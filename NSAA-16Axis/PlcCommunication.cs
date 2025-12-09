@@ -1081,36 +1081,36 @@ namespace NSAA_16Axis
 
         public string Send(string message)
         {
-            /*
-            lock (_locker)
-            {
-                try
-                {
+            
+            //lock (_locker)
+            //{
+            //    try
+            //    {
 
-                    byte cr = 0x0D;
-                    byte[] data = new byte[System.Text.Encoding.ASCII.GetBytes(message).Length + 1];
-                    for (int i = 0; i < data.Length - 1; i++)
-                        data[i] = System.Text.Encoding.ASCII.GetBytes(message)[i];
-                    data[data.Length - 1] = cr;
-                    _stream.Write(data, 0, data.Length);
+            //        byte cr = 0x0D;
+            //        byte[] data = new byte[System.Text.Encoding.ASCII.GetBytes(message).Length + 1];
+            //        for (int i = 0; i < data.Length - 1; i++)
+            //            data[i] = System.Text.Encoding.ASCII.GetBytes(message)[i];
+            //        data[data.Length - 1] = cr;
+            //        _stream.Write(data, 0, data.Length);
 
 
-                    data = new Byte[256];
-                    string responseData = String.Empty;
+            //        data = new Byte[256];
+            //        string responseData = String.Empty;
 
-                    Int32 bytes = _stream.Read(data, 0, data.Length);
-                    responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
-                    Thread.Sleep(100);
-                    return responseData;
-                }
-                catch
-                {
-                    Debug.WriteLine("PLC Send Error!");
-                    throw;
-                    // return "";
-                }
-            }
-            */
+            //        Int32 bytes = _stream.Read(data, 0, data.Length);
+            //        responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+            //        Thread.Sleep(100);
+            //        return responseData;
+            //    }
+            //    catch
+            //    {
+            //        Debug.WriteLine("PLC Send Error!");
+            //        throw;
+            //        // return "";
+            //    }
+            //}
+            
             return "not implement!!";
         }
 

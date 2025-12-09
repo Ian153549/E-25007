@@ -392,6 +392,7 @@
     <EmbeddedResource Include="UCPattern.resx">
       <DependentUpon>UCPattern.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="PLC交握\PC20251117E-25007 .xlsx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -431,6 +432,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.4</Version>
+    </PackageReference>
     <PackageReference Include="OpenCvSharp4">
       <Version>4.11.0.20250507</Version>
     </PackageReference>

@@ -35,6 +35,7 @@
             this.btLBackMaskLightMinus = new System.Windows.Forms.Button();
             this.rbLBackMask = new System.Windows.Forms.RadioButton();
             this.btLBackMaskLightPlus = new System.Windows.Forms.Button();
+            this.ucNavigatorBackMaskL = new NSAA_16Axis.UCNavigator();
             this.tBLeftBackMaskLight = new System.Windows.Forms.TrackBar();
             this.pbLBackMask = new System.Windows.Forms.PictureBox();
             this.btLBackMaskSave = new System.Windows.Forms.Button();
@@ -42,10 +43,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.gbLWafer = new System.Windows.Forms.GroupBox();
             this.btBackLabelPatternL = new System.Windows.Forms.Button();
-            this.pbLBackWaferClassList = new System.Windows.Forms.ComboBox();
+            this.cbLBackWaferClassList = new System.Windows.Forms.ComboBox();
             this.btLWaferLightMinus = new System.Windows.Forms.Button();
             this.rbLWafer = new System.Windows.Forms.RadioButton();
             this.btLWaferLightPlus = new System.Windows.Forms.Button();
+            this.ucNavigatorWaferL = new NSAA_16Axis.UCNavigator();
             this.tBLeftBackWaferLight = new System.Windows.Forms.TrackBar();
             this.pbLWafer = new System.Windows.Forms.PictureBox();
             this.btLWaferSave = new System.Windows.Forms.Button();
@@ -56,11 +58,12 @@
             this.btLWaferLSave = new System.Windows.Forms.Button();
             this.gbRWafer = new System.Windows.Forms.GroupBox();
             this.btBackLabelPatternR = new System.Windows.Forms.Button();
-            this.pbRBackWaferClassList = new System.Windows.Forms.ComboBox();
+            this.cbRBackWaferClassList = new System.Windows.Forms.ComboBox();
             this.BtRightWaferFocus = new System.Windows.Forms.Button();
             this.btRWaferLightMinus = new System.Windows.Forms.Button();
             this.rbRWafer = new System.Windows.Forms.RadioButton();
             this.btRWaferLightPlus = new System.Windows.Forms.Button();
+            this.ucNavigatorWaferR = new NSAA_16Axis.UCNavigator();
             this.tBRightBackWaferLight = new System.Windows.Forms.TrackBar();
             this.btRWaferMask = new System.Windows.Forms.Button();
             this.pbRWafer = new System.Windows.Forms.PictureBox();
@@ -74,6 +77,7 @@
             this.btRBackMaskLightMinus = new System.Windows.Forms.Button();
             this.rbRBackMask = new System.Windows.Forms.RadioButton();
             this.btRBackMaskLightPlus = new System.Windows.Forms.Button();
+            this.ucNavigatorBackMaskR = new NSAA_16Axis.UCNavigator();
             this.tBRightBackMaskLight = new System.Windows.Forms.TrackBar();
             this.btRBackMask = new System.Windows.Forms.Button();
             this.pbRBackMask = new System.Windows.Forms.PictureBox();
@@ -86,6 +90,8 @@
             this.btFindRMaskCenter = new System.Windows.Forms.Button();
             this.btRTopMaskLSave = new System.Windows.Forms.Button();
             this.btRTopMaskLightMinus = new System.Windows.Forms.Button();
+            this.ucNavigatorTopMaskR = new NSAA_16Axis.UCNavigator();
+            this.ucPattern1 = new NSAA_16Axis.UCPattern();
             this.btRTopMaskLightPlus = new System.Windows.Forms.Button();
             this.rbRTopMask = new System.Windows.Forms.RadioButton();
             this.tBRightTopMaskLight = new System.Windows.Forms.TrackBar();
@@ -100,6 +106,7 @@
             this.btLTopMaskLightMinus = new System.Windows.Forms.Button();
             this.tBLeftTopMaskLight = new System.Windows.Forms.TrackBar();
             this.btLTopMaskLightPlus = new System.Windows.Forms.Button();
+            this.ucNavigatorTopMaskL = new NSAA_16Axis.UCNavigator();
             this.rbLTopMask = new System.Windows.Forms.RadioButton();
             this.btLTopPhotoMask = new System.Windows.Forms.Button();
             this.pbLTopMask = new System.Windows.Forms.PictureBox();
@@ -179,13 +186,6 @@
             this.buttonL = new System.Windows.Forms.Button();
             this.buttonR = new System.Windows.Forms.Button();
             this.OpenFileDialogRead = new System.Windows.Forms.OpenFileDialog();
-            this.ucNavigatorBackMaskR = new NSAA_16Axis.UCNavigator();
-            this.ucNavigatorTopMaskR = new NSAA_16Axis.UCNavigator();
-            this.ucPattern1 = new NSAA_16Axis.UCPattern();
-            this.ucNavigatorWaferR = new NSAA_16Axis.UCNavigator();
-            this.ucNavigatorBackMaskL = new NSAA_16Axis.UCNavigator();
-            this.ucNavigatorWaferL = new NSAA_16Axis.UCNavigator();
-            this.ucNavigatorTopMaskL = new NSAA_16Axis.UCNavigator();
             this.buttonF = new System.Windows.Forms.Button();
             this.gbLBackMask.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftBackMaskLight)).BeginInit();
@@ -318,6 +318,17 @@
             this.btLBackMaskLightPlus.UseVisualStyleBackColor = true;
             this.btLBackMaskLightPlus.Click += new System.EventHandler(this.btLBackMaskLightPlus_Click);
             // 
+            // ucNavigatorBackMaskL
+            // 
+            this.ucNavigatorBackMaskL.AutoSize = true;
+            this.ucNavigatorBackMaskL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorBackMaskL.Location = new System.Drawing.Point(31, 28);
+            this.ucNavigatorBackMaskL.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorBackMaskL.Name = "ucNavigatorBackMaskL";
+            this.ucNavigatorBackMaskL.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorBackMaskL.TabIndex = 50;
+            this.ucNavigatorBackMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
+            // 
             // tBLeftBackMaskLight
             // 
             this.tBLeftBackMaskLight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -390,7 +401,7 @@
             // 
             this.gbLWafer.BackColor = System.Drawing.Color.LightYellow;
             this.gbLWafer.Controls.Add(this.btBackLabelPatternL);
-            this.gbLWafer.Controls.Add(this.pbLBackWaferClassList);
+            this.gbLWafer.Controls.Add(this.cbLBackWaferClassList);
             this.gbLWafer.Controls.Add(this.btLWaferLightMinus);
             this.gbLWafer.Controls.Add(this.rbLWafer);
             this.gbLWafer.Controls.Add(this.btLWaferLightPlus);
@@ -427,11 +438,11 @@
             this.btBackLabelPatternL.Visible = false;
             this.btBackLabelPatternL.Click += new System.EventHandler(this.btBackLabelPatternL_Click);
             // 
-            // pbLBackWaferClassList
+            // cbLBackWaferClassList
             // 
-            this.pbLBackWaferClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pbLBackWaferClassList.FormattingEnabled = true;
-            this.pbLBackWaferClassList.Items.AddRange(new object[] {
+            this.cbLBackWaferClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbLBackWaferClassList.FormattingEnabled = true;
+            this.cbLBackWaferClassList.Items.AddRange(new object[] {
             "X1",
             "X2",
             "X3",
@@ -444,11 +455,11 @@
             "X10",
             "X11",
             "X12"});
-            this.pbLBackWaferClassList.Location = new System.Drawing.Point(13, 205);
-            this.pbLBackWaferClassList.Name = "pbLBackWaferClassList";
-            this.pbLBackWaferClassList.Size = new System.Drawing.Size(153, 31);
-            this.pbLBackWaferClassList.TabIndex = 75;
-            this.pbLBackWaferClassList.Visible = false;
+            this.cbLBackWaferClassList.Location = new System.Drawing.Point(13, 205);
+            this.cbLBackWaferClassList.Name = "cbLBackWaferClassList";
+            this.cbLBackWaferClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbLBackWaferClassList.TabIndex = 75;
+            this.cbLBackWaferClassList.Visible = false;
             // 
             // btLWaferLightMinus
             // 
@@ -484,6 +495,17 @@
             this.btLWaferLightPlus.Text = "+";
             this.btLWaferLightPlus.UseVisualStyleBackColor = true;
             this.btLWaferLightPlus.Click += new System.EventHandler(this.btLWaferLightPlus_Click);
+            // 
+            // ucNavigatorWaferL
+            // 
+            this.ucNavigatorWaferL.AutoSize = true;
+            this.ucNavigatorWaferL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorWaferL.Location = new System.Drawing.Point(36, 28);
+            this.ucNavigatorWaferL.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorWaferL.Name = "ucNavigatorWaferL";
+            this.ucNavigatorWaferL.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorWaferL.TabIndex = 49;
+            this.ucNavigatorWaferL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferL_CommandPressed);
             // 
             // tBLeftBackWaferLight
             // 
@@ -599,7 +621,7 @@
             // 
             this.gbRWafer.BackColor = System.Drawing.Color.LightYellow;
             this.gbRWafer.Controls.Add(this.btBackLabelPatternR);
-            this.gbRWafer.Controls.Add(this.pbRBackWaferClassList);
+            this.gbRWafer.Controls.Add(this.cbRBackWaferClassList);
             this.gbRWafer.Controls.Add(this.BtRightWaferFocus);
             this.gbRWafer.Controls.Add(this.btRWaferLightMinus);
             this.gbRWafer.Controls.Add(this.rbRWafer);
@@ -638,11 +660,11 @@
             this.btBackLabelPatternR.Visible = false;
             this.btBackLabelPatternR.Click += new System.EventHandler(this.btBackLabelPatternR_Click);
             // 
-            // pbRBackWaferClassList
+            // cbRBackWaferClassList
             // 
-            this.pbRBackWaferClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pbRBackWaferClassList.FormattingEnabled = true;
-            this.pbRBackWaferClassList.Items.AddRange(new object[] {
+            this.cbRBackWaferClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbRBackWaferClassList.FormattingEnabled = true;
+            this.cbRBackWaferClassList.Items.AddRange(new object[] {
             "X1",
             "X2",
             "X3",
@@ -655,11 +677,11 @@
             "X10",
             "X11",
             "X12"});
-            this.pbRBackWaferClassList.Location = new System.Drawing.Point(62, 205);
-            this.pbRBackWaferClassList.Name = "pbRBackWaferClassList";
-            this.pbRBackWaferClassList.Size = new System.Drawing.Size(153, 31);
-            this.pbRBackWaferClassList.TabIndex = 74;
-            this.pbRBackWaferClassList.Visible = false;
+            this.cbRBackWaferClassList.Location = new System.Drawing.Point(62, 205);
+            this.cbRBackWaferClassList.Name = "cbRBackWaferClassList";
+            this.cbRBackWaferClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbRBackWaferClassList.TabIndex = 74;
+            this.cbRBackWaferClassList.Visible = false;
             // 
             // BtRightWaferFocus
             // 
@@ -709,6 +731,17 @@
             this.btRWaferLightPlus.Text = "+";
             this.btRWaferLightPlus.UseVisualStyleBackColor = true;
             this.btRWaferLightPlus.Click += new System.EventHandler(this.btRWaferLightPlus_Click);
+            // 
+            // ucNavigatorWaferR
+            // 
+            this.ucNavigatorWaferR.AutoSize = true;
+            this.ucNavigatorWaferR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorWaferR.Location = new System.Drawing.Point(77, 28);
+            this.ucNavigatorWaferR.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorWaferR.Name = "ucNavigatorWaferR";
+            this.ucNavigatorWaferR.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorWaferR.TabIndex = 50;
+            this.ucNavigatorWaferR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferR_CommandPressed);
             // 
             // tBRightBackWaferLight
             // 
@@ -896,6 +929,17 @@
             this.btRBackMaskLightPlus.UseVisualStyleBackColor = true;
             this.btRBackMaskLightPlus.Click += new System.EventHandler(this.btRBackMaskLightPlus_Click);
             // 
+            // ucNavigatorBackMaskR
+            // 
+            this.ucNavigatorBackMaskR.AutoSize = true;
+            this.ucNavigatorBackMaskR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorBackMaskR.Location = new System.Drawing.Point(73, 30);
+            this.ucNavigatorBackMaskR.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorBackMaskR.Name = "ucNavigatorBackMaskR";
+            this.ucNavigatorBackMaskR.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorBackMaskR.TabIndex = 51;
+            this.ucNavigatorBackMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
+            // 
             // tBRightBackMaskLight
             // 
             this.tBRightBackMaskLight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1070,6 +1114,23 @@
             this.btRTopMaskLightMinus.Text = "-";
             this.btRTopMaskLightMinus.UseVisualStyleBackColor = true;
             this.btRTopMaskLightMinus.Click += new System.EventHandler(this.BtRTopMaskLightMinus_Click);
+            // 
+            // ucNavigatorTopMaskR
+            // 
+            this.ucNavigatorTopMaskR.AutoSize = true;
+            this.ucNavigatorTopMaskR.Location = new System.Drawing.Point(85, 28);
+            this.ucNavigatorTopMaskR.Name = "ucNavigatorTopMaskR";
+            this.ucNavigatorTopMaskR.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorTopMaskR.TabIndex = 54;
+            this.ucNavigatorTopMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
+            // 
+            // ucPattern1
+            // 
+            this.ucPattern1.Location = new System.Drawing.Point(31062, 32706);
+            this.ucPattern1.Margin = new System.Windows.Forms.Padding(0);
+            this.ucPattern1.Name = "ucPattern1";
+            this.ucPattern1.Size = new System.Drawing.Size(65535, 65535);
+            this.ucPattern1.TabIndex = 53;
             // 
             // btRTopMaskLightPlus
             // 
@@ -1271,6 +1332,15 @@
             this.btLTopMaskLightPlus.Text = "+";
             this.btLTopMaskLightPlus.UseVisualStyleBackColor = true;
             this.btLTopMaskLightPlus.Click += new System.EventHandler(this.btLRingLightPlus_Click);
+            // 
+            // ucNavigatorTopMaskL
+            // 
+            this.ucNavigatorTopMaskL.AutoSize = true;
+            this.ucNavigatorTopMaskL.Location = new System.Drawing.Point(37, 27);
+            this.ucNavigatorTopMaskL.Name = "ucNavigatorTopMaskL";
+            this.ucNavigatorTopMaskL.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorTopMaskL.TabIndex = 15;
+            this.ucNavigatorTopMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
             // 
             // rbLTopMask
             // 
@@ -2317,76 +2387,6 @@
             // 
             this.OpenFileDialogRead.FileName = "openFileDialog1";
             // 
-            // ucNavigatorBackMaskR
-            // 
-            this.ucNavigatorBackMaskR.AutoSize = true;
-            this.ucNavigatorBackMaskR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorBackMaskR.Location = new System.Drawing.Point(73, 30);
-            this.ucNavigatorBackMaskR.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorBackMaskR.Name = "ucNavigatorBackMaskR";
-            this.ucNavigatorBackMaskR.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorBackMaskR.TabIndex = 51;
-            this.ucNavigatorBackMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
-            // 
-            // ucNavigatorTopMaskR
-            // 
-            this.ucNavigatorTopMaskR.AutoSize = true;
-            this.ucNavigatorTopMaskR.Location = new System.Drawing.Point(85, 28);
-            this.ucNavigatorTopMaskR.Name = "ucNavigatorTopMaskR";
-            this.ucNavigatorTopMaskR.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorTopMaskR.TabIndex = 54;
-            this.ucNavigatorTopMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
-            // 
-            // ucPattern1
-            // 
-            this.ucPattern1.Location = new System.Drawing.Point(31081, 32725);
-            this.ucPattern1.Margin = new System.Windows.Forms.Padding(0);
-            this.ucPattern1.Name = "ucPattern1";
-            this.ucPattern1.Size = new System.Drawing.Size(65535, 65535);
-            this.ucPattern1.TabIndex = 53;
-            // 
-            // ucNavigatorWaferR
-            // 
-            this.ucNavigatorWaferR.AutoSize = true;
-            this.ucNavigatorWaferR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorWaferR.Location = new System.Drawing.Point(77, 28);
-            this.ucNavigatorWaferR.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorWaferR.Name = "ucNavigatorWaferR";
-            this.ucNavigatorWaferR.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorWaferR.TabIndex = 50;
-            this.ucNavigatorWaferR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferR_CommandPressed);
-            // 
-            // ucNavigatorBackMaskL
-            // 
-            this.ucNavigatorBackMaskL.AutoSize = true;
-            this.ucNavigatorBackMaskL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorBackMaskL.Location = new System.Drawing.Point(31, 28);
-            this.ucNavigatorBackMaskL.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorBackMaskL.Name = "ucNavigatorBackMaskL";
-            this.ucNavigatorBackMaskL.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorBackMaskL.TabIndex = 50;
-            this.ucNavigatorBackMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
-            // 
-            // ucNavigatorWaferL
-            // 
-            this.ucNavigatorWaferL.AutoSize = true;
-            this.ucNavigatorWaferL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorWaferL.Location = new System.Drawing.Point(36, 28);
-            this.ucNavigatorWaferL.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorWaferL.Name = "ucNavigatorWaferL";
-            this.ucNavigatorWaferL.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorWaferL.TabIndex = 49;
-            this.ucNavigatorWaferL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferL_CommandPressed);
-            // 
-            // ucNavigatorTopMaskL
-            // 
-            this.ucNavigatorTopMaskL.AutoSize = true;
-            this.ucNavigatorTopMaskL.Location = new System.Drawing.Point(37, 27);
-            this.ucNavigatorTopMaskL.Name = "ucNavigatorTopMaskL";
-            this.ucNavigatorTopMaskL.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorTopMaskL.TabIndex = 15;
-            this.ucNavigatorTopMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
-            // 
             // buttonF
             // 
             this.buttonF.Location = new System.Drawing.Point(743, 188);
@@ -2626,7 +2626,7 @@
         private System.Windows.Forms.Button btBTAlignWafer;
         private System.Windows.Forms.Button btReadMaskMat;
         private System.Windows.Forms.Button btNG;
-        private System.Windows.Forms.GroupBox groupBox4;
+        public System.Windows.Forms.GroupBox groupBox4;
         private MRLibrary.UCButton btGo;
         private MRLibrary.UCButton btUpdate;
         private System.Windows.Forms.NumericUpDown nUDXyyY2;
@@ -2666,9 +2666,9 @@
         private System.Windows.Forms.Button BtLMaskAdjSave;
         private System.Windows.Forms.Button BtRMaskAdjSave;
         private System.Windows.Forms.Button btSave;
-        private System.Windows.Forms.ComboBox pbLBackWaferClassList;
+        private System.Windows.Forms.ComboBox cbLBackWaferClassList;
         private System.Windows.Forms.Button btBackLabelPatternL;
-        private System.Windows.Forms.ComboBox pbRBackWaferClassList;
+        private System.Windows.Forms.ComboBox cbRBackWaferClassList;
         private System.Windows.Forms.Button btBackLabelPatternR;
         private System.Windows.Forms.Button buttonL;
         private System.Windows.Forms.Button buttonR;

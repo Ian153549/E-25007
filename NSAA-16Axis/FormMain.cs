@@ -1,23 +1,14 @@
-﻿using OpenCvSharp;
-using OpenCvSharp.Extensions;
-using MRLibrary;
+﻿using MRLibrary;
+using OpenCvSharp;
 using Sentech.StApiDotNET;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using Euresys.Open_eVision;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace NSAA_16Axis
 {
@@ -328,6 +319,8 @@ namespace NSAA_16Axis
                 iAdmin = 1;
                 ucOpenPad.Visible = true;
                 btZoomInfoRead.Visible = true;
+                cmLearnPatternBack1.groupBox4.Visible = true;
+                cmLearnPatternUp1.groupBox4.Visible = true;
                 UserName = GV.Dlang.strAdmin;
             }
             else
@@ -1056,10 +1049,10 @@ namespace NSAA_16Axis
             GV.RightUpCam.SetWindow(GV.RightUpWindowOnAlignPage);
             GV.LeftUpCam.Live();
             GV.RightUpCam.Live();
-            GV.LeftBackCam.SetWindow(GV.LeftDownWindowOnAlignPage);
-            GV.RightBackCam.SetWindow(GV.RightDownWindowOnAlignPage);
-            GV.LeftBackCam.Live();
-            GV.RightBackCam.Live();
+            //GV.LeftBackCam.SetWindow(GV.LeftDownWindowOnAlignPage);
+            //GV.RightBackCam.SetWindow(GV.RightDownWindowOnAlignPage);
+            //GV.LeftBackCam.Live();
+            //GV.RightBackCam.Live();
 
             if (AlignC.LeftLight[AlignC.AlignLowMagnification])
             {
@@ -1609,7 +1602,6 @@ namespace NSAA_16Axis
                 DlgInitial.WriteToInitialTextBox(GV.Dlang.strConnectLenLight);
                 if (GV.AppSettingParm.Emulation != true)
                 {
-                    // GV.Light.Open(0x03, 0x00, GV.AppSettingParm.LightComPort, 19200, 8, System.IO.Ports.Parity.None, System.IO.Ports.StopBits.One);
                     GV.Light.Open(GV.AppSettingParm.LightComPort, 19200, 8, System.IO.Ports.Parity.None, System.IO.Ports.StopBits.One, 4);
                 }
                 DlgInitial.WriteToInitialTextBox(GV.Dlang.strOK);
@@ -1617,7 +1609,6 @@ namespace NSAA_16Axis
                 DlgInitial.WriteToInitialTextBox(GV.Dlang.strConnectLenRingLight);
                 if (GV.AppSettingParm.Emulation != true)
                 {
-                    // GV.Light.Open(0x03, 0x00, GV.AppSettingParm.LightComPort, 19200, 8, System.IO.Ports.Parity.None, System.IO.Ports.StopBits.One);
                     if (GV.AppSettingParm.RingLightPortEnable == true)
                     {
                         GV.RingLight.LightNum = 2;
@@ -2581,6 +2572,7 @@ namespace NSAA_16Axis
                     return;
                 }
                 await Task.Run(() => MoveTableToMatchPatternAtSpecificMagnification("high"));
+                Thread.Sleep(500);
                 iAlignCode = GV.Plc.ReadData16(GV.Plc.iAlign, 4);
                 if (iAlignCode[1] == 0 || (iStartAlign == 0))
                 {
@@ -3349,9 +3341,9 @@ namespace NSAA_16Axis
             if (!GV.AppSettingParm.EnableContactShiftCompensation)
             {
 
-                GV.Plc.TellPlcToEnterContactUnContactMode();
-                // GV.Plc.Contact(1);
-                GV.Plc.Exposure(1);
+                //GV.Plc.TellPlcToEnterContactUnContactMode();
+                GV.Plc.Contact(1);
+                //GV.Plc.Exposure(1);
                 iExposure = 1;
                 return 0;
             }
@@ -3603,7 +3595,7 @@ namespace NSAA_16Axis
             int iWidth;
             ProductMatchPositions pmps;
 
-            // GV.Plc.ChangeXyyTableSpeed(6000);
+            //GV.Plc.ChangeXyyTableSpeed(1000);
 
             CheckIfPlcStop();
             if (alignMagnification == "high")
@@ -3650,7 +3642,7 @@ namespace NSAA_16Axis
                 {
 
                 }
-                Thread.Sleep(250);
+                Thread.Sleep(500);
                 iAlignCode = GV.Plc.ReadData16(GV.Plc.iAlign, 4);
                 if (iAlignCode[1] == 0)
                 {
@@ -3668,10 +3660,14 @@ namespace NSAA_16Axis
                     iStartAlign = 0;
                     return;
                 }
+                LastPmps.LMaskMp = pmps.LMaskMp;
+                LastPmps.RMaskMp = pmps.RMaskMp;
+                writeStatus($"Mask位置: L({pmps.LMaskMp.X:F1},{pmps.LMaskMp.Y:F1}) R({pmps.RMaskMp.X:F1},{pmps.RMaskMp.Y:F1})");
                 iMaskGetOK = 1;
             }
             else
             {
+                Thread.Sleep(500);
                 pmps = GetAllMatchPostion(GV.LeftUpCam.Grab(), GV.RightUpCam.Grab(), alignMagnification);
             }
 
@@ -3702,6 +3698,7 @@ namespace NSAA_16Axis
                 return;
             }
             GV.Plc.AlignXyyTableMove(motorSteps[0], motorSteps[1], motorSteps[2]);
+            Thread.Sleep(500);
             writeStatus(GV.Dlang.strMessageTableStep + " : " + motorSteps[0].ToString() + " , " + motorSteps[1].ToString() + " , " + motorSteps[2].ToString());
         }
 

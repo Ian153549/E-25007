@@ -16,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Interop;
+using System.Xml;
 using static System.Windows.Forms.AxHost;
 
 namespace NSAA_16Axis
@@ -192,44 +193,51 @@ namespace NSAA_16Axis
             {
                 while (GV.TabOption == GV.Tab.Learn)
                 {
-                    if (rBLowMagnification.Checked)
-                    {
-                        GV.matcherLLM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LMaskMp, _AlignC.LLMaskAlgorithm);
-                        GV.matcherLLW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LWaferMp, _AlignC.LLWaferAlgorithm);
-                        GV.matcherRLM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RMaskMp, _AlignC.RLMaskAlgorithm);
-                        GV.matcherRLW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RWaferMp, _AlignC.RLWaferAlgorithm);
+                    try 
+                    { 
+                        if (rBLowMagnification.Checked)
+                        {
+                            GV.matcherLLM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LMaskMp, _AlignC.LLMaskAlgorithm);
+                            GV.matcherLLW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LWaferMp, _AlignC.LLWaferAlgorithm);
+                            GV.matcherRLM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RMaskMp, _AlignC.RLMaskAlgorithm);
+                            GV.matcherRLW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RWaferMp, _AlignC.RLWaferAlgorithm);
+                        }
+                        if (rBHighMagnification.Checked)
+                        {
+                            GV.matcherLHM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LMaskMp, _AlignC.LHMaskAlgorithm);
+                            GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LWaferMp, _AlignC.LHWaferAlgorithm);
+                            GV.matcherRHM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RMaskMp, _AlignC.RHMaskAlgorithm);
+                            GV.matcherRHW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RWaferMp, _AlignC.RHWaferAlgorithm);
+                        }
+
+                        Invoke((MethodInvoker)delegate ()
+                        {
+                            double dLX = skLPattern.MaskMp.X - skLPattern.WaferMp.X;
+                            double dLY = skLPattern.MaskMp.Y - skLPattern.WaferMp.Y;
+                            double dRX = skRPattern.MaskMp.X - skRPattern.WaferMp.X;
+                            double dRY = skRPattern.MaskMp.Y - skRPattern.WaferMp.Y;
+
+                            string msgLM = string.Format("LMX = {0:N3}, LMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
+                                skLPattern.MaskMp.X, skLPattern.MaskMp.Y, dLX, dLY, skLPattern.MaskMp.Score);
+                            string msgLW = string.Format("LWX = {0:N3}, LWY = {1:N3}, WScore = {2:N2}",
+                                skLPattern.WaferMp.X, skLPattern.WaferMp.Y, skLPattern.WaferMp.Score);
+                            string msgRM = string.Format("RMX = {0:N3}, RMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
+                                skRPattern.MaskMp.X, skRPattern.MaskMp.Y, dRX, dRY, skRPattern.MaskMp.Score);
+                            string msgRW = string.Format("RWX = {0:N3}, RWY = {1:N3}, WScore = {2:N2}",
+                                skRPattern.WaferMp.X, skRPattern.WaferMp.Y, skRPattern.WaferMp.Score);
+
+                            lbLMsgM.Text = msgLM;
+                            lbRMsgM.Text = msgRM;
+                            lbLMsgW.Text = msgLW;
+                            lbRMsgW.Text = msgRW;
+
+                            Update();
+                        });
                     }
-                    if (rBHighMagnification.Checked)
-                    {
-                        GV.matcherLHM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LMaskMp, _AlignC.LHMaskAlgorithm);
-                        GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LWaferMp, _AlignC.LHWaferAlgorithm);
-                        GV.matcherRHM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RMaskMp, _AlignC.RHMaskAlgorithm);
-                        GV.matcherRHW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RWaferMp, _AlignC.RHWaferAlgorithm);
+                    catch(Exception ex)
+                    {                        
+                        WriteStatus(ex.Message);
                     }
-
-                    Invoke((MethodInvoker)delegate ()
-                    {
-                        double dLX = skLPattern.MaskMp.X - skLPattern.WaferMp.X;
-                        double dLY = skLPattern.MaskMp.Y - skLPattern.WaferMp.Y;
-                        double dRX = skRPattern.MaskMp.X - skRPattern.WaferMp.X;
-                        double dRY = skRPattern.MaskMp.Y - skRPattern.WaferMp.Y;
-
-                        string msgLM = string.Format("LMX = {0:N3}, LMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
-                            skLPattern.MaskMp.X, skLPattern.MaskMp.Y, dLX, dLY, skLPattern.MaskMp.Score);
-                        string msgLW = string.Format("LWX = {0:N3}, LWY = {1:N3}, WScore = {2:N2}",
-                            skLPattern.WaferMp.X, skLPattern.WaferMp.Y, skLPattern.WaferMp.Score);
-                        string msgRM = string.Format("RMX = {0:N3}, RMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
-                            skRPattern.MaskMp.X, skRPattern.MaskMp.Y, dRX, dRY, skRPattern.MaskMp.Score);
-                        string msgRW = string.Format("RWX = {0:N3}, RWY = {1:N3}, WScore = {2:N2}",
-                            skRPattern.WaferMp.X, skRPattern.WaferMp.Y, skRPattern.WaferMp.Score);
-
-                        lbLMsgM.Text = msgLM;
-                        lbRMsgM.Text = msgRM;
-                        lbLMsgW.Text = msgLW;
-                        lbRMsgW.Text = msgRW;
-
-                        Update();
-                    });
 
                     Thread.Sleep(2000);
                 }
@@ -237,6 +245,10 @@ namespace NSAA_16Axis
             }
         }
 
+        public void WriteStatus(string message)
+        {
+            Invoke((MethodInvoker)delegate { GM.WriteToStatusTextBox(message); });
+        }
 
         public void UpdateUI()
         {
@@ -264,12 +276,12 @@ namespace NSAA_16Axis
             pbLMaskImage.Image = null;
             pbLWaferImage.Image = null;
             pbRMaskImage.Image = null;
+            pbRMaskImage.Image = null;
             pbRWaferImage.Image = null;
 
             if (rBLowMagnification.Checked)
             {
-                if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() &&
-        _recipe.LeftLowMaskMat.Width > 0 && _recipe.LeftLowMaskMat.Height > 0)
+                if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() &&_recipe.LeftLowMaskMat.Width > 0 && _recipe.LeftLowMaskMat.Height > 0)
                 {
                     try
                     {
@@ -314,8 +326,7 @@ namespace NSAA_16Axis
                 }
                 //if (_recipe.RightLowMaskMat != null)
                 //    pbRMaskImage.Image = _recipe.RightLowMaskMat.ToBitmap();
-                if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() &&
-    _recipe.RightLowMaskMat.Width > 0 && _recipe.RightLowMaskMat.Height > 0)
+                if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() &&_recipe.RightLowMaskMat.Width > 0 && _recipe.RightLowMaskMat.Height > 0)
                 {
                     try
                     {
@@ -739,7 +750,7 @@ namespace NSAA_16Axis
                 {
                     if (cbLWaferAlgorithm.SelectedIndex == 2)
                     {
-                        pbLWaferClassList.Visible = true;
+                        cbLWaferClassList.Visible = true;
                         btLabelPatternL.Visible = true;
                         pbLWaferImage.Visible = false;
                     }
@@ -763,7 +774,7 @@ namespace NSAA_16Axis
                 _AlignC.LLWaferAlgorithm = Algoritm(cbLWaferAlgorithm.SelectedIndex);
                 if (cbLWaferAlgorithm.SelectedIndex == 2)
                 {
-                    _AlignC.LLBitwiseNot = pbLWaferClassList.SelectedIndex;
+                    _AlignC.LLBitwiseNot = cbLWaferClassList.SelectedIndex;
                 }
                 else
                 {
@@ -777,7 +788,7 @@ namespace NSAA_16Axis
                 {
                     if (cbLWaferAlgorithm.SelectedIndex == 2)
                     {
-                        pbLWaferClassList.Visible = true;
+                        cbLWaferClassList.Visible = true;
                         btLabelPatternL.Visible = true;
                         pbLWaferImage.Visible = false;
                     }
@@ -797,7 +808,7 @@ namespace NSAA_16Axis
                 _AlignC.LHWaferAlgorithm = Algoritm(cbLWaferAlgorithm.SelectedIndex);
                 if (cbLWaferAlgorithm.SelectedIndex == 2)
                 {
-                    _AlignC.LHBitwiseNot = pbLWaferClassList.SelectedIndex;
+                    _AlignC.LHBitwiseNot = cbLWaferClassList.SelectedIndex;
                 }
                 else
                 {
@@ -829,7 +840,7 @@ namespace NSAA_16Axis
                     float w = roi.Width / (float)fullImage.Width;
                     float h = roi.Height / (float)fullImage.Height;
 
-                    int classId = pbLWaferClassList.SelectedIndex;
+                    int classId = cbLWaferClassList.SelectedIndex;
                     List<YoloBox> boxes = new List<YoloBox>();
                     boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
                     File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
@@ -837,7 +848,7 @@ namespace NSAA_16Axis
                 catch
                 {
                 }
-                pbLWaferClassList.Visible = true;
+                cbLWaferClassList.Visible = true;
                 btLabelPatternL.Visible = true;
                 pbLWaferImage.Visible = false;
             }
@@ -856,18 +867,19 @@ namespace NSAA_16Axis
                 btTfile.Visible = true;
                 btTLRead.Visible = true;
                 btTRRead.Visible = true;
+                groupBox4.Visible = true;
             }
             if (GMPLeft == null)
             {
                 GMPLeft = new Mat();
                 GMPRight = new Mat();
-                pbRWaferClassList.Items.Clear();
-                pbLWaferClassList.Items.Clear();
+                cbRWaferClassList.Items.Clear();
+                cbLWaferClassList.Items.Clear();
                 Dictionary<string, Int16> ClassList = GV.AIClassList.GetClassList();
                 foreach (var className in ClassList)
                 {
-                    pbRWaferClassList.Items.Add(className);
-                    pbLWaferClassList.Items.Add(className);
+                    cbRWaferClassList.Items.Add(className);
+                    cbLWaferClassList.Items.Add(className);
 
                 }
             }
@@ -1074,7 +1086,7 @@ namespace NSAA_16Axis
                 {
                     if (cbRWaferAlgorithm.SelectedIndex == 2)
                     {
-                        pbRWaferClassList.Visible = true;
+                        cbRWaferClassList.Visible = true;
                         btLabelPatternR.Visible = true;
                         pbRWaferImage.Visible = false;
                     }
@@ -1096,7 +1108,7 @@ namespace NSAA_16Axis
                 _AlignC.RLWaferAlgorithm = Algoritm(cbRWaferAlgorithm.SelectedIndex);
                 if (cbRWaferAlgorithm.SelectedIndex == 2)
                 {
-                    _AlignC.RLBitwiseNot = pbRWaferClassList.SelectedIndex;
+                    _AlignC.RLBitwiseNot = cbRWaferClassList.SelectedIndex;
                 }
                 else
                 {
@@ -1110,7 +1122,7 @@ namespace NSAA_16Axis
                 {
                     if (cbRWaferAlgorithm.SelectedIndex == 2)
                     {
-                        pbRWaferClassList.Visible = true;
+                        cbRWaferClassList.Visible = true;
                         btLabelPatternR.Visible = true;
                         pbRWaferImage.Visible = false;
                     }
@@ -1134,7 +1146,7 @@ namespace NSAA_16Axis
                 _AlignC.RHWaferAlgorithm = Algoritm(cbRWaferAlgorithm.SelectedIndex);
                 if (cbRWaferAlgorithm.SelectedIndex == 2)
                 {
-                    _AlignC.RHBitwiseNot = pbRWaferClassList.SelectedIndex;
+                    _AlignC.RHBitwiseNot = cbRWaferClassList.SelectedIndex;
                 }
                 else
                 {
@@ -1165,11 +1177,11 @@ namespace NSAA_16Axis
                 float w = roi.Width / (float)fullImage.Width;
                 float h = roi.Height / (float)fullImage.Height;
 
-                int classId = pbRWaferClassList.SelectedIndex;
+                int classId = cbRWaferClassList.SelectedIndex;
                 List<YoloBox> boxes = new List<YoloBox>();
                 boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
                 File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
-                pbRWaferClassList.Visible = true;
+                cbRWaferClassList.Visible = true;
                 btLabelPatternR.Visible = true;
                 pbLWaferImage.Visible = false;
             }
@@ -1427,7 +1439,7 @@ namespace NSAA_16Axis
 
             if (mat.Empty()) return;
 
-            GrayImage gmas = rBHighMagnification.Checked ? _recipe.RightHighWaferMask : GV.RightLowWaferMask[EditRecipe];
+            GrayImage gmas = rBHighMagnification.Checked ? _recipe.RightHighWaferMask : _recipe.RightLowWaferMask;
 
             if ((gmas == null) || (gmas.Width != mat.Width || gmas.Height != mat.Height))
             {
@@ -1505,6 +1517,22 @@ namespace NSAA_16Axis
 
         private void CbLMaskAlgorithm_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if(rBLowMagnification.Checked)
+            {
+                _AlignC.LLMaskAlgorithm = Algoritm(cbLMaskAlgorithm.SelectedIndex);
+                if(_recipe.LeftLowMaskMat !=null && !_recipe.LeftLowMaskMat.Empty())
+                {
+                    GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm);
+                }
+            }
+            else if (rBHighMagnification.Checked)
+            {
+                _AlignC.LHMaskAlgorithm = Algoritm(cbLMaskAlgorithm.SelectedIndex);
+                if(_recipe.LeftHighMaskMat !=null && !_recipe.LeftHighMaskMat.Empty())
+                {
+                    GV.matcherLHM.LearnWithAlgo(_recipe.LeftHighMaskMat, _recipe.LeftHighMaskMask, _AlignC.LHMaskAlgorithm);
+                }
+            }
             CheckParam();
         }
 
@@ -1513,20 +1541,28 @@ namespace NSAA_16Axis
             if (rBLowMagnification.Checked)
             {
                 _AlignC.RLWaferAlgorithm = Algoritm(cbRWaferAlgorithm.SelectedIndex);
+                if(_recipe.RightLowWaferMat !=null && !_recipe.RightLowMaskMat.Empty())
+                {
+                    GV.matcherRLW.LearnWithAlgo(_recipe.RightLowWaferMat, _recipe.RightLowWaferMask, _AlignC.RLWaferAlgorithm);
+                }
             }
             else if (rBHighMagnification.Checked)
             {
                 _AlignC.RHWaferAlgorithm = Algoritm(cbRWaferAlgorithm.SelectedIndex);
+                if(_recipe.RightHighWaferMat !=null && !_recipe.RightHighMaskMat.Empty())
+                {
+                    GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm);
+                }
             }
             if (cbRWaferAlgorithm.SelectedIndex == 2)
             {
-                pbRWaferClassList.Visible = true;
+                cbRWaferClassList.Visible = true;
                 btLabelPatternR.Visible = true;
                 pbRWaferImage.Visible = false;
             }
             else
             {
-                pbRWaferClassList.Visible = false;
+                cbRWaferClassList.Visible = false;
                 btLabelPatternR.Visible = false;
                 pbRWaferImage.Visible = true;
             }
@@ -1698,87 +1734,6 @@ namespace NSAA_16Axis
             CheckParam();
         }
 
-        private void RBLowMagni_Change(object sender, EventArgs e)
-        {
-            /*
-            if (rBLowMagnification.Checked)
-            {
-                try
-                {
-                    gBMag.Enabled = false;
-                    rBHighMagnification.Enabled = false;
-                    rBLowMagnification.Enabled = false;
-                    cbLowMagnification.Enabled = false;
-                    cbHighMagnification.Enabled = false;
-                    cbPatterhShift.Enabled = false;
-                    GV.NowMagnification = 1;
-                    NowMageni = cbLowMagnification.SelectedIndex;
-
-                    cbLMaskAlgorithm.SelectedIndex = (int)_AlignC.LLMaskAlgorithm;
-                    cbRMaskAlgorithm.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
-                    cbLWaferAlgorithm.SelectedIndex = (int)_AlignC.LLWaferAlgorithm;
-                    cbRWaferAlgorithm.SelectedIndex = (int)_AlignC.RLWaferAlgorithm;
-
-                    changelight();
-
-                    ChangeLensMagnification(NowMageni);
-
-                    if (GV.LeftLowMaskMat[EditRecipe] != null)
-                    {
-                        pbLMaskImage.Image = GV.LeftLowMaskMat[EditRecipe].ToBitmap();
-                    }
-                    else
-                    {
-                        pbLMaskImage.Image = null;
-                    }
-                    if (GV.LeftLowWaferMat[EditRecipe] != null)
-                    {
-                        pbLWaferImage.Image = GV.LeftLowWaferMat[EditRecipe].ToBitmap();
-                    }
-                    else
-                    {
-                        pbLWaferImage.Image = null;
-                    }
-                    if (GV.RightLowMaskMat[EditRecipe] != null)
-                    {
-                        pbRMaskImage.Image = GV.RightLowMaskMat[EditRecipe].ToBitmap();
-                    }
-                    else
-                    {
-                        pbRMaskImage.Image = null;
-                    }
-                    if (GV.RightLowWaferMat[EditRecipe] != null)
-                    {
-                        pbRWaferImage.Image = GV.RightLowWaferMat[EditRecipe].ToBitmap();
-                    }
-                    else
-                    {
-                        pbRWaferImage.Image = null;
-                    }
-
-                    Thread.Sleep(iDelayT);
-                    gBMag.Enabled = true;
-                    if (GV.UserLevel != GV.User.Operator)
-                        cbLowMagnification.Enabled = true;
-                    else
-                        cbLowMagnification.Enabled = false;
-
-                    cbHighMagnification.Enabled = false;
-                    rBLowMagnification.Enabled = true;
-                    rBHighMagnification.Enabled = true;
-                    checkParam();
-                }
-                catch (Exception ex)
-                {
-                    if (GV.AppSettingParm.DebugMode)
-                    {
-                        lbDebugMsg.Text = ex.Message;
-                    }
-                }
-            }
-            */
-        }
-
         public void Changelight()
         {
             if (_AlignC.LeftLight[NowMageni])
@@ -1822,108 +1777,6 @@ namespace NSAA_16Axis
                 tBRightRingLight.Value = 0;
             }
         }
-
-        private void RBHighMagni_Change(object sender, EventArgs e)
-        {
-            /*
-            if (rBHighMagnification.Checked)
-            {
-                gBMag.Enabled = false;
-                cbHighMagnification.Enabled = false;
-                cbLowMagnification.Enabled = false;
-                rBHighMagnification.Enabled = false;
-                rBLowMagnification.Enabled = false;
-
-                GV.NowMagnification = 2;
-
-                NowMageni = cbHighMagnification.SelectedIndex;
-                cbLMaskAlgorithm.SelectedIndex = (int)_AlignC.LHMaskAlgorithm;
-                cbRMaskAlgorithm.SelectedIndex = (int)_AlignC.RHMaskAlgorithm;
-                cbLWaferAlgorithm.SelectedIndex = (int)_AlignC.LHWaferAlgorithm;
-                cbRWaferAlgorithm.SelectedIndex = (int)_AlignC.RHWaferAlgorithm;
-
-                changelight();
-
-                ChangeLensMagnification(NowMageni);
-
-                if (GV.LeftHighMaskMat[EditRecipe] != null)
-                {
-                    pbLMaskImage.Image = GV.LeftHighMaskMat[EditRecipe].ToBitmap();
-                } else
-                {
-                    pbLMaskImage.Image = null;
-                }
-                if (GV.LeftHighWaferMat[EditRecipe] != null)
-                {
-                    pbLWaferImage.Image = GV.LeftHighWaferMat[EditRecipe].ToBitmap();
-                } else
-                {
-                    pbLWaferImage.Image = null;
-                }
-                if (GV.RightHighMaskMat[EditRecipe] != null)
-                {
-                    pbRMaskImage.Image = GV.RightHighMaskMat[EditRecipe].ToBitmap();
-                } else { pbRMaskImage.Image = null; }
-                    
-                if (GV.RightHighWaferMat[EditRecipe] != null)
-                {
-                    pbRWaferImage.Image = GV.RightHighWaferMat[EditRecipe].ToBitmap();
-                } else { pbRWaferImage.Image = null; }
-
-                Thread.Sleep(iDelayT);
-                gBMag.Enabled = true;
-                cbLowMagnification.Enabled = false;
-                if (GV.UserLevel != GV.User.Operator)
-                {
-                    cbHighMagnification.Enabled = true;
-                    cbPatterhShift.Enabled = true;
-                }
-                else
-                {
-                    cbHighMagnification.Enabled = false;
-                    cbPatterhShift.Enabled = false;
-                }
-
-                rBLowMagnification.Enabled = true;
-                rBHighMagnification.Enabled = true;
-                Update();
-
-                checkParam();
-            }
-            */
-        }
-
-        //private void ChangeLensMagnification(string side, int motormagnification)
-        //{
-        //    try
-        //    {
-        //        CheckIfPlcStop();
-
-        //        if (side == "left")
-        //        {
-
-        //            if (!GV.LeftZoomLens.MoveGoto(motormagnification))
-        //            {
-        //                // GV.Plc.Send("WR DM6400.S 1");
-        //                throw new MRException("Error : Zoom lens fail.");
-        //            }
-        //        }
-
-        //        if (side == "right")
-        //        {
-        //            if (!GV.RightZoomLens.MoveGoto(motormagnification))
-        //            {
-        //                // GV.Plc.Send("WR DM6400.S 1");
-        //                throw new MRException("Error : Zoom lens fail.");
-        //            }
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        Debug.WriteLine("ChangeLensMagnification fail");
-        //        throw;
-        //    }
-        //}
 
         private void ChangeLensMagnification(int motormagnification)
         {
@@ -2475,33 +2328,115 @@ namespace NSAA_16Axis
 
                 ChangeLensMagnification(NowMageni);
 
-                if (_recipe.LeftHighMaskMat != null)
+                //if (_recipe.LeftHighMaskMat != null)
+                //{
+                //    pbLMaskImage.Image = _recipe.LeftHighMaskMat.ToBitmap();
+                //}
+                //else
+                //{
+                //    pbLMaskImage.Image = null;
+                //}
+                if (_recipe.LeftHighMaskMat != null && !_recipe.LeftHighMaskMat.Empty() && _recipe.LeftHighMaskMat.Width > 0 && _recipe.LeftHighMaskMat.Height > 0)
                 {
-                    pbLMaskImage.Image = _recipe.LeftHighMaskMat.ToBitmap();
+                    try
+                    {
+                        pbLMaskImage.Image?.Dispose(); // 先釋放舊的 Image
+                        pbLMaskImage.Image = _recipe.LeftHighMaskMat.ToBitmap();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (GV.AppSettingParm.DebugMode)
+                        {
+                            lbDebugMsg.Text = "LeftHighMaskMat ToBitmap Error: " + ex.Message;
+                        }
+                        pbLMaskImage.Image = null;
+                    }
                 }
                 else
                 {
                     pbLMaskImage.Image = null;
                 }
-                if (_recipe.LeftHighWaferMat != null)
+
+                //if (_recipe.LeftHighWaferMat != null)
+                //{
+                //    pbLWaferImage.Image = _recipe.LeftHighWaferMat.ToBitmap();
+                //}
+                //else
+                //{
+                //    pbLWaferImage.Image = null;
+                //}
+                if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() && _recipe.LeftHighWaferMask.Width > 0 && _recipe.LeftHighWaferMask.Height > 0)
                 {
-                    pbLWaferImage.Image = _recipe.LeftHighWaferMat.ToBitmap();
+                    try
+                    {
+                        pbLWaferImage.Image?.Dispose();
+                        pbLWaferImage.Image = _recipe.LeftHighWaferMat.ToBitmap();
+                    }
+                    catch(Exception ex)
+                    {
+                        if (GV.AppSettingParm.DebugMode)
+                        {
+                            lbDebugMsg.Text = "LeftHighWaferMat ToBitmap Error: " + ex.Message;
+                        }
+                        pbLWaferImage.Image = null;
+                    }
                 }
                 else
                 {
                     pbLWaferImage.Image = null;
                 }
-                if (_recipe.RightHighMaskMat != null)
+                if (_recipe.RightHighMaskMat != null && !_recipe.RightHighMaskMat.Empty() && _recipe.RightHighMaskMask.Height>0 && _recipe.RightHighMaskMask.Width > 0)
                 {
-                    pbRMaskImage.Image = _recipe.RightHighMaskMat.ToBitmap();
+                    try
+                    {
+                        pbRMaskImage.Image?.Dispose();
+                        pbRMaskImage.Image = _recipe.RightHighMaskMat.ToBitmap();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (GV.AppSettingParm.DebugMode)
+                        {
+                            lbDebugMsg.Text = "RightHighMaskMat ToBitmap Error: " + ex.Message;
+                        }
+                        pbRMaskImage.Image = null;
+                    }
                 }
-                else { pbRMaskImage.Image = null; }
+                else
+                {
+                    pbRMaskImage.Image = null;
+                }
+                if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() && _recipe.RightHighWaferMask.Width>0 && _recipe.RightHighWaferMask.Height > 0)
+                {
+                    try
+                    {
+                        pbRWaferImage.Image?.Dispose();
+                        pbRWaferImage.Image = _recipe.RightHighWaferMat.ToBitmap();
+                    }
+                    catch(Exception ex)
+                    {
+                        if (GV.AppSettingParm.DebugMode)
+                        {
+                            lbDebugMsg.Text = "RightHighWaferMat ToBitmap Error: " + ex.Message;
+                        }
+                        pbRWaferImage.Image = null;
+                    }
+                }
+                else
+                {
+                    pbRWaferImage.Image = null;
+                }
 
-                if (_recipe.RightHighWaferMat != null)
-                {
-                    pbRWaferImage.Image = _recipe.RightHighWaferMat.ToBitmap();
-                }
-                else { pbRWaferImage.Image = null; }
+                //if (_recipe.RightHighMaskMat != null)
+                //{
+                //    pbRMaskImage.Image = _recipe.RightHighMaskMat.ToBitmap();
+                //}
+                //else { pbRMaskImage.Image = null; }
+
+                //if (_recipe.RightHighWaferMat != null)
+                //{
+                //    pbRWaferImage.Image = _recipe.RightHighWaferMat.ToBitmap();
+                //}
+                //else { pbRWaferImage.Image = null; }
 
                 Thread.Sleep(iDelayT);
                 gBMag.Enabled = true;
@@ -2589,26 +2524,58 @@ namespace NSAA_16Axis
         private void CbLWaferAlgorithm_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (rBLowMagnification.Checked)
+            {
                 _AlignC.LLWaferAlgorithm = Algoritm(cbLWaferAlgorithm.SelectedIndex);
+                if (_recipe.LeftLowWaferMat != null && !_recipe.LeftLowWaferMat.Empty())
+                {
+                    GV.matcherLLW.LearnWithAlgo(_recipe.LeftLowWaferMat, _recipe.LeftLowWaferMask, _AlignC.LLWaferAlgorithm);
+                }
+            }
+                
             else if (rBHighMagnification.Checked)
+            {
                 _AlignC.LHWaferAlgorithm = Algoritm(cbLWaferAlgorithm.SelectedIndex);
+                if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty())
+                {
+                    GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm);
+                }
+
+            }
+                
             if (cbLWaferAlgorithm.SelectedIndex == 2)
             {
-                pbLWaferClassList.Visible = true;
+                cbLWaferClassList.Visible = true;
                 btLabelPatternL.Visible = true;
                 pbLWaferImage.Visible = false;
             }
             else
             {
-                pbLWaferClassList.Visible = false;
+                cbLWaferClassList.Visible = false;
                 btLabelPatternL.Visible = false;
                 pbLWaferImage.Visible = true;
             }
+            
             CheckParam();
         }
 
         private void CbRMaskAlgorithm_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (rBLowMagnification.Checked)
+            {
+                _AlignC.RLMaskAlgorithm = Algoritm(cbRMaskAlgorithm.SelectedIndex);
+                if(_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty())
+                {
+                    GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm);
+                }
+            }                
+            else if (rBHighMagnification.Checked)
+            {
+                _AlignC.RHMaskAlgorithm = Algoritm(cbRMaskAlgorithm.SelectedIndex);
+                if(_recipe.RightHighMaskMask != null && !_recipe.RightHighMaskMat.Empty())
+                {
+                    GV.matcherRHM.LearnWithAlgo(_recipe.RightHighMaskMat, _recipe.RightHighMaskMask, _AlignC.RHMaskAlgorithm);
+                }
+            }                
             CheckParam();
         }
 
@@ -3197,6 +3164,121 @@ namespace NSAA_16Axis
             GV.ZoomLensInfo.MotorStepsPerPixelDegree = (double)nuDRotate.Value;
         }
 
+        //private void BtFindLMaskCenter_Click(object sender, EventArgs e)
+        //{
+        //    Mat m;
+        //    Rect roi;
+        //    GV.TickCount = 0;
+
+        //    if (rBLowMagnification.Checked)
+        //    {
+        //        if (_recipe.LeftLowMaskMat.Empty())
+        //        {
+        //            MessageBox.Show("請先學習光罩圖型，再找中心!!", "錯誤提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return;
+        //        }
+        //        m = _recipe.LeftLowMaskMat;
+        //        DialogFindCenter FindCenter = new DialogFindCenter()
+        //        {
+        //            img = m.Clone(),
+        //            iMaskWaferRadio = 1.2,
+        //            imgM = new GrayImage(_recipe.LeftLowMaskMask)
+        //        };
+
+        //        if (FindCenter.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //        {
+        //            roi = FindCenter.rect;
+        //            Mat newm = new Mat(m, roi);
+
+        //            // 從 FindCenter 取回修改後的 imgM，並裁切相同 ROI
+        //            GrayImage editedMask = FindCenter.imgM;  // 假設 imgM 是 public 屬性
+        //            GrayImage d = editedMask.GetSubImage(roi);  // 需要實作裁切方法
+
+        //            _recipe.LeftLowMaskMask = new GrayImage(d);
+        //        }
+
+        //        else
+        //        {
+        //            return;
+        //        }
+        //        //roi = new Rectangle(0, 0, m.Width, m.Height);
+        //        //FindTargetCenterCG findTargetCenterCG = new FindTargetCenterCG();
+        //        //roi = findTargetCenterCG.AutoCenterCG(m, roi);
+        //        Mat newm = new Mat(m, roi);
+        //        pbLMaskImage.Image = newm.ToBitmap();
+
+        //        if (MessageBox.Show(GV.Dlang.strbtnSaveLLM, GV.Dlang.strSureSaveLLM, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+        //        {
+        //            pbLMaskImage.Image = m.ToBitmap();
+        //            return;
+        //        }
+
+        //        //GV.LeftLowMaskMat[EditRecipe] = newm;
+        //        //CvInvoke.Imwrite(GetTemplateFileName("LLM"), newm);
+        //        GrayImage d = new GrayImage(newm.Width, newm.Height);
+        //        d.Fill(255);
+        //        //GV.LeftLowMaskMask[EditRecipe] = d;
+        //        //d.Save(GetTemplateFileName("MLLM"), System.Drawing.Imaging.ImageFormat.Bmp);
+        //        _recipe.SetLeftLowMaskMat(newm);
+        //        _recipe.LeftLowMaskMask = new GrayImage(d);
+        //        _AlignC.LLMaskAlgorithm = Algoritm(cbLMaskAlgorithm.SelectedIndex);
+        //        GV.matcherLLM.LearnWithAlgo(newm, d, _AlignC.LLMaskAlgorithm);
+        //    }
+        //    else if (rBHighMagnification.Checked)
+        //    {
+        //        if (_recipe.LeftHighMaskMat.Empty())
+        //        {
+        //            MessageBox.Show("請先學習光罩圖型，再找中心!!", "錯誤提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return;
+        //        }
+        //        m = _recipe.LeftHighMaskMat;
+        //        DialogFindCenter FindCenter = new DialogFindCenter()
+        //        {
+        //            img = m.Clone(),
+        //            iMaskWaferRadio = 1.2,
+        //            imgM = new GrayImage(_recipe.LeftHighMaskMask)
+        //        };
+
+        //        if (FindCenter.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //        {
+        //            roi = FindCenter.rect;
+        //        }
+        //        else
+        //        {
+        //            return;
+        //        }
+        //        //roi = new Rectangle(0, 0, m.Width, m.Height);
+        //        //FindTargetCenterCG findTargetCenterCG = new FindTargetCenterCG();
+        //        //roi = findTargetCenterCG.AutoCenterCG(m, roi);
+        //        Mat newm = new Mat(m, roi);
+        //        pbLMaskImage.Image = newm.ToBitmap();
+
+        //        if (MessageBox.Show(GV.Dlang.strbtnSaveLHM, GV.Dlang.strSureSaveLHM, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+        //        {
+        //            pbLMaskImage.Image = m.ToBitmap();
+        //            return;
+        //        }
+
+        //        //GV.LeftHighMaskMat[EditRecipe] = newm;
+        //        //CvInvoke.Imwrite(GetTemplateFileName("LHM"), newm);
+        //        GrayImage d = new GrayImage(newm.Width, newm.Height);
+        //        d.Fill(255);
+        //        //GV.LeftHighMaskMask[EditRecipe] = d;
+        //        //d.Save(GetTemplateFileName("MLHM"), System.Drawing.Imaging.ImageFormat.Bmp);
+        //        _recipe.SetLeftHighMaskMat(newm);
+        //        _recipe.LeftHighMaskMask = new GrayImage(d);
+        //        _AlignC.LHMaskAlgorithm = Algoritm(cbLMaskAlgorithm.SelectedIndex);
+        //        GV.matcherLHM.LearnWithAlgo(newm, d, _AlignC.LHMaskAlgorithm);
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Select magnification first.", "LMaskTemplateSave", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+
+        //    _AlignC.LastModifyTime = DateTime.Now;
+        //    GM.WriteRecipeXml(EditRecipe);
+        //}
         private void BtFindLMaskCenter_Click(object sender, EventArgs e)
         {
             Mat m;
@@ -3226,9 +3308,7 @@ namespace NSAA_16Axis
                 {
                     return;
                 }
-                //roi = new Rectangle(0, 0, m.Width, m.Height);
-                //FindTargetCenterCG findTargetCenterCG = new FindTargetCenterCG();
-                //roi = findTargetCenterCG.AutoCenterCG(m, roi);
+
                 Mat newm = new Mat(m, roi);
                 pbLMaskImage.Image = newm.ToBitmap();
 
@@ -3238,13 +3318,14 @@ namespace NSAA_16Axis
                     return;
                 }
 
-                //GV.LeftLowMaskMat[EditRecipe] = newm;
-                //CvInvoke.Imwrite(GetTemplateFileName("LLM"), newm);
-                GrayImage d = new GrayImage(newm.Width, newm.Height);
-                d.Fill(255);
-                //GV.LeftLowMaskMask[EditRecipe] = d;
-                //d.Save(GetTemplateFileName("MLLM"), System.Drawing.Imaging.ImageFormat.Bmp);
                 _recipe.SetLeftLowMaskMat(newm);
+
+                // 取得 DialogFindCenter 中修改後的遮罩
+                GrayImage editedMask = FindCenter.imgM;
+
+                // 裁切遮罩到 ROI 範圍
+                GrayImage d = CropGrayImage(editedMask, roi);
+
                 _recipe.LeftLowMaskMask = new GrayImage(d);
                 _AlignC.LLMaskAlgorithm = Algoritm(cbLMaskAlgorithm.SelectedIndex);
                 GV.matcherLLM.LearnWithAlgo(newm, d, _AlignC.LLMaskAlgorithm);
@@ -3272,9 +3353,7 @@ namespace NSAA_16Axis
                 {
                     return;
                 }
-                //roi = new Rectangle(0, 0, m.Width, m.Height);
-                //FindTargetCenterCG findTargetCenterCG = new FindTargetCenterCG();
-                //roi = findTargetCenterCG.AutoCenterCG(m, roi);
+
                 Mat newm = new Mat(m, roi);
                 pbLMaskImage.Image = newm.ToBitmap();
 
@@ -3284,13 +3363,14 @@ namespace NSAA_16Axis
                     return;
                 }
 
-                //GV.LeftHighMaskMat[EditRecipe] = newm;
-                //CvInvoke.Imwrite(GetTemplateFileName("LHM"), newm);
-                GrayImage d = new GrayImage(newm.Width, newm.Height);
-                d.Fill(255);
-                //GV.LeftHighMaskMask[EditRecipe] = d;
-                //d.Save(GetTemplateFileName("MLHM"), System.Drawing.Imaging.ImageFormat.Bmp);
                 _recipe.SetLeftHighMaskMat(newm);
+
+                // 取得 DialogFindCenter 中修改後的遮罩
+                GrayImage editedMask = FindCenter.imgM;
+
+                // 裁切遮罩到 ROI 範圍
+                GrayImage d = CropGrayImage(editedMask, roi);
+
                 _recipe.LeftHighMaskMask = new GrayImage(d);
                 _AlignC.LHMaskAlgorithm = Algoritm(cbLMaskAlgorithm.SelectedIndex);
                 GV.matcherLHM.LearnWithAlgo(newm, d, _AlignC.LHMaskAlgorithm);
@@ -3303,6 +3383,29 @@ namespace NSAA_16Axis
 
             _AlignC.LastModifyTime = DateTime.Now;
             GM.WriteRecipeXml(EditRecipe);
+        }
+
+        /// <summary>
+        /// 裁切 GrayImage 到指定的 ROI 範圍
+        /// </summary>
+        private GrayImage CropGrayImage(GrayImage src, Rect roi)
+        {
+            // 確保 ROI 在有效範圍內
+            int x = Math.Max(0, roi.X);
+            int y = Math.Max(0, roi.Y);
+            int width = Math.Min(roi.Width, src.Width - x);
+            int height = Math.Min(roi.Height, src.Height - y);
+
+            GrayImage result = new GrayImage(width, height);
+
+            for (int row = 0; row < height; row++)
+            {
+                int srcIndex = (y + row) * src.Width + x;
+                int dstIndex = row * width;
+                Array.Copy(src.Bits, srcIndex, result.Bits, dstIndex, width);
+            }
+
+            return result;
         }
 
         private void BtFindLWaferCenter_Click(object sender, EventArgs e)
@@ -3332,12 +3435,7 @@ namespace NSAA_16Axis
                 if (FindCenter.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     roi = FindCenter.rect;
-                    //if (_AlignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.FindCenter)
-                    //{
-                    //    _AlignC.LLWaferBlockSize = FindCenter.iBlockSize;
-                    //    _AlignC.LLBitwiseNot = FindCenter.iBitwiseNot;
-                    //    GV.matcherLLW.SetAlgoParameter(FindCenter.ThresholdAlgorithm, FindCenter.iBlockSize, FindCenter.iBitwiseNot, FindCenter.Max, FindCenter.Gaussian, FindCenter.Threashold);
-                    //}
+                   
                 }
                 else
                 {
@@ -3351,14 +3449,10 @@ namespace NSAA_16Axis
                     pbLWaferImage.Image = m.ToBitmap();
                     return;
                 }
-
-                //GV.LeftLowWaferMat[EditRecipe] = newm;
-                //CvInvoke.Imwrite(GetTemplateFileName("LLW"), newm);
-                GrayImage d = new GrayImage(newm.Width, newm.Height);
-                d.Fill(255);
-                //GV.LeftHighWaferMask[EditRecipe] = d;
-                //d.Save(GetTemplateFileName("MLLW"), System.Drawing.Imaging.ImageFormat.Bmp);
+                               
                 _recipe.SetLeftLowWaferMat(newm);
+                GrayImage editedMask = FindCenter.imgM;               
+                GrayImage d = CropGrayImage(editedMask, roi);
                 _recipe.LeftLowWaferMask = new GrayImage(d);
                 _AlignC.LLWaferAlgorithm = Algoritm(cbLWaferAlgorithm.SelectedIndex);
                 GV.matcherLLW.LearnWithAlgo(newm, d, _AlignC.LLWaferAlgorithm);
@@ -3384,12 +3478,7 @@ namespace NSAA_16Axis
                 if (FindCenter.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     roi = FindCenter.rect;
-                    //if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.FindCenter)
-                    //{
-                    //    _AlignC.LHWaferBlockSize = FindCenter.iBlockSize;
-                    //    _AlignC.LHBitwiseNot = FindCenter.iBitwiseNot;
-                    //    GV.matcherLHW.SetAlgoParameter(FindCenter.ThresholdAlgorithm, FindCenter.iBlockSize, FindCenter.iBitwiseNot, FindCenter.Max, FindCenter.Gaussian, FindCenter.Threashold);
-                    //}
+                    
                 }
                 else
                 {
@@ -3403,9 +3492,11 @@ namespace NSAA_16Axis
                     pbLWaferImage.Image = m.ToBitmap();
                     return;
                 }
-                GrayImage d = new GrayImage(newm.Width, newm.Height);
-                d.Fill(255);
+                
                 _recipe.SetLeftHighWaferMat(newm);
+
+                GrayImage editedMask = FindCenter.imgM;
+                GrayImage d = CropGrayImage(editedMask, roi);
                 _recipe.LeftHighWaferMask = new GrayImage(d);
                 _AlignC.LHWaferAlgorithm = Algoritm(cbLWaferAlgorithm.SelectedIndex);
                 GV.matcherLHW.LearnWithAlgo(newm, d, _AlignC.LHWaferAlgorithm);
@@ -3469,14 +3560,10 @@ namespace NSAA_16Axis
                     pbRWaferImage.Image = m.ToBitmap();
                     return;
                 }
-
-                //GV.RightLowWaferMat[EditRecipe] = newm;
-                //CvInvoke.Imwrite(GetTemplateFileName("RLW"), newm);
-                GrayImage d = new GrayImage(newm.Width, newm.Height);
-                d.Fill(255);
-                //GV.RightLowWaferMask[EditRecipe] = d;
-                //d.Save(GetTemplateFileName("MRLW"), System.Drawing.Imaging.ImageFormat.Bmp);
+                
                 _recipe.SetRightLowWaferMat(newm);
+                GrayImage editedMask = FindCenter.imgM;
+                GrayImage d = CropGrayImage(editedMask, roi);
                 _recipe.RightLowWaferMask = new GrayImage(d);
                 _AlignC.RLWaferAlgorithm = Algoritm(cbRWaferAlgorithm.SelectedIndex);
                 GV.matcherRLW.LearnWithAlgo(newm, d, _AlignC.RLWaferAlgorithm);
@@ -3524,14 +3611,10 @@ namespace NSAA_16Axis
                     pbRWaferImage.Image = m.ToBitmap();
                     return;
                 }
-
-                //GV.RightHighWaferMat[EditRecipe] = newm;
-                //CvInvoke.Imwrite(GetTemplateFileName("RHW"), newm);
-                GrayImage d = new GrayImage(newm.Width, newm.Height);
-                d.Fill(255);
-                //GV.RightHighWaferMask[EditRecipe] = d;
-                //d.Save(GetTemplateFileName("MRHW"), System.Drawing.Imaging.ImageFormat.Bmp);
+                
                 _recipe.SetRightHighWaferMat(newm);
+                GrayImage editedMask = FindCenter.imgM;
+                GrayImage d = CropGrayImage(editedMask, roi);
                 _recipe.RightHighWaferMask = new GrayImage(d);
                 // GM.Learn(GV.m_MatcherRW, ImageConvert.MatToGrayImage(GV.RightHighWaferMat[EditRecipe]), GV.RightHighWaferMask[EditRecipe]);
                 _AlignC.RHWaferAlgorithm = Algoritm(cbRWaferAlgorithm.SelectedIndex);
@@ -3585,13 +3668,9 @@ namespace NSAA_16Axis
                     return;
                 }
 
-                //GV.RightLowMaskMat[EditRecipe] = newm;
-                //CvInvoke.Imwrite(GetTemplateFileName("RLM"), newm);
-                GrayImage d = new GrayImage(newm.Width, newm.Height);
-                d.Fill(255);
-                //GV.RightLowMaskMask[EditRecipe] = d;
-                //d.Save(GetTemplateFileName("MRLM"), System.Drawing.Imaging.ImageFormat.Bmp);
                 _recipe.SetRightLowMaskMat(newm);
+                GrayImage editedMask = FindCenter.imgM;
+                GrayImage d = CropGrayImage(editedMask, roi);
                 _recipe.RightLowMaskMask = new GrayImage(d);
                 _AlignC.RLMaskAlgorithm = Algoritm(cbRMaskAlgorithm.SelectedIndex);
                 GV.matcherRLM.LearnWithAlgo(newm, d, _AlignC.RLMaskAlgorithm);
@@ -3628,14 +3707,9 @@ namespace NSAA_16Axis
                     return;
                 }
 
-                //GV.RightHighMaskMat[EditRecipe] = newm;
-                //CvInvoke.Imwrite(GetTemplateFileName("RHM"), newm);
-                GrayImage d = new GrayImage(newm.Width, newm.Height);
-                d.Fill(255);
-                //GV.RightHighMaskMask[EditRecipe] = d;
-                //d.Save(GetTemplateFileName("MRHM"), System.Drawing.Imaging.ImageFormat.Bmp);
-                // GM.Learn(GV.m_MatcherRM, ImageConvert.MatToGrayImage(GV.RightHighMaskMat[EditRecipe]), GV.RightHighMaskMask[EditRecipe]);
                 _recipe.SetRightHighMaskMat(newm);
+                GrayImage editedMask = FindCenter.imgM;
+                GrayImage d = CropGrayImage(editedMask, roi);
                 _recipe.RightHighMaskMask = new GrayImage(d);
                 _AlignC.RHMaskAlgorithm = Algoritm(cbRMaskAlgorithm.SelectedIndex);
                 GV.matcherRHM.LearnWithAlgo(newm, d, _AlignC.RHMaskAlgorithm);
@@ -3756,6 +3830,10 @@ namespace NSAA_16Axis
 
                 GV.LeftUpCam.Live();
             }
+        }
+        public void ShowGroupBox4(bool visible)
+        {
+            groupBox4.Visible = visible;
         }
     }
 }

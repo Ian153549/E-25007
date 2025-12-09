@@ -106,6 +106,7 @@ namespace NSAA_16Axis
             this.buttonCapture = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.cmLearnPatternUp1 = new NSAA_16Axis.CMLearnPatternUp();
+            this.cmLearnPatternBack1= new NSAA_16Axis.CMLearnPatternBack();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.btReadMask = new MRLibrary.UCButton();
             this.ucOpenPad = new MRLibrary.UCButton();
@@ -178,8 +179,7 @@ namespace NSAA_16Axis
             this.btZoomInfoRead = new MRLibrary.UCButton();
             this.skRightParam = new MRLibrary.SKZoomAndPanWindow();
             this.skLeftParam = new MRLibrary.SKZoomAndPanWindow();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.cmLearnPatternBack1 = new NSAA_16Axis.CMLearnPatternBack();
+            this.tabPage4 = new System.Windows.Forms.TabPage();            
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.cmzCalibration1 = new NSAA_16Axis.CMZCalibration();
             this.skZoomAndPanWindow6 = new MRLibrary.SKZoomAndPanWindow();

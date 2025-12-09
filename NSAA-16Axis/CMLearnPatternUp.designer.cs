@@ -32,7 +32,6 @@ namespace NSAA_16Axis
         {
             this.gbLMask = new System.Windows.Forms.GroupBox();
             this.btFindLMaskCenter = new System.Windows.Forms.Button();
-            this.ucLeftMaskNavigator = new NSAA_16Axis.UCNavigator();
             this.btCreateLMaskPatternMask = new System.Windows.Forms.Button();
             this.pbLMaskImage = new System.Windows.Forms.PictureBox();
             this.btLMaskLocationSave = new System.Windows.Forms.Button();
@@ -40,9 +39,8 @@ namespace NSAA_16Axis
             this.label2 = new System.Windows.Forms.Label();
             this.gbLWafer = new System.Windows.Forms.GroupBox();
             this.btLabelPatternL = new System.Windows.Forms.Button();
-            this.pbLWaferClassList = new System.Windows.Forms.ComboBox();
+            this.cbLWaferClassList = new System.Windows.Forms.ComboBox();
             this.btFindLWaferCenter = new System.Windows.Forms.Button();
-            this.ucLeftWaferNavigator = new NSAA_16Axis.UCNavigator();
             this.btCreateLWaferPatternMask = new System.Windows.Forms.Button();
             this.pbLWaferImage = new System.Windows.Forms.PictureBox();
             this.btLWaferLoactionSave = new System.Windows.Forms.Button();
@@ -50,10 +48,9 @@ namespace NSAA_16Axis
             this.label1 = new System.Windows.Forms.Label();
             this.gbRWafer = new System.Windows.Forms.GroupBox();
             this.btLabelPatternR = new System.Windows.Forms.Button();
-            this.pbRWaferClassList = new System.Windows.Forms.ComboBox();
+            this.cbRWaferClassList = new System.Windows.Forms.ComboBox();
             this.BtLeftWaferFocus = new System.Windows.Forms.Button();
             this.btFindRWaferCenter = new System.Windows.Forms.Button();
-            this.ucRightWaferNavigator = new NSAA_16Axis.UCNavigator();
             this.btCreateRWaferPatternMask = new System.Windows.Forms.Button();
             this.pbRWaferImage = new System.Windows.Forms.PictureBox();
             this.btRWaferLocationSave = new System.Windows.Forms.Button();
@@ -61,7 +58,6 @@ namespace NSAA_16Axis
             this.label3 = new System.Windows.Forms.Label();
             this.gbRMask = new System.Windows.Forms.GroupBox();
             this.btFindRMaskCenter = new System.Windows.Forms.Button();
-            this.ucRightMaskNavigator = new NSAA_16Axis.UCNavigator();
             this.btCreateRMaskPatternMask = new System.Windows.Forms.Button();
             this.pbRMaskImage = new System.Windows.Forms.PictureBox();
             this.btRMaskLocationSave = new System.Windows.Forms.Button();
@@ -126,6 +122,10 @@ namespace NSAA_16Axis
             this.btTLRead = new System.Windows.Forms.Button();
             this.btTRRead = new System.Windows.Forms.Button();
             this.OpenFileDialogReadT = new System.Windows.Forms.OpenFileDialog();
+            this.ucRightMaskNavigator = new NSAA_16Axis.UCNavigator();
+            this.ucRightWaferNavigator = new NSAA_16Axis.UCNavigator();
+            this.ucLeftWaferNavigator = new NSAA_16Axis.UCNavigator();
+            this.ucLeftMaskNavigator = new NSAA_16Axis.UCNavigator();
             this.gbLMask.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLMaskImage)).BeginInit();
             this.gbLWafer.SuspendLayout();
@@ -177,15 +177,6 @@ namespace NSAA_16Axis
             this.btFindLMaskCenter.Text = "FindCenter";
             this.btFindLMaskCenter.UseVisualStyleBackColor = false;
             this.btFindLMaskCenter.Click += new System.EventHandler(this.BtFindLMaskCenter_Click);
-            // 
-            // ucLeftMaskNavigator
-            // 
-            this.ucLeftMaskNavigator.AutoSize = true;
-            this.ucLeftMaskNavigator.Location = new System.Drawing.Point(32, 30);
-            this.ucLeftMaskNavigator.Name = "ucLeftMaskNavigator";
-            this.ucLeftMaskNavigator.Size = new System.Drawing.Size(107, 40);
-            this.ucLeftMaskNavigator.TabIndex = 55;
-            this.ucLeftMaskNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcLeftMaskNavigator_CommandPressed);
             // 
             // btCreateLMaskPatternMask
             // 
@@ -255,7 +246,7 @@ namespace NSAA_16Axis
             // 
             this.gbLWafer.BackColor = System.Drawing.Color.LightYellow;
             this.gbLWafer.Controls.Add(this.btLabelPatternL);
-            this.gbLWafer.Controls.Add(this.pbLWaferClassList);
+            this.gbLWafer.Controls.Add(this.cbLWaferClassList);
             this.gbLWafer.Controls.Add(this.btFindLWaferCenter);
             this.gbLWafer.Controls.Add(this.ucLeftWaferNavigator);
             this.gbLWafer.Controls.Add(this.btCreateLWaferPatternMask);
@@ -286,11 +277,11 @@ namespace NSAA_16Axis
             this.btLabelPatternL.UseVisualStyleBackColor = false;
             this.btLabelPatternL.Click += new System.EventHandler(this.btLabelPatternL_Click);
             // 
-            // pbLWaferClassList
+            // cbLWaferClassList
             // 
-            this.pbLWaferClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pbLWaferClassList.FormattingEnabled = true;
-            this.pbLWaferClassList.Items.AddRange(new object[] {
+            this.cbLWaferClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbLWaferClassList.FormattingEnabled = true;
+            this.cbLWaferClassList.Items.AddRange(new object[] {
             "X1",
             "X2",
             "X3",
@@ -303,11 +294,11 @@ namespace NSAA_16Axis
             "X10",
             "X11",
             "X12"});
-            this.pbLWaferClassList.Location = new System.Drawing.Point(13, 205);
-            this.pbLWaferClassList.Name = "pbLWaferClassList";
-            this.pbLWaferClassList.Size = new System.Drawing.Size(153, 31);
-            this.pbLWaferClassList.TabIndex = 75;
-            this.pbLWaferClassList.Visible = false;
+            this.cbLWaferClassList.Location = new System.Drawing.Point(13, 205);
+            this.cbLWaferClassList.Name = "cbLWaferClassList";
+            this.cbLWaferClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbLWaferClassList.TabIndex = 75;
+            this.cbLWaferClassList.Visible = false;
             // 
             // btFindLWaferCenter
             // 
@@ -321,15 +312,6 @@ namespace NSAA_16Axis
             this.btFindLWaferCenter.Text = "FindCenter";
             this.btFindLWaferCenter.UseVisualStyleBackColor = false;
             this.btFindLWaferCenter.Click += new System.EventHandler(this.BtFindLWaferCenter_Click);
-            // 
-            // ucLeftWaferNavigator
-            // 
-            this.ucLeftWaferNavigator.AutoSize = true;
-            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(30, 30);
-            this.ucLeftWaferNavigator.Name = "ucLeftWaferNavigator";
-            this.ucLeftWaferNavigator.Size = new System.Drawing.Size(107, 40);
-            this.ucLeftWaferNavigator.TabIndex = 54;
-            this.ucLeftWaferNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcLeftWaferNavigator_CommandPressed);
             // 
             // btCreateLWaferPatternMask
             // 
@@ -400,7 +382,7 @@ namespace NSAA_16Axis
             // 
             this.gbRWafer.BackColor = System.Drawing.Color.LightYellow;
             this.gbRWafer.Controls.Add(this.btLabelPatternR);
-            this.gbRWafer.Controls.Add(this.pbRWaferClassList);
+            this.gbRWafer.Controls.Add(this.cbRWaferClassList);
             this.gbRWafer.Controls.Add(this.BtLeftWaferFocus);
             this.gbRWafer.Controls.Add(this.btFindRWaferCenter);
             this.gbRWafer.Controls.Add(this.ucRightWaferNavigator);
@@ -433,11 +415,11 @@ namespace NSAA_16Axis
             this.btLabelPatternR.UseVisualStyleBackColor = false;
             this.btLabelPatternR.Click += new System.EventHandler(this.btLabelPatternR_Click);
             // 
-            // pbRWaferClassList
+            // cbRWaferClassList
             // 
-            this.pbRWaferClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pbRWaferClassList.FormattingEnabled = true;
-            this.pbRWaferClassList.Items.AddRange(new object[] {
+            this.cbRWaferClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbRWaferClassList.FormattingEnabled = true;
+            this.cbRWaferClassList.Items.AddRange(new object[] {
             "X1",
             "X2",
             "X3",
@@ -450,11 +432,11 @@ namespace NSAA_16Axis
             "X10",
             "X11",
             "X12"});
-            this.pbRWaferClassList.Location = new System.Drawing.Point(13, 205);
-            this.pbRWaferClassList.Name = "pbRWaferClassList";
-            this.pbRWaferClassList.Size = new System.Drawing.Size(153, 31);
-            this.pbRWaferClassList.TabIndex = 74;
-            this.pbRWaferClassList.Visible = false;
+            this.cbRWaferClassList.Location = new System.Drawing.Point(13, 205);
+            this.cbRWaferClassList.Name = "cbRWaferClassList";
+            this.cbRWaferClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbRWaferClassList.TabIndex = 74;
+            this.cbRWaferClassList.Visible = false;
             // 
             // BtLeftWaferFocus
             // 
@@ -483,15 +465,6 @@ namespace NSAA_16Axis
             this.btFindRWaferCenter.Text = "FindCenter";
             this.btFindRWaferCenter.UseVisualStyleBackColor = false;
             this.btFindRWaferCenter.Click += new System.EventHandler(this.BtFindRWaferCenter_Click);
-            // 
-            // ucRightWaferNavigator
-            // 
-            this.ucRightWaferNavigator.AutoSize = true;
-            this.ucRightWaferNavigator.Location = new System.Drawing.Point(37, 31);
-            this.ucRightWaferNavigator.Name = "ucRightWaferNavigator";
-            this.ucRightWaferNavigator.Size = new System.Drawing.Size(107, 40);
-            this.ucRightWaferNavigator.TabIndex = 55;
-            this.ucRightWaferNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcRightWaferNavigator_CommandPressed);
             // 
             // btCreateRWaferPatternMask
             // 
@@ -590,15 +563,6 @@ namespace NSAA_16Axis
             this.btFindRMaskCenter.Text = "FindCenter";
             this.btFindRMaskCenter.UseVisualStyleBackColor = false;
             this.btFindRMaskCenter.Click += new System.EventHandler(this.BtFindRMaskCenter_Click);
-            // 
-            // ucRightMaskNavigator
-            // 
-            this.ucRightMaskNavigator.AutoSize = true;
-            this.ucRightMaskNavigator.Location = new System.Drawing.Point(36, 30);
-            this.ucRightMaskNavigator.Name = "ucRightMaskNavigator";
-            this.ucRightMaskNavigator.Size = new System.Drawing.Size(107, 40);
-            this.ucRightMaskNavigator.TabIndex = 55;
-            this.ucRightMaskNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcRightMaskNavigator_CommandPressed);
             // 
             // btCreateRMaskPatternMask
             // 
@@ -1191,7 +1155,7 @@ namespace NSAA_16Axis
             this.groupBox4.Controls.Add(this.label17);
             this.groupBox4.Controls.Add(this.label16);
             this.groupBox4.Controls.Add(this.label15);
-            this.groupBox4.Location = new System.Drawing.Point(1177, 79);
+            this.groupBox4.Location = new System.Drawing.Point(1183, 79);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(169, 197);
             this.groupBox4.TabIndex = 141;
@@ -1453,6 +1417,42 @@ namespace NSAA_16Axis
             // 
             this.OpenFileDialogReadT.FileName = "openFileDialogT1";
             // 
+            // ucRightMaskNavigator
+            // 
+            this.ucRightMaskNavigator.AutoSize = true;
+            this.ucRightMaskNavigator.Location = new System.Drawing.Point(36, 30);
+            this.ucRightMaskNavigator.Name = "ucRightMaskNavigator";
+            this.ucRightMaskNavigator.Size = new System.Drawing.Size(107, 40);
+            this.ucRightMaskNavigator.TabIndex = 55;
+            this.ucRightMaskNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcRightMaskNavigator_CommandPressed);
+            // 
+            // ucRightWaferNavigator
+            // 
+            this.ucRightWaferNavigator.AutoSize = true;
+            this.ucRightWaferNavigator.Location = new System.Drawing.Point(37, 31);
+            this.ucRightWaferNavigator.Name = "ucRightWaferNavigator";
+            this.ucRightWaferNavigator.Size = new System.Drawing.Size(107, 40);
+            this.ucRightWaferNavigator.TabIndex = 55;
+            this.ucRightWaferNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcRightWaferNavigator_CommandPressed);
+            // 
+            // ucLeftWaferNavigator
+            // 
+            this.ucLeftWaferNavigator.AutoSize = true;
+            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(30, 30);
+            this.ucLeftWaferNavigator.Name = "ucLeftWaferNavigator";
+            this.ucLeftWaferNavigator.Size = new System.Drawing.Size(107, 40);
+            this.ucLeftWaferNavigator.TabIndex = 54;
+            this.ucLeftWaferNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcLeftWaferNavigator_CommandPressed);
+            // 
+            // ucLeftMaskNavigator
+            // 
+            this.ucLeftMaskNavigator.AutoSize = true;
+            this.ucLeftMaskNavigator.Location = new System.Drawing.Point(32, 30);
+            this.ucLeftMaskNavigator.Name = "ucLeftMaskNavigator";
+            this.ucLeftMaskNavigator.Size = new System.Drawing.Size(107, 40);
+            this.ucLeftMaskNavigator.TabIndex = 55;
+            this.ucLeftMaskNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcLeftMaskNavigator_CommandPressed);
+            // 
             // CMLearnPatternUp
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1612,7 +1612,7 @@ namespace NSAA_16Axis
         private MRLibrary.UCButton btRollBack;
         private MRLibrary.UCButton btCapture;
         private MRLibrary.UCButton btChuckAlignN;
-        private System.Windows.Forms.GroupBox groupBox4;
+        public System.Windows.Forms.GroupBox groupBox4;
         private MRLibrary.UCButton btGo;
         private MRLibrary.UCButton btUpdate;
         private System.Windows.Forms.NumericUpDown nUDXyyY2;
@@ -1628,10 +1628,10 @@ namespace NSAA_16Axis
         private System.Windows.Forms.Button btFindRMaskCenter;
         private System.Windows.Forms.Button BtLeftWaferFocus;
         private System.Windows.Forms.Button btMagSaveHigh;
-        private System.Windows.Forms.ComboBox pbLWaferClassList;
+        private System.Windows.Forms.ComboBox cbLWaferClassList;
         private System.Windows.Forms.Button btLabelPatternL;
         private System.Windows.Forms.Button btLabelPatternR;
-        private System.Windows.Forms.ComboBox pbRWaferClassList;
+        private System.Windows.Forms.ComboBox cbRWaferClassList;
         private System.Windows.Forms.Button btTfile;
         private System.Windows.Forms.Button btTLRead;
         private System.Windows.Forms.Button btTRRead;

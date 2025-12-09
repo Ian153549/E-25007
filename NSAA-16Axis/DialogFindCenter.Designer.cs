@@ -81,14 +81,14 @@
             this.lblBlockSize = new System.Windows.Forms.Label();
             this.TBBlockSize = new System.Windows.Forms.TrackBar();
             this.ProcessView_noUse = new System.Windows.Forms.PictureBox();
-            this.ProcessView = new NSAA_16Axis.UCPaintMask();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rbMask = new System.Windows.Forms.RadioButton();
+            this.udPenSize = new System.Windows.Forms.NumericUpDown();
+            this.label22 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.cbControl = new System.Windows.Forms.ComboBox();
-            this.label22 = new System.Windows.Forms.Label();
-            this.udPenSize = new System.Windows.Forms.NumericUpDown();
+            this.rbMask = new System.Windows.Forms.RadioButton();
+            this.ProcessView = new NSAA_16Axis.UCPaintMask();
             ((System.ComponentModel.ISupportInitialize)(this.TrackBarGaussian)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrackBarThreashold1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrackBarMax)).BeginInit();
@@ -110,7 +110,7 @@
             // 
             this.btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btCancel.Location = new System.Drawing.Point(2559, 725);
-            this.btCancel.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.btCancel.Margin = new System.Windows.Forms.Padding(5);
             this.btCancel.Name = "btCancel";
             this.btCancel.Size = new System.Drawing.Size(165, 60);
             this.btCancel.TabIndex = 10;
@@ -122,7 +122,7 @@
             // 
             this.btOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btOK.Location = new System.Drawing.Point(2559, 639);
-            this.btOK.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.btOK.Margin = new System.Windows.Forms.Padding(5);
             this.btOK.Name = "btOK";
             this.btOK.Size = new System.Drawing.Size(165, 60);
             this.btOK.TabIndex = 9;
@@ -136,7 +136,7 @@
             this.CBBitwiseNot.AutoSize = true;
             this.CBBitwiseNot.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CBBitwiseNot.Location = new System.Drawing.Point(2407, 556);
-            this.CBBitwiseNot.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.CBBitwiseNot.Margin = new System.Windows.Forms.Padding(5);
             this.CBBitwiseNot.Name = "CBBitwiseNot";
             this.CBBitwiseNot.Size = new System.Drawing.Size(72, 27);
             this.CBBitwiseNot.TabIndex = 237;
@@ -149,7 +149,7 @@
             this.TrackBarGaussian.AutoSize = false;
             this.TrackBarGaussian.LargeChange = 2;
             this.TrackBarGaussian.Location = new System.Drawing.Point(2564, 138);
-            this.TrackBarGaussian.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.TrackBarGaussian.Margin = new System.Windows.Forms.Padding(5);
             this.TrackBarGaussian.Maximum = 65;
             this.TrackBarGaussian.Minimum = 3;
             this.TrackBarGaussian.Name = "TrackBarGaussian";
@@ -166,7 +166,7 @@
             this.TrackBarThreashold1.AutoSize = false;
             this.TrackBarThreashold1.LargeChange = 1;
             this.TrackBarThreashold1.Location = new System.Drawing.Point(2293, 138);
-            this.TrackBarThreashold1.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.TrackBarThreashold1.Margin = new System.Windows.Forms.Padding(5);
             this.TrackBarThreashold1.Maximum = 255;
             this.TrackBarThreashold1.Minimum = 1;
             this.TrackBarThreashold1.Name = "TrackBarThreashold1";
@@ -182,7 +182,7 @@
             this.TrackBarMax.AutoSize = false;
             this.TrackBarMax.LargeChange = 1;
             this.TrackBarMax.Location = new System.Drawing.Point(2204, 138);
-            this.TrackBarMax.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.TrackBarMax.Margin = new System.Windows.Forms.Padding(5);
             this.TrackBarMax.Maximum = 255;
             this.TrackBarMax.Minimum = 1;
             this.TrackBarMax.Name = "TrackBarMax";
@@ -305,7 +305,7 @@
             this.OriginalView.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.OriginalView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.OriginalView.Location = new System.Drawing.Point(17, 94);
-            this.OriginalView.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.OriginalView.Margin = new System.Windows.Forms.Padding(5);
             this.OriginalView.Name = "OriginalView";
             this.OriginalView.Size = new System.Drawing.Size(1065, 702);
             this.OriginalView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -339,7 +339,7 @@
             // BtFind
             // 
             this.BtFind.Location = new System.Drawing.Point(2560, 558);
-            this.BtFind.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.BtFind.Margin = new System.Windows.Forms.Padding(5);
             this.BtFind.Name = "BtFind";
             this.BtFind.Size = new System.Drawing.Size(165, 60);
             this.BtFind.TabIndex = 249;
@@ -374,7 +374,7 @@
             this.TrackBarRadio.AutoSize = false;
             this.TrackBarRadio.LargeChange = 1;
             this.TrackBarRadio.Location = new System.Drawing.Point(2676, 138);
-            this.TrackBarRadio.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.TrackBarRadio.Margin = new System.Windows.Forms.Padding(5);
             this.TrackBarRadio.Maximum = 20;
             this.TrackBarRadio.Minimum = 5;
             this.TrackBarRadio.Name = "TrackBarRadio";
@@ -397,7 +397,7 @@
             "重心",
             "最小圓心"});
             this.CbCenterAlgorithm.Location = new System.Drawing.Point(2295, 789);
-            this.CbCenterAlgorithm.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.CbCenterAlgorithm.Margin = new System.Windows.Forms.Padding(5);
             this.CbCenterAlgorithm.Name = "CbCenterAlgorithm";
             this.CbCenterAlgorithm.Size = new System.Drawing.Size(175, 31);
             this.CbCenterAlgorithm.TabIndex = 254;
@@ -429,7 +429,7 @@
             "Edge",
             "不使用"});
             this.CBThresholdAlgorithm.Location = new System.Drawing.Point(2257, 668);
-            this.CBThresholdAlgorithm.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.CBThresholdAlgorithm.Margin = new System.Windows.Forms.Padding(5);
             this.CBThresholdAlgorithm.Name = "CBThresholdAlgorithm";
             this.CBThresholdAlgorithm.Size = new System.Drawing.Size(251, 31);
             this.CBThresholdAlgorithm.TabIndex = 256;
@@ -474,7 +474,7 @@
             this.TrackBarThreashold2.AutoSize = false;
             this.TrackBarThreashold2.LargeChange = 1;
             this.TrackBarThreashold2.Location = new System.Drawing.Point(2380, 138);
-            this.TrackBarThreashold2.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.TrackBarThreashold2.Margin = new System.Windows.Forms.Padding(5);
             this.TrackBarThreashold2.Maximum = 255;
             this.TrackBarThreashold2.Minimum = 1;
             this.TrackBarThreashold2.Name = "TrackBarThreashold2";
@@ -496,7 +496,7 @@
             "不引用",
             "引用"});
             this.CBAlpahBata.Location = new System.Drawing.Point(1201, 869);
-            this.CBAlpahBata.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.CBAlpahBata.Margin = new System.Windows.Forms.Padding(5);
             this.CBAlpahBata.Name = "CBAlpahBata";
             this.CBAlpahBata.Size = new System.Drawing.Size(251, 31);
             this.CBAlpahBata.TabIndex = 261;
@@ -544,7 +544,7 @@
             this.TBAlpha.AutoSize = false;
             this.TBAlpha.LargeChange = 1;
             this.TBAlpha.Location = new System.Drawing.Point(1291, 919);
-            this.TBAlpha.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.TBAlpha.Margin = new System.Windows.Forms.Padding(5);
             this.TBAlpha.Maximum = 300;
             this.TBAlpha.Minimum = 100;
             this.TBAlpha.Name = "TBAlpha";
@@ -584,7 +584,7 @@
             this.TBBata.AutoSize = false;
             this.TBBata.LargeChange = 1;
             this.TBBata.Location = new System.Drawing.Point(1291, 975);
-            this.TBBata.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.TBBata.Margin = new System.Windows.Forms.Padding(5);
             this.TBBata.Maximum = 100;
             this.TBBata.Name = "TBBata";
             this.TBBata.Size = new System.Drawing.Size(780, 70);
@@ -610,7 +610,7 @@
             this.trackBar1.AutoSize = false;
             this.trackBar1.LargeChange = 1;
             this.trackBar1.Location = new System.Drawing.Point(185, 950);
-            this.trackBar1.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.trackBar1.Margin = new System.Windows.Forms.Padding(5);
             this.trackBar1.Maximum = 255;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(780, 70);
@@ -636,7 +636,7 @@
             this.trackBar2.AutoSize = false;
             this.trackBar2.LargeChange = 1;
             this.trackBar2.Location = new System.Drawing.Point(185, 894);
-            this.trackBar2.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.trackBar2.Margin = new System.Windows.Forms.Padding(5);
             this.trackBar2.Maximum = 255;
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Size = new System.Drawing.Size(780, 70);
@@ -660,7 +660,7 @@
             "Sobel 邊緣檢測",
             "砍高填低"});
             this.CBEdge.Location = new System.Drawing.Point(96, 844);
-            this.CBEdge.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.CBEdge.Margin = new System.Windows.Forms.Padding(5);
             this.CBEdge.Name = "CBEdge";
             this.CBEdge.Size = new System.Drawing.Size(251, 31);
             this.CBEdge.TabIndex = 269;
@@ -691,7 +691,7 @@
             "不引用",
             "影像銳利化"});
             this.CBFilter2D.Location = new System.Drawing.Point(1577, 869);
-            this.CBFilter2D.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.CBFilter2D.Margin = new System.Windows.Forms.Padding(5);
             this.CBFilter2D.Name = "CBFilter2D";
             this.CBFilter2D.Size = new System.Drawing.Size(251, 31);
             this.CBFilter2D.TabIndex = 275;
@@ -726,7 +726,7 @@
             this.trackBar3.AutoSize = false;
             this.trackBar3.LargeChange = 1;
             this.trackBar3.Location = new System.Drawing.Point(185, 1002);
-            this.trackBar3.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.trackBar3.Margin = new System.Windows.Forms.Padding(5);
             this.trackBar3.Maximum = 255;
             this.trackBar3.Name = "trackBar3";
             this.trackBar3.Size = new System.Drawing.Size(780, 70);
@@ -762,7 +762,7 @@
             this.TBBlockSize.AutoSize = false;
             this.TBBlockSize.LargeChange = 2;
             this.TBBlockSize.Location = new System.Drawing.Point(2468, 138);
-            this.TBBlockSize.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.TBBlockSize.Margin = new System.Windows.Forms.Padding(5);
             this.TBBlockSize.Maximum = 255;
             this.TBBlockSize.Minimum = 3;
             this.TBBlockSize.Name = "TBBlockSize";
@@ -780,27 +780,12 @@
             this.ProcessView_noUse.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.ProcessView_noUse.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ProcessView_noUse.Location = new System.Drawing.Point(1092, 94);
-            this.ProcessView_noUse.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ProcessView_noUse.Margin = new System.Windows.Forms.Padding(4);
             this.ProcessView_noUse.Name = "ProcessView_noUse";
             this.ProcessView_noUse.Size = new System.Drawing.Size(1067, 702);
             this.ProcessView_noUse.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.ProcessView_noUse.TabIndex = 246;
             this.ProcessView_noUse.TabStop = false;
-            // 
-            // ProcessView
-            // 
-            this.ProcessView.BackColor = System.Drawing.SystemColors.AppWorkspace;
-            this.ProcessView.LineThickness = 10;
-            this.ProcessView.Location = new System.Drawing.Point(1092, 94);
-            this.ProcessView.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.ProcessView.Name = "ProcessView";
-            this.ProcessView.PaintColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.ProcessView.PaintColorK = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.ProcessView.PaintColorM = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.ProcessView.PenSize = 20;
-            this.ProcessView.Size = new System.Drawing.Size(1068, 702);
-            this.ProcessView.TabIndex = 281;
-            this.ProcessView.Tool = NSAA_16Axis.UCPaintMask.EnumTool.Pen;
             // 
             // timer1
             // 
@@ -820,17 +805,32 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "使用滑鼠左鍵建立遮罩, 右鍵清除.";
             // 
-            // rbMask
+            // udPenSize
             // 
-            this.rbMask.AutoSize = true;
-            this.rbMask.Location = new System.Drawing.Point(35, 24);
-            this.rbMask.Name = "rbMask";
-            this.rbMask.Size = new System.Drawing.Size(58, 19);
-            this.rbMask.TabIndex = 0;
-            this.rbMask.TabStop = true;
-            this.rbMask.Text = "遮罩";
-            this.rbMask.UseVisualStyleBackColor = true;
-            this.rbMask.CheckedChanged += new System.EventHandler(this.rbMask_CheckedChanged);
+            this.udPenSize.Location = new System.Drawing.Point(287, 47);
+            this.udPenSize.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.udPenSize.Name = "udPenSize";
+            this.udPenSize.Size = new System.Drawing.Size(83, 25);
+            this.udPenSize.TabIndex = 286;
+            this.udPenSize.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udPenSize.ValueChanged += new System.EventHandler(this.udPenSize_ValueChanged);
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(244, 55);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(37, 15);
+            this.label22.TabIndex = 285;
+            this.label22.Text = "大小";
             // 
             // label21
             // 
@@ -858,33 +858,38 @@
             this.cbControl.TabIndex = 284;
             this.cbControl.SelectedIndexChanged += new System.EventHandler(this.cbControl_SelectedIndexChanged);
             // 
-            // label22
+            // rbMask
             // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(244, 55);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(37, 15);
-            this.label22.TabIndex = 285;
-            this.label22.Text = "大小";
+            this.rbMask.AutoSize = true;
+            this.rbMask.Location = new System.Drawing.Point(35, 24);
+            this.rbMask.Name = "rbMask";
+            this.rbMask.Size = new System.Drawing.Size(58, 19);
+            this.rbMask.TabIndex = 0;
+            this.rbMask.TabStop = true;
+            this.rbMask.Text = "遮罩";
+            this.rbMask.UseVisualStyleBackColor = true;
+            this.rbMask.CheckedChanged += new System.EventHandler(this.rbMask_CheckedChanged);
             // 
-            // udPenSize
+            // ProcessView
             // 
-            this.udPenSize.Location = new System.Drawing.Point(287, 47);
-            this.udPenSize.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.udPenSize.Name = "udPenSize";
-            this.udPenSize.Size = new System.Drawing.Size(83, 25);
-            this.udPenSize.TabIndex = 286;
-            this.udPenSize.ValueChanged += new System.EventHandler(this.udPenSize_ValueChanged);
+            this.ProcessView.BackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.ProcessView.LineThickness = 10;
+            this.ProcessView.Location = new System.Drawing.Point(1092, 94);
+            this.ProcessView.Margin = new System.Windows.Forms.Padding(4);
+            this.ProcessView.Name = "ProcessView";
+            this.ProcessView.PaintColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.ProcessView.PaintColorK = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.ProcessView.PaintColorM = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.ProcessView.PenSize = 20;
+            this.ProcessView.Size = new System.Drawing.Size(1068, 702);
+            this.ProcessView.TabIndex = 281;
+            this.ProcessView.Tool = NSAA_16Axis.UCPaintMask.EnumTool.Pen;
             // 
             // DialogFindCenter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2780, 1092);
+            this.ClientSize = new System.Drawing.Size(1924, 1055);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.ProcessView);
             this.Controls.Add(this.LbBlockSize);
@@ -937,7 +942,7 @@
             this.Controls.Add(this.btCancel);
             this.Controls.Add(this.btOK);
             this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "DialogFindCenter";
             this.Text = "自動找中心";
             this.Load += new System.EventHandler(this.DialogFindCenter_Load);

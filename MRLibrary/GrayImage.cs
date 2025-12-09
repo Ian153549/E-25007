@@ -41,7 +41,7 @@ namespace MRLibrary
             Width = w;
             Height = h;
         }
-
+        
         //    public GrayImage(IntPtr strAddr, int w, int h)
         //    {
         //        Bits = new byte[w * h];
@@ -508,21 +508,63 @@ namespace MRLibrary
             bitmap.Dispose();
         }
 
+        //public void SetMask(GrayImage mask)
+        //{
+        //    for (int i = 0; i < Height; i++)
+        //    {
+        //        int width = i * Width;
+        //        for (int j = 0; j < Width; j++)
+        //        {
+        //            if (mask.Bits[width + j] == 0)
+        //            {
+        //                Bits[width + j] = 0;
+        //            }
+        //        }
+        //    }
+        //}
         public void SetMask(GrayImage mask)
         {
-            for (int i = 0; i < Height; i++)
+            // 檢查 mask 是否有效
+            if (mask == null || mask.Bits == null)
+                return;
+
+            // 確保尺寸匹配，否則無法正確套用 mask
+            if (mask.Width != Width || mask.Height != Height)
             {
-                int width = i * Width;
-                for (int j = 0; j < Width; j++)
+                // 尺寸不匹配時，使用較小的範圍
+                int minWidth = Math.Min(Width, mask.Width);
+                int minHeight = Math.Min(Height, mask.Height);
+
+                for (int i = 0; i < minHeight; i++)
                 {
-                    if (mask.Bits[width + j] == 0)
+                    int thisRowStart = i * Width;
+                    int maskRowStart = i * mask.Width;
+
+                    for (int j = 0; j < minWidth; j++)
                     {
-                        Bits[width + j] = 0;
+                        if (mask.Bits[maskRowStart + j] == 0)
+                        {
+                            Bits[thisRowStart + j] = 0;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // 尺寸相同時，直接處理
+                for (int i = 0; i < Height; i++)
+                {
+                    int rowStart = i * Width;
+                    for (int j = 0; j < Width; j++)
+                    {
+                        if (mask.Bits[rowStart + j] == 0)
+                        {
+                            Bits[rowStart + j] = 0;
+                        }
                     }
                 }
             }
         }
-
         //    public void SizeSquare()
         //    {
         //        int width = 0;

@@ -77,6 +77,8 @@ namespace MRLibrary
             sSample = new Mat(4000, 3000, MatType.CV_8UC1);
             TransImg1 = new Mat(4000, 3000, MatType.CV_8UC1);
             sTemplate = new Mat(4000, 3000, MatType.CV_8UC1);
+            Tr1=new Mat(4000, 3000, MatType.CV_8UC1);
+            Tr2= new Mat(4000, 3000, MatType.CV_8UC1);
             for (int i = 0; i < 10; i++)
             {
                 sLevel[i] = new Mat();
@@ -906,8 +908,8 @@ namespace MRLibrary
             }
             else if (algorithm == AlignAlgorithm.EdgeMatch)
             {
-                Cv2.GaussianBlur(Tr2, sSample, new Size(7, 7), 0);
-                Cv2.AdaptiveThreshold(image, Tr2, 255, AdaptiveThresholdTypes.MeanC, ThresholdTypes.Binary, iBlockSize, 2);
+                Cv2.GaussianBlur(image, Tr1, new Size(7, 7), 0);
+                Cv2.AdaptiveThreshold(Tr1, Tr2, 255, AdaptiveThresholdTypes.MeanC, ThresholdTypes.Binary, iBlockSize, 2);
                 Cv2.BitwiseNot(Tr2, sSample);
                 MatMatch(debug, sSample, ref mPos);
             }
