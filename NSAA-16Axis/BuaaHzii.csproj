@@ -82,7 +82,7 @@
       <HintPath>..\..\..\Program Files\Common Files\OMRON_SENTECH\StApi\v1_2\x64\bin\GenApiDotNet40_v3_4.dll</HintPath>
     </Reference>
     <Reference Include="Open_eVision_NetApi">
-      <HintPath>\\192.168.2.77\Project\E-24002N\NSAA-16Axis\bin\x64\Debug3\Open_eVision_NetApi.dll</HintPath>
+      <HintPath>..\Open_eVision_NetApi.dll</HintPath>
     </Reference>
     <Reference Include="StApiDotNet40_v1_2, Version=1.2.1.0, Culture=neutral, PublicKeyToken=702a7d0a1d42e9d9, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -453,6 +453,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y /E /I /D "$(TargetDir)*.*" "\\192.168.2.54\Project\E-25007\NSAA-16Axis\bin\x64\DebugIV"</PostBuildEvent>
+    <PostBuildEvent>xcopy /Y /E /I /D "$(TargetDir)*.*" "\\E-25007\Project2026\E-25007\NSAA-16Axis\bin\x64\DebugIV"</PostBuildEvent>
   </PropertyGroup>
 </Project>

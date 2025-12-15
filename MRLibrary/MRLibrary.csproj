@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <Reference Include="Open_eVision_NetApi">
-      <HintPath>bin\Debug\net472\Open_eVision_NetApi.dll</HintPath>
+      <HintPath>..\Open_eVision_NetApi.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
   </ItemGroup>

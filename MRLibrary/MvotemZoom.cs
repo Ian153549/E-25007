@@ -194,12 +194,16 @@ namespace MRLibrary
                 0xcd        // 指令結尾
                 };
 
+            bool needConfirm = false;
+
             if (isOpen)
             {
                 lock (_locker)
                 {
                     try
                     {
+                        needConfirm = true;
+
                         if (NowPosition != dstPosition)
                         {
                             isOK = 0;
@@ -220,13 +224,44 @@ namespace MRLibrary
                         throw new Exception(ex.Message);
                     }
                 }
-                GetPositioncmd();
+
+                if (needConfirm && !ConfirmMagnification(dstPosition))
+                {
+                    throw new Exception("Magnification confirmation timeout.");
+                }
+
+                return true;
             }           
             else
             {
                 isOK = 0;  
             }
             return true;
+        }
+
+        private bool ConfirmMagnification(int dstPosition, int timeoutMilliseconds = 15000, int pollDelayMilliseconds = 100)
+        {
+            if (!isOpen)
+            {
+                return true;
+            }
+
+            int expectedMagni = dstPosition; 
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            while (stopwatch.ElapsedMilliseconds <= timeoutMilliseconds)
+            {
+                GetPositioncmd();
+                Thread.Sleep(pollDelayMilliseconds);
+
+                if (iMagni == expectedMagni)
+                {
+                    _Magni = expectedMagni;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool MoveGotoM(int Magni)
