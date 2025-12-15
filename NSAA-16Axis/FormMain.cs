@@ -1016,35 +1016,37 @@ namespace NSAA_16Axis
             Update();
             //GV.matcher = new OpenCV3MatchUMat("matcher");
 
-            GV.matcherLLW = new OpenCV3MatchUMat("LLW");
-            GV.matcherLHW = new OpenCV3MatchUMat("LHW");
-            GV.matcherLLM = new OpenCV3MatchUMat("LLM");
-            GV.matcherLHM = new OpenCV3MatchUMat("LHM");
-            GV.matcherRLW = new OpenCV3MatchUMat("RLW");
-            GV.matcherRHW = new OpenCV3MatchUMat("RHW");
-            GV.matcherRLM = new OpenCV3MatchUMat("RLM");
-            GV.matcherRHM = new OpenCV3MatchUMat("RHM");
+            if(GV.AppSettingParm.Emulation != true) 
+            { 
+                GV.matcherLLW = new OpenCV3MatchUMat("LLW");
+                GV.matcherLHW = new OpenCV3MatchUMat("LHW");
+                GV.matcherLLM = new OpenCV3MatchUMat("LLM");
+                GV.matcherLHM = new OpenCV3MatchUMat("LHM");
+                GV.matcherRLW = new OpenCV3MatchUMat("RLW");
+                GV.matcherRHW = new OpenCV3MatchUMat("RHW");
+                GV.matcherRLM = new OpenCV3MatchUMat("RLM");
+                GV.matcherRHM = new OpenCV3MatchUMat("RHM");
 
-            try
-            {
-                GV.matcherLLW.iBlockSize = AlignC.LLWaferBlockSize;
-                GV.matcherLHW.iBlockSize = AlignC.LHWaferBlockSize;
-                GV.matcherRLW.iBlockSize = AlignC.RLWaferBlockSize;
-                GV.matcherRHW.iBlockSize = AlignC.RHWaferBlockSize;
-                GV.matcherLLW.LearnWithAlgo(_recipe.LeftLowWaferMat, _recipe.LeftLowWaferMask, AlignC.LLWaferAlgorithm);
-                GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, AlignC.LHWaferAlgorithm);
-                GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, AlignC.LLMaskAlgorithm);
-                GV.matcherLHM.LearnWithAlgo(_recipe.LeftHighMaskMat, _recipe.LeftHighMaskMask, AlignC.LHMaskAlgorithm);
-                GV.matcherRLW.LearnWithAlgo(_recipe.RightLowWaferMat, _recipe.RightLowWaferMask, AlignC.RLWaferAlgorithm);
-                GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, AlignC.RHWaferAlgorithm);
-                GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, AlignC.RLMaskAlgorithm);
-                GV.matcherRHM.LearnWithAlgo(_recipe.RightHighMaskMat, _recipe.RightHighMaskMask, AlignC.RHMaskAlgorithm);
+                try
+                {
+                    GV.matcherLLW.iBlockSize = AlignC.LLWaferBlockSize;
+                    GV.matcherLHW.iBlockSize = AlignC.LHWaferBlockSize;
+                    GV.matcherRLW.iBlockSize = AlignC.RLWaferBlockSize;
+                    GV.matcherRHW.iBlockSize = AlignC.RHWaferBlockSize;
+                    GV.matcherLLW.LearnWithAlgo(_recipe.LeftLowWaferMat, _recipe.LeftLowWaferMask, AlignC.LLWaferAlgorithm);
+                    GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, AlignC.LHWaferAlgorithm);
+                    GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, AlignC.LLMaskAlgorithm);
+                    GV.matcherLHM.LearnWithAlgo(_recipe.LeftHighMaskMat, _recipe.LeftHighMaskMask, AlignC.LHMaskAlgorithm);
+                    GV.matcherRLW.LearnWithAlgo(_recipe.RightLowWaferMat, _recipe.RightLowWaferMask, AlignC.RLWaferAlgorithm);
+                    GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, AlignC.RHWaferAlgorithm);
+                    GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, AlignC.RLMaskAlgorithm);
+                    GV.matcherRHM.LearnWithAlgo(_recipe.RightHighMaskMat, _recipe.RightHighMaskMask, AlignC.RHMaskAlgorithm);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Pattern Learn", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Pattern Learn", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            }
-
             GV.LeftUpCam.SetWindow(GV.LeftUpWindowOnAlignPage);
             GV.RightUpCam.SetWindow(GV.RightUpWindowOnAlignPage);
             GV.LeftUpCam.Live();
@@ -2011,6 +2013,11 @@ namespace NSAA_16Axis
             {
                 while ((!GV.OnAlign) && (GV.TabOption == GV.Tab.Align))
                 {
+                    if (GV.AppSettingParm.Emulation == true)
+                    {
+                        Thread.Sleep(1000);
+                        continue;
+                    }
                     if (GV.skView == 0)
                     {
                         if (GV.AppSettingParm.DebugMode)

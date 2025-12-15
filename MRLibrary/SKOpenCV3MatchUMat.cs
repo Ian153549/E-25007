@@ -63,13 +63,17 @@ namespace MRLibrary
 
         public Mat[] sLevel = new Mat[10];
         public Mat[] tLevel = new Mat[10];
-
+        private readonly bool _emulationMode;
         //-----------------------------------------//
 
-        public OpenCV3MatchUMat(string debugmsg, bool enableInferGate = false, int maxConcurrency = 1, TimeSpan? timeout = null)
+        public OpenCV3MatchUMat(string debugmsg, bool enableInferGate = false, int maxConcurrency = 1, TimeSpan? timeout = null, bool emulationMode = false)
         {
+            _emulationMode = emulationMode;
             mps = new MatchPosition();
-            _eVisionMatch = new EVisionMatch(debugmsg);
+            if (!_emulationMode)
+            {
+                _eVisionMatch = new EVisionMatch(debugmsg);
+            }
             dMsg = debugmsg;
             //-----------------------------------------//
             LearnMat = new Mat(4000, 3000, MatType.CV_8UC1);
@@ -839,6 +843,11 @@ namespace MRLibrary
         //}
         public void LearnWithAlgo(Mat pattern, GrayImage dontCare, AlignAlgorithm algorithm)
         {
+            if (_emulationMode)
+            {
+                MatchAlgorithm = algorithm;
+                return;
+            }
             if (algorithm == AlignAlgorithm.TemplateMatch)
             {
                 Learn(pattern, dontCare);
@@ -902,6 +911,14 @@ namespace MRLibrary
 
         public void MatMatchWithAlgo(int debug, Mat image, ref MatchPosition mPos, AlignAlgorithm algorithm, int classId = -1)
         {
+            if (_emulationMode)
+            {
+                mPos.X = image.Width / 2.0f;
+                mPos.Y = image.Height / 2.0f;
+                mPos.Score = 0.95f;
+                mPos.TemplateSize = new System.Drawing.SizeF(100, 100);
+                return;
+            }
             if (algorithm == AlignAlgorithm.TemplateMatch)
             {
                 MatMatch(debug, image, ref mPos);
