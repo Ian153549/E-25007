@@ -900,7 +900,7 @@ namespace MRLibrary
             if (debug == 1) LogActivities.GDebugMatch(dMsg, image, ref mPos);
         }
 
-        public void MatMatchWithAlgo(int debug, Mat image, ref MatchPosition mPos, AlignAlgorithm algorithm)
+        public void MatMatchWithAlgo(int debug, Mat image, ref MatchPosition mPos, AlignAlgorithm algorithm, int classId = -1)
         {
             if (algorithm == AlignAlgorithm.TemplateMatch)
             {
@@ -961,7 +961,14 @@ namespace MRLibrary
             //}
             else if (algorithm == AlignAlgorithm.AIMatch)
             {
-                AIMatch(0, image, ref mPos);
+                if (classId >= 0)
+                {
+                    AIMatch(0, image, ref mPos, classId);
+                }
+                else
+                {
+                    AIMatch(0, image, ref mPos);
+                }
             }
             else
             {
@@ -973,26 +980,53 @@ namespace MRLibrary
             GC.KeepAlive(sSample);
         }
 
-        private void AIMatch(int debug, Mat sSample, ref MatchPosition mPos)
+        private void AIMatch(int debug, Mat sSample, ref MatchPosition mPos, int classId = -1)
         {
             string result = PostMatAsync(sSample).GetAwaiter().GetResult();
             var boxes = JArray.Parse(result);
             if (boxes.Count > 0)
             {
-                foreach(var box in boxes)
+                // 如果指定了 classId，只匹配該類別
+                JToken targetBox = null;
+                if (classId >= 0)
                 {
-                    int cls = (int)box["class"];
-                    string clsName = (string)box["name"];
-                    int x1 = (int)box["x1"];
-                    int y1 = (int)box["y1"];
-                    int x2 = (int)box["x2"];    
-                    int y2 = (int)box["y2"];
-                    float Score = (float)box["conf"];
+                    foreach (var box in boxes)
+                    {
+                        int cls = (int)box["class"];
+                        if (cls == classId)
+                        {
+                            targetBox = box;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // 沒有指定 classId，取第一個結果
+                    targetBox = boxes[0];
+                }
+
+                if (targetBox != null)
+                {
+                    int cls = (int)targetBox["class"];
+                    string clsName = (string)targetBox["name"];
+                    int x1 = (int)targetBox["x1"];
+                    int y1 = (int)targetBox["y1"];
+                    int x2 = (int)targetBox["x2"];
+                    int y2 = (int)targetBox["y2"];
+                    float Score = (float)targetBox["conf"];
                     mPos.X = (x1 + x2) / 2;
                     mPos.Y = (y1 + y2) / 2;
-                    mPos.Score = (double)Score;                    
+                    mPos.Score = (double)Score;
                 }
-                
+                else
+                {
+                    // 找不到指定類別
+                    mPos.X = 0;
+                    mPos.Y = 0;
+                    mPos.Score = 0.1F;
+                    AIImageProcess.SaveAIFailImage(sSample, mPos);
+                }
             }
             else
             {
@@ -1003,24 +1037,59 @@ namespace MRLibrary
             }
             if (debug == 1) LogActivities.GDebugMatch(dMsg, sSample, ref mPos);
         }
-        public async Task AIMatchAsync(int debug, Mat sSample,MatchPosition mPos,CancellationToken ct = default)
+        public async Task AIMatchAsync(int debug, Mat sSample, MatchPosition mPos, CancellationToken ct = default,int classId = -1)
         {
             string result = await PostMatAsync(sSample, ct).ConfigureAwait(false);
-
             var boxes = JArray.Parse(result);
 
             if (boxes.Count > 0)
             {
-                var box = boxes[0];
-                int x1 = (int)box["x1"];
-                int y1 = (int)box["y1"];
-                int x2 = (int)box["x2"];
-                int y2 = (int)box["y2"];
-                float score = (float)box["conf"];
-                mPos.X = (x1 + x2) / 2;
-                mPos.Y = (y1 + y2) / 2;
-                mPos.Score = score;
+                JToken targetBox = null;
+                if (classId >= 0)
+                {
+                    // 尋找指定類別的檢測結果
+                    foreach (var box in boxes)
+                    {
+                        int cls = (int)box["class"];
+                        if (cls == classId)
+                        {
+                            targetBox = box;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // 沒有指定類別，取第一個結果
+                    targetBox = boxes[0];
+                }
+
+                if (targetBox != null)
+                {
+                    int x1 = (int)targetBox["x1"];
+                    int y1 = (int)targetBox["y1"];
+                    int x2 = (int)targetBox["x2"];
+                    int y2 = (int)targetBox["y2"];
+                    float score = (float)targetBox["conf"];
+                    mPos.X = (x1 + x2) / 2;
+                    mPos.Y = (y1 + y2) / 2;
+                    mPos.Score = score;
+                }
+                else
+                {
+                    // 找不到指定類別
+                    mPos.X = 0;
+                    mPos.Y = 0;
+                    mPos.Score = 0.1F;
+                }
             }
+            else
+            {
+                mPos.X = 0;
+                mPos.Y = 0;
+                mPos.Score = 0.1F;
+            }
+
             if (debug == 1)
             {
                 LogActivities.GDebugMatch("infer", sSample, ref mPos);

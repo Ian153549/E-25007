@@ -2166,6 +2166,18 @@ namespace NSAA_16Axis
         public OpenCV3MatchUMat.AlignAlgorithm RHMaskAlgorithm = OpenCV3MatchUMat.AlignAlgorithm.TemplateMatch;
         public OpenCV3MatchUMat.AlignAlgorithm RHWaferAlgorithm = OpenCV3MatchUMat.AlignAlgorithm.TemplateMatch;
 
+
+        public int LLWaferAIClassId { get; set; } = -1;
+        public int LHWaferAIClassId { get; set; } = -1;
+
+        public int RLWaferAIClassId { get; set; } = -1;
+        public int RHWaferAIClassId { get; set; } = -1;
+        public int LLMaskAIClassId { get; set; } = -1;
+        public int LHMaskAIClassId { get; set; } = -1;
+        public int RLMaskAIClassId { get; set; } = -1;
+        public int RHMaskAIClassId { get; set; } = -1;
+
+
         public int LLWaferBlockSize = 27;
         public int RLWaferBlockSize = 27;
         public int LHWaferBlockSize = 27;

@@ -187,6 +187,10 @@
             this.buttonR = new System.Windows.Forms.Button();
             this.OpenFileDialogRead = new System.Windows.Forms.OpenFileDialog();
             this.buttonF = new System.Windows.Forms.Button();
+            this.cbLBackMaskClassList = new System.Windows.Forms.ComboBox();
+            this.cbRBackMaskClassList = new System.Windows.Forms.ComboBox();
+            this.btBackLabelPatternLM = new System.Windows.Forms.Button();
+            this.btBackLabelPatternRM = new System.Windows.Forms.Button();
             this.gbLBackMask.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftBackMaskLight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLBackMask)).BeginInit();
@@ -221,6 +225,8 @@
             // gbLBackMask
             // 
             this.gbLBackMask.BackColor = System.Drawing.Color.AliceBlue;
+            this.gbLBackMask.Controls.Add(this.btBackLabelPatternLM);
+            this.gbLBackMask.Controls.Add(this.cbLBackMaskClassList);
             this.gbLBackMask.Controls.Add(this.btLBackMask);
             this.gbLBackMask.Controls.Add(this.btFindLBMaskCenter);
             this.gbLBackMask.Controls.Add(this.btLBackMaskLSave);
@@ -858,18 +864,20 @@
             // gbRBackMask
             // 
             this.gbRBackMask.BackColor = System.Drawing.Color.AliceBlue;
+            this.gbRBackMask.Controls.Add(this.btBackLabelPatternRM);
+            this.gbRBackMask.Controls.Add(this.cbRBackMaskClassList);
             this.gbRBackMask.Controls.Add(this.btFindRBMaskCenter);
             this.gbRBackMask.Controls.Add(this.btRBackMaskLightMinus);
             this.gbRBackMask.Controls.Add(this.rbRBackMask);
             this.gbRBackMask.Controls.Add(this.btRBackMaskLightPlus);
             this.gbRBackMask.Controls.Add(this.ucNavigatorBackMaskR);
-            this.gbRBackMask.Controls.Add(this.tBRightBackMaskLight);
             this.gbRBackMask.Controls.Add(this.btRBackMask);
             this.gbRBackMask.Controls.Add(this.pbRBackMask);
             this.gbRBackMask.Controls.Add(this.btRBackMaskSave);
             this.gbRBackMask.Controls.Add(this.cbRBackMaskAlgo);
             this.gbRBackMask.Controls.Add(this.label4);
             this.gbRBackMask.Controls.Add(this.btRBackMaskLSave);
+            this.gbRBackMask.Controls.Add(this.tBRightBackMaskLight);
             this.gbRBackMask.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbRBackMask.ForeColor = System.Drawing.Color.Green;
             this.gbRBackMask.Location = new System.Drawing.Point(1677, 4);
@@ -2397,6 +2405,80 @@
             this.buttonF.UseVisualStyleBackColor = true;
             this.buttonF.Click += new System.EventHandler(this.buttonF_Click);
             // 
+            // cbLBackMaskClassList
+            // 
+            this.cbLBackMaskClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbLBackMaskClassList.FormattingEnabled = true;
+            this.cbLBackMaskClassList.Items.AddRange(new object[] {
+            "X1",
+            "X2",
+            "X3",
+            "X4",
+            "X5",
+            "X6",
+            "X7",
+            "X8",
+            "X9",
+            "X10",
+            "X11",
+            "X12"});
+            this.cbLBackMaskClassList.Location = new System.Drawing.Point(13, 205);
+            this.cbLBackMaskClassList.Name = "cbLBackMaskClassList";
+            this.cbLBackMaskClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbLBackMaskClassList.TabIndex = 172;
+            this.cbLBackMaskClassList.Visible = false;
+            // 
+            // cbRBackMaskClassList
+            // 
+            this.cbRBackMaskClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbRBackMaskClassList.FormattingEnabled = true;
+            this.cbRBackMaskClassList.Items.AddRange(new object[] {
+            "X1",
+            "X2",
+            "X3",
+            "X4",
+            "X5",
+            "X6",
+            "X7",
+            "X8",
+            "X9",
+            "X10",
+            "X11",
+            "X12"});
+            this.cbRBackMaskClassList.Location = new System.Drawing.Point(60, 205);
+            this.cbRBackMaskClassList.Name = "cbRBackMaskClassList";
+            this.cbRBackMaskClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbRBackMaskClassList.TabIndex = 172;
+            this.cbRBackMaskClassList.Visible = false;
+            // 
+            // btBackLabelPatternLM
+            // 
+            this.btBackLabelPatternLM.AutoSize = true;
+            this.btBackLabelPatternLM.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.btBackLabelPatternLM.Font = new System.Drawing.Font("Arial", 12F);
+            this.btBackLabelPatternLM.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btBackLabelPatternLM.Location = new System.Drawing.Point(34, 254);
+            this.btBackLabelPatternLM.Name = "btBackLabelPatternLM";
+            this.btBackLabelPatternLM.Size = new System.Drawing.Size(129, 33);
+            this.btBackLabelPatternLM.TabIndex = 172;
+            this.btBackLabelPatternLM.Text = "Label Image";
+            this.btBackLabelPatternLM.UseVisualStyleBackColor = false;
+            this.btBackLabelPatternLM.Visible = false;
+            // 
+            // btBackLabelPatternRM
+            // 
+            this.btBackLabelPatternRM.AutoSize = true;
+            this.btBackLabelPatternRM.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.btBackLabelPatternRM.Font = new System.Drawing.Font("Arial", 12F);
+            this.btBackLabelPatternRM.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btBackLabelPatternRM.Location = new System.Drawing.Point(73, 264);
+            this.btBackLabelPatternRM.Name = "btBackLabelPatternRM";
+            this.btBackLabelPatternRM.Size = new System.Drawing.Size(129, 33);
+            this.btBackLabelPatternRM.TabIndex = 172;
+            this.btBackLabelPatternRM.Text = "Label Image";
+            this.btBackLabelPatternRM.UseVisualStyleBackColor = false;
+            this.btBackLabelPatternRM.Visible = false;
+            // 
             // CMLearnPatternBack
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -2674,5 +2756,9 @@
         private System.Windows.Forms.Button buttonR;
         private System.Windows.Forms.OpenFileDialog OpenFileDialogRead;
         private System.Windows.Forms.Button buttonF;
+        private System.Windows.Forms.ComboBox cbLBackMaskClassList;
+        private System.Windows.Forms.ComboBox cbRBackMaskClassList;
+        private System.Windows.Forms.Button btBackLabelPatternLM;
+        private System.Windows.Forms.Button btBackLabelPatternRM;
     }
 }

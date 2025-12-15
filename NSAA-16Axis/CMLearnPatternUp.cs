@@ -197,17 +197,127 @@ namespace NSAA_16Axis
                     { 
                         if (rBLowMagnification.Checked)
                         {
-                            GV.matcherLLM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LMaskMp, _AlignC.LLMaskAlgorithm);
-                            GV.matcherLLW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LWaferMp, _AlignC.LLWaferAlgorithm);
-                            GV.matcherRLM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RMaskMp, _AlignC.RLMaskAlgorithm);
-                            GV.matcherRLW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RWaferMp, _AlignC.RLWaferAlgorithm);
+                            int lWaferClassId = _AlignC.LLWaferAIClassId;
+                            int rWaferClassId = _AlignC.RLWaferAIClassId;
+                            int lMaskClassId = _AlignC.LLMaskAIClassId;
+                            int rMaskClassId = _AlignC.RLMaskAIClassId;
+
+                            Invoke((MethodInvoker)delegate ()
+                            {
+                                if (_AlignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLWaferClassList.SelectedIndex >= 0)
+                                {
+                                    lWaferClassId = cbLWaferClassList.SelectedIndex;
+                                }
+                                if (_AlignC.RLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRWaferClassList.SelectedIndex >= 0)
+                                {
+                                    rWaferClassId = cbRWaferClassList.SelectedIndex;
+                                }
+                                if(_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLMaskClassList.SelectedIndex >= 0)
+                                {
+                                    lMaskClassId = cbLMaskClassList.SelectedIndex;
+                                }
+                                if(_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRMaskClassList.SelectedIndex >= 0)
+                                {
+                                    rMaskClassId = cbRMaskClassList.SelectedIndex;
+                                }
+                            });
+                            if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherLLM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LMaskMp, _AlignC.LLMaskAlgorithm, lMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherLLM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LMaskMp, _AlignC.LLMaskAlgorithm);
+                            }
+
+                            if (_AlignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherLLW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LWaferMp, _AlignC.LLWaferAlgorithm, lWaferClassId);
+                            }
+                            else
+                            {
+                                GV.matcherLLW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LWaferMp, _AlignC.LLWaferAlgorithm);
+                            }
+
+                            if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRLM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RMaskMp, _AlignC.RLMaskAlgorithm, rMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRLM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RMaskMp, _AlignC.RLMaskAlgorithm);
+                            }
+
+                            if (_AlignC.RLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRLW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RWaferMp, _AlignC.RLWaferAlgorithm, rWaferClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRLW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RWaferMp, _AlignC.RLWaferAlgorithm);
+                            }
                         }
                         if (rBHighMagnification.Checked)
                         {
-                            GV.matcherLHM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LMaskMp, _AlignC.LHMaskAlgorithm);
-                            GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LWaferMp, _AlignC.LHWaferAlgorithm);
-                            GV.matcherRHM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RMaskMp, _AlignC.RHMaskAlgorithm);
-                            GV.matcherRHW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RWaferMp, _AlignC.RHWaferAlgorithm);
+                            int lWaferClassId = _AlignC.LHWaferAIClassId;
+                            int rWaferClassId = _AlignC.RHWaferAIClassId;
+                            int lMaskClassId = _AlignC.LHMaskAIClassId;
+                            int rMaskClassId = _AlignC.RHMaskAIClassId;
+
+                            Invoke((MethodInvoker)delegate ()
+                            {
+                                if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLWaferClassList.SelectedIndex >= 0)
+                                {
+                                    lWaferClassId = cbLWaferClassList.SelectedIndex;
+                                }
+                                if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRWaferClassList.SelectedIndex >= 0)
+                                {
+                                    rWaferClassId = cbRWaferClassList.SelectedIndex;
+                                }
+                                if(_AlignC.LHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLMaskClassList.SelectedIndex >= 0)
+                                {
+                                    lMaskClassId = cbLMaskClassList.SelectedIndex;
+                                }
+                                if(_AlignC.RHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRMaskClassList.SelectedIndex >= 0)
+                                {
+                                    rMaskClassId = cbRMaskClassList.SelectedIndex;
+                                }
+                            });
+                            if (_AlignC.LHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherLHM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LMaskMp, _AlignC.LHMaskAlgorithm, lMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherLHM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LMaskMp, _AlignC.LHMaskAlgorithm);
+                            }
+
+                            if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LWaferMp, _AlignC.LHWaferAlgorithm, lWaferClassId);
+                            }
+                            else
+                            {
+                                GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref LWaferMp, _AlignC.LHWaferAlgorithm);
+                            }
+
+                            if (_AlignC.RHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRHM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RMaskMp, _AlignC.RHMaskAlgorithm, rMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRHM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RMaskMp, _AlignC.RHMaskAlgorithm);
+                            }
+
+                            if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRHW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RWaferMp, _AlignC.RHWaferAlgorithm, rWaferClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRHW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref RWaferMp, _AlignC.RHWaferAlgorithm);
+                            }
                         }
 
                         Invoke((MethodInvoker)delegate ()
@@ -372,8 +482,27 @@ namespace NSAA_16Axis
                 cbLWaferAlgorithm.SelectedIndex = (int)_AlignC.LLWaferAlgorithm;
                 cbRMaskAlgorithm.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
                 cbRWaferAlgorithm.SelectedIndex = (int)_AlignC.RLWaferAlgorithm;
+
+                if(_AlignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                {
+                    cbLWaferClassList.SelectedIndex=_AlignC.LLWaferAIClassId;
+                }
+                if(_AlignC.RLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                {
+                    cbRWaferClassList.SelectedIndex=_AlignC.RLWaferAIClassId;
+                }
+                if(_AlignC.LLMaskAlgorithm== OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                {
+                    cbLMaskClassList.SelectedIndex=_AlignC.LLMaskAIClassId;
+                }
+                if(_AlignC.RLMaskAlgorithm== OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                {
+                    cbRMaskClassList.SelectedIndex=_AlignC.RLMaskAIClassId;
+                }
                 btMagSaveLow.Enabled = true;
                 btMagSaveHigh.Enabled = false;
+
+                
             }
 
             if (rBHighMagnification.Checked)
@@ -390,6 +519,23 @@ namespace NSAA_16Axis
                 cbLWaferAlgorithm.SelectedIndex = (int)_AlignC.LHWaferAlgorithm;
                 cbRMaskAlgorithm.SelectedIndex = (int)_AlignC.RHMaskAlgorithm;
                 cbRWaferAlgorithm.SelectedIndex = (int)_AlignC.RHWaferAlgorithm;
+
+                if(_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                {
+                    cbLWaferClassList.SelectedIndex=_AlignC.LHWaferAIClassId;
+                }
+                if(_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                {
+                    cbRWaferClassList.SelectedIndex=_AlignC.RHWaferAIClassId;
+                }
+                if(_AlignC.LHMaskAlgorithm== OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                {
+                    cbLMaskClassList.SelectedIndex=_AlignC.LHMaskAIClassId;
+                }
+                if(_AlignC.RHMaskAlgorithm== OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                {
+                    cbRMaskClassList.SelectedIndex=_AlignC.RHMaskAIClassId;
+                }
                 btMagSaveLow.Enabled = false;
                 btMagSaveHigh.Enabled = true;
             }
@@ -770,14 +916,16 @@ namespace NSAA_16Axis
                 d.Fill(255);
                 _recipe.LeftLowWaferMask = new GrayImage(d);
                 _AlignC.LowMagnificationLZ = GV.NowLocation[GV.Plc.iiDSUpLeftZ];
-                _AlignC.HighMagnificationLZ = GV.NowLocation[GV.Plc.iiDSUpLeftZ];
+                
                 _AlignC.LLWaferAlgorithm = Algoritm(cbLWaferAlgorithm.SelectedIndex);
                 if (cbLWaferAlgorithm.SelectedIndex == 2)
                 {
+                    _AlignC.LLWaferAIClassId=cbLWaferClassList.SelectedIndex;
                     _AlignC.LLBitwiseNot = cbLWaferClassList.SelectedIndex;
                 }
                 else
                 {
+                    _AlignC.LLWaferAIClassId = -1;
                     _AlignC.LLBitwiseNot = 0;
                 }
                 GV.matcherLLW.LearnWithAlgo(m, d, _AlignC.LLWaferAlgorithm);
@@ -805,13 +953,16 @@ namespace NSAA_16Axis
                 GrayImage d = new GrayImage(m.Width, m.Height);
                 d.Fill(255);
                 _recipe.LeftHighWaferMask = new GrayImage(d);
+                _AlignC.HighMagnificationLZ = GV.NowLocation[GV.Plc.iiDSUpLeftZ];
                 _AlignC.LHWaferAlgorithm = Algoritm(cbLWaferAlgorithm.SelectedIndex);
                 if (cbLWaferAlgorithm.SelectedIndex == 2)
                 {
+                    _AlignC.LHWaferAIClassId = cbLWaferClassList.SelectedIndex;
                     _AlignC.LHBitwiseNot = cbLWaferClassList.SelectedIndex;
                 }
                 else
                 {
+                    _AlignC.LHWaferAIClassId = -1;
                     _AlignC.LHBitwiseNot = 0;
                 }
                 GV.matcherLHW.LearnWithAlgo(m, d, _AlignC.LHWaferAlgorithm);
@@ -831,7 +982,7 @@ namespace NSAA_16Axis
                     string trainPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train", GV._recipe.RecipeName);
                     DateTime now = DateTime.Now;
                     Directory.CreateDirectory(trainPath);
-                    string fn = string.Concat(trainPath, "\\L", now.ToString("HH_mm_ss"));
+                    string fn = string.Concat(trainPath, "\\LW", now.ToString("HH_mm_ss"));
                     Cv2.ImWrite(string.Concat(fn, ".bmp"), fullImage);
                     var labelPath = string.Concat(fn, ".txt");
 
@@ -848,9 +999,9 @@ namespace NSAA_16Axis
                 catch
                 {
                 }
-                cbLWaferClassList.Visible = true;
-                btLabelPatternL.Visible = true;
-                pbLWaferImage.Visible = false;
+                //cbLWaferClassList.Visible = true;
+                //btLabelPatternL.Visible = true;
+                //pbLWaferImage.Visible = false;
             }
         }
 
@@ -873,14 +1024,17 @@ namespace NSAA_16Axis
             {
                 GMPLeft = new Mat();
                 GMPRight = new Mat();
+                cbRMaskClassList.Items.Clear();
                 cbRWaferClassList.Items.Clear();
                 cbLWaferClassList.Items.Clear();
+                cbLMaskClassList.Items.Clear();
                 Dictionary<string, Int16> ClassList = GV.AIClassList.GetClassList();
                 foreach (var className in ClassList)
                 {
-                    cbRWaferClassList.Items.Add(className);
-                    cbLWaferClassList.Items.Add(className);
-
+                    cbRMaskClassList.Items.Add(className.Key);
+                    cbRWaferClassList.Items.Add(className.Key);
+                    cbLWaferClassList.Items.Add(className.Key);
+                    cbLMaskClassList.Items.Add(className.Key);
                 }
             }
             if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty())
@@ -978,6 +1132,15 @@ namespace NSAA_16Axis
             // 建立 ROI Mat
             Mat m = new Mat(fullImage, roi).Clone();
 
+            if (cbLMaskAlgorithm.SelectedIndex == 1)
+            {
+                Cv2.GaussianBlur(m, m, new OpenCvSharp.Size(7, 7), 0, 0, BorderTypes.Default);
+                Cv2.AdaptiveThreshold(m, m, 255, AdaptiveThresholdTypes.MeanC, ThresholdTypes.Binary, 27, 2);
+                Mat invertedImg = new Mat();
+                Cv2.BitwiseNot(m, invertedImg);
+                m = invertedImg.Clone();
+                invertedImg.Dispose();
+            }
 
             if (rBLowMagnification.Checked)
             {
@@ -985,7 +1148,15 @@ namespace NSAA_16Axis
                 // DialogResult m1 = msg1.ShowDialog();
                 // if (m1 != DialogResult.OK)
                 if (MessageBox.Show(GV.Dlang.strbtnSaveLLM, GV.Dlang.strSureSaveLLM, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    if (cbLMaskAlgorithm.SelectedIndex == 2)
+                    {
+                        cbLMaskClassList.Visible = true;
+                        btLabelPatternLM.Visible = false;
+                        pbLMaskImage.Visible = false;
+                    }
                     return;
+                }
 
                 GV.Plc.GetRecipe();
                 GV.Plc.GetLocation();
@@ -1006,12 +1177,29 @@ namespace NSAA_16Axis
                 _recipe.LeftLowMaskMask = new GrayImage(d);
                 _AlignC.LowMagnificationLZ = GV.NowLocation[GV.Plc.iiDSUpLeftZ];
                 _AlignC.LLMaskAlgorithm = Algoritm(cbLMaskAlgorithm.SelectedIndex);
+                if (cbLMaskAlgorithm.SelectedIndex == 2)
+                {
+                    _AlignC.LLMaskAIClassId = cbLMaskClassList.SelectedIndex;
+
+                }
+                else
+                {
+                    _AlignC.LLMaskAIClassId = -1;
+                }
                 GV.matcherLLM.LearnWithAlgo(m, d, _AlignC.LLMaskAlgorithm);
             }
             else if (rBHighMagnification.Checked)
             {
                 if (MessageBox.Show(GV.Dlang.strbtnSaveLHM, GV.Dlang.strSureSaveLHM, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    if (cbLMaskAlgorithm.SelectedIndex == 2)
+                    {
+                        cbLMaskClassList.Visible = true;
+                        btLabelPatternLM.Visible = false;
+                        pbLMaskImage.Visible = false;
+                    }
                     return;
+                }
 
                 GV.Plc.GetRecipe();
                 GV.Plc.GetLocation();
@@ -1032,6 +1220,15 @@ namespace NSAA_16Axis
                 _recipe.LeftHighMaskMask = new GrayImage(d);
                 _AlignC.HighMagnificationLZ = GV.NowLocation[GV.Plc.iiDSUpLeftZ];
                 _AlignC.LHMaskAlgorithm = Algoritm(cbLMaskAlgorithm.SelectedIndex);
+                if (cbLMaskAlgorithm.SelectedIndex == 2)
+                {
+                    _AlignC.LHMaskAIClassId = cbLMaskClassList.SelectedIndex;
+
+                }
+                else
+                {
+                    _AlignC.LHMaskAIClassId = -1;
+                }
                 GV.matcherLHM.LearnWithAlgo(m, d, _AlignC.LHMaskAlgorithm);
             }
             else
@@ -1042,6 +1239,30 @@ namespace NSAA_16Axis
 
             _AlignC.LastModifyTime = DateTime.Now;
             GM.WriteRecipeXml(EditRecipe);
+            if (cbLWaferAlgorithm.SelectedIndex == 2)
+            {
+                try
+                {
+                    string trainPath= Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train", GV._recipe.RecipeName);
+                    DateTime now = DateTime.Now;
+                    Directory.CreateDirectory(trainPath);
+                    string fn=string.Concat(trainPath, "\\LM", now.ToString("HH_mm_ss"));
+                    Cv2.ImWrite(string.Concat(fn, ".bmp"), fullImage);
+                    var labelPath = string.Concat(fn, ".txt");
+                    float xCenter = (roi.X + roi.Width / 2f) / fullImage.Width;
+                    float yCenter = (roi.Y + roi.Height / 2f) / fullImage.Height;
+                    float w = roi.Width / (float)fullImage.Width;
+                    float h = roi.Height / (float)fullImage.Height;
+                    int classId = cbLMaskClassList.SelectedIndex;
+                    List<YoloBox> boxes = new List<YoloBox>();
+                    boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
+                    File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
+                }
+                catch
+                {
+
+                }
+            }
         }
 
         private void BtRWaferTempalteSave_Click(object sender, EventArgs e)
@@ -1108,10 +1329,12 @@ namespace NSAA_16Axis
                 _AlignC.RLWaferAlgorithm = Algoritm(cbRWaferAlgorithm.SelectedIndex);
                 if (cbRWaferAlgorithm.SelectedIndex == 2)
                 {
+                    _AlignC.RLWaferAIClassId = cbRWaferClassList.SelectedIndex;
                     _AlignC.RLBitwiseNot = cbRWaferClassList.SelectedIndex;
                 }
                 else
                 {
+                    _AlignC.RLWaferAIClassId = -1;
                     _AlignC.RLBitwiseNot = 0;
                 }
                 GV.matcherRLW.LearnWithAlgo(m, d, _AlignC.RLWaferAlgorithm);
@@ -1146,10 +1369,12 @@ namespace NSAA_16Axis
                 _AlignC.RHWaferAlgorithm = Algoritm(cbRWaferAlgorithm.SelectedIndex);
                 if (cbRWaferAlgorithm.SelectedIndex == 2)
                 {
+                    _AlignC.RHWaferAIClassId = cbRWaferClassList.SelectedIndex;
                     _AlignC.RHBitwiseNot = cbRWaferClassList.SelectedIndex;
                 }
                 else
                 {
+                    _AlignC.RHWaferAIClassId = -1;
                     _AlignC.RHBitwiseNot = 0;
                 }
                 GV.matcherRHW.LearnWithAlgo(m, d, _AlignC.RHWaferAlgorithm);
@@ -1181,9 +1406,9 @@ namespace NSAA_16Axis
                 List<YoloBox> boxes = new List<YoloBox>();
                 boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
                 File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
-                cbRWaferClassList.Visible = true;
-                btLabelPatternR.Visible = true;
-                pbLWaferImage.Visible = false;
+                //cbRWaferClassList.Visible = true;
+                //btLabelPatternR.Visible = true;
+                //pbLWaferImage.Visible = false;
             }
         }
 
@@ -1211,11 +1436,28 @@ namespace NSAA_16Axis
 
             // 建立 ROI Mat
             Mat m = new Mat(fullImage, roi).Clone();
+            if (cbRMaskAlgorithm.SelectedIndex == 1)
+            {
+                Cv2.GaussianBlur(m, m, new OpenCvSharp.Size(7, 7), 0, 0, BorderTypes.Default);
+                Cv2.AdaptiveThreshold(m, m, 255, AdaptiveThresholdTypes.MeanC, ThresholdTypes.Binary, 27, 2);
+                Mat invertedImg = new Mat();
+                Cv2.BitwiseNot(m, invertedImg);
+                m = invertedImg.Clone();
+                invertedImg.Dispose();
+            }
 
             if (rBLowMagnification.Checked)
             {
                 if (MessageBox.Show(GV.Dlang.strbtnSaveRLM, GV.Dlang.strSureSaveRLM, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    if (cbRMaskAlgorithm.SelectedIndex == 2)
+                    {
+                        cbRMaskClassList.Visible = true;
+                        btLabelPatternRM.Visible = false;
+                        pbRMaskImage.Visible = false;
+                    }
                     return;
+                }
 
                 GV.Plc.GetRecipe();
                 GV.Plc.GetLocation();
@@ -1231,12 +1473,28 @@ namespace NSAA_16Axis
                 _recipe.RightLowMaskMask = new GrayImage(d);
                 _AlignC.LowMagnificationRZ = GV.NowLocation[GV.Plc.iiDSUpRightZ];
                 _AlignC.RLMaskAlgorithm = Algoritm(cbRMaskAlgorithm.SelectedIndex);
+                if (cbRMaskAlgorithm.SelectedIndex == 2)
+                {
+                    _AlignC.RLMaskAIClassId = cbRMaskClassList.SelectedIndex;
+                }
+                else
+                {
+                    _AlignC.RLMaskAIClassId = -1;
+                }
                 GV.matcherRLM.LearnWithAlgo(m, d, _AlignC.RLMaskAlgorithm);
             }
             else if (rBHighMagnification.Checked)
             {
                 if (MessageBox.Show(GV.Dlang.strbtnSaveRHM, GV.Dlang.strSureSaveRHM, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    if( cbRMaskAlgorithm.SelectedIndex == 2)
+                    {
+                        cbRMaskClassList.Visible = true;
+                        btLabelPatternRM.Visible = false;
+                        pbRMaskImage.Visible = false;
+                    }
                     return;
+                }
 
                 GV.Plc.GetRecipe();
                 GV.Plc.GetLocation();
@@ -1252,6 +1510,14 @@ namespace NSAA_16Axis
                 _recipe.RightHighMaskMask = new GrayImage(d);
                 _AlignC.HighMagnificationRZ = GV.NowLocation[GV.Plc.iiDSUpRightZ];
                 _AlignC.RHMaskAlgorithm = Algoritm(cbRMaskAlgorithm.SelectedIndex);
+                if (cbRMaskAlgorithm.SelectedIndex == 2)
+                {
+                    _AlignC.RHMaskAIClassId = cbRMaskClassList.SelectedIndex;
+                }
+                else
+                {
+                    _AlignC.RHMaskAIClassId = -1;
+                }
                 GV.matcherRHM.LearnWithAlgo(m, d, _AlignC.RHMaskAlgorithm);
             }
             else
@@ -1263,6 +1529,29 @@ namespace NSAA_16Axis
             _AlignC.LastModifyTime = DateTime.Now;
             //GM.WriteAlignConditionsAcarToXml("AlignConditions.xml");
             GM.WriteRecipeXml(EditRecipe);
+            if(cbRWaferAlgorithm.SelectedIndex == 2)
+            {
+                try
+                {
+                    string trainPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train", GV._recipe.RecipeName);
+                    DateTime now = DateTime.Now;
+                    Directory.CreateDirectory(trainPath);
+                    string fn = string.Concat(trainPath, "\\RM", now.ToString("HH_mm_ss"));
+                    Cv2.ImWrite(string.Concat(fn, ".bmp"), fullImage);
+                    var labelPath = string.Concat(fn, ".txt");
+                    float xCenter = (roi.X + roi.Width / 2f) / fullImage.Width;
+                    float yCenter = (roi.Y + roi.Height / 2f) / fullImage.Height;
+                    float w = roi.Width / (float)fullImage.Width;
+                    float h = roi.Height / (float)fullImage.Height;
+                    int classId = cbRMaskClassList.SelectedIndex;
+                    List<YoloBox> boxes = new List<YoloBox>();
+                    boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
+                    File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
+                }
+                catch
+                {
+                }
+            }
         }
 
         private void BtLMaskLocationUp_Click(object sender, EventArgs e)
@@ -1532,6 +1821,19 @@ namespace NSAA_16Axis
                 {
                     GV.matcherLHM.LearnWithAlgo(_recipe.LeftHighMaskMat, _recipe.LeftHighMaskMask, _AlignC.LHMaskAlgorithm);
                 }
+            }
+            if (cbLMaskAlgorithm.SelectedIndex == 2)
+            {
+                
+                cbLMaskClassList.Visible = true;
+                btLabelPatternLM.Visible = false;
+                pbLMaskImage.Visible = false;
+            }
+            else
+            {
+                cbLMaskClassList.Visible = false;
+                btLabelPatternLM.Visible = false;
+                pbLMaskImage.Visible = true;
             }
             CheckParam();
         }
@@ -2544,6 +2846,7 @@ namespace NSAA_16Axis
                 
             if (cbLWaferAlgorithm.SelectedIndex == 2)
             {
+                
                 cbLWaferClassList.Visible = true;
                 btLabelPatternL.Visible = true;
                 pbLWaferImage.Visible = false;
@@ -2575,7 +2878,20 @@ namespace NSAA_16Axis
                 {
                     GV.matcherRHM.LearnWithAlgo(_recipe.RightHighMaskMat, _recipe.RightHighMaskMask, _AlignC.RHMaskAlgorithm);
                 }
-            }                
+            }
+            if (cbRMaskAlgorithm.SelectedIndex == 2)
+            {
+                
+                cbRMaskClassList.Visible = true;
+                btLabelPatternRM.Visible = false;
+                pbRMaskImage.Visible = false;
+            }
+            else
+            {
+                cbRMaskClassList.Visible = false;
+                btLabelPatternRM.Visible = false;
+                pbRMaskImage.Visible = true;
+            }
             CheckParam();
         }
 
@@ -3731,34 +4047,16 @@ namespace NSAA_16Axis
 
         private void btLabelPatternL_Click(object sender, EventArgs e)
         {
-            DialogLabelImage labelImage = new DialogLabelImage()
-            {
-
-            };
-            if (labelImage.ShowDialog() == DialogResult.OK)
-            {
-
-            }
-            else
-            {
-
-            }
+            Bitmap bmp = GV.LeftUpCam.Grab().ToBitmap();
+            DialogLabelImage labelImage = new DialogLabelImage(bmp,this.NowMageni);
+            labelImage.ShowDialog();
         }
 
         private void btLabelPatternR_Click(object sender, EventArgs e)
         {
-            DialogLabelImage labelImage = new DialogLabelImage()
-            {
-
-            };
-            if (labelImage.ShowDialog() == DialogResult.OK)
-            {
-
-            }
-            else
-            {
-
-            }
+            Bitmap bmp= GV.RightUpCam.Grab().ToBitmap();
+            DialogLabelImage labelImage = new DialogLabelImage(bmp,NowMageni);
+            labelImage.ShowDialog();
         }
 
         private void btTfile_Click(object sender, EventArgs e)
@@ -3835,5 +4133,6 @@ namespace NSAA_16Axis
         {
             groupBox4.Visible = visible;
         }
+        
     }
 }

@@ -133,6 +133,7 @@ namespace NSAA_16Axis
 
         private void InitializeSimulationTimer()
         {
+            //_simulationTimer = new System.Timers.Timer(1000 / _simulationFrameRate); 20251212
             _simulationTimer = new System.Timers.Timer(1000 / _simulationFrameRate);
             _simulationTimer.Elapsed += (sender, e) =>
             {

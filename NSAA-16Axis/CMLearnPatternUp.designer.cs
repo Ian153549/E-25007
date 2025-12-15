@@ -31,7 +31,10 @@ namespace NSAA_16Axis
         private void InitializeComponent()
         {
             this.gbLMask = new System.Windows.Forms.GroupBox();
+            this.btLabelPatternLM = new System.Windows.Forms.Button();
+            this.cbLMaskClassList = new System.Windows.Forms.ComboBox();
             this.btFindLMaskCenter = new System.Windows.Forms.Button();
+            this.ucLeftMaskNavigator = new NSAA_16Axis.UCNavigator();
             this.btCreateLMaskPatternMask = new System.Windows.Forms.Button();
             this.pbLMaskImage = new System.Windows.Forms.PictureBox();
             this.btLMaskLocationSave = new System.Windows.Forms.Button();
@@ -41,6 +44,7 @@ namespace NSAA_16Axis
             this.btLabelPatternL = new System.Windows.Forms.Button();
             this.cbLWaferClassList = new System.Windows.Forms.ComboBox();
             this.btFindLWaferCenter = new System.Windows.Forms.Button();
+            this.ucLeftWaferNavigator = new NSAA_16Axis.UCNavigator();
             this.btCreateLWaferPatternMask = new System.Windows.Forms.Button();
             this.pbLWaferImage = new System.Windows.Forms.PictureBox();
             this.btLWaferLoactionSave = new System.Windows.Forms.Button();
@@ -51,13 +55,17 @@ namespace NSAA_16Axis
             this.cbRWaferClassList = new System.Windows.Forms.ComboBox();
             this.BtLeftWaferFocus = new System.Windows.Forms.Button();
             this.btFindRWaferCenter = new System.Windows.Forms.Button();
+            this.ucRightWaferNavigator = new NSAA_16Axis.UCNavigator();
             this.btCreateRWaferPatternMask = new System.Windows.Forms.Button();
             this.pbRWaferImage = new System.Windows.Forms.PictureBox();
             this.btRWaferLocationSave = new System.Windows.Forms.Button();
             this.cbRWaferAlgorithm = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.gbRMask = new System.Windows.Forms.GroupBox();
+            this.btLabelPatternRM = new System.Windows.Forms.Button();
+            this.cbRMaskClassList = new System.Windows.Forms.ComboBox();
             this.btFindRMaskCenter = new System.Windows.Forms.Button();
+            this.ucRightMaskNavigator = new NSAA_16Axis.UCNavigator();
             this.btCreateRMaskPatternMask = new System.Windows.Forms.Button();
             this.pbRMaskImage = new System.Windows.Forms.PictureBox();
             this.btRMaskLocationSave = new System.Windows.Forms.Button();
@@ -122,10 +130,6 @@ namespace NSAA_16Axis
             this.btTLRead = new System.Windows.Forms.Button();
             this.btTRRead = new System.Windows.Forms.Button();
             this.OpenFileDialogReadT = new System.Windows.Forms.OpenFileDialog();
-            this.ucRightMaskNavigator = new NSAA_16Axis.UCNavigator();
-            this.ucRightWaferNavigator = new NSAA_16Axis.UCNavigator();
-            this.ucLeftWaferNavigator = new NSAA_16Axis.UCNavigator();
-            this.ucLeftMaskNavigator = new NSAA_16Axis.UCNavigator();
             this.gbLMask.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLMaskImage)).BeginInit();
             this.gbLWafer.SuspendLayout();
@@ -149,6 +153,8 @@ namespace NSAA_16Axis
             // gbLMask
             // 
             this.gbLMask.BackColor = System.Drawing.Color.AliceBlue;
+            this.gbLMask.Controls.Add(this.btLabelPatternLM);
+            this.gbLMask.Controls.Add(this.cbLMaskClassList);
             this.gbLMask.Controls.Add(this.btFindLMaskCenter);
             this.gbLMask.Controls.Add(this.ucLeftMaskNavigator);
             this.gbLMask.Controls.Add(this.btCreateLMaskPatternMask);
@@ -165,6 +171,43 @@ namespace NSAA_16Axis
             this.gbLMask.TabStop = false;
             this.gbLMask.Text = "Mask";
             // 
+            // btLabelPatternLM
+            // 
+            this.btLabelPatternLM.AutoSize = true;
+            this.btLabelPatternLM.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.btLabelPatternLM.Font = new System.Drawing.Font("Arial", 12F);
+            this.btLabelPatternLM.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btLabelPatternLM.Location = new System.Drawing.Point(32, 248);
+            this.btLabelPatternLM.Name = "btLabelPatternLM";
+            this.btLabelPatternLM.Size = new System.Drawing.Size(129, 33);
+            this.btLabelPatternLM.TabIndex = 143;
+            this.btLabelPatternLM.Text = "Label Image";
+            this.btLabelPatternLM.UseVisualStyleBackColor = false;
+            this.btLabelPatternLM.Visible = false;
+            // 
+            // cbLMaskClassList
+            // 
+            this.cbLMaskClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbLMaskClassList.FormattingEnabled = true;
+            this.cbLMaskClassList.Items.AddRange(new object[] {
+            "X1",
+            "X2",
+            "X3",
+            "X4",
+            "X5",
+            "X6",
+            "X7",
+            "X8",
+            "X9",
+            "X10",
+            "X11",
+            "X12"});
+            this.cbLMaskClassList.Location = new System.Drawing.Point(14, 203);
+            this.cbLMaskClassList.Name = "cbLMaskClassList";
+            this.cbLMaskClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbLMaskClassList.TabIndex = 143;
+            this.cbLMaskClassList.Visible = false;
+            // 
             // btFindLMaskCenter
             // 
             this.btFindLMaskCenter.BackColor = System.Drawing.SystemColors.InactiveCaption;
@@ -177,6 +220,15 @@ namespace NSAA_16Axis
             this.btFindLMaskCenter.Text = "FindCenter";
             this.btFindLMaskCenter.UseVisualStyleBackColor = false;
             this.btFindLMaskCenter.Click += new System.EventHandler(this.BtFindLMaskCenter_Click);
+            // 
+            // ucLeftMaskNavigator
+            // 
+            this.ucLeftMaskNavigator.AutoSize = true;
+            this.ucLeftMaskNavigator.Location = new System.Drawing.Point(32, 30);
+            this.ucLeftMaskNavigator.Name = "ucLeftMaskNavigator";
+            this.ucLeftMaskNavigator.Size = new System.Drawing.Size(107, 40);
+            this.ucLeftMaskNavigator.TabIndex = 55;
+            this.ucLeftMaskNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcLeftMaskNavigator_CommandPressed);
             // 
             // btCreateLMaskPatternMask
             // 
@@ -224,7 +276,8 @@ namespace NSAA_16Axis
             this.cbLMaskAlgorithm.FormattingEnabled = true;
             this.cbLMaskAlgorithm.Items.AddRange(new object[] {
             "Template",
-            "Edge"});
+            "Edge",
+            "AI Identify"});
             this.cbLMaskAlgorithm.Location = new System.Drawing.Point(66, 71);
             this.cbLMaskAlgorithm.Name = "cbLMaskAlgorithm";
             this.cbLMaskAlgorithm.Size = new System.Drawing.Size(100, 31);
@@ -312,6 +365,15 @@ namespace NSAA_16Axis
             this.btFindLWaferCenter.Text = "FindCenter";
             this.btFindLWaferCenter.UseVisualStyleBackColor = false;
             this.btFindLWaferCenter.Click += new System.EventHandler(this.BtFindLWaferCenter_Click);
+            // 
+            // ucLeftWaferNavigator
+            // 
+            this.ucLeftWaferNavigator.AutoSize = true;
+            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(30, 30);
+            this.ucLeftWaferNavigator.Name = "ucLeftWaferNavigator";
+            this.ucLeftWaferNavigator.Size = new System.Drawing.Size(107, 40);
+            this.ucLeftWaferNavigator.TabIndex = 54;
+            this.ucLeftWaferNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcLeftWaferNavigator_CommandPressed);
             // 
             // btCreateLWaferPatternMask
             // 
@@ -466,6 +528,15 @@ namespace NSAA_16Axis
             this.btFindRWaferCenter.UseVisualStyleBackColor = false;
             this.btFindRWaferCenter.Click += new System.EventHandler(this.BtFindRWaferCenter_Click);
             // 
+            // ucRightWaferNavigator
+            // 
+            this.ucRightWaferNavigator.AutoSize = true;
+            this.ucRightWaferNavigator.Location = new System.Drawing.Point(37, 31);
+            this.ucRightWaferNavigator.Name = "ucRightWaferNavigator";
+            this.ucRightWaferNavigator.Size = new System.Drawing.Size(107, 40);
+            this.ucRightWaferNavigator.TabIndex = 55;
+            this.ucRightWaferNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcRightWaferNavigator_CommandPressed);
+            // 
             // btCreateRWaferPatternMask
             // 
             this.btCreateRWaferPatternMask.BackColor = System.Drawing.SystemColors.InactiveCaption;
@@ -534,6 +605,8 @@ namespace NSAA_16Axis
             // gbRMask
             // 
             this.gbRMask.BackColor = System.Drawing.Color.AliceBlue;
+            this.gbRMask.Controls.Add(this.btLabelPatternRM);
+            this.gbRMask.Controls.Add(this.cbRMaskClassList);
             this.gbRMask.Controls.Add(this.btFindRMaskCenter);
             this.gbRMask.Controls.Add(this.ucRightMaskNavigator);
             this.gbRMask.Controls.Add(this.btCreateRMaskPatternMask);
@@ -551,6 +624,43 @@ namespace NSAA_16Axis
             this.gbRMask.TabStop = false;
             this.gbRMask.Text = "Mask";
             // 
+            // btLabelPatternRM
+            // 
+            this.btLabelPatternRM.AutoSize = true;
+            this.btLabelPatternRM.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.btLabelPatternRM.Font = new System.Drawing.Font("Arial", 12F);
+            this.btLabelPatternRM.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btLabelPatternRM.Location = new System.Drawing.Point(26, 248);
+            this.btLabelPatternRM.Name = "btLabelPatternRM";
+            this.btLabelPatternRM.Size = new System.Drawing.Size(129, 33);
+            this.btLabelPatternRM.TabIndex = 143;
+            this.btLabelPatternRM.Text = "Label Image";
+            this.btLabelPatternRM.UseVisualStyleBackColor = false;
+            this.btLabelPatternRM.Visible = false;
+            // 
+            // cbRMaskClassList
+            // 
+            this.cbRMaskClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbRMaskClassList.FormattingEnabled = true;
+            this.cbRMaskClassList.Items.AddRange(new object[] {
+            "X1",
+            "X2",
+            "X3",
+            "X4",
+            "X5",
+            "X6",
+            "X7",
+            "X8",
+            "X9",
+            "X10",
+            "X11",
+            "X12"});
+            this.cbRMaskClassList.Location = new System.Drawing.Point(13, 205);
+            this.cbRMaskClassList.Name = "cbRMaskClassList";
+            this.cbRMaskClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbRMaskClassList.TabIndex = 144;
+            this.cbRMaskClassList.Visible = false;
+            // 
             // btFindRMaskCenter
             // 
             this.btFindRMaskCenter.BackColor = System.Drawing.SystemColors.InactiveCaption;
@@ -563,6 +673,15 @@ namespace NSAA_16Axis
             this.btFindRMaskCenter.Text = "FindCenter";
             this.btFindRMaskCenter.UseVisualStyleBackColor = false;
             this.btFindRMaskCenter.Click += new System.EventHandler(this.BtFindRMaskCenter_Click);
+            // 
+            // ucRightMaskNavigator
+            // 
+            this.ucRightMaskNavigator.AutoSize = true;
+            this.ucRightMaskNavigator.Location = new System.Drawing.Point(36, 30);
+            this.ucRightMaskNavigator.Name = "ucRightMaskNavigator";
+            this.ucRightMaskNavigator.Size = new System.Drawing.Size(107, 40);
+            this.ucRightMaskNavigator.TabIndex = 55;
+            this.ucRightMaskNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcRightMaskNavigator_CommandPressed);
             // 
             // btCreateRMaskPatternMask
             // 
@@ -610,7 +729,8 @@ namespace NSAA_16Axis
             this.cbRMaskAlgorithm.FormattingEnabled = true;
             this.cbRMaskAlgorithm.Items.AddRange(new object[] {
             "Template",
-            "Edge"});
+            "Edge",
+            "AI Identify"});
             this.cbRMaskAlgorithm.Location = new System.Drawing.Point(66, 75);
             this.cbRMaskAlgorithm.Name = "cbRMaskAlgorithm";
             this.cbRMaskAlgorithm.Size = new System.Drawing.Size(100, 31);
@@ -1417,42 +1537,6 @@ namespace NSAA_16Axis
             // 
             this.OpenFileDialogReadT.FileName = "openFileDialogT1";
             // 
-            // ucRightMaskNavigator
-            // 
-            this.ucRightMaskNavigator.AutoSize = true;
-            this.ucRightMaskNavigator.Location = new System.Drawing.Point(36, 30);
-            this.ucRightMaskNavigator.Name = "ucRightMaskNavigator";
-            this.ucRightMaskNavigator.Size = new System.Drawing.Size(107, 40);
-            this.ucRightMaskNavigator.TabIndex = 55;
-            this.ucRightMaskNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcRightMaskNavigator_CommandPressed);
-            // 
-            // ucRightWaferNavigator
-            // 
-            this.ucRightWaferNavigator.AutoSize = true;
-            this.ucRightWaferNavigator.Location = new System.Drawing.Point(37, 31);
-            this.ucRightWaferNavigator.Name = "ucRightWaferNavigator";
-            this.ucRightWaferNavigator.Size = new System.Drawing.Size(107, 40);
-            this.ucRightWaferNavigator.TabIndex = 55;
-            this.ucRightWaferNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcRightWaferNavigator_CommandPressed);
-            // 
-            // ucLeftWaferNavigator
-            // 
-            this.ucLeftWaferNavigator.AutoSize = true;
-            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(30, 30);
-            this.ucLeftWaferNavigator.Name = "ucLeftWaferNavigator";
-            this.ucLeftWaferNavigator.Size = new System.Drawing.Size(107, 40);
-            this.ucLeftWaferNavigator.TabIndex = 54;
-            this.ucLeftWaferNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcLeftWaferNavigator_CommandPressed);
-            // 
-            // ucLeftMaskNavigator
-            // 
-            this.ucLeftMaskNavigator.AutoSize = true;
-            this.ucLeftMaskNavigator.Location = new System.Drawing.Point(32, 30);
-            this.ucLeftMaskNavigator.Name = "ucLeftMaskNavigator";
-            this.ucLeftMaskNavigator.Size = new System.Drawing.Size(107, 40);
-            this.ucLeftMaskNavigator.TabIndex = 55;
-            this.ucLeftMaskNavigator.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.UcLeftMaskNavigator_CommandPressed);
-            // 
             // CMLearnPatternUp
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1636,5 +1720,9 @@ namespace NSAA_16Axis
         private System.Windows.Forms.Button btTLRead;
         private System.Windows.Forms.Button btTRRead;
         private System.Windows.Forms.OpenFileDialog OpenFileDialogReadT;
+        private System.Windows.Forms.ComboBox cbLMaskClassList;
+        private System.Windows.Forms.ComboBox cbRMaskClassList;
+        private System.Windows.Forms.Button btLabelPatternLM;
+        private System.Windows.Forms.Button btLabelPatternRM;
     }
 }

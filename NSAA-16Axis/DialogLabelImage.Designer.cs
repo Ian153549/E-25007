@@ -38,6 +38,10 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.ucLeftWaferNavigator = new NSAA_16Axis.UCNavigator();
             this.btnClear = new System.Windows.Forms.Button();
+            this.lb = new System.Windows.Forms.Label();
+            this.tbNewLabel = new System.Windows.Forms.TextBox();
+            this.btAdd = new System.Windows.Forms.Button();
+            this.btDelete = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -57,7 +61,7 @@
             // comboBoxClass
             // 
             this.comboBoxClass.FormattingEnabled = true;
-            this.comboBoxClass.Location = new System.Drawing.Point(1339, 114);
+            this.comboBoxClass.Location = new System.Drawing.Point(1339, 292);
             this.comboBoxClass.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxClass.Name = "comboBoxClass";
             this.comboBoxClass.Size = new System.Drawing.Size(139, 23);
@@ -65,7 +69,7 @@
             // 
             // btnNext
             // 
-            this.btnNext.Location = new System.Drawing.Point(1339, 264);
+            this.btnNext.Location = new System.Drawing.Point(1337, 412);
             this.btnNext.Margin = new System.Windows.Forms.Padding(4);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(139, 56);
@@ -76,7 +80,7 @@
             // 
             // btnPrev
             // 
-            this.btnPrev.Location = new System.Drawing.Point(1339, 186);
+            this.btnPrev.Location = new System.Drawing.Point(1337, 334);
             this.btnPrev.Margin = new System.Windows.Forms.Padding(4);
             this.btnPrev.Name = "btnPrev";
             this.btnPrev.Size = new System.Drawing.Size(139, 56);
@@ -87,7 +91,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(1339, 412);
+            this.btnSave.Location = new System.Drawing.Point(1337, 560);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(139, 56);
@@ -110,13 +114,14 @@
             // 
             // btnOrganizeAndYaml
             // 
-            this.btnOrganizeAndYaml.Location = new System.Drawing.Point(1339, 484);
+            this.btnOrganizeAndYaml.Location = new System.Drawing.Point(1337, 632);
             this.btnOrganizeAndYaml.Margin = new System.Windows.Forms.Padding(4);
             this.btnOrganizeAndYaml.Name = "btnOrganizeAndYaml";
             this.btnOrganizeAndYaml.Size = new System.Drawing.Size(139, 56);
             this.btnOrganizeAndYaml.TabIndex = 56;
             this.btnOrganizeAndYaml.Text = "OrganizeAndYaml";
             this.btnOrganizeAndYaml.UseVisualStyleBackColor = true;
+            this.btnOrganizeAndYaml.Click += new System.EventHandler(this.btnOrganizeAndYaml_Click);
             // 
             // pictureBox1
             // 
@@ -134,7 +139,7 @@
             // ucLeftWaferNavigator
             // 
             this.ucLeftWaferNavigator.AutoSize = true;
-            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(1337, 559);
+            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(1335, 707);
             this.ucLeftWaferNavigator.Margin = new System.Windows.Forms.Padding(4);
             this.ucLeftWaferNavigator.Name = "ucLeftWaferNavigator";
             this.ucLeftWaferNavigator.Size = new System.Drawing.Size(143, 50);
@@ -142,7 +147,7 @@
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(1339, 338);
+            this.btnClear.Location = new System.Drawing.Point(1337, 486);
             this.btnClear.Margin = new System.Windows.Forms.Padding(4);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(139, 56);
@@ -151,11 +156,51 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
+            // lb
+            // 
+            this.lb.AutoSize = true;
+            this.lb.Location = new System.Drawing.Point(1344, 120);
+            this.lb.Name = "lb";
+            this.lb.Size = new System.Drawing.Size(69, 15);
+            this.lb.TabIndex = 64;
+            this.lb.Text = "New Label";
+            // 
+            // tbNewLabel
+            // 
+            this.tbNewLabel.Location = new System.Drawing.Point(1339, 149);
+            this.tbNewLabel.Name = "tbNewLabel";
+            this.tbNewLabel.Size = new System.Drawing.Size(100, 25);
+            this.tbNewLabel.TabIndex = 65;
+            // 
+            // btAdd
+            // 
+            this.btAdd.Location = new System.Drawing.Point(1445, 144);
+            this.btAdd.Name = "btAdd";
+            this.btAdd.Size = new System.Drawing.Size(95, 31);
+            this.btAdd.TabIndex = 66;
+            this.btAdd.Text = "Add";
+            this.btAdd.UseVisualStyleBackColor = true;
+            this.btAdd.Click += new System.EventHandler(this.btAdd_Click);
+            // 
+            // btDelete
+            // 
+            this.btDelete.Location = new System.Drawing.Point(1447, 201);
+            this.btDelete.Name = "btDelete";
+            this.btDelete.Size = new System.Drawing.Size(93, 38);
+            this.btDelete.TabIndex = 67;
+            this.btDelete.Text = "delete";
+            this.btDelete.UseVisualStyleBackColor = true;
+            this.btDelete.Click += new System.EventHandler(this.btDelete_Click);
+            // 
             // DialogLabelImage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1560, 929);
+            this.Controls.Add(this.btDelete);
+            this.Controls.Add(this.btAdd);
+            this.Controls.Add(this.tbNewLabel);
+            this.Controls.Add(this.lb);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.comboBoxClass);
@@ -188,5 +233,9 @@
         private System.Windows.Forms.Button btnOrganizeAndYaml;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Label lb;
+        private System.Windows.Forms.TextBox tbNewLabel;
+        private System.Windows.Forms.Button btAdd;
+        private System.Windows.Forms.Button btDelete;
     }
 }

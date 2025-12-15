@@ -1733,7 +1733,7 @@ namespace NSAA_16Axis
 
             return true;
         }
-
+        
         public void LaunchDevice()
         {
             try
@@ -2015,7 +2015,7 @@ namespace NSAA_16Axis
                     {
                         if (GV.AppSettingParm.DebugMode)
                         {
-                            writeStatus("GV.NowMagi = " + GV.NowMagnification.ToString());
+                            //writeStatus("GV.NowMagi = " + GV.NowMagnification.ToString());
                         }
                         if (GV.NowMagnification == 1)
                         {
@@ -2562,6 +2562,7 @@ namespace NSAA_16Axis
                 {
                     ChangeLensMagnification(AlignC.AlignHighMagnification);
                     MoveCamera(AlignC.AlignHighMagnification);
+                    Thread.Sleep(500);
                 });
                 await t3;
                 iZoomAdj = 0;
@@ -3338,11 +3339,11 @@ namespace NSAA_16Axis
 
         private int MoveTableToMatchPatternAfterContactShift()
         {
-            if (!GV.AppSettingParm.EnableContactShiftCompensation)
+            if (GV.AppSettingParm.EnableContactShiftCompensation)
             {
 
-                //GV.Plc.TellPlcToEnterContactUnContactMode();
-                GV.Plc.Contact(1);
+                GV.Plc.TellPlcToEnterContactUnContactMode();
+                //GV.Plc.Contact(1);
                 //GV.Plc.Exposure(1);
                 iExposure = 1;
                 return 0;
@@ -3649,6 +3650,7 @@ namespace NSAA_16Axis
                     iStartAlign = 0;
                     return;
                 }
+                Thread.Sleep(500);
                 pmps = GetAllMatchPostion(GV.LeftUpCam.Grab(), GV.RightUpCam.Grab(), alignMagnification);
 
                 if (pmps.LMaskMp.Score < AlignC.MaskSocre || pmps.RMaskMp.Score < AlignC.MaskSocre)
@@ -3691,6 +3693,7 @@ namespace NSAA_16Axis
             writeStatus(string.Format(GV.Dlang.strMessageRShiftum, beforeMoveRShiftXum.ToString("F2"), beforeMoveRShiftYum.ToString("F2")));
 
             int[] motorSteps = CalcuteMaskWaferShiftAndReturnMotorSteps(pmps.LMaskMp, pmps.LWaferMp, pmps.RMaskMp, pmps.RWaferMp, pmps.PatternCenterDistance);
+            Thread.Sleep(500);  
             iAlignCode = GV.Plc.ReadData16(GV.Plc.iAlign, 4);
             if (iAlignCode[1] == 0)
             {
@@ -3756,6 +3759,7 @@ namespace NSAA_16Axis
             else
             {
                 pmps = GetAllMatchPostion(GV.LeftUpCam.Grab(), GV.RightUpCam.Grab(), "high");
+                Thread.Sleep(800);
             }
 
             PointF center = GV.UpCenter;
@@ -3773,9 +3777,9 @@ namespace NSAA_16Axis
             }
 
             GV.Plc.AlignCameraMove(0, -lOffsetXSteps, rOffsetXSteps, -lOffsetYSteps, -rOffsetYSteps);
-
+            Thread.Sleep(800);
             GV.Plc.GetLocation();
-
+            Thread.Sleep(200);
             AlignC.PatternCenterDistanceUm = GV.ZoomLensInfo.LRUpCenterDistance
                 - GV.NowLocation[GV.Plc.iiDUpLeftX] / 10 - GV.NowLocation[GV.Plc.iiDUpRightX] / 10;
 
