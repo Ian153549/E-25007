@@ -3545,6 +3545,23 @@ namespace NSAA_16Axis
                 iHighLow = 0;
             }
             GM.SaveRecipeTemplate(_recipe, iHighLow);
+            try
+            {
+                string trainBasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train");
+                string recipePath = Path.Combine(trainBasePath, $"{EditRecipe}");
+                if (!Directory.Exists(recipePath))
+                {
+                    Directory.CreateDirectory(recipePath);
+                }
+                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                string leftImagePath = Path.Combine(recipePath, $"Left_{timestamp}.bmp");
+                string rightImagePath = Path.Combine(recipePath, $"Right_{timestamp}.bmp");
+                Cv2.ImWrite(leftImagePath, GV.LeftUpCam.Grab());
+                Cv2.ImWrite(rightImagePath, GV.RightUpCam.Grab());
+            }
+            catch
+            {
+            }
             //MessageBox.Show(GM.SaveCaptureImage(GV.LeftUpCam.Grab(), GV.RightUpCam.Grab()) + " " + GV.Dlang.strSave);
         }
 

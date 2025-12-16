@@ -36,12 +36,13 @@
             this.btnOpenFolder = new System.Windows.Forms.Button();
             this.btnOrganizeAndYaml = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.ucLeftWaferNavigator = new NSAA_16Axis.UCNavigator();
             this.btnClear = new System.Windows.Forms.Button();
             this.lb = new System.Windows.Forms.Label();
             this.tbNewLabel = new System.Windows.Forms.TextBox();
             this.btAdd = new System.Windows.Forms.Button();
             this.btDelete = new System.Windows.Forms.Button();
+            this.btTrain = new System.Windows.Forms.Button();
+            this.ucLeftWaferNavigator = new NSAA_16Axis.UCNavigator();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -136,15 +137,6 @@
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
-            // ucLeftWaferNavigator
-            // 
-            this.ucLeftWaferNavigator.AutoSize = true;
-            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(1335, 707);
-            this.ucLeftWaferNavigator.Margin = new System.Windows.Forms.Padding(4);
-            this.ucLeftWaferNavigator.Name = "ucLeftWaferNavigator";
-            this.ucLeftWaferNavigator.Size = new System.Drawing.Size(143, 50);
-            this.ucLeftWaferNavigator.TabIndex = 55;
-            // 
             // btnClear
             // 
             this.btnClear.Location = new System.Drawing.Point(1337, 486);
@@ -192,11 +184,32 @@
             this.btDelete.UseVisualStyleBackColor = true;
             this.btDelete.Click += new System.EventHandler(this.btDelete_Click);
             // 
+            // btTrain
+            // 
+            this.btTrain.Location = new System.Drawing.Point(1347, 769);
+            this.btTrain.Name = "btTrain";
+            this.btTrain.Size = new System.Drawing.Size(130, 49);
+            this.btTrain.TabIndex = 68;
+            this.btTrain.Text = "Train Model";
+            this.btTrain.UseVisualStyleBackColor = true;
+            this.btTrain.Click += new System.EventHandler(this.btTrain_Click);
+            // 
+            // ucLeftWaferNavigator
+            // 
+            this.ucLeftWaferNavigator.AutoSize = true;
+            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(1335, 707);
+            this.ucLeftWaferNavigator.Margin = new System.Windows.Forms.Padding(4);
+            this.ucLeftWaferNavigator.Name = "ucLeftWaferNavigator";
+            this.ucLeftWaferNavigator.Size = new System.Drawing.Size(143, 50);
+            this.ucLeftWaferNavigator.TabIndex = 55;
+            this.ucLeftWaferNavigator.Visible = false;
+            // 
             // DialogLabelImage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1560, 929);
+            this.Controls.Add(this.btTrain);
             this.Controls.Add(this.btDelete);
             this.Controls.Add(this.btAdd);
             this.Controls.Add(this.tbNewLabel);
@@ -237,5 +250,6 @@
         private System.Windows.Forms.TextBox tbNewLabel;
         private System.Windows.Forms.Button btAdd;
         private System.Windows.Forms.Button btDelete;
+        private System.Windows.Forms.Button btTrain;
     }
 }

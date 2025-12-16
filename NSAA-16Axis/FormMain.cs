@@ -1,5 +1,6 @@
 ﻿using MRLibrary;
 using OpenCvSharp;
+using OpenCvSharp.Aruco;
 using Sentech.StApiDotNET;
 using System;
 using System.Diagnostics;
@@ -870,6 +871,7 @@ namespace NSAA_16Axis
 
                 string result = GM.SaveCaptureImage(leftImage, rightImage);
                 MessageBox.Show(result + GV.Dlang.strSave, "擷取影像", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
             }
             catch (Exception ex)
             {
@@ -1100,7 +1102,7 @@ namespace NSAA_16Axis
                 GV.OnAlign = false;
                 if (GV.drawAlignMatch == null)
                 {
-                    GV.drawAlignMatch = new Thread(DrawAlginMatchPosition);
+                    GV.drawAlignMatch = new Thread(DrawAlignMatchPosition);
                     GV.drawAlignMatch.Start();
                 }
             }
@@ -1804,7 +1806,7 @@ namespace NSAA_16Axis
 
                     if (GV.drawAlignMatch == null)
                     {
-                        GV.drawAlignMatch = new Thread(DrawAlginMatchPosition);
+                        GV.drawAlignMatch = new Thread(DrawAlignMatchPosition);
                         GV.drawAlignMatch.Start();
                     }
                     /*
@@ -2004,7 +2006,7 @@ namespace NSAA_16Axis
             }
         }
 
-        public void DrawAlginMatchPosition()
+        public void DrawAlignMatchPosition()
         {
             iAlignMatcherRun = 1;
             //bool bRet = false;
@@ -2026,10 +2028,10 @@ namespace NSAA_16Axis
                         }
                         if (GV.NowMagnification == 1)
                         {
-                            GV.matcherLLM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lMaskMp, AlignC.LLMaskAlgorithm);
-                            GV.matcherLLW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lWaferMp, AlignC.LLWaferAlgorithm);
-                            GV.matcherRLM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rMaskMp, AlignC.RLMaskAlgorithm);
-                            GV.matcherRLW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rWaferMp, AlignC.RLWaferAlgorithm);
+                            GV.matcherLLM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lMaskMp, AlignC.LLMaskAlgorithm,AlignC.LLMaskAIClassId);
+                            GV.matcherLLW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lWaferMp, AlignC.LLWaferAlgorithm,AlignC.LLWaferAIClassId);
+                            GV.matcherRLM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rMaskMp, AlignC.RLMaskAlgorithm,AlignC.RLMaskAIClassId);
+                            GV.matcherRLW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rWaferMp, AlignC.RLWaferAlgorithm,AlignC.RLWaferAIClassId);
 
                             skLeftAlign.WaferMp.X = lWaferMp.X;
                             skLeftAlign.WaferMp.Y = lWaferMp.Y;
@@ -2059,8 +2061,8 @@ namespace NSAA_16Axis
                             }
                             else
                             {
-                                GV.matcherLHM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lMaskMp, AlignC.LHMaskAlgorithm);
-                                GV.matcherRHM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rMaskMp, AlignC.RHMaskAlgorithm);
+                                GV.matcherLHM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lMaskMp, AlignC.LHMaskAlgorithm,AlignC.LLMaskAIClassId);
+                                GV.matcherRHM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rMaskMp, AlignC.RHMaskAlgorithm,AlignC.RLMaskAIClassId);
 
                                 skLeftAlign.MaskMp.X = lMaskMp.X;
                                 skLeftAlign.MaskMp.Y = lMaskMp.Y;
@@ -2070,8 +2072,8 @@ namespace NSAA_16Axis
                                 skRightAlign.MaskMp.Score = rMaskMp.Score;
 
                             }
-                            GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lWaferMp, AlignC.LHWaferAlgorithm);
-                            GV.matcherRHW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rWaferMp, AlignC.RHWaferAlgorithm);
+                            GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lWaferMp, AlignC.LHWaferAlgorithm,AlignC.LHWaferAIClassId);
+                            GV.matcherRHW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rWaferMp, AlignC.RHWaferAlgorithm,AlignC.RHWaferAIClassId);
 
                             skLeftAlign.WaferMp.X = lWaferMp.X;
                             skLeftAlign.WaferMp.Y = lWaferMp.Y;
@@ -2085,12 +2087,12 @@ namespace NSAA_16Axis
                     }
                     else if (GV.skView == 1)
                     {
-                        if (GV.NowWaferMask == 1)
+                        if (GV.NowWaferMask == 1)//Mask Only
                         {
                             //GV.matcherLLW.MatMatchWithAlgo(0,GV.LeftBackCam.Grab(), ref lMaskMp,AlignC.LLWaferAlgorithm);
                             //GV.matcherRLW.MatMatchWithAlgo(0,GV.RightBackCam.Grab(), ref rMaskMp,AlignC.RLWaferAlgorithm);
-                            GV.matcherLLM.MatMatchWithAlgo(0, GV.LeftBackCam.Grab(), ref lMaskMp, AlignC.LLMaskAlgorithm);
-                            GV.matcherRLM.MatMatchWithAlgo(0, GV.RightBackCam.Grab(), ref rMaskMp, AlignC.RLMaskAlgorithm);
+                            GV.matcherLLM.MatMatchWithAlgo(0, GV.LeftBackCam.Grab(), ref lMaskMp, AlignC.LLMaskAlgorithm,AlignC.LLMaskAIClassId);
+                            GV.matcherRLM.MatMatchWithAlgo(0, GV.RightBackCam.Grab(), ref rMaskMp, AlignC.RLMaskAlgorithm,AlignC.RLMaskAIClassId);
                             skLeftAlign.MaskMp.X = lMaskMp.X;
                             skLeftAlign.MaskMp.Y = lMaskMp.Y;
                             skLeftAlign.MaskMp.Score = lMaskMp.Score;
@@ -2099,16 +2101,16 @@ namespace NSAA_16Axis
                             skRightAlign.MaskMp.Score = rMaskMp.Score;
 
                         }
-                        else if (GV.NowWaferMask == 2)
+                        else if (GV.NowWaferMask == 2)//Mask+Wafer
                         {
                             //GV.matcherLLW.MatMatchWithAlgo(0,LeftMask, ref lMaskMp,AlignC.LLWaferAlgorithm);
                             //GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftBackCam.Grab(), ref lWaferMp,AlignC.LHWaferAlgorithm);
                             //GV.matcherRLW.MatMatchWithAlgo(0,RightMask, ref rMaskMp, AlignC.RLWaferAlgorithm);
                             //GV.matcherRHW.MatMatchWithAlgo(0,GV.RightBackCam.Grab(), ref rWaferMp, AlignC.RHWaferAlgorithm);
-                            GV.matcherLLM.MatMatchWithAlgo(0, LeftMask, ref lMaskMp, AlignC.LLMaskAlgorithm);
-                            GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftBackCam.Grab(), ref lWaferMp, AlignC.LHWaferAlgorithm);
-                            GV.matcherRLM.MatMatchWithAlgo(0, RightMask, ref rMaskMp, AlignC.RLMaskAlgorithm);
-                            GV.matcherRHW.MatMatchWithAlgo(0, GV.RightBackCam.Grab(), ref rWaferMp, AlignC.RHWaferAlgorithm);
+                            GV.matcherLLM.MatMatchWithAlgo(0, LeftMask, ref lMaskMp, AlignC.LLMaskAlgorithm,AlignC.LLMaskAIClassId);
+                            GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftBackCam.Grab(), ref lWaferMp, AlignC.LHWaferAlgorithm,AlignC.LHWaferAIClassId);
+                            GV.matcherRLM.MatMatchWithAlgo(0, RightMask, ref rMaskMp, AlignC.RLMaskAlgorithm,AlignC.RLMaskAIClassId);
+                            GV.matcherRHW.MatMatchWithAlgo(0, GV.RightBackCam.Grab(), ref rWaferMp, AlignC.RHWaferAlgorithm,AlignC.RHWaferAIClassId);
 
                             skLeftAlign.WaferMp.X = lWaferMp.X;
                             skLeftAlign.WaferMp.Y = lWaferMp.Y;
@@ -2124,13 +2126,13 @@ namespace NSAA_16Axis
                             skRightAlign.MaskMp.Score = rMaskMp.Score;
 
                         }
-                        else if (GV.NowWaferMask == 3)
+                        else if (GV.NowWaferMask == 3)// use BLivePmps for mask
                         {
                             skLeftAlign.MaskMp.X = BLivePmps.LMaskMp.X;
                             skLeftAlign.MaskMp.Y = BLivePmps.LMaskMp.Y;
                             skLeftAlign.MaskMp.Score = BLivePmps.LMaskMp.Score;
 
-                            GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftBackCam.Grab(), ref lWaferMp, AlignC.LHWaferAlgorithm);
+                            GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftBackCam.Grab(), ref lWaferMp, AlignC.LHWaferAlgorithm,AlignC.LHWaferAIClassId);
                             //GV.matcherLHW.MatMatch(GV.LeftBackCam.Grab(), ref skLeftAlign.WaferMp);
                             skLeftAlign.WaferMp.X = lWaferMp.X;
                             skLeftAlign.WaferMp.Y = lWaferMp.Y;
@@ -2142,7 +2144,7 @@ namespace NSAA_16Axis
                             skRightAlign.MaskMp.Y = BLivePmps.RMaskMp.Y;
                             skRightAlign.MaskMp.Score = BLivePmps.RMaskMp.Score;
 
-                            GV.matcherRHW.MatMatchWithAlgo(0, GV.RightBackCam.Grab(), ref rWaferMp, AlignC.RHWaferAlgorithm);
+                            GV.matcherRHW.MatMatchWithAlgo(0, GV.RightBackCam.Grab(), ref rWaferMp, AlignC.RHWaferAlgorithm,AlignC.RHWaferAIClassId);
                             //GV.matcherRHW.MatMatch(GV.RightBackCam.Grab(), ref skRightAlign.WaferMp);
                             skRightAlign.WaferMp.X = rWaferMp.X;
                             skRightAlign.WaferMp.Y = rWaferMp.Y;

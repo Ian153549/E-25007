@@ -28,11 +28,13 @@ namespace NSAA_16Axis
         private Bitmap initialImage;
         private bool isInitial = false;
         private int nowMagni;
+        private int currentRecipeNumber;
         private Dictionary<string, Int16> labelClassList = new Dictionary<string, Int16>();
 
         public DialogLabelImage()
         {
-            InitializeComponent();            
+            InitializeComponent();
+            currentRecipeNumber = GV.NowRecipeNumber;
         }
         public DialogLabelImage(Bitmap initialImage, int nowMagnification)
         {
@@ -40,16 +42,30 @@ namespace NSAA_16Axis
             this.initialImage = initialImage;
             isInitial = true;
             nowMagni = nowMagnification;
+            currentRecipeNumber = GV.NowRecipeNumber;
         }
+
+        public DialogLabelImage(int recipeNumber)
+        {
+            InitializeComponent();
+            currentRecipeNumber = recipeNumber;
+        }
+
+        
         private void btnOpenFolder_Click(object sender, EventArgs e)
         {
 
         }        
         private void DialogLabelImage_Load(object sender, EventArgs e)
-        {            
-            imageDir = @"C:\AIData\LabeledImage";
+        {
+            string trainBasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train");
+            imageDir = Path.Combine(trainBasePath, $"{currentRecipeNumber}");
             try
-            {                
+            {  
+                if(!Directory.Exists(imageDir))
+                {
+                    Directory.CreateDirectory(imageDir);
+                }
                 imageFiles = Directory.GetFiles(imageDir, "*.*", SearchOption.AllDirectories)
                     .Where(f =>
                     {
@@ -777,6 +793,11 @@ names: [{names}]
                 }
             }
             return null;
+        }
+
+        private void btTrain_Click(object sender, EventArgs e)
+        {
+
         }
 
         void DrawYoloBox(Graphics graphics, YoloBox box, Color color)

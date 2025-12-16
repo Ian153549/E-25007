@@ -236,27 +236,129 @@ namespace NSAA_16Axis
                     {
                         Thread.Sleep(2000);
                         continue;
-                    }
+                    }   
                     Mat leftImageSrc = GV.LeftBackCam.IsFileImage ? LViewMat : GV.LeftBackCam.Grab();
                     Mat rightImageSrc = GV.RightBackCam.IsFileImage ? RViewMat : GV.RightBackCam.Grab();
                     using (Mat leftImage = leftImageSrc?.Clone())
                     using (Mat rightImage = rightImageSrc?.Clone())
                     {
+                        int lWaferClassId = _AlignC.LHWaferAIClassId;
+                        int rWaferClassId = _AlignC.RHWaferAIClassId;
+                        int lMaskClassId = _AlignC.LLMaskAIClassId;
+                        int rMaskClassId = _AlignC.RLMaskAIClassId;
                         if (rbLBackMask.Checked)
                         {
+                            
+                            Invoke((MethodInvoker)delegate ()
+                            {
+                                if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLBackWaferClassList.SelectedIndex >= 0)
+                                {
+                                    lWaferClassId = cbLBackWaferClassList.SelectedIndex;
+                                }
+                                if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRBackWaferClassList.SelectedIndex >= 0)
+                                {
+                                    rWaferClassId = cbRBackWaferClassList.SelectedIndex;
+                                }
+                                if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLBackMaskClassList.SelectedIndex >= 0)
+                                {
+                                    lMaskClassId = cbLBackMaskClassList.SelectedIndex;
+                                }
+                                if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRBackMaskClassList.SelectedIndex >= 0)
+                                {
+                                    rMaskClassId = cbRBackMaskClassList.SelectedIndex;
+                                }
+                            });
                             //GV.matcherLLW.MatMatchWithAlgo(0, leftImage, ref lMaskMp, _AlignC.LLWaferAlgorithm);
                             //GV.matcherRLW.MatMatchWithAlgo(0, rightImage, ref rMaskMp, _AlignC.RLWaferAlgorithm);
-                            GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm);
-                            GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm);
-                            GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm);
-                            GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm);
+                            if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm, lMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm);
+                            }
+
+                            if(_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm,rMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm);
+                            }
+
+                            if(_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm,lWaferClassId);
+                            }
+                            else
+                            {
+                                GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm);
+                            }
+
+                            if(_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm,rWaferClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm);
+                            } 
                         }
-                        else
+                        else if(rbLWafer.Checked)
                         {
-                            GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm);
-                            GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm);
-                            GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm);
-                            GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm);
+                            Invoke((MethodInvoker)delegate ()
+                            {
+                                if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLBackWaferClassList.SelectedIndex >= 0)
+                                {
+                                    lWaferClassId = cbLBackWaferClassList.SelectedIndex;
+                                }
+                                if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRBackWaferClassList.SelectedIndex >= 0)
+                                {
+                                    rWaferClassId = cbRBackWaferClassList.SelectedIndex;
+                                }
+                                if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLBackMaskClassList.SelectedIndex >= 0)
+                                {
+                                    lMaskClassId = cbLBackMaskClassList.SelectedIndex;
+                                }
+                                if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRBackMaskClassList.SelectedIndex >= 0)
+                                {
+                                    rMaskClassId = cbRBackMaskClassList.SelectedIndex;
+                                }
+                            });
+                            if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm,lMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm);
+                            }
+                            if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm,rMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm);
+                            }
+                            if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm,lWaferClassId);
+                            }
+                            else
+                            {
+                                GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm);
+                            }
+                            if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm,rWaferClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm);
+                            }
                         }
                         BLivePmps.LMaskMp = lMaskMp;
                         BLivePmps.LWaferMp = lWaferMp;
@@ -4750,6 +4852,23 @@ namespace NSAA_16Axis
             if (MessageBox.Show(GM.SaveCaptureImage(GV.LeftBackCam.Grab(), GV.RightBackCam.Grab()) + " " + GV.Dlang.strSave, GV.Dlang.strSave + "Pattern too ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                 return;
             GM.SaveRecipeTemplate(_recipe, 2);
+            try
+            {
+                string trainBasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train");
+                string recipePath = Path.Combine(trainBasePath, $"{EditRecipe}");
+                if (!Directory.Exists(recipePath))
+                {
+                    Directory.CreateDirectory(recipePath);
+                }
+                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                string leftImagePath = Path.Combine(recipePath, $"Left_{timestamp}.bmp");
+                string rightImagePath = Path.Combine(recipePath, $"Right_{timestamp}.bmp");
+                Cv2.ImWrite(leftImagePath, GV.LeftUpCam.Grab());
+                Cv2.ImWrite(rightImagePath, GV.RightUpCam.Grab());
+            }
+            catch
+            {
+            }
         }
 
         private void BtSave_Click(object sender, EventArgs e)
