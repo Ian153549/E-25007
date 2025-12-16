@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -76,16 +77,8 @@ namespace NSAA_16Axis
                     .ToList();
                 currentIndex = 0;
 
-                labelClassList = AIClassList.LoadLabelClassNameFromJson();
-                if (labelClassList.Count == 0)
-                {
-                    Dictionary<string, Int16> inferenceClassList = GV.AIClassList.GetClassList();
-                    foreach(var className in inferenceClassList)
-                    {
-                        labelClassList.Add(className.Key, className.Value);
-                    }
-                    AIClassList.SaveLabelClassNameToJson(labelClassList);
-                }
+                labelClassList = AIClassList.LoadLabelClassNameFromJson(currentRecipeNumber);
+                
                 // 載入類別列表
                 comboBoxClass.Items.Clear();
                 foreach (var className in labelClassList.OrderBy(kvp=>kvp.Value))
@@ -97,45 +90,34 @@ namespace NSAA_16Axis
                 {
                     comboBoxClass.SelectedIndex = 0;
                 }
-                   
-                // 設定語言
-                if (GV.AppSettingParm.Language != "default")
+                this.Text = $"Recipe{currentRecipeNumber} - Path:{imageDir} ";
+                if (imageFiles.Count > 0)
                 {
-                    this.Text = GV.Dlang.strImageLabel;
-                }
-                if (isInitial)
-                {
+                    currentIndex = 0;
+                    LoadCurrentImage();
 
-                    //string fileName = $"labeled_{DateTime.Now:yyyyMMdd_HHmmss}_X{nowMagni}.bmp";
-                    //string imgPath = Path.Combine(imageDir, fileName);
-
-                    //// 儲存圖片
-                    //initialImage.Save(imgPath);
-                    //imageFiles.Add(imgPath);
-                    //imageFiles = imageFiles.OrderBy(f => f).ToList();
-                    //currentIndex = imageFiles.IndexOf(imgPath);
-
-                    //// 顯示圖片
-                    //pictureBox1.Image = new Bitmap(imgPath);
-                    //boxes.Clear();
-                    //pictureBox1.Invalidate();
-
-                    //// 釋放 initialImage
-                    //if (initialImage != null)
-                    //{
-                    //    initialImage.Dispose();
-                    //    initialImage = null;
-                    //}
-                    //isInitial = false;
-                    pictureBox1.Image = initialImage;
-                    boxes.Clear();
-                    pictureBox1.Invalidate();
-                    currentIndex = imageFiles.Count;
+                    // ✅ 如果有 initialImage，釋放它（不再使用）
+                    if (initialImage != null)
+                    {
+                        initialImage.Dispose();
+                        initialImage = null;
+                    }
+                    isInitial = false;
                 }
                 else
-                {               
-                    LoadCurrentImage();
-                }                                 
+                {
+                    // 沒有圖片時顯示空白
+                    pictureBox1.Image = null;
+                    boxes.Clear();
+                    pictureBox1.Invalidate();
+
+                    // 顯示提示訊息（可選）
+                    // MessageBox.Show(
+                    //     $"Recipe {currentRecipeNumber} 資料夾中沒有圖片。\n請先擷取影像。",
+                    //     "提示",
+                    //     MessageBoxButtons.OK,
+                    //     MessageBoxIcon.Information);
+                }
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -228,58 +210,6 @@ namespace NSAA_16Axis
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            //try
-            //{
-            //    if (isInitial)
-            //    {
-            //        // 確保目錄存在
-            //        if (!Directory.Exists(imageDir))
-            //        {
-            //            Directory.CreateDirectory(imageDir);
-            //        }
-
-            //        string fileName = $"labeled_{DateTime.Now:yyyyMMdd_HHmmss}.bmp";
-            //        string imgPath = Path.Combine(imageDir, fileName);
-
-            //        // 儲存圖片
-            //        pictureBox1.Image.Save(imgPath);
-
-            //        // 儲存標註
-            //        string labelPath = Path.ChangeExtension(imgPath, ".txt");
-            //        File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
-
-            //        // 加入到 imageFiles 列表並排序
-            //        imageFiles.Add(imgPath);
-            //        imageFiles = imageFiles.OrderBy(f => f).ToList();
-
-            //        // 設定當前索引
-            //        currentIndex = imageFiles.IndexOf(imgPath);
-
-            //        // 釋放 initialImage 並清除標記
-            //        if (initialImage != null)
-            //        {
-            //            initialImage.Dispose();
-            //            initialImage = null;
-            //        }
-            //        isInitial = false;
-
-            //    }
-            //    else
-            //    {
-            //        if (imageFiles.Count == 0) return;
-
-            //        var imgPath = imageFiles[currentIndex];
-            //        var labelPath = Path.ChangeExtension(imgPath, ".txt");
-
-            //        // 儲存標註
-            //        File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
-
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"儲存時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //}
             try
             {
                 if (isInitial)
@@ -389,14 +319,6 @@ namespace NSAA_16Axis
 
         private void btnPrev_Click(object sender, EventArgs e)
         {
-
-            //if (imageFiles.Count == 0) return;
-
-            //if(currentIndex > 0)
-            //{
-            //    currentIndex--;
-            //    LoadCurrentImage();
-            //}
             if (isInitial)
             {
                 if (imageFiles.Count == 0) return;
@@ -426,12 +348,6 @@ namespace NSAA_16Axis
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-
-            //if (currentIndex < imageFiles.Count - 1)
-            //{
-            //    currentIndex++;
-            //    LoadCurrentImage();
-            //}
             if (isInitial)
             {
                 if (imageFiles.Count == 0) return;
@@ -509,7 +425,7 @@ namespace NSAA_16Axis
             }
             labelClassList.Add(newClass, (Int16)labelClassList.Count);
             comboBoxClass.Items.Add(newClass);
-            AIClassList.SaveLabelClassNameToJson(labelClassList);
+            AIClassList.SaveLabelClassNameToJson(labelClassList,currentRecipeNumber);
             tbNewLabel.Clear();
             comboBoxClass.SelectedItem = newClass;
         }
@@ -523,7 +439,9 @@ namespace NSAA_16Axis
             //    comboBoxClass.Items.Add(newClass);
             //}
             string srcImgDir = imageDir;
-            string projectDir = Path.Combine(srcImgDir, "..", "dataset");
+            string trainBasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train");
+
+            string projectDir = Path.Combine(trainBasePath, $"{currentRecipeNumber}", "dataset");
             string[] allImages = Directory.GetFiles(srcImgDir, "*.jpg")
                 .Concat(Directory.GetFiles(srcImgDir, "*.png"))
                 .Concat(Directory.GetFiles(srcImgDir, "*.bmp"))
@@ -581,7 +499,7 @@ names: [{names}]
             // 建立類別選擇對話框
             Form deleteForm = new Form
             {
-                Text = "刪除類別",
+                Text = $"刪除類別-Recipe{currentRecipeNumber}",
                 Size = new System.Drawing.Size(400, 300),
                 StartPosition = FormStartPosition.CenterParent,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
@@ -591,7 +509,7 @@ names: [{names}]
 
             Label lblInfo = new Label
             {
-                Text = "請選擇要刪除的類別：",
+                Text = $"請選擇要刪除的類別：(Recipe{currentRecipeNumber})",
                 Location = new System.Drawing.Point(10, 10),
                 AutoSize = true
             };
@@ -676,7 +594,7 @@ names: [{names}]
                         {
                             labelClassList.Add(classNames[i], (Int16)i);
                         }
-                        AIClassList.SaveLabelClassNameToJson(labelClassList);
+                        AIClassList.SaveLabelClassNameToJson(labelClassList,currentRecipeNumber);
                         // 更新所有標註檔案中的 ClassId
                         UpdateLabelFilesAfterClassDeletion(classNameToId, classesToDelete);
 
@@ -795,9 +713,281 @@ names: [{names}]
             return null;
         }
 
-        private void btTrain_Click(object sender, EventArgs e)
+        private async void btTrain_Click(object sender, EventArgs e)
         {
+            try
+            {
+                string trainBasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train");
+                string modelsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Models");
+                string projectDir = Path.Combine(trainBasePath, $"{currentRecipeNumber}", "dataset");
+                string dataYamlPath = Path.Combine(projectDir, "data.yaml");
 
+                if (!File.Exists(dataYamlPath))
+                {
+                    MessageBox.Show(
+                        "找不到 data.yaml 檔案！\n請先執行「整理資料集」功能。",
+                        "錯誤",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+
+                string modelFileName = $"best{currentRecipeNumber}.pt";
+                string modelPath = Path.Combine(modelsPath, modelFileName);
+
+                if (!File.Exists(modelPath))
+                {
+                    string yolov8nPath = Path.Combine(modelsPath, "yolov8n.pt");
+                    if (!File.Exists(yolov8nPath))
+                    {
+                        MessageBox.Show(
+                            $"找不到模型檔案！\n請確保以下任一檔案存在：\n1. {modelPath}\n2. {yolov8nPath}",
+                            "錯誤",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                        return;
+                    }
+                    modelPath = yolov8nPath;
+                }
+
+                DialogResult confirmResult = MessageBox.Show(
+                    $"準備開始訓練 Recipe {currentRecipeNumber} 的模型\n\n" +
+                    $"資料集: {Path.GetFileName(dataYamlPath)}\n" +
+                    $"基礎模型: {Path.GetFileName(modelPath)}\n" +
+                    $"訓練參數: epochs=50, imgsz=2000\n\n" +
+                    $"訓練將在背景執行，您可以繼續使用程式。\n" +
+                    $"確定要開始嗎？",
+                    "確認訓練",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (confirmResult == DialogResult.No)
+                {
+                    return;
+                }
+
+                // ✅ 禁用訓練按鈕，顯示訓練中狀態
+                btTrain.Enabled = false;
+                btTrain.Text = "訓練中...";
+
+                MessageBox.Show(
+                    $"Recipe {currentRecipeNumber} 開始背景訓練！\n\n" +
+                    $"訓練過程將在背景執行，您可以繼續使用程式。\n" +
+                    $"訓練完成後會自動通知。",
+                    "訓練已啟動",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                // ✅ 使用 Task.Run 在背景執行緒執行訓練
+                await Task.Run(async () =>
+                {
+                    try
+                    {
+                        string arguments = $"task=detect mode=train model=\"{modelPath}\" data=\"{dataYamlPath}\" epochs=50 imgsz=2000 rect=True batch=2";
+
+                        System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = "yolo",
+                            Arguments = arguments,
+                            WorkingDirectory = projectDir,
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            CreateNoWindow = true,
+                            WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden
+                        };
+
+                        using (System.Diagnostics.Process process = new System.Diagnostics.Process())
+                        {
+                            process.StartInfo = startInfo;
+
+                            // 處理輸出
+                            process.OutputDataReceived += (s, args) =>
+                            {
+                                if (!string.IsNullOrEmpty(args.Data))
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"[YOLO訓練-Recipe{currentRecipeNumber}] {args.Data}");
+                                }
+                            };
+
+                            process.ErrorDataReceived += (s, args) =>
+                            {
+                                if (!string.IsNullOrEmpty(args.Data))
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"[YOLO錯誤-Recipe{currentRecipeNumber}] {args.Data}");
+                                }
+                            };
+
+                            process.Start();
+                            process.BeginOutputReadLine();
+                            process.BeginErrorReadLine();
+
+                            // ✅ 使用 WaitForExitAsync (自訂實現)
+                            await WaitForExitAsync(process);
+
+                            // ✅ 訓練完成後處理結果
+                            if (process.ExitCode == 0)
+                            {
+                                // 尋找並複製新模型
+                                string runsPath = Path.Combine(projectDir, "runs", "detect");
+                                string latestTrainPath = GetLatestTrainFolder(runsPath);
+
+                                if (!string.IsNullOrEmpty(latestTrainPath))
+                                {
+                                    string newBestPt = Path.Combine(latestTrainPath, "weights", "best.pt");
+
+                                    if (File.Exists(newBestPt))
+                                    {
+                                        string targetModelPath = Path.Combine(modelsPath, $"best{currentRecipeNumber}.pt");
+
+                                        // 確保 Models 資料夾存在
+                                        if (!Directory.Exists(modelsPath))
+                                        {
+                                            Directory.CreateDirectory(modelsPath);
+                                        }
+
+                                        // 備份舊模型
+                                        if (File.Exists(targetModelPath))
+                                        {
+                                            string backupPath = Path.Combine(
+                                                modelsPath,
+                                                $"best{currentRecipeNumber}_backup_{DateTime.Now:yyyyMMdd_HHmmss}.pt");
+                                            File.Copy(targetModelPath, backupPath, true);
+                                            System.Diagnostics.Debug.WriteLine($"[Recipe{currentRecipeNumber}] 舊模型已備份: {backupPath}");
+                                        }
+
+                                        // 複製新模型
+                                        File.Copy(newBestPt, targetModelPath, true);
+                                        System.Diagnostics.Debug.WriteLine($"[Recipe{currentRecipeNumber}] 新模型已儲存: {targetModelPath}");
+
+                                        // ✅ 在 UI 執行緒上顯示完成訊息
+                                        Invoke(new Action(() =>
+                                        {
+                                            MessageBox.Show(
+                                                $"Recipe {currentRecipeNumber} 模型訓練完成！\n\n" +
+                                                $"新模型已儲存至:\n{targetModelPath}\n\n" +
+                                                $"訓練結果位於:\n{latestTrainPath}",
+                                                "訓練成功",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Information);
+                                        }));
+                                    }
+                                    else
+                                    {
+                                        System.Diagnostics.Debug.WriteLine($"[Recipe{currentRecipeNumber}] 找不到新模型: {newBestPt}");
+
+                                        //Invoke(new Action(() =>
+                                        //{
+                                        //    //MessageBox.Show(
+                                        //    //    $"訓練完成但找不到新模型檔案！\n預期路徑: {newBestPt}",
+                                        //    //    "警告",
+                                        //    //    MessageBoxButtons.OK,
+                                        //    //    MessageBoxIcon.Warning);
+                                        //}));
+                                    }
+                                }
+                                else
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"[Recipe{currentRecipeNumber}] 找不到訓練輸出目錄");
+
+                                    //Invoke(new Action(() =>
+                                    //{
+                                    //    MessageBox.Show(
+                                    //        "訓練完成但無法找到輸出目錄！",
+                                    //        "警告",
+                                    //        MessageBoxButtons.OK,
+                                    //        MessageBoxIcon.Warning);
+                                    //}));
+                                }
+                            }
+                            else
+                            {
+                                System.Diagnostics.Debug.WriteLine($"[Recipe{currentRecipeNumber}] 訓練失敗，退出代碼: {process.ExitCode}");
+
+                                //Invoke(new Action(() =>
+                                //{
+                                //    MessageBox.Show(
+                                //        $"Recipe {currentRecipeNumber} 模型訓練失敗！\n\n" +
+                                //        $"退出代碼: {process.ExitCode}\n\n" +
+                                //        $"請檢查：\n" +
+                                //        $"1. 是否安裝了 YOLO (ultralytics)\n" +
+                                //        $"2. data.yaml 格式是否正確\n" +
+                                //        $"3. 標註資料是否完整",
+                                //        "訓練失敗",
+                                //        MessageBoxButtons.OK,
+                                //        MessageBoxIcon.Error);
+                                //}));
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[Recipe{currentRecipeNumber}] 訓練異常: {ex.Message}");
+
+                        //Invoke(new Action(() =>
+                        //{
+                        //    MessageBox.Show(
+                        //        $"訓練過程發生錯誤:\n{ex.Message}",
+                        //        "錯誤",
+                        //        MessageBoxButtons.OK,
+                        //        MessageBoxIcon.Error);
+                        //}));
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(
+                //    $"啟動訓練時發生錯誤:\n{ex.Message}",
+                //    "錯誤",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
+                System.Diagnostics.Debug.WriteLine($"[Recipe{currentRecipeNumber}] 啟動訓練錯誤: {ex.Message}");
+            }
+            finally
+            {
+                // ✅ 恢復按鈕狀態
+                btTrain.Enabled = true;
+                btTrain.Text = "訓練";
+            }
+        }
+
+        private Task WaitForExitAsync(Process process)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+
+            process.EnableRaisingEvents = true;
+            process.Exited += (sender, args) =>
+            {
+                tcs.TrySetResult(true);
+            };
+
+            if (process.HasExited)
+            {
+                tcs.TrySetResult(true);
+            }
+
+            return tcs.Task;
+        }
+
+        private string GetLatestTrainFolder(string runsPath)
+        {
+            try
+            {
+                if (!Directory.Exists(runsPath))
+                    return null;
+
+                var directories = Directory.GetDirectories(runsPath, "train*")
+                    .OrderByDescending(d => Directory.GetCreationTime(d))
+                    .ToList();
+
+                return directories.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"獲取訓練目錄失敗: {ex.Message}");
+                return null;
+            }
         }
 
         void DrawYoloBox(Graphics graphics, YoloBox box, Color color)
