@@ -474,24 +474,7 @@ namespace NSAA_16Axis
         //public int iDDownRightZ = 13430;
         
         //** 沒使用到
-        public int iiDMaskY = 0;
-        public int iiDUpBigY = 1;
-        public int iiDUpLeftX = 2;
-        public int iiDUpRightX = 3;
-        public int iiDChuckZ = 4;
-        public int iiDChuckX = 5;
-        public int iiDChuckY1 = 6;
-        public int iiDChuckY2 = 7;
-        public int iiDUpLeftY = 8;
-        public int iiDUpRightY = 9;
-        public int iiDDownLeftX = 10;
-        public int iiDDownRightX = 11;
-        public int iiDDownLeftY = 12;
-        public int iiDDownRightY = 13;
-        public int iiDDownLeftZ = 14;
-        public int iiDDownRightZ = 15;
-        public int iiDUpLeftZ = 16;
-        public int iiDUpRightZ = 17;
+        
         //**
 
         public int iModifyRecipeNumber = 14940;
@@ -546,14 +529,34 @@ namespace NSAA_16Axis
         public int iiDSChuckY2 = 7;
         public int iiDSUpLeftY = 8;
         public int iiDSUpRightY = 9;
-        public int iiDSDownLeftX = 10;
-        public int iiDSDownRightX = 11;
-        public int iiDSDownLeftY = 12;
-        public int iiDSDownRightY = 13;
-        public int iiDSDownLeftZ = 14;
-        public int iiDSDownRightZ = 15;
-        public int iiDSUpLeftZ = 16;
-        public int iiDSUpRightZ = 17;
+        public int iiDSUpLeftZ = 10;
+        public int iiDSUpRightZ = 11;
+        public int iiDSDownLeftX = 12;
+        public int iiDSDownRightX = 13;
+        public int iiDSDownLeftY = 14;
+        public int iiDSDownRightY = 15;
+        public int iiDSDownLeftZ = 16;
+        public int iiDSDownRightZ = 17;
+
+        public int iiDMaskY = 0;
+        public int iiDUpBigY = 1;
+        public int iiDUpLeftX = 2;
+        public int iiDUpRightX = 3;
+        public int iiDChuckZ = 4;
+        public int iiDChuckX = 5;
+        public int iiDChuckY1 = 6;
+        public int iiDChuckY2 = 7;
+        public int iiDUpLeftY = 8;
+        public int iiDUpRightY = 9;
+        public int iiDUpLeftZ = 10;
+        public int iiDUpRightZ = 11;
+        public int iiDDownLeftX = 12;
+        public int iiDDownRightX = 13;
+        public int iiDDownLeftY = 14;
+        public int iiDDownRightY = 15;
+        public int iiDDownLeftZ = 16;
+        public int iiDDownRightZ = 17;
+        
 
 
         public int iWSCount = 20;
@@ -834,7 +837,7 @@ namespace NSAA_16Axis
             PlcDataList.Add("D" + iNowRecipeNumber.ToString(), 1);
             PlcDataList.Add("D" + iModifyRecipeNumber.ToString(), 1);
             PlcDataList.Add("D13019", 0);
-
+            
             if (GV.AppSettingParm.StartUpBack == 1)
             {
                 PlcDataList.Add("M" + iDownAlign.ToString(), 0);
@@ -2192,12 +2195,12 @@ namespace NSAA_16Axis
 
             if (iWaferMask == 1)
             {
-                lz = GV.Plc.RecipeData[22];
-                rz = GV.Plc.RecipeData[23];
+                lz = GV.Plc.RecipeData[43];
+                rz = GV.Plc.RecipeData[44];
             } else
             {
-                lz = GV.Plc.RecipeData[26];
-                rz = GV.Plc.RecipeData[27];
+                lz = GV.Plc.RecipeData[45];
+                rz = GV.Plc.RecipeData[46];
             }
 
             GV.Plc.AlignDownCameraMoveZAbsW(0, 0, 0, 0, 0, lz, rz);

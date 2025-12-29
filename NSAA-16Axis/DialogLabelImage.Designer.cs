@@ -43,7 +43,12 @@
             this.btDelete = new System.Windows.Forms.Button();
             this.btTrain = new System.Windows.Forms.Button();
             this.ucLeftWaferNavigator = new NSAA_16Axis.UCNavigator();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btDeleteImage = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // skPattern
@@ -62,7 +67,7 @@
             // comboBoxClass
             // 
             this.comboBoxClass.FormattingEnabled = true;
-            this.comboBoxClass.Location = new System.Drawing.Point(1339, 292);
+            this.comboBoxClass.Location = new System.Drawing.Point(9, 116);
             this.comboBoxClass.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxClass.Name = "comboBoxClass";
             this.comboBoxClass.Size = new System.Drawing.Size(139, 23);
@@ -70,10 +75,10 @@
             // 
             // btnNext
             // 
-            this.btnNext.Location = new System.Drawing.Point(1337, 412);
+            this.btnNext.Location = new System.Drawing.Point(130, 25);
             this.btnNext.Margin = new System.Windows.Forms.Padding(4);
             this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(139, 56);
+            this.btnNext.Size = new System.Drawing.Size(94, 56);
             this.btnNext.TabIndex = 60;
             this.btnNext.Text = "Next";
             this.btnNext.UseVisualStyleBackColor = true;
@@ -81,10 +86,10 @@
             // 
             // btnPrev
             // 
-            this.btnPrev.Location = new System.Drawing.Point(1337, 334);
+            this.btnPrev.Location = new System.Drawing.Point(9, 25);
             this.btnPrev.Margin = new System.Windows.Forms.Padding(4);
             this.btnPrev.Name = "btnPrev";
-            this.btnPrev.Size = new System.Drawing.Size(139, 56);
+            this.btnPrev.Size = new System.Drawing.Size(94, 56);
             this.btnPrev.TabIndex = 59;
             this.btnPrev.Text = "Previous";
             this.btnPrev.UseVisualStyleBackColor = true;
@@ -92,10 +97,10 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(1337, 560);
+            this.btnSave.Location = new System.Drawing.Point(9, 163);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(139, 56);
+            this.btnSave.Size = new System.Drawing.Size(94, 56);
             this.btnSave.TabIndex = 58;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -115,12 +120,12 @@
             // 
             // btnOrganizeAndYaml
             // 
-            this.btnOrganizeAndYaml.Location = new System.Drawing.Point(1337, 632);
+            this.btnOrganizeAndYaml.Location = new System.Drawing.Point(127, 163);
             this.btnOrganizeAndYaml.Margin = new System.Windows.Forms.Padding(4);
             this.btnOrganizeAndYaml.Name = "btnOrganizeAndYaml";
-            this.btnOrganizeAndYaml.Size = new System.Drawing.Size(139, 56);
+            this.btnOrganizeAndYaml.Size = new System.Drawing.Size(97, 56);
             this.btnOrganizeAndYaml.TabIndex = 56;
-            this.btnOrganizeAndYaml.Text = "OrganizeAndYaml";
+            this.btnOrganizeAndYaml.Text = "General Yaml";
             this.btnOrganizeAndYaml.UseVisualStyleBackColor = true;
             this.btnOrganizeAndYaml.Click += new System.EventHandler(this.btnOrganizeAndYaml_Click);
             // 
@@ -139,19 +144,19 @@
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(1337, 486);
+            this.btnClear.Location = new System.Drawing.Point(9, 89);
             this.btnClear.Margin = new System.Windows.Forms.Padding(4);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(139, 56);
+            this.btnClear.Size = new System.Drawing.Size(94, 56);
             this.btnClear.TabIndex = 63;
-            this.btnClear.Text = "Clear";
+            this.btnClear.Text = "Clear Label";
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // lb
             // 
             this.lb.AutoSize = true;
-            this.lb.Location = new System.Drawing.Point(1344, 120);
+            this.lb.Location = new System.Drawing.Point(6, 34);
             this.lb.Name = "lb";
             this.lb.Size = new System.Drawing.Size(69, 15);
             this.lb.TabIndex = 64;
@@ -159,14 +164,14 @@
             // 
             // tbNewLabel
             // 
-            this.tbNewLabel.Location = new System.Drawing.Point(1339, 149);
+            this.tbNewLabel.Location = new System.Drawing.Point(81, 24);
             this.tbNewLabel.Name = "tbNewLabel";
             this.tbNewLabel.Size = new System.Drawing.Size(100, 25);
             this.tbNewLabel.TabIndex = 65;
             // 
             // btAdd
             // 
-            this.btAdd.Location = new System.Drawing.Point(1445, 144);
+            this.btAdd.Location = new System.Drawing.Point(6, 69);
             this.btAdd.Name = "btAdd";
             this.btAdd.Size = new System.Drawing.Size(95, 31);
             this.btAdd.TabIndex = 66;
@@ -176,52 +181,85 @@
             // 
             // btDelete
             // 
-            this.btDelete.Location = new System.Drawing.Point(1447, 201);
+            this.btDelete.Location = new System.Drawing.Point(107, 69);
             this.btDelete.Name = "btDelete";
-            this.btDelete.Size = new System.Drawing.Size(93, 38);
+            this.btDelete.Size = new System.Drawing.Size(93, 31);
             this.btDelete.TabIndex = 67;
-            this.btDelete.Text = "delete";
+            this.btDelete.Text = "Delete";
             this.btDelete.UseVisualStyleBackColor = true;
             this.btDelete.Click += new System.EventHandler(this.btDelete_Click);
             // 
             // btTrain
             // 
-            this.btTrain.Location = new System.Drawing.Point(1347, 769);
+            this.btTrain.Location = new System.Drawing.Point(1339, 800);
             this.btTrain.Name = "btTrain";
             this.btTrain.Size = new System.Drawing.Size(130, 49);
             this.btTrain.TabIndex = 68;
             this.btTrain.Text = "Train Model";
             this.btTrain.UseVisualStyleBackColor = true;
+            this.btTrain.Visible = false;
             this.btTrain.Click += new System.EventHandler(this.btTrain_Click);
             // 
             // ucLeftWaferNavigator
             // 
             this.ucLeftWaferNavigator.AutoSize = true;
-            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(1335, 707);
+            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(1339, 856);
             this.ucLeftWaferNavigator.Margin = new System.Windows.Forms.Padding(4);
             this.ucLeftWaferNavigator.Name = "ucLeftWaferNavigator";
             this.ucLeftWaferNavigator.Size = new System.Drawing.Size(143, 50);
             this.ucLeftWaferNavigator.TabIndex = 55;
             this.ucLeftWaferNavigator.Visible = false;
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.tbNewLabel);
+            this.groupBox1.Controls.Add(this.lb);
+            this.groupBox1.Controls.Add(this.btDelete);
+            this.groupBox1.Controls.Add(this.btAdd);
+            this.groupBox1.Controls.Add(this.comboBoxClass);
+            this.groupBox1.Location = new System.Drawing.Point(1290, 84);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(248, 163);
+            this.groupBox1.TabIndex = 69;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Label";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.btDeleteImage);
+            this.groupBox2.Controls.Add(this.btnPrev);
+            this.groupBox2.Controls.Add(this.btnNext);
+            this.groupBox2.Controls.Add(this.btnClear);
+            this.groupBox2.Controls.Add(this.btnSave);
+            this.groupBox2.Controls.Add(this.btnOrganizeAndYaml);
+            this.groupBox2.Location = new System.Drawing.Point(1290, 263);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(248, 245);
+            this.groupBox2.TabIndex = 70;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Image";
+            // 
+            // btDeleteImage
+            // 
+            this.btDeleteImage.Location = new System.Drawing.Point(130, 89);
+            this.btDeleteImage.Margin = new System.Windows.Forms.Padding(4);
+            this.btDeleteImage.Name = "btDeleteImage";
+            this.btDeleteImage.Size = new System.Drawing.Size(94, 56);
+            this.btDeleteImage.TabIndex = 64;
+            this.btDeleteImage.Text = "Delete Image";
+            this.btDeleteImage.UseVisualStyleBackColor = true;
+            this.btDeleteImage.Click += new System.EventHandler(this.btDeleteImage_Click);
+            // 
             // DialogLabelImage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1560, 929);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btTrain);
-            this.Controls.Add(this.btDelete);
-            this.Controls.Add(this.btAdd);
-            this.Controls.Add(this.tbNewLabel);
-            this.Controls.Add(this.lb);
-            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.comboBoxClass);
-            this.Controls.Add(this.btnNext);
-            this.Controls.Add(this.btnPrev);
-            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnOpenFolder);
-            this.Controls.Add(this.btnOrganizeAndYaml);
             this.Controls.Add(this.ucLeftWaferNavigator);
             this.Controls.Add(this.skPattern);
             this.Margin = new System.Windows.Forms.Padding(4);
@@ -229,6 +267,9 @@
             this.Text = "DialogLabelImage";
             this.Load += new System.EventHandler(this.DialogLabelImage_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -251,5 +292,8 @@
         private System.Windows.Forms.Button btAdd;
         private System.Windows.Forms.Button btDelete;
         private System.Windows.Forms.Button btTrain;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button btDeleteImage;
     }
 }

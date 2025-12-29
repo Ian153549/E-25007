@@ -77,9 +77,9 @@ namespace NSAA_16Axis
             this.btMagSaveLow = new System.Windows.Forms.Button();
             this.rBHighMagnification = new System.Windows.Forms.RadioButton();
             this.rBLowMagnification = new System.Windows.Forms.RadioButton();
+            this.cbPatterhShift = new System.Windows.Forms.ComboBox();
             this.cbHighMagnification = new System.Windows.Forms.ComboBox();
             this.cbLowMagnification = new System.Windows.Forms.ComboBox();
-            this.cbPatterhShift = new System.Windows.Forms.ComboBox();
             this.tBRightRingLight = new System.Windows.Forms.TrackBar();
             this.tBLeftRingLight = new System.Windows.Forms.TrackBar();
             this.tBLeftCoaLight = new System.Windows.Forms.TrackBar();
@@ -111,14 +111,22 @@ namespace NSAA_16Axis
             this.lbRMsgM = new System.Windows.Forms.Label();
             this.lbLMsgM = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.nuDRotate = new System.Windows.Forms.NumericUpDown();
-            this.btGo = new MRLibrary.UCButton();
-            this.btUpdate = new MRLibrary.UCButton();
-            this.nUDXyyY2 = new System.Windows.Forms.NumericUpDown();
-            this.nUDXyyY1 = new System.Windows.Forms.NumericUpDown();
-            this.nUDXyyX = new System.Windows.Forms.NumericUpDown();
+            this.nudWriteChuckY2 = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.btChuckGo = new MRLibrary.UCButton();
+            this.nudWriteChuckY1 = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteChuckX = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.btChuckUpdate = new MRLibrary.UCButton();
+            this.nudWriteChuckZ = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudReadChuckR = new System.Windows.Forms.NumericUpDown();
+            this.nudReadChuckY2 = new System.Windows.Forms.NumericUpDown();
+            this.nudReadChuckY1 = new System.Windows.Forms.NumericUpDown();
+            this.nudReadChuckZ = new System.Windows.Forms.NumericUpDown();
+            this.nudReadChuckX = new System.Windows.Forms.NumericUpDown();
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.btChuckAlignN = new MRLibrary.UCButton();
             this.btCapture = new MRLibrary.UCButton();
@@ -130,6 +138,33 @@ namespace NSAA_16Axis
             this.btTLRead = new System.Windows.Forms.Button();
             this.btTRRead = new System.Windows.Forms.Button();
             this.OpenFileDialogReadT = new System.Windows.Forms.OpenFileDialog();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.nudWriteUpRightZ = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteUpRightY = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteUpRightX = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteUpLeftZ = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.btUpCCDGo = new MRLibrary.UCButton();
+            this.nudWriteUpLeftY = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteUpLeftX = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.btUpCCDUpdate = new MRLibrary.UCButton();
+            this.nudWriteUpBigY = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.nudReadUpRightZ = new System.Windows.Forms.NumericUpDown();
+            this.nudReadUpRightY = new System.Windows.Forms.NumericUpDown();
+            this.nudReadUpRightX = new System.Windows.Forms.NumericUpDown();
+            this.nudReadUpLeftZ = new System.Windows.Forms.NumericUpDown();
+            this.nudReadUpLeftY = new System.Windows.Forms.NumericUpDown();
+            this.nudReadBigY = new System.Windows.Forms.NumericUpDown();
+            this.nudReadUpLeftX = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.gbLMask.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLMaskImage)).BeginInit();
             this.gbLWafer.SuspendLayout();
@@ -144,10 +179,20 @@ namespace NSAA_16Axis
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftCoaLight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBRightCoaLight)).BeginInit();
             this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nuDRotate)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckR)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckX)).BeginInit();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpRightZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpRightY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpRightX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpLeftZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpLeftY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBigY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpLeftX)).BeginInit();
             this.SuspendLayout();
             // 
             // gbLMask
@@ -204,7 +249,7 @@ namespace NSAA_16Axis
             "X12"});
             this.cbLMaskClassList.Location = new System.Drawing.Point(14, 203);
             this.cbLMaskClassList.Name = "cbLMaskClassList";
-            this.cbLMaskClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbLMaskClassList.Size = new System.Drawing.Size(153, 26);
             this.cbLMaskClassList.TabIndex = 143;
             this.cbLMaskClassList.Visible = false;
             // 
@@ -280,7 +325,7 @@ namespace NSAA_16Axis
             "AI Identify"});
             this.cbLMaskAlgorithm.Location = new System.Drawing.Point(66, 71);
             this.cbLMaskAlgorithm.Name = "cbLMaskAlgorithm";
-            this.cbLMaskAlgorithm.Size = new System.Drawing.Size(100, 31);
+            this.cbLMaskAlgorithm.Size = new System.Drawing.Size(100, 26);
             this.cbLMaskAlgorithm.TabIndex = 1;
             this.cbLMaskAlgorithm.SelectedIndexChanged += new System.EventHandler(this.CbLMaskAlgorithm_SelectedIndexChanged);
             // 
@@ -291,7 +336,7 @@ namespace NSAA_16Axis
             this.label2.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label2.Location = new System.Drawing.Point(10, 74);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(72, 23);
+            this.label2.Size = new System.Drawing.Size(56, 18);
             this.label2.TabIndex = 0;
             this.label2.Text = "ALGO.";
             // 
@@ -349,7 +394,7 @@ namespace NSAA_16Axis
             "X12"});
             this.cbLWaferClassList.Location = new System.Drawing.Point(13, 205);
             this.cbLWaferClassList.Name = "cbLWaferClassList";
-            this.cbLWaferClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbLWaferClassList.Size = new System.Drawing.Size(153, 26);
             this.cbLWaferClassList.TabIndex = 75;
             this.cbLWaferClassList.Visible = false;
             // 
@@ -425,7 +470,7 @@ namespace NSAA_16Axis
             "AI Identify"});
             this.cbLWaferAlgorithm.Location = new System.Drawing.Point(66, 76);
             this.cbLWaferAlgorithm.Name = "cbLWaferAlgorithm";
-            this.cbLWaferAlgorithm.Size = new System.Drawing.Size(100, 31);
+            this.cbLWaferAlgorithm.Size = new System.Drawing.Size(100, 26);
             this.cbLWaferAlgorithm.TabIndex = 1;
             this.cbLWaferAlgorithm.SelectedIndexChanged += new System.EventHandler(this.CbLWaferAlgorithm_SelectedIndexChanged);
             // 
@@ -436,7 +481,7 @@ namespace NSAA_16Axis
             this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label1.Location = new System.Drawing.Point(10, 79);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(72, 23);
+            this.label1.Size = new System.Drawing.Size(56, 18);
             this.label1.TabIndex = 0;
             this.label1.Text = "ALGO.";
             // 
@@ -496,7 +541,7 @@ namespace NSAA_16Axis
             "X12"});
             this.cbRWaferClassList.Location = new System.Drawing.Point(13, 205);
             this.cbRWaferClassList.Name = "cbRWaferClassList";
-            this.cbRWaferClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbRWaferClassList.Size = new System.Drawing.Size(153, 26);
             this.cbRWaferClassList.TabIndex = 74;
             this.cbRWaferClassList.Visible = false;
             // 
@@ -587,7 +632,7 @@ namespace NSAA_16Axis
             "AI Identify"});
             this.cbRWaferAlgorithm.Location = new System.Drawing.Point(68, 75);
             this.cbRWaferAlgorithm.Name = "cbRWaferAlgorithm";
-            this.cbRWaferAlgorithm.Size = new System.Drawing.Size(100, 31);
+            this.cbRWaferAlgorithm.Size = new System.Drawing.Size(100, 26);
             this.cbRWaferAlgorithm.TabIndex = 1;
             this.cbRWaferAlgorithm.SelectedIndexChanged += new System.EventHandler(this.CbRWaferAlgorithm_SelectedIndexChanged);
             // 
@@ -598,7 +643,7 @@ namespace NSAA_16Axis
             this.label3.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label3.Location = new System.Drawing.Point(12, 78);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(72, 23);
+            this.label3.Size = new System.Drawing.Size(56, 18);
             this.label3.TabIndex = 0;
             this.label3.Text = "ALGO.";
             // 
@@ -657,7 +702,7 @@ namespace NSAA_16Axis
             "X12"});
             this.cbRMaskClassList.Location = new System.Drawing.Point(13, 205);
             this.cbRMaskClassList.Name = "cbRMaskClassList";
-            this.cbRMaskClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbRMaskClassList.Size = new System.Drawing.Size(153, 26);
             this.cbRMaskClassList.TabIndex = 144;
             this.cbRMaskClassList.Visible = false;
             // 
@@ -733,7 +778,7 @@ namespace NSAA_16Axis
             "AI Identify"});
             this.cbRMaskAlgorithm.Location = new System.Drawing.Point(66, 75);
             this.cbRMaskAlgorithm.Name = "cbRMaskAlgorithm";
-            this.cbRMaskAlgorithm.Size = new System.Drawing.Size(100, 31);
+            this.cbRMaskAlgorithm.Size = new System.Drawing.Size(100, 26);
             this.cbRMaskAlgorithm.TabIndex = 1;
             this.cbRMaskAlgorithm.SelectedIndexChanged += new System.EventHandler(this.CbRMaskAlgorithm_SelectedIndexChanged);
             // 
@@ -744,17 +789,17 @@ namespace NSAA_16Axis
             this.label4.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label4.Location = new System.Drawing.Point(10, 78);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(72, 23);
+            this.label4.Size = new System.Drawing.Size(56, 18);
             this.label4.TabIndex = 0;
             this.label4.Text = "ALGO.";
             // 
             // lbRecipeNumber
             // 
             this.lbRecipeNumber.AutoSize = true;
-            this.lbRecipeNumber.Font = new System.Drawing.Font("Arial", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbRecipeNumber.Location = new System.Drawing.Point(812, 68);
+            this.lbRecipeNumber.Font = new System.Drawing.Font("Arial", 20F, System.Drawing.FontStyle.Bold);
+            this.lbRecipeNumber.Location = new System.Drawing.Point(478, 62);
             this.lbRecipeNumber.Name = "lbRecipeNumber";
-            this.lbRecipeNumber.Size = new System.Drawing.Size(347, 46);
+            this.lbRecipeNumber.Size = new System.Drawing.Size(244, 32);
             this.lbRecipeNumber.TabIndex = 11;
             this.lbRecipeNumber.Text = "Recipe Number : ";
             // 
@@ -764,12 +809,13 @@ namespace NSAA_16Axis
             this.gBMag.Controls.Add(this.btMagSaveLow);
             this.gBMag.Controls.Add(this.rBHighMagnification);
             this.gBMag.Controls.Add(this.rBLowMagnification);
+            this.gBMag.Controls.Add(this.cbPatterhShift);
             this.gBMag.Controls.Add(this.cbHighMagnification);
             this.gBMag.Controls.Add(this.cbLowMagnification);
             this.gBMag.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gBMag.Location = new System.Drawing.Point(819, 132);
+            this.gBMag.Location = new System.Drawing.Point(485, 126);
             this.gBMag.Name = "gBMag";
-            this.gBMag.Size = new System.Drawing.Size(269, 128);
+            this.gBMag.Size = new System.Drawing.Size(330, 128);
             this.gBMag.TabIndex = 12;
             this.gBMag.TabStop = false;
             this.gBMag.Text = "Magnification";
@@ -780,7 +826,7 @@ namespace NSAA_16Axis
             this.btMagSaveHigh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btMagSaveHigh.Font = new System.Drawing.Font("Arial", 12F);
             this.btMagSaveHigh.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btMagSaveHigh.Location = new System.Drawing.Point(171, 82);
+            this.btMagSaveHigh.Location = new System.Drawing.Point(238, 82);
             this.btMagSaveHigh.Name = "btMagSaveHigh";
             this.btMagSaveHigh.Size = new System.Drawing.Size(80, 30);
             this.btMagSaveHigh.TabIndex = 27;
@@ -794,7 +840,7 @@ namespace NSAA_16Axis
             this.btMagSaveLow.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btMagSaveLow.Font = new System.Drawing.Font("Arial", 12F);
             this.btMagSaveLow.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btMagSaveLow.Location = new System.Drawing.Point(171, 32);
+            this.btMagSaveLow.Location = new System.Drawing.Point(238, 31);
             this.btMagSaveLow.Name = "btMagSaveLow";
             this.btMagSaveLow.Size = new System.Drawing.Size(80, 30);
             this.btMagSaveLow.TabIndex = 26;
@@ -806,9 +852,9 @@ namespace NSAA_16Axis
             // 
             this.rBHighMagnification.AutoSize = true;
             this.rBHighMagnification.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rBHighMagnification.Location = new System.Drawing.Point(25, 86);
+            this.rBHighMagnification.Location = new System.Drawing.Point(11, 86);
             this.rBHighMagnification.Name = "rBHighMagnification";
-            this.rBHighMagnification.Size = new System.Drawing.Size(69, 27);
+            this.rBHighMagnification.Size = new System.Drawing.Size(58, 22);
             this.rBHighMagnification.TabIndex = 21;
             this.rBHighMagnification.Text = "High";
             this.rBHighMagnification.UseVisualStyleBackColor = true;
@@ -818,13 +864,30 @@ namespace NSAA_16Axis
             // 
             this.rBLowMagnification.AutoSize = true;
             this.rBLowMagnification.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rBLowMagnification.Location = new System.Drawing.Point(25, 36);
+            this.rBLowMagnification.Location = new System.Drawing.Point(12, 36);
             this.rBLowMagnification.Name = "rBLowMagnification";
-            this.rBLowMagnification.Size = new System.Drawing.Size(68, 27);
+            this.rBLowMagnification.Size = new System.Drawing.Size(55, 22);
             this.rBLowMagnification.TabIndex = 20;
             this.rBLowMagnification.Text = "Low";
             this.rBLowMagnification.UseVisualStyleBackColor = true;
             this.rBLowMagnification.Click += new System.EventHandler(this.RBLowMagnification_Click);
+            // 
+            // cbPatterhShift
+            // 
+            this.cbPatterhShift.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbPatterhShift.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbPatterhShift.FormattingEnabled = true;
+            this.cbPatterhShift.Items.AddRange(new object[] {
+            "Up",
+            "Down",
+            "Left",
+            "Right",
+            "Center"});
+            this.cbPatterhShift.Location = new System.Drawing.Point(152, 83);
+            this.cbPatterhShift.Name = "cbPatterhShift";
+            this.cbPatterhShift.Size = new System.Drawing.Size(80, 26);
+            this.cbPatterhShift.TabIndex = 25;
+            this.cbPatterhShift.SelectedIndexChanged += new System.EventHandler(this.CbPatterhShift_SelectedIndexChanged);
             // 
             // cbHighMagnification
             // 
@@ -844,9 +907,9 @@ namespace NSAA_16Axis
             "X10",
             "X11",
             "X12"});
-            this.cbHighMagnification.Location = new System.Drawing.Point(95, 84);
+            this.cbHighMagnification.Location = new System.Drawing.Point(86, 82);
             this.cbHighMagnification.Name = "cbHighMagnification";
-            this.cbHighMagnification.Size = new System.Drawing.Size(60, 31);
+            this.cbHighMagnification.Size = new System.Drawing.Size(60, 26);
             this.cbHighMagnification.TabIndex = 17;
             this.cbHighMagnification.SelectedIndexChanged += new System.EventHandler(this.CbHighMagnification_SelectedIndexChanged);
             // 
@@ -868,28 +931,11 @@ namespace NSAA_16Axis
             "X10",
             "X11",
             "X12"});
-            this.cbLowMagnification.Location = new System.Drawing.Point(95, 34);
+            this.cbLowMagnification.Location = new System.Drawing.Point(86, 32);
             this.cbLowMagnification.Name = "cbLowMagnification";
-            this.cbLowMagnification.Size = new System.Drawing.Size(60, 31);
+            this.cbLowMagnification.Size = new System.Drawing.Size(60, 26);
             this.cbLowMagnification.TabIndex = 16;
             this.cbLowMagnification.SelectedIndexChanged += new System.EventHandler(this.CbLowMagnification_SelectedIndexChanged);
-            // 
-            // cbPatterhShift
-            // 
-            this.cbPatterhShift.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbPatterhShift.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbPatterhShift.FormattingEnabled = true;
-            this.cbPatterhShift.Items.AddRange(new object[] {
-            "Up",
-            "Down",
-            "Left",
-            "Right",
-            "Center"});
-            this.cbPatterhShift.Location = new System.Drawing.Point(1097, 215);
-            this.cbPatterhShift.Name = "cbPatterhShift";
-            this.cbPatterhShift.Size = new System.Drawing.Size(80, 31);
-            this.cbPatterhShift.TabIndex = 25;
-            this.cbPatterhShift.SelectedIndexChanged += new System.EventHandler(this.CbPatterhShift_SelectedIndexChanged);
             // 
             // tBRightRingLight
             // 
@@ -897,11 +943,11 @@ namespace NSAA_16Axis
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tBRightRingLight.LargeChange = 1;
-            this.tBRightRingLight.Location = new System.Drawing.Point(1473, 82);
+            this.tBRightRingLight.Location = new System.Drawing.Point(1518, 82);
             this.tBRightRingLight.Maximum = 255;
             this.tBRightRingLight.Name = "tBRightRingLight";
             this.tBRightRingLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBRightRingLight.Size = new System.Drawing.Size(56, 161);
+            this.tBRightRingLight.Size = new System.Drawing.Size(45, 216);
             this.tBRightRingLight.TabIndex = 50;
             this.tBRightRingLight.Visible = false;
             this.tBRightRingLight.ValueChanged += new System.EventHandler(this.TBRightRingLight_ValueChanged);
@@ -912,11 +958,11 @@ namespace NSAA_16Axis
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tBLeftRingLight.LargeChange = 1;
-            this.tBLeftRingLight.Location = new System.Drawing.Point(408, 87);
+            this.tBLeftRingLight.Location = new System.Drawing.Point(378, 77);
             this.tBLeftRingLight.Maximum = 255;
             this.tBLeftRingLight.Name = "tBLeftRingLight";
             this.tBLeftRingLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBLeftRingLight.Size = new System.Drawing.Size(56, 156);
+            this.tBLeftRingLight.Size = new System.Drawing.Size(45, 270);
             this.tBLeftRingLight.TabIndex = 51;
             this.tBLeftRingLight.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.tBLeftRingLight.Visible = false;
@@ -928,11 +974,11 @@ namespace NSAA_16Axis
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tBLeftCoaLight.LargeChange = 1;
-            this.tBLeftCoaLight.Location = new System.Drawing.Point(512, 89);
+            this.tBLeftCoaLight.Location = new System.Drawing.Point(415, 89);
             this.tBLeftCoaLight.Maximum = 255;
             this.tBLeftCoaLight.Name = "tBLeftCoaLight";
             this.tBLeftCoaLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBLeftCoaLight.Size = new System.Drawing.Size(56, 154);
+            this.tBLeftCoaLight.Size = new System.Drawing.Size(45, 216);
             this.tBLeftCoaLight.TabIndex = 54;
             this.tBLeftCoaLight.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.tBLeftCoaLight.ValueChanged += new System.EventHandler(this.TBLeftCoaLight_ValueChanged);
@@ -943,11 +989,11 @@ namespace NSAA_16Axis
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tBRightCoaLight.LargeChange = 1;
-            this.tBRightCoaLight.Location = new System.Drawing.Point(1364, 82);
+            this.tBRightCoaLight.Location = new System.Drawing.Point(1455, 82);
             this.tBRightCoaLight.Maximum = 255;
             this.tBRightCoaLight.Name = "tBRightCoaLight";
             this.tBRightCoaLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBRightCoaLight.Size = new System.Drawing.Size(56, 161);
+            this.tBRightCoaLight.Size = new System.Drawing.Size(45, 216);
             this.tBRightCoaLight.TabIndex = 56;
             this.tBRightCoaLight.ValueChanged += new System.EventHandler(this.TBRightCoaLight_ValueChanged);
             // 
@@ -958,9 +1004,9 @@ namespace NSAA_16Axis
             this.LRingLight.Checked = true;
             this.LRingLight.CheckState = System.Windows.Forms.CheckState.Checked;
             this.LRingLight.ForeColor = System.Drawing.Color.Green;
-            this.LRingLight.Location = new System.Drawing.Point(392, 20);
+            this.LRingLight.Location = new System.Drawing.Point(362, 20);
             this.LRingLight.Name = "LRingLight";
-            this.LRingLight.Size = new System.Drawing.Size(101, 33);
+            this.LRingLight.Size = new System.Drawing.Size(84, 28);
             this.LRingLight.TabIndex = 57;
             this.LRingLight.Text = "RingLight";
             this.LRingLight.UseVisualStyleBackColor = true;
@@ -974,9 +1020,9 @@ namespace NSAA_16Axis
             this.LCoaLight.Checked = true;
             this.LCoaLight.CheckState = System.Windows.Forms.CheckState.Checked;
             this.LCoaLight.ForeColor = System.Drawing.Color.Red;
-            this.LCoaLight.Location = new System.Drawing.Point(491, 20);
+            this.LCoaLight.Location = new System.Drawing.Point(394, 20);
             this.LCoaLight.Name = "LCoaLight";
-            this.LCoaLight.Size = new System.Drawing.Size(98, 33);
+            this.LCoaLight.Size = new System.Drawing.Size(82, 28);
             this.LCoaLight.TabIndex = 59;
             this.LCoaLight.Text = "CoaLight";
             this.LCoaLight.UseVisualStyleBackColor = true;
@@ -989,9 +1035,9 @@ namespace NSAA_16Axis
             this.RCoaLight.Checked = true;
             this.RCoaLight.CheckState = System.Windows.Forms.CheckState.Checked;
             this.RCoaLight.ForeColor = System.Drawing.Color.Red;
-            this.RCoaLight.Location = new System.Drawing.Point(1341, 20);
+            this.RCoaLight.Location = new System.Drawing.Point(1432, 20);
             this.RCoaLight.Name = "RCoaLight";
-            this.RCoaLight.Size = new System.Drawing.Size(98, 33);
+            this.RCoaLight.Size = new System.Drawing.Size(82, 28);
             this.RCoaLight.TabIndex = 60;
             this.RCoaLight.Text = "CoaLight";
             this.RCoaLight.UseVisualStyleBackColor = true;
@@ -1004,9 +1050,9 @@ namespace NSAA_16Axis
             this.RRingLight.Checked = true;
             this.RRingLight.CheckState = System.Windows.Forms.CheckState.Checked;
             this.RRingLight.ForeColor = System.Drawing.Color.Green;
-            this.RRingLight.Location = new System.Drawing.Point(1446, 20);
+            this.RRingLight.Location = new System.Drawing.Point(1491, 20);
             this.RRingLight.Name = "RRingLight";
-            this.RRingLight.Size = new System.Drawing.Size(101, 33);
+            this.RRingLight.Size = new System.Drawing.Size(84, 28);
             this.RRingLight.TabIndex = 61;
             this.RRingLight.Text = "RingLight";
             this.RRingLight.UseVisualStyleBackColor = true;
@@ -1016,7 +1062,7 @@ namespace NSAA_16Axis
             // btLCoaLightPlus
             // 
             this.btLCoaLightPlus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btLCoaLightPlus.Location = new System.Drawing.Point(512, 53);
+            this.btLCoaLightPlus.Location = new System.Drawing.Point(415, 53);
             this.btLCoaLightPlus.Name = "btLCoaLightPlus";
             this.btLCoaLightPlus.Size = new System.Drawing.Size(38, 30);
             this.btLCoaLightPlus.TabIndex = 62;
@@ -1027,7 +1073,7 @@ namespace NSAA_16Axis
             // btLCoaLightMinus
             // 
             this.btLCoaLightMinus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btLCoaLightMinus.Location = new System.Drawing.Point(512, 244);
+            this.btLCoaLightMinus.Location = new System.Drawing.Point(415, 294);
             this.btLCoaLightMinus.Name = "btLCoaLightMinus";
             this.btLCoaLightMinus.Size = new System.Drawing.Size(38, 30);
             this.btLCoaLightMinus.TabIndex = 63;
@@ -1038,7 +1084,7 @@ namespace NSAA_16Axis
             // btLRingLightMinus
             // 
             this.btLRingLightMinus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btLRingLightMinus.Location = new System.Drawing.Point(408, 243);
+            this.btLRingLightMinus.Location = new System.Drawing.Point(378, 243);
             this.btLRingLightMinus.Name = "btLRingLightMinus";
             this.btLRingLightMinus.Size = new System.Drawing.Size(38, 30);
             this.btLRingLightMinus.TabIndex = 65;
@@ -1050,7 +1096,7 @@ namespace NSAA_16Axis
             // btLRingLightPlus
             // 
             this.btLRingLightPlus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btLRingLightPlus.Location = new System.Drawing.Point(408, 54);
+            this.btLRingLightPlus.Location = new System.Drawing.Point(378, 54);
             this.btLRingLightPlus.Name = "btLRingLightPlus";
             this.btLRingLightPlus.Size = new System.Drawing.Size(38, 30);
             this.btLRingLightPlus.TabIndex = 64;
@@ -1062,7 +1108,7 @@ namespace NSAA_16Axis
             // btRCoaLightMinus
             // 
             this.btRCoaLightMinus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btRCoaLightMinus.Location = new System.Drawing.Point(1364, 243);
+            this.btRCoaLightMinus.Location = new System.Drawing.Point(1455, 294);
             this.btRCoaLightMinus.Name = "btRCoaLightMinus";
             this.btRCoaLightMinus.Size = new System.Drawing.Size(38, 30);
             this.btRCoaLightMinus.TabIndex = 67;
@@ -1073,7 +1119,7 @@ namespace NSAA_16Axis
             // btRCoaLightPlus
             // 
             this.btRCoaLightPlus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btRCoaLightPlus.Location = new System.Drawing.Point(1364, 50);
+            this.btRCoaLightPlus.Location = new System.Drawing.Point(1455, 50);
             this.btRCoaLightPlus.Name = "btRCoaLightPlus";
             this.btRCoaLightPlus.Size = new System.Drawing.Size(38, 30);
             this.btRCoaLightPlus.TabIndex = 66;
@@ -1084,7 +1130,7 @@ namespace NSAA_16Axis
             // btRRingLightMinus
             // 
             this.btRRingLightMinus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btRRingLightMinus.Location = new System.Drawing.Point(1473, 243);
+            this.btRRingLightMinus.Location = new System.Drawing.Point(1518, 243);
             this.btRRingLightMinus.Name = "btRRingLightMinus";
             this.btRRingLightMinus.Size = new System.Drawing.Size(38, 30);
             this.btRRingLightMinus.TabIndex = 69;
@@ -1096,7 +1142,7 @@ namespace NSAA_16Axis
             // btRRingLightPlus
             // 
             this.btRRingLightPlus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btRRingLightPlus.Location = new System.Drawing.Point(1473, 50);
+            this.btRRingLightPlus.Location = new System.Drawing.Point(1518, 50);
             this.btRRingLightPlus.Name = "btRRingLightPlus";
             this.btRRingLightPlus.Size = new System.Drawing.Size(38, 30);
             this.btRRingLightPlus.TabIndex = 68;
@@ -1111,7 +1157,7 @@ namespace NSAA_16Axis
             this.lbEmulationModeL.Font = new System.Drawing.Font("標楷體", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbEmulationModeL.Location = new System.Drawing.Point(306, 672);
             this.lbEmulationModeL.Name = "lbEmulationModeL";
-            this.lbEmulationModeL.Size = new System.Drawing.Size(327, 44);
+            this.lbEmulationModeL.Size = new System.Drawing.Size(267, 35);
             this.lbEmulationModeL.TabIndex = 71;
             this.lbEmulationModeL.Text = "Emulation Mode";
             // 
@@ -1121,7 +1167,7 @@ namespace NSAA_16Axis
             this.lbEmulationModeR.Font = new System.Drawing.Font("標楷體", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbEmulationModeR.Location = new System.Drawing.Point(1313, 672);
             this.lbEmulationModeR.Name = "lbEmulationModeR";
-            this.lbEmulationModeR.Size = new System.Drawing.Size(327, 44);
+            this.lbEmulationModeR.Size = new System.Drawing.Size(267, 35);
             this.lbEmulationModeR.TabIndex = 72;
             this.lbEmulationModeR.Text = "Emulation Mode";
             // 
@@ -1129,7 +1175,7 @@ namespace NSAA_16Axis
             // 
             this.btRRingSave.BackColor = System.Drawing.Color.LightCoral;
             this.btRRingSave.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btRRingSave.Location = new System.Drawing.Point(1465, 288);
+            this.btRRingSave.Location = new System.Drawing.Point(1510, 288);
             this.btRRingSave.Name = "btRRingSave";
             this.btRRingSave.Size = new System.Drawing.Size(60, 30);
             this.btRRingSave.TabIndex = 76;
@@ -1142,7 +1188,7 @@ namespace NSAA_16Axis
             // 
             this.btRCoaSave.BackColor = System.Drawing.Color.LightCoral;
             this.btRCoaSave.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btRCoaSave.Location = new System.Drawing.Point(1355, 288);
+            this.btRCoaSave.Location = new System.Drawing.Point(1446, 288);
             this.btRCoaSave.Name = "btRCoaSave";
             this.btRCoaSave.Size = new System.Drawing.Size(60, 30);
             this.btRCoaSave.TabIndex = 75;
@@ -1155,7 +1201,7 @@ namespace NSAA_16Axis
             // 
             this.btLRingSave.BackColor = System.Drawing.Color.LightCoral;
             this.btLRingSave.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btLRingSave.Location = new System.Drawing.Point(397, 288);
+            this.btLRingSave.Location = new System.Drawing.Point(367, 288);
             this.btLRingSave.Name = "btLRingSave";
             this.btLRingSave.Size = new System.Drawing.Size(60, 30);
             this.btLRingSave.TabIndex = 74;
@@ -1168,7 +1214,7 @@ namespace NSAA_16Axis
             // 
             this.btLCoaSave.BackColor = System.Drawing.Color.LightCoral;
             this.btLCoaSave.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btLCoaSave.Location = new System.Drawing.Point(502, 289);
+            this.btLCoaSave.Location = new System.Drawing.Point(405, 289);
             this.btLCoaSave.Name = "btLCoaSave";
             this.btLCoaSave.Size = new System.Drawing.Size(60, 30);
             this.btLCoaSave.TabIndex = 73;
@@ -1181,9 +1227,9 @@ namespace NSAA_16Axis
             // 
             this.lbNowTime.AutoSize = true;
             this.lbNowTime.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbNowTime.Location = new System.Drawing.Point(840, 30);
+            this.lbNowTime.Location = new System.Drawing.Point(506, 24);
             this.lbNowTime.Name = "lbNowTime";
-            this.lbNowTime.Size = new System.Drawing.Size(62, 29);
+            this.lbNowTime.Size = new System.Drawing.Size(49, 22);
             this.lbNowTime.TabIndex = 77;
             this.lbNowTime.Text = "time";
             // 
@@ -1191,9 +1237,9 @@ namespace NSAA_16Axis
             // 
             this.lbDebugMsg.AutoSize = true;
             this.lbDebugMsg.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbDebugMsg.Location = new System.Drawing.Point(382, 292);
+            this.lbDebugMsg.Location = new System.Drawing.Point(328, 409);
             this.lbDebugMsg.Name = "lbDebugMsg";
-            this.lbDebugMsg.Size = new System.Drawing.Size(62, 29);
+            this.lbDebugMsg.Size = new System.Drawing.Size(49, 22);
             this.lbDebugMsg.TabIndex = 78;
             this.lbDebugMsg.Text = "time";
             this.lbDebugMsg.Visible = false;
@@ -1230,7 +1276,7 @@ namespace NSAA_16Axis
             this.lbRMsgW.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbRMsgW.Location = new System.Drawing.Point(986, 369);
             this.lbRMsgW.Name = "lbRMsgW";
-            this.lbRMsgW.Size = new System.Drawing.Size(164, 25);
+            this.lbRMsgW.Size = new System.Drawing.Size(130, 20);
             this.lbRMsgW.TabIndex = 133;
             this.lbRMsgW.Text = "Debug Message";
             // 
@@ -1240,7 +1286,7 @@ namespace NSAA_16Axis
             this.lbLMsgW.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbLMsgW.Location = new System.Drawing.Point(36, 369);
             this.lbLMsgW.Name = "lbLMsgW";
-            this.lbLMsgW.Size = new System.Drawing.Size(164, 25);
+            this.lbLMsgW.Size = new System.Drawing.Size(130, 20);
             this.lbLMsgW.TabIndex = 132;
             this.lbLMsgW.Text = "Debug Message";
             // 
@@ -1250,7 +1296,7 @@ namespace NSAA_16Axis
             this.lbRMsgM.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbRMsgM.Location = new System.Drawing.Point(986, 340);
             this.lbRMsgM.Name = "lbRMsgM";
-            this.lbRMsgM.Size = new System.Drawing.Size(164, 25);
+            this.lbRMsgM.Size = new System.Drawing.Size(130, 20);
             this.lbRMsgM.TabIndex = 131;
             this.lbRMsgM.Text = "Debug Message";
             // 
@@ -1260,144 +1306,229 @@ namespace NSAA_16Axis
             this.lbLMsgM.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbLMsgM.Location = new System.Drawing.Point(36, 340);
             this.lbLMsgM.Name = "lbLMsgM";
-            this.lbLMsgM.Size = new System.Drawing.Size(164, 25);
+            this.lbLMsgM.Size = new System.Drawing.Size(130, 20);
             this.lbLMsgM.TabIndex = 130;
             this.lbLMsgM.Text = "Debug Message";
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.nuDRotate);
-            this.groupBox4.Controls.Add(this.btGo);
-            this.groupBox4.Controls.Add(this.btUpdate);
-            this.groupBox4.Controls.Add(this.nUDXyyY2);
-            this.groupBox4.Controls.Add(this.nUDXyyY1);
-            this.groupBox4.Controls.Add(this.nUDXyyX);
+            this.groupBox4.Controls.Add(this.nudWriteChuckY2);
+            this.groupBox4.Controls.Add(this.btChuckGo);
+            this.groupBox4.Controls.Add(this.nudWriteChuckY1);
+            this.groupBox4.Controls.Add(this.nudWriteChuckX);
+            this.groupBox4.Controls.Add(this.btChuckUpdate);
+            this.groupBox4.Controls.Add(this.nudWriteChuckZ);
+            this.groupBox4.Controls.Add(this.nudReadChuckR);
+            this.groupBox4.Controls.Add(this.nudReadChuckY2);
+            this.groupBox4.Controls.Add(this.nudReadChuckY1);
+            this.groupBox4.Controls.Add(this.nudReadChuckZ);
+            this.groupBox4.Controls.Add(this.nudReadChuckX);
             this.groupBox4.Controls.Add(this.label17);
             this.groupBox4.Controls.Add(this.label16);
+            this.groupBox4.Controls.Add(this.label6);
+            this.groupBox4.Controls.Add(this.label5);
+            this.groupBox4.Controls.Add(this.label8);
             this.groupBox4.Controls.Add(this.label15);
-            this.groupBox4.Location = new System.Drawing.Point(1183, 79);
+            this.groupBox4.Location = new System.Drawing.Point(821, 20);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(169, 197);
+            this.groupBox4.Size = new System.Drawing.Size(291, 249);
             this.groupBox4.TabIndex = 141;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Now Table Location";
+            this.groupBox4.Text = "WEC Location";
             this.groupBox4.Visible = false;
             // 
-            // nuDRotate
+            // nudWriteChuckY2
             // 
-            this.nuDRotate.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.nuDRotate.Enabled = false;
-            this.nuDRotate.Location = new System.Drawing.Point(73, 118);
-            this.nuDRotate.Maximum = new decimal(new int[] {
+            this.nudWriteChuckY2.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckY2.DrawBorder = false;
+            this.nudWriteChuckY2.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckY2.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckY2.Location = new System.Drawing.Point(83, 180);
+            this.nudWriteChuckY2.Name = "nudWriteChuckY2";
+            this.nudWriteChuckY2.Radius = 0;
+            this.nudWriteChuckY2.Size = new System.Drawing.Size(80, 26);
+            this.nudWriteChuckY2.TabIndex = 145;
+            this.nudWriteChuckY2.Text = "0";
+            this.nudWriteChuckY2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // btChuckGo
+            // 
+            this.btChuckGo.BackColor = System.Drawing.Color.Transparent;
+            this.btChuckGo.Caption = "Go";
+            this.btChuckGo.FaceColor = System.Drawing.Color.Lime;
+            this.btChuckGo.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btChuckGo.Image = null;
+            this.btChuckGo.Location = new System.Drawing.Point(93, 212);
+            this.btChuckGo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btChuckGo.Name = "btChuckGo";
+            this.btChuckGo.Radius = 5;
+            this.btChuckGo.Size = new System.Drawing.Size(66, 30);
+            this.btChuckGo.TabIndex = 142;
+            this.btChuckGo.Visible = false;
+            this.btChuckGo.Click += new System.EventHandler(this.BtGo_Click);
+            // 
+            // nudWriteChuckY1
+            // 
+            this.nudWriteChuckY1.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckY1.DrawBorder = false;
+            this.nudWriteChuckY1.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckY1.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckY1.Location = new System.Drawing.Point(83, 143);
+            this.nudWriteChuckY1.Name = "nudWriteChuckY1";
+            this.nudWriteChuckY1.Radius = 0;
+            this.nudWriteChuckY1.Size = new System.Drawing.Size(80, 28);
+            this.nudWriteChuckY1.TabIndex = 145;
+            this.nudWriteChuckY1.Text = "0";
+            this.nudWriteChuckY1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteChuckX
+            // 
+            this.nudWriteChuckX.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckX.DrawBorder = false;
+            this.nudWriteChuckX.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckX.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckX.Location = new System.Drawing.Point(83, 102);
+            this.nudWriteChuckX.Name = "nudWriteChuckX";
+            this.nudWriteChuckX.Radius = 0;
+            this.nudWriteChuckX.Size = new System.Drawing.Size(80, 28);
+            this.nudWriteChuckX.TabIndex = 145;
+            this.nudWriteChuckX.Text = "0";
+            this.nudWriteChuckX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // btChuckUpdate
+            // 
+            this.btChuckUpdate.BackColor = System.Drawing.Color.Transparent;
+            this.btChuckUpdate.Caption = "Update";
+            this.btChuckUpdate.FaceColor = System.Drawing.Color.Khaki;
+            this.btChuckUpdate.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btChuckUpdate.Image = null;
+            this.btChuckUpdate.Location = new System.Drawing.Point(6, 212);
+            this.btChuckUpdate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btChuckUpdate.Name = "btChuckUpdate";
+            this.btChuckUpdate.Radius = 5;
+            this.btChuckUpdate.Size = new System.Drawing.Size(101, 30);
+            this.btChuckUpdate.TabIndex = 141;
+            this.btChuckUpdate.Click += new System.EventHandler(this.BtChuckUpdate_Click);
+            // 
+            // nudWriteChuckZ
+            // 
+            this.nudWriteChuckZ.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckZ.DrawBorder = false;
+            this.nudWriteChuckZ.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckZ.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckZ.Location = new System.Drawing.Point(83, 67);
+            this.nudWriteChuckZ.Name = "nudWriteChuckZ";
+            this.nudWriteChuckZ.Radius = 0;
+            this.nudWriteChuckZ.Size = new System.Drawing.Size(80, 27);
+            this.nudWriteChuckZ.TabIndex = 145;
+            this.nudWriteChuckZ.Text = "0";
+            this.nudWriteChuckZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudReadChuckR
+            // 
+            this.nudReadChuckR.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadChuckR.Enabled = false;
+            this.nudReadChuckR.Location = new System.Drawing.Point(175, 212);
+            this.nudReadChuckR.Maximum = new decimal(new int[] {
             2500000,
             0,
             0,
             0});
-            this.nuDRotate.Minimum = new decimal(new int[] {
+            this.nudReadChuckR.Minimum = new decimal(new int[] {
             2500000,
             0,
             0,
             -2147483648});
-            this.nuDRotate.Name = "nuDRotate";
-            this.nuDRotate.Size = new System.Drawing.Size(90, 30);
-            this.nuDRotate.TabIndex = 143;
-            this.nuDRotate.ValueChanged += new System.EventHandler(this.NuDRotate_ValueChanged);
+            this.nudReadChuckR.Name = "nudReadChuckR";
+            this.nudReadChuckR.Size = new System.Drawing.Size(90, 26);
+            this.nudReadChuckR.TabIndex = 143;
+            this.nudReadChuckR.Visible = false;
+            this.nudReadChuckR.ValueChanged += new System.EventHandler(this.NuDRotate_ValueChanged);
             // 
-            // btGo
+            // nudReadChuckY2
             // 
-            this.btGo.BackColor = System.Drawing.Color.Transparent;
-            this.btGo.Caption = "Go";
-            this.btGo.FaceColor = System.Drawing.Color.Lime;
-            this.btGo.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btGo.Image = null;
-            this.btGo.Location = new System.Drawing.Point(94, 154);
-            this.btGo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btGo.Name = "btGo";
-            this.btGo.Radius = 5;
-            this.btGo.Size = new System.Drawing.Size(66, 30);
-            this.btGo.TabIndex = 142;
-            this.btGo.Click += new System.EventHandler(this.BtGo_Click);
-            // 
-            // btUpdate
-            // 
-            this.btUpdate.BackColor = System.Drawing.Color.Transparent;
-            this.btUpdate.Caption = "Update";
-            this.btUpdate.FaceColor = System.Drawing.Color.Khaki;
-            this.btUpdate.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btUpdate.Image = null;
-            this.btUpdate.Location = new System.Drawing.Point(6, 154);
-            this.btUpdate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btUpdate.Name = "btUpdate";
-            this.btUpdate.Radius = 5;
-            this.btUpdate.Size = new System.Drawing.Size(74, 30);
-            this.btUpdate.TabIndex = 141;
-            this.btUpdate.Click += new System.EventHandler(this.BtUpdate_Click);
-            // 
-            // nUDXyyY2
-            // 
-            this.nUDXyyY2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.nUDXyyY2.Enabled = false;
-            this.nUDXyyY2.Location = new System.Drawing.Point(73, 86);
-            this.nUDXyyY2.Maximum = new decimal(new int[] {
+            this.nudReadChuckY2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadChuckY2.Enabled = false;
+            this.nudReadChuckY2.Location = new System.Drawing.Point(175, 176);
+            this.nudReadChuckY2.Maximum = new decimal(new int[] {
             2500000,
             0,
             0,
             0});
-            this.nUDXyyY2.Minimum = new decimal(new int[] {
+            this.nudReadChuckY2.Minimum = new decimal(new int[] {
             2500000,
             0,
             0,
             -2147483648});
-            this.nUDXyyY2.Name = "nUDXyyY2";
-            this.nUDXyyY2.Size = new System.Drawing.Size(90, 30);
-            this.nUDXyyY2.TabIndex = 119;
+            this.nudReadChuckY2.Name = "nudReadChuckY2";
+            this.nudReadChuckY2.Size = new System.Drawing.Size(90, 26);
+            this.nudReadChuckY2.TabIndex = 119;
             // 
-            // nUDXyyY1
+            // nudReadChuckY1
             // 
-            this.nUDXyyY1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.nUDXyyY1.Enabled = false;
-            this.nUDXyyY1.Location = new System.Drawing.Point(73, 55);
-            this.nUDXyyY1.Maximum = new decimal(new int[] {
+            this.nudReadChuckY1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadChuckY1.Enabled = false;
+            this.nudReadChuckY1.Location = new System.Drawing.Point(175, 139);
+            this.nudReadChuckY1.Maximum = new decimal(new int[] {
             2500000,
             0,
             0,
             0});
-            this.nUDXyyY1.Minimum = new decimal(new int[] {
+            this.nudReadChuckY1.Minimum = new decimal(new int[] {
             2500000,
             0,
             0,
             -2147483648});
-            this.nUDXyyY1.Name = "nUDXyyY1";
-            this.nUDXyyY1.Size = new System.Drawing.Size(90, 30);
-            this.nUDXyyY1.TabIndex = 118;
+            this.nudReadChuckY1.Name = "nudReadChuckY1";
+            this.nudReadChuckY1.Size = new System.Drawing.Size(90, 26);
+            this.nudReadChuckY1.TabIndex = 118;
             // 
-            // nUDXyyX
+            // nudReadChuckZ
             // 
-            this.nUDXyyX.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.nUDXyyX.Enabled = false;
-            this.nUDXyyX.Location = new System.Drawing.Point(73, 24);
-            this.nUDXyyX.Maximum = new decimal(new int[] {
+            this.nudReadChuckZ.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadChuckZ.Enabled = false;
+            this.nudReadChuckZ.Location = new System.Drawing.Point(175, 67);
+            this.nudReadChuckZ.Maximum = new decimal(new int[] {
             2500000,
             0,
             0,
             0});
-            this.nUDXyyX.Minimum = new decimal(new int[] {
+            this.nudReadChuckZ.Minimum = new decimal(new int[] {
             2500000,
             0,
             0,
             -2147483648});
-            this.nUDXyyX.Name = "nUDXyyX";
-            this.nUDXyyX.Size = new System.Drawing.Size(90, 30);
-            this.nUDXyyX.TabIndex = 117;
+            this.nudReadChuckZ.Name = "nudReadChuckZ";
+            this.nudReadChuckZ.Size = new System.Drawing.Size(90, 26);
+            this.nudReadChuckZ.TabIndex = 117;
+            // 
+            // nudReadChuckX
+            // 
+            this.nudReadChuckX.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadChuckX.Enabled = false;
+            this.nudReadChuckX.Location = new System.Drawing.Point(175, 103);
+            this.nudReadChuckX.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadChuckX.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadChuckX.Name = "nudReadChuckX";
+            this.nudReadChuckX.Size = new System.Drawing.Size(90, 26);
+            this.nudReadChuckX.TabIndex = 117;
             // 
             // label17
             // 
             this.label17.AutoSize = true;
             this.label17.Enabled = false;
             this.label17.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label17.Location = new System.Drawing.Point(8, 59);
+            this.label17.Location = new System.Drawing.Point(9, 145);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(74, 24);
+            this.label17.Size = new System.Drawing.Size(61, 19);
             this.label17.TabIndex = 98;
             this.label17.Text = "XYY-Y1";
             // 
@@ -1406,20 +1537,53 @@ namespace NSAA_16Axis
             this.label16.AutoSize = true;
             this.label16.Enabled = false;
             this.label16.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label16.Location = new System.Drawing.Point(8, 90);
+            this.label16.Location = new System.Drawing.Point(9, 182);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(74, 24);
+            this.label16.Size = new System.Drawing.Size(61, 19);
             this.label16.TabIndex = 96;
             this.label16.Text = "XYY-Y2";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Enabled = false;
+            this.label6.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label6.Location = new System.Drawing.Point(84, 39);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(59, 19);
+            this.label6.TabIndex = 94;
+            this.label6.Text = "Setting";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Enabled = false;
+            this.label5.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label5.Location = new System.Drawing.Point(160, 39);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(101, 19);
+            this.label5.TabIndex = 94;
+            this.label5.Text = "Now Located";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Enabled = false;
+            this.label8.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label8.Location = new System.Drawing.Point(9, 69);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(55, 19);
+            this.label8.TabIndex = 94;
+            this.label8.Text = "WEC Z";
             // 
             // label15
             // 
             this.label15.AutoSize = true;
             this.label15.Enabled = false;
             this.label15.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label15.Location = new System.Drawing.Point(16, 28);
+            this.label15.Location = new System.Drawing.Point(9, 105);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(64, 24);
+            this.label15.Size = new System.Drawing.Size(53, 19);
             this.label15.TabIndex = 94;
             this.label15.Text = "XYY-X";
             // 
@@ -1430,7 +1594,7 @@ namespace NSAA_16Axis
             this.btChuckAlignN.FaceColor = System.Drawing.Color.Khaki;
             this.btChuckAlignN.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btChuckAlignN.Image = null;
-            this.btChuckAlignN.Location = new System.Drawing.Point(691, 127);
+            this.btChuckAlignN.Location = new System.Drawing.Point(703, 287);
             this.btChuckAlignN.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btChuckAlignN.Name = "btChuckAlignN";
             this.btChuckAlignN.Radius = 5;
@@ -1446,7 +1610,7 @@ namespace NSAA_16Axis
             this.btCapture.FaceColor = System.Drawing.Color.Khaki;
             this.btCapture.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btCapture.Image = null;
-            this.btCapture.Location = new System.Drawing.Point(691, 89);
+            this.btCapture.Location = new System.Drawing.Point(607, 287);
             this.btCapture.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btCapture.Name = "btCapture";
             this.btCapture.Radius = 5;
@@ -1461,7 +1625,7 @@ namespace NSAA_16Axis
             this.btRollBack.FaceColor = System.Drawing.Color.Khaki;
             this.btRollBack.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btRollBack.Image = null;
-            this.btRollBack.Location = new System.Drawing.Point(691, 165);
+            this.btRollBack.Location = new System.Drawing.Point(798, 287);
             this.btRollBack.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btRollBack.Name = "btRollBack";
             this.btRollBack.Radius = 5;
@@ -1477,7 +1641,7 @@ namespace NSAA_16Axis
             this.btAlignTest.FaceColor = System.Drawing.Color.Khaki;
             this.btAlignTest.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btAlignTest.Image = null;
-            this.btAlignTest.Location = new System.Drawing.Point(691, 50);
+            this.btAlignTest.Location = new System.Drawing.Point(511, 287);
             this.btAlignTest.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btAlignTest.Name = "btAlignTest";
             this.btAlignTest.Radius = 5;
@@ -1505,9 +1669,9 @@ namespace NSAA_16Axis
             // 
             // btTfile
             // 
-            this.btTfile.Location = new System.Drawing.Point(628, 202);
+            this.btTfile.Location = new System.Drawing.Point(485, 251);
             this.btTfile.Name = "btTfile";
-            this.btTfile.Size = new System.Drawing.Size(106, 37);
+            this.btTfile.Size = new System.Drawing.Size(106, 34);
             this.btTfile.TabIndex = 142;
             this.btTfile.Text = "file";
             this.btTfile.UseVisualStyleBackColor = true;
@@ -1515,7 +1679,7 @@ namespace NSAA_16Axis
             // 
             // btTLRead
             // 
-            this.btTLRead.Location = new System.Drawing.Point(628, 243);
+            this.btTLRead.Location = new System.Drawing.Point(591, 251);
             this.btTLRead.Name = "btTLRead";
             this.btTLRead.Size = new System.Drawing.Size(106, 33);
             this.btTLRead.TabIndex = 142;
@@ -1525,9 +1689,9 @@ namespace NSAA_16Axis
             // 
             // btTRRead
             // 
-            this.btTRRead.Location = new System.Drawing.Point(628, 283);
+            this.btTRRead.Location = new System.Drawing.Point(703, 251);
             this.btTRRead.Name = "btTRRead";
-            this.btTRRead.Size = new System.Drawing.Size(106, 36);
+            this.btTRRead.Size = new System.Drawing.Size(106, 31);
             this.btTRRead.TabIndex = 142;
             this.btTRRead.Text = "buttonR";
             this.btTRRead.UseVisualStyleBackColor = true;
@@ -1537,6 +1701,423 @@ namespace NSAA_16Axis
             // 
             this.OpenFileDialogReadT.FileName = "openFileDialogT1";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.nudWriteUpRightZ);
+            this.groupBox1.Controls.Add(this.nudWriteUpRightY);
+            this.groupBox1.Controls.Add(this.nudWriteUpRightX);
+            this.groupBox1.Controls.Add(this.nudWriteUpLeftZ);
+            this.groupBox1.Controls.Add(this.btUpCCDGo);
+            this.groupBox1.Controls.Add(this.nudWriteUpLeftY);
+            this.groupBox1.Controls.Add(this.nudWriteUpLeftX);
+            this.groupBox1.Controls.Add(this.btUpCCDUpdate);
+            this.groupBox1.Controls.Add(this.nudWriteUpBigY);
+            this.groupBox1.Controls.Add(this.numericUpDown1);
+            this.groupBox1.Controls.Add(this.nudReadUpRightZ);
+            this.groupBox1.Controls.Add(this.nudReadUpRightY);
+            this.groupBox1.Controls.Add(this.nudReadUpRightX);
+            this.groupBox1.Controls.Add(this.nudReadUpLeftZ);
+            this.groupBox1.Controls.Add(this.nudReadUpLeftY);
+            this.groupBox1.Controls.Add(this.nudReadBigY);
+            this.groupBox1.Controls.Add(this.nudReadUpLeftX);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.label19);
+            this.groupBox1.Controls.Add(this.label18);
+            this.groupBox1.Controls.Add(this.label14);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.label10);
+            this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.label12);
+            this.groupBox1.Controls.Add(this.label13);
+            this.groupBox1.Location = new System.Drawing.Point(1135, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(291, 321);
+            this.groupBox1.TabIndex = 141;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "CCD Location";
+            // 
+            // nudWriteUpRightZ
+            // 
+            this.nudWriteUpRightZ.BackColor = System.Drawing.Color.White;
+            this.nudWriteUpRightZ.DrawBorder = false;
+            this.nudWriteUpRightZ.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteUpRightZ.ForeColor = System.Drawing.Color.White;
+            this.nudWriteUpRightZ.Location = new System.Drawing.Point(83, 246);
+            this.nudWriteUpRightZ.Name = "nudWriteUpRightZ";
+            this.nudWriteUpRightZ.Radius = 0;
+            this.nudWriteUpRightZ.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteUpRightZ.TabIndex = 145;
+            this.nudWriteUpRightZ.Text = "0";
+            this.nudWriteUpRightZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteUpRightY
+            // 
+            this.nudWriteUpRightY.BackColor = System.Drawing.Color.White;
+            this.nudWriteUpRightY.DrawBorder = false;
+            this.nudWriteUpRightY.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteUpRightY.ForeColor = System.Drawing.Color.White;
+            this.nudWriteUpRightY.Location = new System.Drawing.Point(83, 213);
+            this.nudWriteUpRightY.Name = "nudWriteUpRightY";
+            this.nudWriteUpRightY.Radius = 0;
+            this.nudWriteUpRightY.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteUpRightY.TabIndex = 145;
+            this.nudWriteUpRightY.Text = "0";
+            this.nudWriteUpRightY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteUpRightX
+            // 
+            this.nudWriteUpRightX.BackColor = System.Drawing.Color.White;
+            this.nudWriteUpRightX.DrawBorder = false;
+            this.nudWriteUpRightX.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteUpRightX.ForeColor = System.Drawing.Color.White;
+            this.nudWriteUpRightX.Location = new System.Drawing.Point(83, 180);
+            this.nudWriteUpRightX.Name = "nudWriteUpRightX";
+            this.nudWriteUpRightX.Radius = 0;
+            this.nudWriteUpRightX.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteUpRightX.TabIndex = 145;
+            this.nudWriteUpRightX.Text = "0";
+            this.nudWriteUpRightX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteUpLeftZ
+            // 
+            this.nudWriteUpLeftZ.BackColor = System.Drawing.Color.White;
+            this.nudWriteUpLeftZ.DrawBorder = false;
+            this.nudWriteUpLeftZ.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteUpLeftZ.ForeColor = System.Drawing.Color.White;
+            this.nudWriteUpLeftZ.Location = new System.Drawing.Point(83, 147);
+            this.nudWriteUpLeftZ.Name = "nudWriteUpLeftZ";
+            this.nudWriteUpLeftZ.Radius = 0;
+            this.nudWriteUpLeftZ.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteUpLeftZ.TabIndex = 145;
+            this.nudWriteUpLeftZ.Text = "0";
+            this.nudWriteUpLeftZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // btUpCCDGo
+            // 
+            this.btUpCCDGo.BackColor = System.Drawing.Color.Transparent;
+            this.btUpCCDGo.Caption = "Go";
+            this.btUpCCDGo.FaceColor = System.Drawing.Color.Lime;
+            this.btUpCCDGo.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btUpCCDGo.Image = null;
+            this.btUpCCDGo.Location = new System.Drawing.Point(89, 286);
+            this.btUpCCDGo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btUpCCDGo.Name = "btUpCCDGo";
+            this.btUpCCDGo.Radius = 5;
+            this.btUpCCDGo.Size = new System.Drawing.Size(66, 30);
+            this.btUpCCDGo.TabIndex = 142;
+            this.btUpCCDGo.Visible = false;
+            this.btUpCCDGo.Click += new System.EventHandler(this.BtGo_Click);
+            // 
+            // nudWriteUpLeftY
+            // 
+            this.nudWriteUpLeftY.BackColor = System.Drawing.Color.White;
+            this.nudWriteUpLeftY.DrawBorder = false;
+            this.nudWriteUpLeftY.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteUpLeftY.ForeColor = System.Drawing.Color.White;
+            this.nudWriteUpLeftY.Location = new System.Drawing.Point(83, 114);
+            this.nudWriteUpLeftY.Name = "nudWriteUpLeftY";
+            this.nudWriteUpLeftY.Radius = 0;
+            this.nudWriteUpLeftY.Size = new System.Drawing.Size(80, 29);
+            this.nudWriteUpLeftY.TabIndex = 145;
+            this.nudWriteUpLeftY.Text = "0";
+            this.nudWriteUpLeftY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteUpLeftX
+            // 
+            this.nudWriteUpLeftX.BackColor = System.Drawing.Color.White;
+            this.nudWriteUpLeftX.DrawBorder = false;
+            this.nudWriteUpLeftX.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteUpLeftX.ForeColor = System.Drawing.Color.White;
+            this.nudWriteUpLeftX.Location = new System.Drawing.Point(83, 80);
+            this.nudWriteUpLeftX.Name = "nudWriteUpLeftX";
+            this.nudWriteUpLeftX.Radius = 0;
+            this.nudWriteUpLeftX.Size = new System.Drawing.Size(80, 27);
+            this.nudWriteUpLeftX.TabIndex = 145;
+            this.nudWriteUpLeftX.Text = "0";
+            this.nudWriteUpLeftX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // btUpCCDUpdate
+            // 
+            this.btUpCCDUpdate.BackColor = System.Drawing.Color.Transparent;
+            this.btUpCCDUpdate.Caption = "Update";
+            this.btUpCCDUpdate.FaceColor = System.Drawing.Color.Khaki;
+            this.btUpCCDUpdate.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btUpCCDUpdate.Image = null;
+            this.btUpCCDUpdate.Location = new System.Drawing.Point(9, 286);
+            this.btUpCCDUpdate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btUpCCDUpdate.Name = "btUpCCDUpdate";
+            this.btUpCCDUpdate.Radius = 5;
+            this.btUpCCDUpdate.Size = new System.Drawing.Size(96, 30);
+            this.btUpCCDUpdate.TabIndex = 141;
+            this.btUpCCDUpdate.Click += new System.EventHandler(this.BtUpCCDUpdate_Click);
+            // 
+            // nudWriteUpBigY
+            // 
+            this.nudWriteUpBigY.BackColor = System.Drawing.Color.White;
+            this.nudWriteUpBigY.DrawBorder = false;
+            this.nudWriteUpBigY.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteUpBigY.ForeColor = System.Drawing.Color.White;
+            this.nudWriteUpBigY.Location = new System.Drawing.Point(83, 48);
+            this.nudWriteUpBigY.Name = "nudWriteUpBigY";
+            this.nudWriteUpBigY.Radius = 0;
+            this.nudWriteUpBigY.Size = new System.Drawing.Size(80, 27);
+            this.nudWriteUpBigY.TabIndex = 145;
+            this.nudWriteUpBigY.Text = "0";
+            this.nudWriteUpBigY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.numericUpDown1.Enabled = false;
+            this.numericUpDown1.Location = new System.Drawing.Point(175, 285);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(90, 26);
+            this.numericUpDown1.TabIndex = 143;
+            this.numericUpDown1.Visible = false;
+            this.numericUpDown1.ValueChanged += new System.EventHandler(this.NuDRotate_ValueChanged);
+            // 
+            // nudReadUpRightZ
+            // 
+            this.nudReadUpRightZ.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadUpRightZ.Enabled = false;
+            this.nudReadUpRightZ.Location = new System.Drawing.Point(175, 246);
+            this.nudReadUpRightZ.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadUpRightZ.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadUpRightZ.Name = "nudReadUpRightZ";
+            this.nudReadUpRightZ.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpRightZ.TabIndex = 119;
+            // 
+            // nudReadUpRightY
+            // 
+            this.nudReadUpRightY.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadUpRightY.Enabled = false;
+            this.nudReadUpRightY.Location = new System.Drawing.Point(175, 212);
+            this.nudReadUpRightY.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadUpRightY.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadUpRightY.Name = "nudReadUpRightY";
+            this.nudReadUpRightY.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpRightY.TabIndex = 119;
+            // 
+            // nudReadUpRightX
+            // 
+            this.nudReadUpRightX.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadUpRightX.Enabled = false;
+            this.nudReadUpRightX.Location = new System.Drawing.Point(175, 180);
+            this.nudReadUpRightX.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadUpRightX.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadUpRightX.Name = "nudReadUpRightX";
+            this.nudReadUpRightX.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpRightX.TabIndex = 119;
+            // 
+            // nudReadUpLeftZ
+            // 
+            this.nudReadUpLeftZ.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadUpLeftZ.Enabled = false;
+            this.nudReadUpLeftZ.Location = new System.Drawing.Point(175, 148);
+            this.nudReadUpLeftZ.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadUpLeftZ.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadUpLeftZ.Name = "nudReadUpLeftZ";
+            this.nudReadUpLeftZ.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpLeftZ.TabIndex = 119;
+            // 
+            // nudReadUpLeftY
+            // 
+            this.nudReadUpLeftY.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadUpLeftY.Enabled = false;
+            this.nudReadUpLeftY.Location = new System.Drawing.Point(175, 113);
+            this.nudReadUpLeftY.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadUpLeftY.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadUpLeftY.Name = "nudReadUpLeftY";
+            this.nudReadUpLeftY.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpLeftY.TabIndex = 118;
+            // 
+            // nudReadBigY
+            // 
+            this.nudReadBigY.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadBigY.Enabled = false;
+            this.nudReadBigY.Location = new System.Drawing.Point(175, 45);
+            this.nudReadBigY.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadBigY.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadBigY.Name = "nudReadBigY";
+            this.nudReadBigY.Size = new System.Drawing.Size(90, 26);
+            this.nudReadBigY.TabIndex = 117;
+            // 
+            // nudReadUpLeftX
+            // 
+            this.nudReadUpLeftX.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadUpLeftX.Enabled = false;
+            this.nudReadUpLeftX.Location = new System.Drawing.Point(175, 81);
+            this.nudReadUpLeftX.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadUpLeftX.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadUpLeftX.Name = "nudReadUpLeftX";
+            this.nudReadUpLeftX.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpLeftX.TabIndex = 117;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Enabled = false;
+            this.label7.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label7.Location = new System.Drawing.Point(9, 115);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(48, 19);
+            this.label7.TabIndex = 98;
+            this.label7.Text = "Left Y";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Enabled = false;
+            this.label19.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label19.Location = new System.Drawing.Point(9, 248);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(60, 19);
+            this.label19.TabIndex = 96;
+            this.label19.Text = "Right Z";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Enabled = false;
+            this.label18.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label18.Location = new System.Drawing.Point(9, 216);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(60, 19);
+            this.label18.TabIndex = 96;
+            this.label18.Text = "Right Y";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Enabled = false;
+            this.label14.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label14.Location = new System.Drawing.Point(9, 184);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(61, 19);
+            this.label14.TabIndex = 96;
+            this.label14.Text = "Right X";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Enabled = false;
+            this.label9.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label9.Location = new System.Drawing.Point(9, 151);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(48, 19);
+            this.label9.TabIndex = 96;
+            this.label9.Text = "Left Z";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Enabled = false;
+            this.label10.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label10.Location = new System.Drawing.Point(84, 22);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(59, 19);
+            this.label10.TabIndex = 94;
+            this.label10.Text = "Setting";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Enabled = false;
+            this.label11.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label11.Location = new System.Drawing.Point(160, 22);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(101, 19);
+            this.label11.TabIndex = 94;
+            this.label11.Text = "Now Located";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Enabled = false;
+            this.label12.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label12.Location = new System.Drawing.Point(9, 48);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(45, 19);
+            this.label12.TabIndex = 94;
+            this.label12.Text = "Big Y";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Enabled = false;
+            this.label13.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label13.Location = new System.Drawing.Point(9, 79);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(49, 19);
+            this.label13.TabIndex = 94;
+            this.label13.Text = "Left X";
+            // 
             // CMLearnPatternUp
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1544,8 +2125,8 @@ namespace NSAA_16Axis
             this.Controls.Add(this.btTRRead);
             this.Controls.Add(this.btTLRead);
             this.Controls.Add(this.btTfile);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.cbPatterhShift);
             this.Controls.Add(this.btChuckAlignN);
             this.Controls.Add(this.btCapture);
             this.Controls.Add(this.btRollBack);
@@ -1558,28 +2139,22 @@ namespace NSAA_16Axis
             this.Controls.Add(this.btDelete);
             this.Controls.Add(this.lbDebugMsg);
             this.Controls.Add(this.lbNowTime);
-            this.Controls.Add(this.btRRingSave);
             this.Controls.Add(this.btRCoaSave);
             this.Controls.Add(this.btLRingSave);
             this.Controls.Add(this.btLCoaSave);
             this.Controls.Add(this.lbEmulationModeR);
             this.Controls.Add(this.lbEmulationModeL);
-            this.Controls.Add(this.btRRingLightMinus);
-            this.Controls.Add(this.btRRingLightPlus);
             this.Controls.Add(this.btRCoaLightMinus);
             this.Controls.Add(this.btRCoaLightPlus);
             this.Controls.Add(this.btLRingLightMinus);
             this.Controls.Add(this.btLRingLightPlus);
             this.Controls.Add(this.btLCoaLightMinus);
             this.Controls.Add(this.btLCoaLightPlus);
-            this.Controls.Add(this.RRingLight);
             this.Controls.Add(this.RCoaLight);
             this.Controls.Add(this.LCoaLight);
             this.Controls.Add(this.LRingLight);
             this.Controls.Add(this.tBRightCoaLight);
-            this.Controls.Add(this.tBLeftCoaLight);
             this.Controls.Add(this.tBLeftRingLight);
-            this.Controls.Add(this.tBRightRingLight);
             this.Controls.Add(this.gBMag);
             this.Controls.Add(this.lbRecipeNumber);
             this.Controls.Add(this.gbRMask);
@@ -1588,6 +2163,12 @@ namespace NSAA_16Axis
             this.Controls.Add(this.gbLMask);
             this.Controls.Add(this.skRPattern);
             this.Controls.Add(this.skLPattern);
+            this.Controls.Add(this.btRRingSave);
+            this.Controls.Add(this.btRRingLightMinus);
+            this.Controls.Add(this.btRRingLightPlus);
+            this.Controls.Add(this.RRingLight);
+            this.Controls.Add(this.tBRightRingLight);
+            this.Controls.Add(this.tBLeftCoaLight);
             this.Font = new System.Drawing.Font("Arial", 12F);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Name = "CMLearnPatternUp";
@@ -1613,10 +2194,21 @@ namespace NSAA_16Axis
             ((System.ComponentModel.ISupportInitialize)(this.tBRightCoaLight)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nuDRotate)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckR)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckX)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpRightZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpRightY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpRightX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpLeftZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpLeftY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBigY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadUpLeftX)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1697,15 +2289,15 @@ namespace NSAA_16Axis
         private MRLibrary.UCButton btCapture;
         private MRLibrary.UCButton btChuckAlignN;
         public System.Windows.Forms.GroupBox groupBox4;
-        private MRLibrary.UCButton btGo;
-        private MRLibrary.UCButton btUpdate;
-        private System.Windows.Forms.NumericUpDown nUDXyyY2;
-        private System.Windows.Forms.NumericUpDown nUDXyyY1;
-        private System.Windows.Forms.NumericUpDown nUDXyyX;
+        private MRLibrary.UCButton btChuckGo;
+        private MRLibrary.UCButton btChuckUpdate;
+        private System.Windows.Forms.NumericUpDown nudReadChuckY2;
+        private System.Windows.Forms.NumericUpDown nudReadChuckY1;
+        private System.Windows.Forms.NumericUpDown nudReadChuckX;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.NumericUpDown nuDRotate;
+        private System.Windows.Forms.NumericUpDown nudReadChuckR;
         private System.Windows.Forms.Button btFindLMaskCenter;
         private System.Windows.Forms.Button btFindLWaferCenter;
         private System.Windows.Forms.Button btFindRWaferCenter;
@@ -1724,5 +2316,40 @@ namespace NSAA_16Axis
         private System.Windows.Forms.ComboBox cbRMaskClassList;
         private System.Windows.Forms.Button btLabelPatternLM;
         private System.Windows.Forms.Button btLabelPatternRM;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.NumericUpDown nudReadChuckZ;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private UCRoundedRectangleLabel nudWriteChuckY2;
+        private UCRoundedRectangleLabel nudWriteChuckY1;
+        private UCRoundedRectangleLabel nudWriteChuckX;
+        private UCRoundedRectangleLabel nudWriteChuckZ;
+        public System.Windows.Forms.GroupBox groupBox1;
+        private UCRoundedRectangleLabel nudWriteUpLeftZ;
+        private MRLibrary.UCButton btUpCCDGo;
+        private UCRoundedRectangleLabel nudWriteUpLeftY;
+        private UCRoundedRectangleLabel nudWriteUpLeftX;
+        private MRLibrary.UCButton btUpCCDUpdate;
+        private UCRoundedRectangleLabel nudWriteUpBigY;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown nudReadUpLeftZ;
+        private System.Windows.Forms.NumericUpDown nudReadUpLeftY;
+        private System.Windows.Forms.NumericUpDown nudReadBigY;
+        private System.Windows.Forms.NumericUpDown nudReadUpLeftX;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private UCRoundedRectangleLabel nudWriteUpRightZ;
+        private UCRoundedRectangleLabel nudWriteUpRightY;
+        private UCRoundedRectangleLabel nudWriteUpRightX;
+        private System.Windows.Forms.NumericUpDown nudReadUpRightZ;
+        private System.Windows.Forms.NumericUpDown nudReadUpRightY;
+        private System.Windows.Forms.NumericUpDown nudReadUpRightX;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label14;
     }
 }

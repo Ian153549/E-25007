@@ -72,12 +72,14 @@ namespace NSAA_16Axis
         public Mat LViewMat;
         public Mat rotate = new Mat();
         public bool isLive = true;
-
+        private System.Windows.Forms.Timer locationUpdateTimer;
         public CMLearnPatternBack()
         {
             InitializeComponent();
             GV.LeftDownWindowOnAlignPage = skLeft;
             GV.RightDownWindowOnAlignPage = skRight;
+            if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                return;
             //GV.BackLearnLeft = skLeft;
             //GV.BackLearnRight = skRight;
             SetStyle(ControlStyles.UserPaint, true);
@@ -99,8 +101,9 @@ namespace NSAA_16Axis
             //GV.BackLearnRight = skRight;
         }
 
-        private void CMLearnPattern_Load(object sender, EventArgs e)
+        private async void CMLearnPattern_Load(object sender, EventArgs e)
         {
+            
             if (GV.AppSettingParm.DebugMode)
             {
                 lbDebugMsg.Visible = true;
@@ -172,8 +175,10 @@ namespace NSAA_16Axis
                 cbRWaferAlgo.Items.Add(GV.Dlang.strAI);
                 cbLBackMaskAlgo.Items.Add(GV.Dlang.strTemplate);
                 cbLBackMaskAlgo.Items.Add(GV.Dlang.strEdge);
+                cbLBackMaskAlgo.Items.Add(GV.Dlang.strAI);
                 cbRBackMaskAlgo.Items.Add(GV.Dlang.strTemplate);
                 cbRBackMaskAlgo.Items.Add(GV.Dlang.strEdge);
+                cbRBackMaskAlgo.Items.Add(GV.Dlang.strAI);
                 _recipe = GV._recipe;
                 _AlignC = _recipe.AlignC;
                 cbLWaferAlgo.SelectedIndex = 0;
@@ -210,20 +215,292 @@ namespace NSAA_16Axis
                 btOpen.Visible = true;
             }
 
-            NUDLMaskX.Visible = false;
-            NUDLMaskY.Visible = false;
-            NUDRMaskX.Visible = false;
-            NUDRMaskY.Visible = false;
-            BtLMaskAdjSave.Visible = false;
-            BtRMaskAdjSave.Visible = false;
-            lblLMaskX.Visible = false;
-            lblLMaskY.Visible = false;
-            lblRMaskX.Visible = false;
-            lblRMaskY.Visible = false;
-            skLeft.MaskMp = lMaskMp;
-            skLeft.WaferMp = lWaferMp;
-            skRight.MaskMp = rMaskMp;
-            skRight.WaferMp = rWaferMp;
+            //NUDLMaskX.Visible = false;
+            //NUDLMaskY.Visible = false;
+            //NUDRMaskX.Visible = false;
+            //NUDRMaskY.Visible = false;
+            //BtLMaskAdjSave.Visible = false;
+            //BtRMaskAdjSave.Visible = false;
+            //lblLMaskX.Visible = false;
+            //lblLMaskY.Visible = false;
+            //lblRMaskX.Visible = false;
+            //lblRMaskY.Visible = false;
+            //skLeft.MaskMp = lMaskMp;
+            //skLeft.WaferMp = lWaferMp;
+            //skRight.MaskMp = rMaskMp;
+            //skRight.WaferMp = rWaferMp;
+            locationUpdateTimer = new System.Windows.Forms.Timer();
+            locationUpdateTimer.Interval = 500; // 200ms 更新一次
+            locationUpdateTimer.Tick += LocationUpdateTimer_Tick;
+            try
+            {
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        // 1) 取回或載入 Mask（若尚未存在）
+                        if ((LeftMaskMat == null || LeftMaskMat.Empty()) && System.IO.File.Exists(GetTemplateFileName("LeftMask")))
+                        {
+                            try
+                            {
+                                var lm = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
+                                if (lm != null && !lm.Empty())
+                                {
+                                    LeftMaskMat = lm;
+                                    GV.LeftMaskMat = LeftMaskMat;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine("Load LeftMask failed: " + ex.Message);
+                            }
+                        }
+
+                        if ((RightMaskMat == null || RightMaskMat.Empty()) && System.IO.File.Exists(GetTemplateFileName("RightMask")))
+                        {
+                            try
+                            {
+                                var rm = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
+                                if (rm != null && !rm.Empty())
+                                {
+                                    RightMaskMat = rm;
+                                    GV.RightMaskMat = RightMaskMat;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine("Load RightMask failed: " + ex.Message);
+                            }
+                        }
+
+                        // 2) 並行讓 matcher 做學習（若非 Emulation）
+                        if (GV.AppSettingParm.Emulation != true)
+                        {
+                            var learnTasks = new List<Task>();
+
+                            if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() && GV.matcherLLM != null)
+                            {
+                                learnTasks.Add(Task.Run(() => GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm)));
+                            }
+                            if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() && GV.matcherRLM != null)
+                            {
+                                learnTasks.Add(Task.Run(() => GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm)));
+                            }
+                            if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() && GV.matcherLHW != null)
+                            {
+                                learnTasks.Add(Task.Run(() => GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm)));
+                            }
+                            if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() && GV.matcherRHW != null)
+                            {
+                                learnTasks.Add(Task.Run(() => GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm)));
+                            }
+
+                            try
+                            {
+                                Task.WaitAll(learnTasks.ToArray(), 10000); // 等待，但避免無限等待（可調 timeout）
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine("Matcher learn tasks error: " + ex.Message);
+                            }
+                        }
+
+                        // 3) 取得 ClassList（如果需要）
+                        try
+                        {
+                            var classList = GV.AIClassList?.GetClassList();
+                            if (classList != null)
+                            {
+                                // 回到 UI 執行緒更新 ComboBox
+                                this.BeginInvoke(new Action(() => UpdateClassList(classList)));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("GetClassList failed: " + ex.Message);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Background init failed: " + ex.Message);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("CMLearnPattern_Load Task.Run failed: " + ex.Message);
+            }
+
+            // 回到 UI 執行緒：完成 UI 綁定、啟動 camera 與 timer
+            try
+            {
+                // 設定顯示相關參數與控制元件
+                if (_recipe != null)
+                {
+                    _AlignC = _recipe.AlignC;
+                }
+
+                int iL = (int)(_AlignC.dLalpha * 100);
+                if (iL > 100) iL = 100;
+                if (iL < 0) iL = 0;
+                int iR = (int)(_AlignC.dRalpha * 100);
+                if (iR > 100) iR = 100;
+                if (iR < 0) iR = 0;
+
+                iLalpha = iL;
+                iRalpha = iR;
+
+                tBLShowImage.Value = iLalpha;
+                tBRShowImage.Value = iRalpha;
+
+                _dLalpha = (double)tBLShowImage.Value / 100;
+                _dRalpha = (double)tBRShowImage.Value / 100;
+
+                if (rbLTopMask.Checked == false)
+                {
+                    skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
+                    skRight.SetShowMask(true, _dRalpha, RightMaskMat);
+                }
+                else
+                {
+                    skLeft.SetShowMask(false, 0, LeftMaskMat);
+                    skRight.SetShowMask(false, 0, RightMaskMat);
+                }
+
+                // 設定 camera window 並啟動 Live（在 UI 執行緒）
+                GV.LeftBackCam.SetWindow(skLeft);
+                GV.RightBackCam.SetWindow(skRight);
+
+                if (GV.AppSettingParm.LeftBackCamEnable)
+                    GV.LeftBackCam?.Live();
+
+                if (GV.AppSettingParm.RightBackCamEnable)
+                    GV.RightBackCam?.Live();
+
+                // 啟動 location timer（延後到重型作業完成）
+                locationUpdateTimer.Start();
+
+                // 啟動 DrawMatchPosition 執行緒（標示為背景執行緒）
+                if (DrawMatchThread == null)
+                {
+                    DrawMatchThread = new Thread(DrawMatchPosition) { IsBackground = true };
+                    DrawMatchThread.Start();
+                }
+
+                UpdateTargetPositionDisplay();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("UI finalization failed: " + ex.Message);
+            }
+            //locationUpdateTimer.Start();
+            //UpdateTargetPositionDisplay();
+        }
+        private void LocationUpdateTimer_Tick(object sender, EventArgs e)
+        {
+            UpdateCurrentLocationUI();
+        }
+        private void UpdateCurrentLocationUI()
+        {
+            try
+            {
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(UpdateCurrentLocationUI));
+                    return;
+                }
+
+                int[] nowLocation = GV.NowLocation;
+
+                // 更新 WEC Location 現在位置                
+                nudReadChuckX.Value = GV.NowLocation[GV.Plc.iiDChuckX];
+                nudReadChuckY1.Value = GV.NowLocation[GV.Plc.iiDChuckY1];
+                nudReadChuckY2.Value = GV.NowLocation[GV.Plc.iiDChuckY2];
+                nudReadChuckZ.Value = GV.NowLocation[GV.Plc.iiDChuckZ];
+
+                // 更新 CCD Location 現在位置 (Back Camera)
+                // 假設索引：Left: [15]=X, [16]=Y, [17]=Z; Right: [18]=X, [19]=Y, [20]=Z; BigY: [21]
+                // 請根據實際 PLC 資料對應調整索引
+                nudReadBigY.Value = GV.NowLocation[GV.Plc.iiDUpBigY];
+                nudReadBackLeftX.Value = GV.NowLocation[GV.Plc.iiDDownLeftX];
+                nudReadBackLeftY.Value = GV.NowLocation[GV.Plc.iiDDownLeftY];
+                nudReadBackLeftZ.Value = GV.NowLocation[GV.Plc.iiDDownLeftZ];
+                nudReadBackRightX.Value = GV.NowLocation[GV.Plc.iiDDownRightX];
+                nudReadBackRightY.Value = GV.NowLocation[GV.Plc.iiDDownRightY];
+                nudReadBackRightZ.Value = GV.NowLocation[GV.Plc.iiDDownRightZ];
+            }
+            catch (Exception ex)
+            {
+                // 避免更新 UI 時發生例外導致程式中斷
+                System.Diagnostics.Debug.WriteLine($"UpdateCurrentLocationUI Error: {ex.Message}");
+            }
+        }
+        private void UpdateTargetPositionDisplay()
+        {
+            try
+            {
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(UpdateTargetPositionDisplay));
+                    return;
+                }
+
+                if (_recipe == null) return;
+
+                // 顯示 WEC Location 目標位置 (從 LowerWECPos)
+                nudWriteChuckX.Text = _recipe.LowerWECPos.X.ToString("F0");
+                nudWriteChuckY1.Text = _recipe.LowerWECPos.Y.ToString("F0");
+                nudWriteChuckY2.Text = _recipe.LowerWECPos.A.ToString("F0");
+                nudWriteChuckZ.Text = _recipe.LowerWECPos.Z.ToString("F0"); // 如果有對應欄位請調整
+
+                // 顯示 CCD Location 目標位置 (從 LowerMPosition)
+                nudWriteBackLeftX.Text = _recipe.LowerMPosition.XL.ToString("F0");
+                nudWriteBackLeftY.Text = _recipe.LowerMPosition.YL.ToString("F0");
+                nudWriteBackLeftZ.Text = _recipe.LowerMPosition.ZL.ToString("F0");
+                nudWriteBackRightX.Text = _recipe.LowerMPosition.XR.ToString("F0");
+                nudWriteBackRightY.Text = _recipe.LowerMPosition.YR.ToString("F0");
+                nudWriteBackRightZ.Text = _recipe.LowerMPosition.ZR.ToString("F0");
+                nudWriteUpBigY.Text = "0"; // 如果有對應欄位請調整
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateTargetPositionDisplay Error: {ex.Message}");
+            }
+        }
+        private void BtBackCCDUpdate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (MessageBox.Show("確定要將現在位置更新到目標位置嗎？", "更新 CCD Location",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                    return;
+
+                if (_recipe == null) return;
+
+                // 從現在位置讀取並寫入 Recipe 的 LowerMPosition
+                _recipe.LowerMPosition.XL = (double)nudReadBackLeftX.Value;
+                _recipe.LowerMPosition.YL = (double)nudReadBackLeftY.Value;
+                _recipe.LowerMPosition.ZL = (double)nudReadBackLeftZ.Value;
+                _recipe.LowerMPosition.XR = (double)nudReadBackRightX.Value;
+                _recipe.LowerMPosition.YR = (double)nudReadBackRightY.Value;
+                _recipe.LowerMPosition.ZR = (double)nudReadBackRightZ.Value;
+
+                _recipe.LowerWECPos.Z = (double)nudReadChuckZ.Value;
+                _recipe.LowerWECPos.X = (double)nudReadChuckX.Value;
+                _recipe.LowerWECPos.Y = (double)nudReadChuckY1.Value;
+                _recipe.LowerWECPos.A = (double)nudReadChuckY2.Value;
+                // 儲存 Recipe
+                _recipe.Save();
+
+                // 更新目標位置顯示
+                UpdateTargetPositionDisplay();
+
+                MessageBox.Show("CCD Location 已更新。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"更新失敗: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         public void DrawMatchPosition()
         {
@@ -429,9 +706,9 @@ namespace NSAA_16Axis
                 {
                     try
                     {
-                        pbLTopMask.Image = _recipe.LeftLowMaskMat.ToBitmap();
+                        pbLBackMask.Image = _recipe.LeftLowMaskMat.ToBitmap();
                     }
-                    catch (Exception ex)
+                    catch 
                     {
 
                     }
@@ -442,9 +719,9 @@ namespace NSAA_16Axis
                 {
                     try
                     {
-                        pbRTopMask.Image = _recipe.RightLowMaskMat.ToBitmap();
+                        pbRBackMask.Image = _recipe.RightLowMaskMat.ToBitmap();
                     }
-                    catch (Exception ex)
+                    catch 
                     {
 
                     }
@@ -461,7 +738,7 @@ namespace NSAA_16Axis
                     {
                         pbLTopMask.Image = _recipe.LeftHighMaskMat.ToBitmap();
                     }
-                    catch (Exception ex)
+                    catch 
                     {
                     }
                 }
@@ -473,7 +750,7 @@ namespace NSAA_16Axis
                     {
                         pbRTopMask.Image = _recipe.RightHighMaskMat.ToBitmap();
                     }
-                    catch (Exception ex)
+                    catch 
                     {
                     }
                 }
@@ -489,7 +766,9 @@ namespace NSAA_16Axis
                 {
                     pbLBackMask.Image = _recipe.LeftLowMaskMat.ToBitmap();
                 }
-                catch { }
+                catch 
+                { 
+                }
                 //using(var bitmap=_recipe.LeftLowMaskMat.ToBitmap())
                 //{
                 //    pbLBackMask.Image?.Dispose();
@@ -504,7 +783,9 @@ namespace NSAA_16Axis
                 {
                     pbLWafer.Image = _recipe.LeftHighWaferMat.ToBitmap();
                 }
-                catch { }
+                catch 
+                {
+                }
                 //using (var bitmap = _recipe.LeftHighWaferMat.ToBitmap())
                 //{
                 //    pbLWafer.Image?.Dispose();
@@ -519,7 +800,9 @@ namespace NSAA_16Axis
                 {
                     pbRBackMask.Image = _recipe.RightLowMaskMat.ToBitmap();
                 }
-                catch { }
+                catch 
+                {
+                }
                 //using (var bitmap = _recipe.RightLowMaskMat.ToBitmap())
                 //{
                 //    pbRBackMask.Image?.Dispose();
@@ -534,7 +817,9 @@ namespace NSAA_16Axis
                 {
                     pbRWafer.Image = _recipe.RightHighWaferMat.ToBitmap();
                 }
-                catch { }
+                catch 
+                {
+                }
                 //using (var bitmap = _recipe.RightHighWaferMat.ToBitmap())
                 //{
                 //    pbRWafer.Image?.Dispose();
@@ -745,8 +1030,38 @@ namespace NSAA_16Axis
         {
             _recipe = GV._recipe;
             _AlignC = _recipe.AlignC;
+            UpdateTargetPositionDisplay();
         }
+        private void ApplyLanguage()
+        {
+            if (GV.AppSettingParm.Language == "default" || GV.Dlang == null)
+                return;
 
+            // === WEC Location (groupBox2) ===
+            groupBox2.Text = GV.Dlang.gbWECLocation;
+            label22.Text = GV.Dlang.lbTargetPosition;   // "Setting" -> 目標位置
+            label23.Text = GV.Dlang.lbCurrentPosition;    // "Now Located" -> 現在位置
+            label24.Text = GV.Dlang.lbChuckZ;            // "WEC Z"
+            label25.Text = GV.Dlang.lbChuckX;            // "XYY-X"
+            label20.Text = GV.Dlang.lbChuckY1;           // "XYY-Y1"
+            label21.Text = GV.Dlang.lbChuckY2;           // "XYY-Y2"
+            btBackChuckUpdate.Caption = GV.Dlang.btChuckUpdate;  // UCButton 使用 Caption
+            btChuckGo.Caption = GV.Dlang.btChuckGo;              // UCButton 使用 Caption
+
+            // === CCD Location (groupBox1) ===
+            groupBox1.Text = GV.Dlang.gbCCDLocation;
+            label10.Text = GV.Dlang.lbTargetPosition;   // "Setting" -> 目標位置
+            label11.Text = GV.Dlang.lbCurrentPosition;    // "Now Located" -> 現在位置
+                                                         // label12.Text = GV.Dlang.lbBigY;           // "Big Y" (目前隱藏)
+            label13.Text = GV.Dlang.lbLeftX;             // "Left X"
+            label8.Text = GV.Dlang.lbLeftY;              // "Left Y"
+            label9.Text = GV.Dlang.lbLeftZ;              // "Left Z"
+            label14.Text = GV.Dlang.lbRightX;            // "Right X"
+            label18.Text = GV.Dlang.lbRightY;            // "Right Y"
+            label19.Text = GV.Dlang.lbRightZ;            // "Right Z"
+            btBackCCDUpdate.Caption = GV.Dlang.btCCDUpdate;      // UCButton 使用 Caption
+            btUpCCDGo.Caption = GV.Dlang.btCCDGo;                // UCButton 使用 Caption
+        }
 
         public void CheckLevel()
         {
@@ -847,16 +1162,16 @@ namespace NSAA_16Axis
                         btSave.Enabled = true;
                         btReadMaskMat.Visible = true;
                         btNG.Visible = true;
-                        NUDLMaskX.Visible = true;
-                        NUDLMaskY.Visible = true;
-                        NUDRMaskX.Visible = true;
-                        NUDRMaskY.Visible = true;
-                        BtLMaskAdjSave.Visible = true;
-                        BtRMaskAdjSave.Visible = true;
-                        lblLMaskX.Visible = true;
-                        lblLMaskY.Visible = true;
-                        lblRMaskX.Visible = true;
-                        lblRMaskY.Visible = true;
+                        NUDLMaskX.Visible = false;
+                        NUDLMaskY.Visible = false;
+                        NUDRMaskX.Visible = false;
+                        NUDRMaskY.Visible = false;
+                        BtLMaskAdjSave.Visible = false;
+                        BtRMaskAdjSave.Visible = false;
+                        lblLMaskX.Visible = false;
+                        lblLMaskY.Visible = false;
+                        lblRMaskX.Visible = false;
+                        lblRMaskY.Visible = false;
                     }
                     else
                     {
@@ -987,14 +1302,14 @@ namespace NSAA_16Axis
                 else
                 {
                     // 未選擇類別時，使用 -1 表示追蹤所有特徵
-                    _AlignC.LLWaferAIClassId = -1;
-                    _AlignC.LLBitwiseNot = -1;
+                    _AlignC.LHWaferAIClassId = -1;
+                    _AlignC.LHBitwiseNot = -1;
                 }
             }
             else
             {
-                _AlignC.LLWaferAIClassId = -1;
-                _AlignC.LLBitwiseNot = 0;
+                _AlignC.LHWaferAIClassId = -1;
+                _AlignC.LHBitwiseNot = 0;
             }
             if (GV.AppSettingParm.Emulation != true && GV.matcherLHW != null)
             {
@@ -1003,31 +1318,31 @@ namespace NSAA_16Axis
 
             _AlignC.LastModifyTime = DateTime.Now;
             GM.WriteRecipeXml(EditRecipe);
-            if (cbLWaferAlgo.SelectedIndex == 2)
-            {
-                try
-                {
-                    string trainPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train", GV._recipe.RecipeName);
-                    DateTime now = DateTime.Now;
-                    Directory.CreateDirectory(trainPath);
-                    string fn = string.Concat(trainPath, "\\LWB", now.ToString("HH_mm_ss"));
-                    Cv2.ImWrite(string.Concat(fn, ".bmp"), fullImage);
-                    var labelPath = string.Concat(fn, ".txt");
+            //if (cbLWaferAlgo.SelectedIndex == 2)
+            //{
+            //    try
+            //    {
+            //        string trainPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train", GV._recipe.RecipeName);
+            //        DateTime now = DateTime.Now;
+            //        Directory.CreateDirectory(trainPath);
+            //        string fn = string.Concat(trainPath, "\\LWB", now.ToString("HH_mm_ss"));
+            //        Cv2.ImWrite(string.Concat(fn, ".bmp"), fullImage);
+            //        var labelPath = string.Concat(fn, ".txt");
 
-                    float xCenter = (roi.X + roi.Width / 2f) / fullImage.Width;
-                    float yCenter = (roi.Y + roi.Height / 2f) / fullImage.Height;
-                    float w = roi.Width / (float)fullImage.Width;
-                    float h = roi.Height / (float)fullImage.Height;
-                    int classId = cbLBackWaferClassList.SelectedIndex;
-                    List<YoloBox> boxes = new List<YoloBox>();
-                    boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
-                    System.IO.File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
-                }
-                catch
-                {
+            //        float xCenter = (roi.X + roi.Width / 2f) / fullImage.Width;
+            //        float yCenter = (roi.Y + roi.Height / 2f) / fullImage.Height;
+            //        float w = roi.Width / (float)fullImage.Width;
+            //        float h = roi.Height / (float)fullImage.Height;
+            //        int classId = cbLBackWaferClassList.SelectedIndex;
+            //        List<YoloBox> boxes = new List<YoloBox>();
+            //        boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
+            //        System.IO.File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
+            //    }
+            //    catch
+            //    {
 
-                }
-            }
+            //    }
+            //}
         }
 
         private void BtLMaskTemplateSave_Click(object sender, EventArgs e)
@@ -1129,30 +1444,30 @@ namespace NSAA_16Axis
             }                
             _AlignC.LastModifyTime = DateTime.Now;
             GM.WriteRecipeXml(EditRecipe);
-            if (cbRWaferAlgo.SelectedIndex == 2)
-            {
-                try
-                {
-                    string trainPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train", GV._recipe.RecipeName);
-                    DateTime now = DateTime.Now;
-                    Directory.CreateDirectory(trainPath);
-                    string fn = string.Concat(trainPath, "\\RBW", now.ToString("HH_mm_ss"));
-                    Cv2.ImWrite(string.Concat(fn, ".bmp"), fullImage);
-                    var labelPath = string.Concat(fn, ".txt");
-                    float xCenter = (roi.X + roi.Width / 2f) / fullImage.Width;
-                    float yCenter = (roi.Y + roi.Height / 2f) / fullImage.Height;
-                    float w = roi.Width / (float)fullImage.Width;
-                    float h = roi.Height / (float)fullImage.Height;
-                    int classId = cbRBackWaferClassList.SelectedIndex;
-                    List<YoloBox> boxes = new List<YoloBox>();
-                    boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
-                    System.IO.File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
-                }
-                catch
-                {
-                }
+            //if (cbRWaferAlgo.SelectedIndex == 2)
+            //{
+            //    try
+            //    {
+            //        string trainPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train", GV._recipe.RecipeName);
+            //        DateTime now = DateTime.Now;
+            //        Directory.CreateDirectory(trainPath);
+            //        string fn = string.Concat(trainPath, "\\RBW", now.ToString("HH_mm_ss"));
+            //        Cv2.ImWrite(string.Concat(fn, ".bmp"), fullImage);
+            //        var labelPath = string.Concat(fn, ".txt");
+            //        float xCenter = (roi.X + roi.Width / 2f) / fullImage.Width;
+            //        float yCenter = (roi.Y + roi.Height / 2f) / fullImage.Height;
+            //        float w = roi.Width / (float)fullImage.Width;
+            //        float h = roi.Height / (float)fullImage.Height;
+            //        int classId = cbRBackWaferClassList.SelectedIndex;
+            //        List<YoloBox> boxes = new List<YoloBox>();
+            //        boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
+            //        System.IO.File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
+            //    }
+            //    catch
+            //    {
+            //    }
                 
-            }
+            //}
         }
 
         private void btRMaskTemplateSave_Click(object sender, EventArgs e)
@@ -1192,7 +1507,14 @@ namespace NSAA_16Axis
 
             if (MessageBox.Show(GV.Dlang.strRBottomMask, GV.Dlang.strRBottomMaskSave, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
-                pbRBackMask.Image = _recipe.RightLowWaferMat.ToBitmap();
+                if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty())
+                {
+                    pbRBackMask.Image = _recipe.RightLowMaskMat.ToBitmap();
+                }
+                else
+                {
+                    pbRBackMask.Image = null;
+                }
 
                 return;
             }
@@ -1251,29 +1573,30 @@ namespace NSAA_16Axis
             }
             _AlignC.LastModifyTime = DateTime.Now;
             GM.WriteRecipeXml(EditRecipe);
-            if (cbRBackMaskAlgo.SelectedIndex == 2)
-            {
-                try
-                {
-                    string trainPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train", GV._recipe.RecipeName);
-                    DateTime now = DateTime.Now;
-                    Directory.CreateDirectory(trainPath);
-                    string fn = string.Concat(trainPath, "\\RBM", now.ToString("HH_mm_ss"));
-                    Cv2.ImWrite(string.Concat(fn, ".bmp"), fullImage);
-                    var labelPath = string.Concat(fn, ".txt");
-                    float xCenter = (roi.X + roi.Width / 2f) / fullImage.Width;
-                    float yCenter = (roi.Y + roi.Height / 2f) / fullImage.Height;
-                    float w = roi.Width / (float)fullImage.Width;
-                    float h = roi.Height / (float)fullImage.Height;
-                    int classId = cbRBackMaskClassList.SelectedIndex;
-                    List<YoloBox> boxes = new List<YoloBox>();
-                    boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
-                    System.IO.File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
-                }
-                catch
-                {
-                }
-            }
+            //if (cbRBackMaskAlgo.SelectedIndex == 2)
+            //{
+            //    try
+            //    {
+            //        string trainPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train", GV._recipe.RecipeName);
+            //        DateTime now = DateTime.Now;
+            //        Directory.CreateDirectory(trainPath);
+            //        string fn = string.Concat(trainPath, "\\RBM", now.ToString("HH_mm_ss"));
+            //        Cv2.ImWrite(string.Concat(fn, ".bmp"), fullImage);
+            //        var labelPath = string.Concat(fn, ".txt");
+            //        float xCenter = (roi.X + roi.Width / 2f) / fullImage.Width;
+            //        float yCenter = (roi.Y + roi.Height / 2f) / fullImage.Height;
+            //        float w = roi.Width / (float)fullImage.Width;
+            //        float h = roi.Height / (float)fullImage.Height;
+            //        int classId = cbRBackMaskClassList.SelectedIndex;
+            //        List<YoloBox> boxes = new List<YoloBox>();
+            //        boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
+            //        System.IO.File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
+            //    }
+            //    catch
+            //    {
+            //    }
+            //}
+            pbRBackMask.Image = _recipe.RightLowMaskMat.ToBitmap();
         }
 
         //private void BtLMaskLocationUp_Click(object sender, EventArgs e)
@@ -2029,31 +2352,37 @@ namespace NSAA_16Axis
 
         private void TBLeftTopMaskLight_ValueChanged(object sender, EventArgs e)
         {
+            _AlignC.LeftBrightness[NowMagni] = tBLeftTopMaskLight.Value;
             GV.Light.ChangeBrightness("left", tBLeftTopMaskLight.Value);
         }
 
         private void TBLeftBackMaskLight_ValueChanged(object sender, EventArgs e)
         {
+            _AlignC.LBMaskBright = tBLeftBackMaskLight.Value;
             GV.Light.ChangeBrightness("leftback", tBLeftBackMaskLight.Value);
         }
 
         private void tBLeftBackWaferLight_ValueChanged(object sender, EventArgs e)
         {
+            _AlignC.LBWaferBright = tBLeftBackWaferLight.Value;
             GV.Light.ChangeBrightness("leftback", tBLeftBackWaferLight.Value);
         }
 
         private void TBRightBackWaferLight_ValueChanged(object sender, EventArgs e)
         {
+            _AlignC.RBWaferBright = tBRightBackWaferLight.Value;
             GV.Light.ChangeBrightness("rightback", tBRightBackWaferLight.Value);
         }
 
         private void TBRightBackMaskLight_ValueChanged(object sender, EventArgs e)
         {
+            _AlignC.RBMaskBright = tBRightBackMaskLight.Value;
             GV.Light.ChangeBrightness("rightback", tBRightBackMaskLight.Value);
         }
 
         private void tBRightTopMaskLight_ValueChanged(object sender, EventArgs e)
         {
+            _AlignC.RightBrightness[NowMagni] = tBRightTopMaskLight.Value;
             GV.Light.ChangeBrightness("right", tBRightTopMaskLight.Value);
         }
 
@@ -2257,7 +2586,18 @@ namespace NSAA_16Axis
 
             if (MessageBox.Show(GV.Dlang.strLBottomMask, GV.Dlang.strLBottomMaskSave, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
-                pbLBackMask.Image = _recipe.LeftLowMaskMat.ToBitmap();
+                //if(pbLBackMask.Image != null)
+                //{
+                //    pbLBackMask.Image.Dispose();
+                //}
+                if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty())
+                {
+                    pbLBackMask.Image = _recipe.LeftLowMaskMat.ToBitmap();
+                }
+                else
+                {
+                    pbLBackMask.Image = null;
+                }
                 return;
             }
             _AlignC.LBMaskBright = tBLeftBackMaskLight.Value;
@@ -2310,32 +2650,33 @@ namespace NSAA_16Axis
                     _AlignC.LMaskAdjY = GV.AppSettingParm.LyShift6;
                 }
             }
-            if (cbLBackMaskAlgo.SelectedIndex == 2)
-            {
-                try
-                {
-                    string trainPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train", GV._recipe.RecipeName);
-                    DateTime now = DateTime.Now;
-                    Directory.CreateDirectory(trainPath);
-                    string fn = string.Concat(trainPath, "\\LBM", now.ToString("HH_mm_ss"));
-                    Cv2.ImWrite(string.Concat(fn, ".bmp"), fullImage);
-                    var labelPath = string.Concat(fn, ".txt");
-                    float xCenter = (roi.X + roi.Width / 2f) / fullImage.Width;
-                    float yCenter = (roi.Y + roi.Height / 2f) / fullImage.Height;
-                    float w = roi.Width / (float)fullImage.Width;
-                    float h = roi.Height / (float)fullImage.Height;
-                    int classId = cbLBackMaskClassList.SelectedIndex;
-                    List<YoloBox> boxes = new List<YoloBox>();
-                    boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
-                    System.IO.File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
-                }
-                catch
-                {
+            //if (cbLBackMaskAlgo.SelectedIndex == 2)
+            //{
+            //    try
+            //    {
+            //        string trainPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Train", GV._recipe.RecipeName);
+            //        DateTime now = DateTime.Now;
+            //        Directory.CreateDirectory(trainPath);
+            //        string fn = string.Concat(trainPath, "\\LBM", now.ToString("HH_mm_ss"));
+            //        Cv2.ImWrite(string.Concat(fn, ".bmp"), fullImage);
+            //        var labelPath = string.Concat(fn, ".txt");
+            //        float xCenter = (roi.X + roi.Width / 2f) / fullImage.Width;
+            //        float yCenter = (roi.Y + roi.Height / 2f) / fullImage.Height;
+            //        float w = roi.Width / (float)fullImage.Width;
+            //        float h = roi.Height / (float)fullImage.Height;
+            //        int classId = cbLBackMaskClassList.SelectedIndex;
+            //        List<YoloBox> boxes = new List<YoloBox>();
+            //        boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
+            //        System.IO.File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
+            //    }
+            //    catch
+            //    {
 
-                }
+            //    }
 
-            }
+            //}
             _AlignC.LastModifyTime = DateTime.Now;
+            pbLBackMask.Image = _recipe.LeftLowMaskMat.ToBitmap();
             GM.WriteRecipeXml(EditRecipe);
         }
 
@@ -2353,25 +2694,16 @@ namespace NSAA_16Axis
                 buttonL.Visible = true;
                 buttonR.Visible = true;
                 groupBox4.Visible = true;
+                btCaptureN.Visible = true;
             }
 
             if (GMPBackLeft == null)
             {
                 GMPBackLeft = new Mat();
                 GMPBackRight = new Mat();
-                cbLBackMaskClassList.Items.Clear();
-                cbRBackMaskClassList.Items.Clear();
-                cbLBackWaferClassList.Items.Clear();
-                cbRBackWaferClassList.Items.Clear();
+                
                 Dictionary<string, Int16> ClassList = GV.AIClassList.GetClassList();
-                foreach (var className in ClassList)
-                {
-                    cbRBackWaferClassList.Items.Add(className.Key);
-                    cbLBackWaferClassList.Items.Add(className.Key);
-                    cbLBackMaskClassList.Items.Add(className.Key);
-                    cbRBackMaskClassList.Items.Add(className.Key);
-
-                }
+                UpdateClassList(ClassList);
             }
             if(_AlignC.LLMaskAlgorithm==OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
             {
@@ -2433,6 +2765,37 @@ namespace NSAA_16Axis
             iAdmin = GV.HwndFormMain.iAdmin;
             GV.LeftBackCam.SetWindow(skLeft);
             GV.RightBackCam.SetWindow(skRight);
+            tBLeftTopMaskLight.Value = _AlignC.LeftBrightness[NowMagni];
+            tBRightTopMaskLight.Value = _AlignC.RightBrightness[NowMagni];
+            tBLeftBackMaskLight.Value = _AlignC.LBMaskBright;
+            tBRightBackMaskLight.Value = _AlignC.RBMaskBright;
+            tBLeftBackWaferLight.Value = _AlignC.LBWaferBright;
+            tBRightBackWaferLight.Value = _AlignC.RBWaferBright;
+            if (rbLTopMask.Checked)
+            {
+                GV.Light.ChangeBrightness("left", tBLeftTopMaskLight.Value);
+            }
+            else if (rbLBackMask.Checked)
+            {
+                GV.Light.ChangeBrightness("leftback", tBLeftBackMaskLight.Value);
+            }
+            else if (rbLWafer.Checked)
+            {
+                GV.Light.ChangeBrightness("leftback", tBLeftBackWaferLight.Value);
+            }
+
+            if (rbRTopMask.Checked)
+            {
+                GV.Light.ChangeBrightness("right", tBRightTopMaskLight.Value);
+            }
+            else if (rbRBackMask.Checked)
+            {
+                GV.Light.ChangeBrightness("rightback", tBRightBackMaskLight.Value);
+            }
+            else if (rbRWafer.Checked)
+            {
+                GV.Light.ChangeBrightness("rightback", tBRightBackWaferLight.Value);
+            }
 
             if (GV.AppSettingParm.LeftBackCamEnable)
             {
@@ -2503,6 +2866,7 @@ namespace NSAA_16Axis
             NUDRMaskX.Value = _AlignC.RMaskAdjX;
             NUDRMaskY.Value = _AlignC.RMaskAdjY;
             groupBox4.Location = new System.Drawing.Point(560, 15);
+            ApplyLanguage();
             CheckParam();
         }
 
@@ -4603,6 +4967,34 @@ namespace NSAA_16Axis
 
             GV.Plc.WriteMemory(GV.Plc.iAlignTestStart, false);
         }
+        public void UpdateClassList(Dictionary<string, Int16> classList)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<Dictionary<string, Int16>>(UpdateClassList), classList);
+                return;
+            }
+
+            try
+            {
+                cbLBackMaskClassList.Items.Clear();
+                cbLBackWaferClassList.Items.Clear();
+                cbRBackWaferClassList.Items.Clear();
+                cbRBackMaskClassList.Items.Clear();
+
+                foreach (var className in classList)
+                {
+                    cbLBackMaskClassList.Items.Add(className.Key);
+                    cbLBackWaferClassList.Items.Add(className.Key);
+                    cbRBackWaferClassList.Items.Add(className.Key);
+                    cbRBackMaskClassList.Items.Add(className.Key);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"更新 ClassList 失敗: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void BtMaskCenter_Click(object sender, EventArgs e)
         {
@@ -4863,8 +5255,8 @@ namespace NSAA_16Axis
                 string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string leftImagePath = Path.Combine(recipePath, $"Left_{timestamp}.bmp");
                 string rightImagePath = Path.Combine(recipePath, $"Right_{timestamp}.bmp");
-                Cv2.ImWrite(leftImagePath, GV.LeftUpCam.Grab());
-                Cv2.ImWrite(rightImagePath, GV.RightUpCam.Grab());
+                Cv2.ImWrite(leftImagePath, GV.LeftBackCam.Grab());
+                Cv2.ImWrite(rightImagePath, GV.RightBackCam.Grab());
             }
             catch
             {
@@ -5183,6 +5575,48 @@ namespace NSAA_16Axis
             else
             {
                 comboBox.SelectedIndex = -1;
+            }
+        }
+        public void OnPageLeave()
+        {
+            try
+            {
+                // 根據當前選擇的 RadioButton 更新對應的亮度值到 AlignC
+                if (rbLTopMask.Checked)
+                {
+                    _AlignC.LeftBrightness[NowMagni] = tBLeftTopMaskLight.Value;
+                    _AlignC.RightBrightness[NowMagni] = tBRightTopMaskLight.Value;
+                }
+                else if (rbLBackMask.Checked)
+                {
+                    _AlignC.LBMaskBright = tBLeftBackMaskLight.Value;
+                    _AlignC.RBMaskBright = tBRightBackMaskLight.Value;
+                }
+                else if (rbLWafer.Checked)
+                {
+                    _AlignC.LBWaferBright = tBLeftBackWaferLight.Value;
+                    _AlignC.RBWaferBright = tBRightBackWaferLight.Value;
+                }
+
+                _AlignC.dLalpha = (double)tBLShowImage.Value / 100;
+                _AlignC.dRalpha = (double)tBRShowImage.Value / 100;
+
+                // 停止 DrawMatchPosition 執行緒
+                isLive = false;
+
+                // 儲存到 XML
+                _AlignC.LastModifyTime = DateTime.Now;
+                GM.WriteRecipeXml(EditRecipe);
+
+                GM.WriteToStatusTextBox1(iAdmin, "已自動儲存底部光源亮度設定");
+            }
+            catch (Exception ex)
+            {
+                GM.WriteToStatusTextBox($"儲存亮度設定時發生錯誤: {ex.Message}");
+            }
+            if (locationUpdateTimer != null)
+            {
+                locationUpdateTimer.Stop();
             }
         }
     }

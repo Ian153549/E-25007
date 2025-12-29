@@ -37,7 +37,6 @@
             this.btLBackMaskLightMinus = new System.Windows.Forms.Button();
             this.rbLBackMask = new System.Windows.Forms.RadioButton();
             this.btLBackMaskLightPlus = new System.Windows.Forms.Button();
-            this.ucNavigatorBackMaskL = new NSAA_16Axis.UCNavigator();
             this.tBLeftBackMaskLight = new System.Windows.Forms.TrackBar();
             this.pbLBackMask = new System.Windows.Forms.PictureBox();
             this.btLBackMaskSave = new System.Windows.Forms.Button();
@@ -49,7 +48,6 @@
             this.btLWaferLightMinus = new System.Windows.Forms.Button();
             this.rbLWafer = new System.Windows.Forms.RadioButton();
             this.btLWaferLightPlus = new System.Windows.Forms.Button();
-            this.ucNavigatorWaferL = new NSAA_16Axis.UCNavigator();
             this.tBLeftBackWaferLight = new System.Windows.Forms.TrackBar();
             this.pbLWafer = new System.Windows.Forms.PictureBox();
             this.btLWaferSave = new System.Windows.Forms.Button();
@@ -65,7 +63,6 @@
             this.btRWaferLightMinus = new System.Windows.Forms.Button();
             this.rbRWafer = new System.Windows.Forms.RadioButton();
             this.btRWaferLightPlus = new System.Windows.Forms.Button();
-            this.ucNavigatorWaferR = new NSAA_16Axis.UCNavigator();
             this.tBRightBackWaferLight = new System.Windows.Forms.TrackBar();
             this.btRWaferMask = new System.Windows.Forms.Button();
             this.pbRWafer = new System.Windows.Forms.PictureBox();
@@ -81,7 +78,6 @@
             this.btRBackMaskLightMinus = new System.Windows.Forms.Button();
             this.rbRBackMask = new System.Windows.Forms.RadioButton();
             this.btRBackMaskLightPlus = new System.Windows.Forms.Button();
-            this.ucNavigatorBackMaskR = new NSAA_16Axis.UCNavigator();
             this.btRBackMask = new System.Windows.Forms.Button();
             this.pbRBackMask = new System.Windows.Forms.PictureBox();
             this.btRBackMaskSave = new System.Windows.Forms.Button();
@@ -94,8 +90,6 @@
             this.btFindRMaskCenter = new System.Windows.Forms.Button();
             this.btRTopMaskLSave = new System.Windows.Forms.Button();
             this.btRTopMaskLightMinus = new System.Windows.Forms.Button();
-            this.ucNavigatorTopMaskR = new NSAA_16Axis.UCNavigator();
-            this.ucPattern1 = new NSAA_16Axis.UCPattern();
             this.btRTopMaskLightPlus = new System.Windows.Forms.Button();
             this.rbRTopMask = new System.Windows.Forms.RadioButton();
             this.tBRightTopMaskLight = new System.Windows.Forms.TrackBar();
@@ -110,7 +104,6 @@
             this.btLTopMaskLightMinus = new System.Windows.Forms.Button();
             this.tBLeftTopMaskLight = new System.Windows.Forms.TrackBar();
             this.btLTopMaskLightPlus = new System.Windows.Forms.Button();
-            this.ucNavigatorTopMaskL = new NSAA_16Axis.UCNavigator();
             this.rbLTopMask = new System.Windows.Forms.RadioButton();
             this.btLTopPhotoMask = new System.Windows.Forms.Button();
             this.pbLTopMask = new System.Windows.Forms.PictureBox();
@@ -146,18 +139,6 @@
             this.btBTAlignWafer = new System.Windows.Forms.Button();
             this.btReadMaskMat = new System.Windows.Forms.Button();
             this.btNG = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.btGoDisN = new MRLibrary.UCButton();
-            this.btGoDis = new MRLibrary.UCButton();
-            this.btCapture = new MRLibrary.UCButton();
-            this.btGo = new MRLibrary.UCButton();
-            this.btUpdate = new MRLibrary.UCButton();
-            this.nUDXyyY2 = new System.Windows.Forms.NumericUpDown();
-            this.nUDXyyY1 = new System.Windows.Forms.NumericUpDown();
-            this.nUDXyyX = new System.Windows.Forms.NumericUpDown();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
             this.lbDebugMsg = new System.Windows.Forms.Label();
             this.btBTAlignWaferRotate = new System.Windows.Forms.Button();
             this.lbRightXYW = new System.Windows.Forms.Label();
@@ -177,6 +158,10 @@
             this.BtLMaskAdjSave = new System.Windows.Forms.Button();
             this.BtRMaskAdjSave = new System.Windows.Forms.Button();
             this.btSave = new System.Windows.Forms.Button();
+            this.buttonL = new System.Windows.Forms.Button();
+            this.buttonR = new System.Windows.Forms.Button();
+            this.OpenFileDialogRead = new System.Windows.Forms.OpenFileDialog();
+            this.buttonF = new System.Windows.Forms.Button();
             this.BtMaskCenter = new MRLibrary.UCButton();
             this.btChuckAlignN = new MRLibrary.UCButton();
             this.btRollBack = new MRLibrary.UCButton();
@@ -187,10 +172,70 @@
             this.skLeft = new MRLibrary.SKZoomAndPanWindow();
             this.btCaptureN = new MRLibrary.UCButton();
             this.btCapMask = new MRLibrary.UCButton();
-            this.buttonL = new System.Windows.Forms.Button();
-            this.buttonR = new System.Windows.Forms.Button();
-            this.OpenFileDialogRead = new System.Windows.Forms.OpenFileDialog();
-            this.buttonF = new System.Windows.Forms.Button();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.nUDXyyX = new System.Windows.Forms.NumericUpDown();
+            this.nUDXyyY1 = new System.Windows.Forms.NumericUpDown();
+            this.nUDXyyY2 = new System.Windows.Forms.NumericUpDown();
+            this.btGo = new MRLibrary.UCButton();
+            this.btCapture = new MRLibrary.UCButton();
+            this.btGoDis = new MRLibrary.UCButton();
+            this.btGoDisN = new MRLibrary.UCButton();
+            this.btUpdate = new MRLibrary.UCButton();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btUpCCDGo = new MRLibrary.UCButton();
+            this.btBackCCDUpdate = new MRLibrary.UCButton();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.nudReadBackRightZ = new System.Windows.Forms.NumericUpDown();
+            this.nudReadBackRightY = new System.Windows.Forms.NumericUpDown();
+            this.nudReadBackRightX = new System.Windows.Forms.NumericUpDown();
+            this.nudReadBackLeftZ = new System.Windows.Forms.NumericUpDown();
+            this.nudReadBackLeftY = new System.Windows.Forms.NumericUpDown();
+            this.nudReadBigY = new System.Windows.Forms.NumericUpDown();
+            this.nudReadBackLeftX = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btChuckGo = new MRLibrary.UCButton();
+            this.btBackChuckUpdate = new MRLibrary.UCButton();
+            this.nudReadChuckR = new System.Windows.Forms.NumericUpDown();
+            this.nudReadChuckY2 = new System.Windows.Forms.NumericUpDown();
+            this.nudReadChuckY1 = new System.Windows.Forms.NumericUpDown();
+            this.nudReadChuckZ = new System.Windows.Forms.NumericUpDown();
+            this.nudReadChuckX = new System.Windows.Forms.NumericUpDown();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label25 = new System.Windows.Forms.Label();
+            this.nudWriteChuckY2 = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteChuckY1 = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteChuckX = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteChuckZ = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackRightZ = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackRightY = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackRightX = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackLeftZ = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackLeftY = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackLeftX = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteUpBigY = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.ucNavigatorBackMaskR = new NSAA_16Axis.UCNavigator();
+            this.ucNavigatorTopMaskR = new NSAA_16Axis.UCNavigator();
+            this.ucPattern1 = new NSAA_16Axis.UCPattern();
+            this.ucNavigatorWaferR = new NSAA_16Axis.UCNavigator();
+            this.ucNavigatorBackMaskL = new NSAA_16Axis.UCNavigator();
+            this.ucNavigatorWaferL = new NSAA_16Axis.UCNavigator();
+            this.ucNavigatorTopMaskL = new NSAA_16Axis.UCNavigator();
             this.gbLBackMask.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftBackMaskLight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLBackMask)).BeginInit();
@@ -212,14 +257,29 @@
             this.gBMag.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tBRShowImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBLShowImage)).BeginInit();
-            this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUDLMaskY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUDLMaskX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUDRMaskY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUDRMaskX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY2)).BeginInit();
+            this.groupBox4.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackRightZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackRightY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackRightX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackLeftZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackLeftY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBigY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackLeftX)).BeginInit();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckR)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckX)).BeginInit();
             this.SuspendLayout();
             // 
             // gbLBackMask
@@ -281,7 +341,7 @@
             "X12"});
             this.cbLBackMaskClassList.Location = new System.Drawing.Point(13, 205);
             this.cbLBackMaskClassList.Name = "cbLBackMaskClassList";
-            this.cbLBackMaskClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbLBackMaskClassList.Size = new System.Drawing.Size(153, 26);
             this.cbLBackMaskClassList.TabIndex = 172;
             this.cbLBackMaskClassList.Visible = false;
             // 
@@ -343,7 +403,7 @@
             this.rbLBackMask.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbLBackMask.Location = new System.Drawing.Point(159, 27);
             this.rbLBackMask.Name = "rbLBackMask";
-            this.rbLBackMask.Size = new System.Drawing.Size(73, 27);
+            this.rbLBackMask.Size = new System.Drawing.Size(60, 22);
             this.rbLBackMask.TabIndex = 51;
             this.rbLBackMask.TabStop = true;
             this.rbLBackMask.Text = "Light";
@@ -361,17 +421,6 @@
             this.btLBackMaskLightPlus.UseVisualStyleBackColor = true;
             this.btLBackMaskLightPlus.Click += new System.EventHandler(this.btLBackMaskLightPlus_Click);
             // 
-            // ucNavigatorBackMaskL
-            // 
-            this.ucNavigatorBackMaskL.AutoSize = true;
-            this.ucNavigatorBackMaskL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorBackMaskL.Location = new System.Drawing.Point(31, 28);
-            this.ucNavigatorBackMaskL.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorBackMaskL.Name = "ucNavigatorBackMaskL";
-            this.ucNavigatorBackMaskL.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorBackMaskL.TabIndex = 50;
-            this.ucNavigatorBackMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
-            // 
             // tBLeftBackMaskLight
             // 
             this.tBLeftBackMaskLight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -382,7 +431,7 @@
             this.tBLeftBackMaskLight.Maximum = 255;
             this.tBLeftBackMaskLight.Name = "tBLeftBackMaskLight";
             this.tBLeftBackMaskLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBLeftBackMaskLight.Size = new System.Drawing.Size(56, 198);
+            this.tBLeftBackMaskLight.Size = new System.Drawing.Size(45, 198);
             this.tBLeftBackMaskLight.TabIndex = 49;
             this.tBLeftBackMaskLight.ValueChanged += new System.EventHandler(this.TBLeftBackMaskLight_ValueChanged);
             this.tBLeftBackMaskLight.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tBLeftBackMaskLight_KeyUp);
@@ -426,7 +475,7 @@
             "AI Identify"});
             this.cbLBackMaskAlgo.Location = new System.Drawing.Point(69, 73);
             this.cbLBackMaskAlgo.Name = "cbLBackMaskAlgo";
-            this.cbLBackMaskAlgo.Size = new System.Drawing.Size(100, 31);
+            this.cbLBackMaskAlgo.Size = new System.Drawing.Size(100, 26);
             this.cbLBackMaskAlgo.TabIndex = 1;
             this.cbLBackMaskAlgo.SelectedIndexChanged += new System.EventHandler(this.cbLBackMaskAlgo_SelectedIndexChanged);
             // 
@@ -437,7 +486,7 @@
             this.label2.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label2.Location = new System.Drawing.Point(13, 76);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(72, 23);
+            this.label2.Size = new System.Drawing.Size(56, 18);
             this.label2.TabIndex = 0;
             this.label2.Text = "ALGO.";
             // 
@@ -501,7 +550,7 @@
             "X12"});
             this.cbLBackWaferClassList.Location = new System.Drawing.Point(13, 205);
             this.cbLBackWaferClassList.Name = "cbLBackWaferClassList";
-            this.cbLBackWaferClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbLBackWaferClassList.Size = new System.Drawing.Size(153, 26);
             this.cbLBackWaferClassList.TabIndex = 75;
             this.cbLBackWaferClassList.Visible = false;
             // 
@@ -522,7 +571,7 @@
             this.rbLWafer.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbLWafer.Location = new System.Drawing.Point(159, 27);
             this.rbLWafer.Name = "rbLWafer";
-            this.rbLWafer.Size = new System.Drawing.Size(73, 27);
+            this.rbLWafer.Size = new System.Drawing.Size(60, 22);
             this.rbLWafer.TabIndex = 51;
             this.rbLWafer.TabStop = true;
             this.rbLWafer.Text = "Light";
@@ -540,17 +589,6 @@
             this.btLWaferLightPlus.UseVisualStyleBackColor = true;
             this.btLWaferLightPlus.Click += new System.EventHandler(this.btLWaferLightPlus_Click);
             // 
-            // ucNavigatorWaferL
-            // 
-            this.ucNavigatorWaferL.AutoSize = true;
-            this.ucNavigatorWaferL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorWaferL.Location = new System.Drawing.Point(36, 28);
-            this.ucNavigatorWaferL.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorWaferL.Name = "ucNavigatorWaferL";
-            this.ucNavigatorWaferL.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorWaferL.TabIndex = 49;
-            this.ucNavigatorWaferL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferL_CommandPressed);
-            // 
             // tBLeftBackWaferLight
             // 
             this.tBLeftBackWaferLight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -561,7 +599,7 @@
             this.tBLeftBackWaferLight.Maximum = 255;
             this.tBLeftBackWaferLight.Name = "tBLeftBackWaferLight";
             this.tBLeftBackWaferLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBLeftBackWaferLight.Size = new System.Drawing.Size(56, 198);
+            this.tBLeftBackWaferLight.Size = new System.Drawing.Size(45, 198);
             this.tBLeftBackWaferLight.TabIndex = 48;
             this.tBLeftBackWaferLight.ValueChanged += new System.EventHandler(this.tBLeftBackWaferLight_ValueChanged);
             this.tBLeftBackWaferLight.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tBLeftBackWaferLight_KeyUp);
@@ -605,7 +643,7 @@
             "AI Identify"});
             this.cbLWaferAlgo.Location = new System.Drawing.Point(69, 78);
             this.cbLWaferAlgo.Name = "cbLWaferAlgo";
-            this.cbLWaferAlgo.Size = new System.Drawing.Size(100, 31);
+            this.cbLWaferAlgo.Size = new System.Drawing.Size(100, 26);
             this.cbLWaferAlgo.TabIndex = 1;
             this.cbLWaferAlgo.SelectedIndexChanged += new System.EventHandler(this.cbLWaferAlgo_SelectedIndexChanged);
             // 
@@ -616,7 +654,7 @@
             this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label1.Location = new System.Drawing.Point(13, 81);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(72, 23);
+            this.label1.Size = new System.Drawing.Size(56, 18);
             this.label1.TabIndex = 0;
             this.label1.Text = "ALGO.";
             // 
@@ -723,7 +761,7 @@
             "X12"});
             this.cbRBackWaferClassList.Location = new System.Drawing.Point(62, 205);
             this.cbRBackWaferClassList.Name = "cbRBackWaferClassList";
-            this.cbRBackWaferClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbRBackWaferClassList.Size = new System.Drawing.Size(153, 26);
             this.cbRBackWaferClassList.TabIndex = 74;
             this.cbRBackWaferClassList.Visible = false;
             // 
@@ -758,7 +796,7 @@
             this.rbRWafer.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbRWafer.Location = new System.Drawing.Point(6, 27);
             this.rbRWafer.Name = "rbRWafer";
-            this.rbRWafer.Size = new System.Drawing.Size(73, 27);
+            this.rbRWafer.Size = new System.Drawing.Size(60, 22);
             this.rbRWafer.TabIndex = 51;
             this.rbRWafer.TabStop = true;
             this.rbRWafer.Text = "Light";
@@ -776,17 +814,6 @@
             this.btRWaferLightPlus.UseVisualStyleBackColor = true;
             this.btRWaferLightPlus.Click += new System.EventHandler(this.btRWaferLightPlus_Click);
             // 
-            // ucNavigatorWaferR
-            // 
-            this.ucNavigatorWaferR.AutoSize = true;
-            this.ucNavigatorWaferR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorWaferR.Location = new System.Drawing.Point(77, 28);
-            this.ucNavigatorWaferR.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorWaferR.Name = "ucNavigatorWaferR";
-            this.ucNavigatorWaferR.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorWaferR.TabIndex = 50;
-            this.ucNavigatorWaferR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferR_CommandPressed);
-            // 
             // tBRightBackWaferLight
             // 
             this.tBRightBackWaferLight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -797,7 +824,7 @@
             this.tBRightBackWaferLight.Maximum = 255;
             this.tBRightBackWaferLight.Name = "tBRightBackWaferLight";
             this.tBRightBackWaferLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBRightBackWaferLight.Size = new System.Drawing.Size(56, 199);
+            this.tBRightBackWaferLight.Size = new System.Drawing.Size(45, 199);
             this.tBRightBackWaferLight.TabIndex = 49;
             this.tBRightBackWaferLight.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.tBRightBackWaferLight.ValueChanged += new System.EventHandler(this.TBRightBackWaferLight_ValueChanged);
@@ -856,7 +883,7 @@
             "AI Identify"});
             this.cbRWaferAlgo.Location = new System.Drawing.Point(119, 76);
             this.cbRWaferAlgo.Name = "cbRWaferAlgo";
-            this.cbRWaferAlgo.Size = new System.Drawing.Size(100, 31);
+            this.cbRWaferAlgo.Size = new System.Drawing.Size(100, 26);
             this.cbRWaferAlgo.TabIndex = 1;
             this.cbRWaferAlgo.SelectedIndexChanged += new System.EventHandler(this.cbRWaferAlgo_SelectedIndexChanged);
             // 
@@ -867,7 +894,7 @@
             this.label3.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label3.Location = new System.Drawing.Point(63, 79);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(72, 23);
+            this.label3.Size = new System.Drawing.Size(56, 18);
             this.label3.TabIndex = 0;
             this.label3.Text = "ALGO.";
             // 
@@ -959,7 +986,7 @@
             "X12"});
             this.cbRBackMaskClassList.Location = new System.Drawing.Point(60, 205);
             this.cbRBackMaskClassList.Name = "cbRBackMaskClassList";
-            this.cbRBackMaskClassList.Size = new System.Drawing.Size(153, 31);
+            this.cbRBackMaskClassList.Size = new System.Drawing.Size(153, 26);
             this.cbRBackMaskClassList.TabIndex = 172;
             this.cbRBackMaskClassList.Visible = false;
             // 
@@ -993,7 +1020,7 @@
             this.rbRBackMask.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbRBackMask.Location = new System.Drawing.Point(6, 27);
             this.rbRBackMask.Name = "rbRBackMask";
-            this.rbRBackMask.Size = new System.Drawing.Size(73, 27);
+            this.rbRBackMask.Size = new System.Drawing.Size(60, 22);
             this.rbRBackMask.TabIndex = 52;
             this.rbRBackMask.TabStop = true;
             this.rbRBackMask.Text = "Light";
@@ -1011,17 +1038,6 @@
             this.btRBackMaskLightPlus.Text = "+";
             this.btRBackMaskLightPlus.UseVisualStyleBackColor = true;
             this.btRBackMaskLightPlus.Click += new System.EventHandler(this.btRBackMaskLightPlus_Click);
-            // 
-            // ucNavigatorBackMaskR
-            // 
-            this.ucNavigatorBackMaskR.AutoSize = true;
-            this.ucNavigatorBackMaskR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorBackMaskR.Location = new System.Drawing.Point(73, 30);
-            this.ucNavigatorBackMaskR.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorBackMaskR.Name = "ucNavigatorBackMaskR";
-            this.ucNavigatorBackMaskR.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorBackMaskR.TabIndex = 51;
-            this.ucNavigatorBackMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
             // 
             // btRBackMask
             // 
@@ -1075,7 +1091,7 @@
             "AI Identify"});
             this.cbRBackMaskAlgo.Location = new System.Drawing.Point(113, 73);
             this.cbRBackMaskAlgo.Name = "cbRBackMaskAlgo";
-            this.cbRBackMaskAlgo.Size = new System.Drawing.Size(100, 31);
+            this.cbRBackMaskAlgo.Size = new System.Drawing.Size(100, 26);
             this.cbRBackMaskAlgo.TabIndex = 1;
             this.cbRBackMaskAlgo.SelectedIndexChanged += new System.EventHandler(this.cbRBackMaskAlgo_SelectedIndexChanged);
             // 
@@ -1086,7 +1102,7 @@
             this.label4.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label4.Location = new System.Drawing.Point(57, 76);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(72, 23);
+            this.label4.Size = new System.Drawing.Size(56, 18);
             this.label4.TabIndex = 0;
             this.label4.Text = "ALGO.";
             // 
@@ -1115,7 +1131,7 @@
             this.tBRightBackMaskLight.Maximum = 255;
             this.tBRightBackMaskLight.Name = "tBRightBackMaskLight";
             this.tBRightBackMaskLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBRightBackMaskLight.Size = new System.Drawing.Size(56, 198);
+            this.tBRightBackMaskLight.Size = new System.Drawing.Size(45, 198);
             this.tBRightBackMaskLight.TabIndex = 50;
             this.tBRightBackMaskLight.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.tBRightBackMaskLight.ValueChanged += new System.EventHandler(this.TBRightBackMaskLight_ValueChanged);
@@ -1126,9 +1142,9 @@
             // 
             this.lbRecipeNumber.AutoSize = true;
             this.lbRecipeNumber.Font = new System.Drawing.Font("Arial", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbRecipeNumber.Location = new System.Drawing.Point(812, 68);
+            this.lbRecipeNumber.Location = new System.Drawing.Point(526, 60);
             this.lbRecipeNumber.Name = "lbRecipeNumber";
-            this.lbRecipeNumber.Size = new System.Drawing.Size(347, 46);
+            this.lbRecipeNumber.Size = new System.Drawing.Size(278, 37);
             this.lbRecipeNumber.TabIndex = 11;
             this.lbRecipeNumber.Text = "Recipe Number : ";
             // 
@@ -1199,23 +1215,6 @@
             this.btRTopMaskLightMinus.UseVisualStyleBackColor = true;
             this.btRTopMaskLightMinus.Click += new System.EventHandler(this.BtRTopMaskLightMinus_Click);
             // 
-            // ucNavigatorTopMaskR
-            // 
-            this.ucNavigatorTopMaskR.AutoSize = true;
-            this.ucNavigatorTopMaskR.Location = new System.Drawing.Point(85, 28);
-            this.ucNavigatorTopMaskR.Name = "ucNavigatorTopMaskR";
-            this.ucNavigatorTopMaskR.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorTopMaskR.TabIndex = 54;
-            this.ucNavigatorTopMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
-            // 
-            // ucPattern1
-            // 
-            this.ucPattern1.Location = new System.Drawing.Point(31062, 32706);
-            this.ucPattern1.Margin = new System.Windows.Forms.Padding(0);
-            this.ucPattern1.Name = "ucPattern1";
-            this.ucPattern1.Size = new System.Drawing.Size(65535, 65535);
-            this.ucPattern1.TabIndex = 53;
-            // 
             // btRTopMaskLightPlus
             // 
             this.btRTopMaskLightPlus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1234,7 +1233,7 @@
             this.rbRTopMask.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbRTopMask.Location = new System.Drawing.Point(6, 27);
             this.rbRTopMask.Name = "rbRTopMask";
-            this.rbRTopMask.Size = new System.Drawing.Size(73, 27);
+            this.rbRTopMask.Size = new System.Drawing.Size(60, 22);
             this.rbRTopMask.TabIndex = 52;
             this.rbRTopMask.TabStop = true;
             this.rbRTopMask.Text = "Light";
@@ -1251,7 +1250,7 @@
             this.tBRightTopMaskLight.Maximum = 255;
             this.tBRightTopMaskLight.Name = "tBRightTopMaskLight";
             this.tBRightTopMaskLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBRightTopMaskLight.Size = new System.Drawing.Size(56, 201);
+            this.tBRightTopMaskLight.Size = new System.Drawing.Size(45, 201);
             this.tBRightTopMaskLight.TabIndex = 50;
             this.tBRightTopMaskLight.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.tBRightTopMaskLight.ValueChanged += new System.EventHandler(this.tBRightTopMaskLight_ValueChanged);
@@ -1310,7 +1309,7 @@
             "AI Identify"});
             this.cbRTopMaskAlgo.Location = new System.Drawing.Point(108, 79);
             this.cbRTopMaskAlgo.Name = "cbRTopMaskAlgo";
-            this.cbRTopMaskAlgo.Size = new System.Drawing.Size(100, 31);
+            this.cbRTopMaskAlgo.Size = new System.Drawing.Size(100, 26);
             this.cbRTopMaskAlgo.TabIndex = 1;
             this.cbRTopMaskAlgo.SelectedIndexChanged += new System.EventHandler(this.cbRTopMaskAlgo_SelectedIndexChanged);
             // 
@@ -1321,7 +1320,7 @@
             this.label6.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label6.Location = new System.Drawing.Point(52, 82);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(72, 23);
+            this.label6.Size = new System.Drawing.Size(56, 18);
             this.label6.TabIndex = 0;
             this.label6.Text = "ALGO.";
             // 
@@ -1401,7 +1400,7 @@
             this.tBLeftTopMaskLight.Maximum = 255;
             this.tBLeftTopMaskLight.Name = "tBLeftTopMaskLight";
             this.tBLeftTopMaskLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBLeftTopMaskLight.Size = new System.Drawing.Size(56, 198);
+            this.tBLeftTopMaskLight.Size = new System.Drawing.Size(45, 198);
             this.tBLeftTopMaskLight.TabIndex = 53;
             this.tBLeftTopMaskLight.ValueChanged += new System.EventHandler(this.TBLeftTopMaskLight_ValueChanged);
             this.tBLeftTopMaskLight.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tBLeftTopMaskLight_KeyUp);
@@ -1418,15 +1417,6 @@
             this.btLTopMaskLightPlus.UseVisualStyleBackColor = true;
             this.btLTopMaskLightPlus.Click += new System.EventHandler(this.btLRingLightPlus_Click);
             // 
-            // ucNavigatorTopMaskL
-            // 
-            this.ucNavigatorTopMaskL.AutoSize = true;
-            this.ucNavigatorTopMaskL.Location = new System.Drawing.Point(37, 27);
-            this.ucNavigatorTopMaskL.Name = "ucNavigatorTopMaskL";
-            this.ucNavigatorTopMaskL.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorTopMaskL.TabIndex = 15;
-            this.ucNavigatorTopMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
-            // 
             // rbLTopMask
             // 
             this.rbLTopMask.AutoSize = true;
@@ -1434,7 +1424,7 @@
             this.rbLTopMask.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbLTopMask.Location = new System.Drawing.Point(159, 27);
             this.rbLTopMask.Name = "rbLTopMask";
-            this.rbLTopMask.Size = new System.Drawing.Size(73, 27);
+            this.rbLTopMask.Size = new System.Drawing.Size(60, 22);
             this.rbLTopMask.TabIndex = 52;
             this.rbLTopMask.TabStop = true;
             this.rbLTopMask.Text = "Light";
@@ -1492,7 +1482,7 @@
             "AI Identify"});
             this.cbLTopMaskAlgo.Location = new System.Drawing.Point(69, 79);
             this.cbLTopMaskAlgo.Name = "cbLTopMaskAlgo";
-            this.cbLTopMaskAlgo.Size = new System.Drawing.Size(100, 31);
+            this.cbLTopMaskAlgo.Size = new System.Drawing.Size(100, 26);
             this.cbLTopMaskAlgo.TabIndex = 1;
             this.cbLTopMaskAlgo.SelectedIndexChanged += new System.EventHandler(this.cbLTopMaskAlgo_SelectedIndexChanged);
             // 
@@ -1503,7 +1493,7 @@
             this.label5.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label5.Location = new System.Drawing.Point(13, 82);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(72, 23);
+            this.label5.Size = new System.Drawing.Size(56, 18);
             this.label5.TabIndex = 0;
             this.label5.Text = "ALGO.";
             // 
@@ -1529,7 +1519,7 @@
             this.rBHighMagnification.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rBHighMagnification.Location = new System.Drawing.Point(24, 85);
             this.rBHighMagnification.Name = "rBHighMagnification";
-            this.rBHighMagnification.Size = new System.Drawing.Size(69, 27);
+            this.rBHighMagnification.Size = new System.Drawing.Size(58, 22);
             this.rBHighMagnification.TabIndex = 21;
             this.rBHighMagnification.Text = "High";
             this.rBHighMagnification.UseVisualStyleBackColor = true;
@@ -1559,7 +1549,7 @@
             this.rBLowMagnification.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rBLowMagnification.Location = new System.Drawing.Point(910, 126);
             this.rBLowMagnification.Name = "rBLowMagnification";
-            this.rBLowMagnification.Size = new System.Drawing.Size(68, 27);
+            this.rBLowMagnification.Size = new System.Drawing.Size(55, 22);
             this.rBLowMagnification.TabIndex = 20;
             this.rBLowMagnification.TabStop = true;
             this.rBLowMagnification.Text = "Low";
@@ -1588,7 +1578,7 @@
             "X12"});
             this.cbHighMagnification.Location = new System.Drawing.Point(95, 84);
             this.cbHighMagnification.Name = "cbHighMagnification";
-            this.cbHighMagnification.Size = new System.Drawing.Size(60, 31);
+            this.cbHighMagnification.Size = new System.Drawing.Size(60, 26);
             this.cbHighMagnification.TabIndex = 17;
             this.cbHighMagnification.SelectedIndexChanged += new System.EventHandler(this.cbHighMagnification_SelectedIndexChanged);
             // 
@@ -1613,7 +1603,7 @@
             "X12"});
             this.cbLowMagnification.Location = new System.Drawing.Point(95, 34);
             this.cbLowMagnification.Name = "cbLowMagnification";
-            this.cbLowMagnification.Size = new System.Drawing.Size(60, 31);
+            this.cbLowMagnification.Size = new System.Drawing.Size(60, 26);
             this.cbLowMagnification.TabIndex = 16;
             this.cbLowMagnification.SelectedIndexChanged += new System.EventHandler(this.cbLowMagnification_SelectedIndexChanged);
             // 
@@ -1623,12 +1613,13 @@
             this.btDelete.Enabled = false;
             this.btDelete.Font = new System.Drawing.Font("Arial", 12F);
             this.btDelete.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btDelete.Location = new System.Drawing.Point(994, 278);
+            this.btDelete.Location = new System.Drawing.Point(857, 291);
             this.btDelete.Name = "btDelete";
             this.btDelete.Size = new System.Drawing.Size(85, 30);
             this.btDelete.TabIndex = 80;
             this.btDelete.Text = "Delete";
             this.btDelete.UseVisualStyleBackColor = false;
+            this.btDelete.Visible = false;
             this.btDelete.Click += new System.EventHandler(this.btDelete_Click);
             // 
             // tBRShowImage
@@ -1641,7 +1632,7 @@
             this.tBRShowImage.Maximum = 100;
             this.tBRShowImage.Name = "tBRShowImage";
             this.tBRShowImage.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBRShowImage.Size = new System.Drawing.Size(56, 207);
+            this.tBRShowImage.Size = new System.Drawing.Size(45, 207);
             this.tBRShowImage.TabIndex = 51;
             this.tBRShowImage.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.tBRShowImage.ValueChanged += new System.EventHandler(this.tBRShowImage_ValueChanged);
@@ -1654,11 +1645,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tBLShowImage.LargeChange = 1;
-            this.tBLShowImage.Location = new System.Drawing.Point(495, 77);
+            this.tBLShowImage.Location = new System.Drawing.Point(480, 77);
             this.tBLShowImage.Maximum = 100;
             this.tBLShowImage.Name = "tBLShowImage";
             this.tBLShowImage.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBLShowImage.Size = new System.Drawing.Size(56, 207);
+            this.tBLShowImage.Size = new System.Drawing.Size(45, 207);
             this.tBLShowImage.TabIndex = 50;
             this.tBLShowImage.ValueChanged += new System.EventHandler(this.tBLShowImage_ValueChanged);
             this.tBLShowImage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tBLShowImage_KeyUp);
@@ -1667,9 +1658,9 @@
             // lbLRecord
             // 
             this.lbLRecord.AutoSize = true;
-            this.lbLRecord.Location = new System.Drawing.Point(482, 289);
+            this.lbLRecord.Location = new System.Drawing.Point(467, 289);
             this.lbLRecord.Name = "lbLRecord";
-            this.lbLRecord.Size = new System.Drawing.Size(74, 23);
+            this.lbLRecord.Size = new System.Drawing.Size(59, 18);
             this.lbLRecord.TabIndex = 52;
             this.lbLRecord.Text = "Record";
             // 
@@ -1678,25 +1669,25 @@
             this.lbRRecord.AutoSize = true;
             this.lbRRecord.Location = new System.Drawing.Point(1375, 289);
             this.lbRRecord.Name = "lbRRecord";
-            this.lbRRecord.Size = new System.Drawing.Size(74, 23);
+            this.lbRRecord.Size = new System.Drawing.Size(59, 18);
             this.lbRRecord.TabIndex = 53;
             this.lbRRecord.Text = "Record";
             // 
             // lbLLive
             // 
             this.lbLLive.AutoSize = true;
-            this.lbLLive.Location = new System.Drawing.Point(490, 53);
+            this.lbLLive.Location = new System.Drawing.Point(475, 53);
             this.lbLLive.Name = "lbLLive";
-            this.lbLLive.Size = new System.Drawing.Size(45, 23);
+            this.lbLLive.Size = new System.Drawing.Size(37, 18);
             this.lbLLive.TabIndex = 54;
             this.lbLLive.Text = "Live";
             // 
             // lbRLive
             // 
             this.lbRLive.AutoSize = true;
-            this.lbRLive.Location = new System.Drawing.Point(1373, 53);
+            this.lbRLive.Location = new System.Drawing.Point(1384, 53);
             this.lbRLive.Name = "lbRLive";
-            this.lbRLive.Size = new System.Drawing.Size(45, 23);
+            this.lbRLive.Size = new System.Drawing.Size(37, 18);
             this.lbRLive.TabIndex = 55;
             this.lbRLive.Text = "Live";
             // 
@@ -1706,7 +1697,7 @@
             this.lbEmulationModeL.Font = new System.Drawing.Font("標楷體", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbEmulationModeL.Location = new System.Drawing.Point(302, 675);
             this.lbEmulationModeL.Name = "lbEmulationModeL";
-            this.lbEmulationModeL.Size = new System.Drawing.Size(327, 44);
+            this.lbEmulationModeL.Size = new System.Drawing.Size(267, 35);
             this.lbEmulationModeL.TabIndex = 71;
             this.lbEmulationModeL.Text = "Emulation Mode";
             // 
@@ -1716,7 +1707,7 @@
             this.lbEmulationModeR.Font = new System.Drawing.Font("標楷體", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbEmulationModeR.Location = new System.Drawing.Point(1328, 675);
             this.lbEmulationModeR.Name = "lbEmulationModeR";
-            this.lbEmulationModeR.Size = new System.Drawing.Size(327, 44);
+            this.lbEmulationModeR.Size = new System.Drawing.Size(267, 35);
             this.lbEmulationModeR.TabIndex = 72;
             this.lbEmulationModeR.Text = "Emulation Mode";
             // 
@@ -1725,7 +1716,7 @@
             this.btLShowImageSave.BackColor = System.Drawing.Color.LightCoral;
             this.btLShowImageSave.Enabled = false;
             this.btLShowImageSave.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btLShowImageSave.Location = new System.Drawing.Point(485, 20);
+            this.btLShowImageSave.Location = new System.Drawing.Point(470, 20);
             this.btLShowImageSave.Name = "btLShowImageSave";
             this.btLShowImageSave.Size = new System.Drawing.Size(60, 30);
             this.btLShowImageSave.TabIndex = 74;
@@ -1739,7 +1730,7 @@
             this.btRShowImageSave.BackColor = System.Drawing.Color.LightCoral;
             this.btRShowImageSave.Enabled = false;
             this.btRShowImageSave.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btRShowImageSave.Location = new System.Drawing.Point(1364, 20);
+            this.btRShowImageSave.Location = new System.Drawing.Point(1377, 21);
             this.btRShowImageSave.Name = "btRShowImageSave";
             this.btRShowImageSave.Size = new System.Drawing.Size(60, 30);
             this.btRShowImageSave.TabIndex = 75;
@@ -1752,9 +1743,9 @@
             // 
             this.lbNowTime.AutoSize = true;
             this.lbNowTime.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbNowTime.Location = new System.Drawing.Point(840, 30);
+            this.lbNowTime.Location = new System.Drawing.Point(554, 22);
             this.lbNowTime.Name = "lbNowTime";
-            this.lbNowTime.Size = new System.Drawing.Size(62, 29);
+            this.lbNowTime.Size = new System.Drawing.Size(49, 22);
             this.lbNowTime.TabIndex = 76;
             this.lbNowTime.Text = "time";
             // 
@@ -1764,7 +1755,7 @@
             this.btDefault.Enabled = false;
             this.btDefault.Font = new System.Drawing.Font("Arial", 12F);
             this.btDefault.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btDefault.Location = new System.Drawing.Point(894, 278);
+            this.btDefault.Location = new System.Drawing.Point(771, 291);
             this.btDefault.Name = "btDefault";
             this.btDefault.Size = new System.Drawing.Size(80, 30);
             this.btDefault.TabIndex = 81;
@@ -1799,7 +1790,7 @@
             this.lbLeftXYM.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbLeftXYM.Location = new System.Drawing.Point(41, 343);
             this.lbLeftXYM.Name = "lbLeftXYM";
-            this.lbLeftXYM.Size = new System.Drawing.Size(88, 29);
+            this.lbLeftXYM.Size = new System.Drawing.Size(71, 22);
             this.lbLeftXYM.TabIndex = 84;
             this.lbLeftXYM.Text = "LeftXY";
             // 
@@ -1809,7 +1800,7 @@
             this.lbRightXYM.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbRightXYM.Location = new System.Drawing.Point(979, 343);
             this.lbRightXYM.Name = "lbRightXYM";
-            this.lbRightXYM.Size = new System.Drawing.Size(106, 29);
+            this.lbRightXYM.Size = new System.Drawing.Size(84, 22);
             this.lbRightXYM.TabIndex = 85;
             this.lbRightXYM.Text = "RightXY";
             // 
@@ -1879,196 +1870,13 @@
             this.btNG.Visible = false;
             this.btNG.Click += new System.EventHandler(this.btNG_Click);
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.btGoDisN);
-            this.groupBox4.Controls.Add(this.btGoDis);
-            this.groupBox4.Controls.Add(this.btCapture);
-            this.groupBox4.Controls.Add(this.btGo);
-            this.groupBox4.Controls.Add(this.btUpdate);
-            this.groupBox4.Controls.Add(this.nUDXyyY2);
-            this.groupBox4.Controls.Add(this.nUDXyyY1);
-            this.groupBox4.Controls.Add(this.nUDXyyX);
-            this.groupBox4.Controls.Add(this.label17);
-            this.groupBox4.Controls.Add(this.label16);
-            this.groupBox4.Controls.Add(this.label15);
-            this.groupBox4.Location = new System.Drawing.Point(551, 20);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(169, 197);
-            this.groupBox4.TabIndex = 142;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Now Table Location";
-            this.groupBox4.Visible = false;
-            // 
-            // btGoDisN
-            // 
-            this.btGoDisN.BackColor = System.Drawing.Color.Transparent;
-            this.btGoDisN.Caption = "GoDis-";
-            this.btGoDisN.FaceColor = System.Drawing.Color.Lime;
-            this.btGoDisN.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btGoDisN.Image = null;
-            this.btGoDisN.Location = new System.Drawing.Point(11, 117);
-            this.btGoDisN.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btGoDisN.Name = "btGoDisN";
-            this.btGoDisN.Radius = 5;
-            this.btGoDisN.Size = new System.Drawing.Size(66, 30);
-            this.btGoDisN.TabIndex = 145;
-            this.btGoDisN.Click += new System.EventHandler(this.btGoDisN_Click);
-            // 
-            // btGoDis
-            // 
-            this.btGoDis.BackColor = System.Drawing.Color.Transparent;
-            this.btGoDis.Caption = "GoDis+";
-            this.btGoDis.FaceColor = System.Drawing.Color.Lime;
-            this.btGoDis.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btGoDis.Image = null;
-            this.btGoDis.Location = new System.Drawing.Point(94, 116);
-            this.btGoDis.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btGoDis.Name = "btGoDis";
-            this.btGoDis.Radius = 5;
-            this.btGoDis.Size = new System.Drawing.Size(66, 30);
-            this.btGoDis.TabIndex = 144;
-            this.btGoDis.Click += new System.EventHandler(this.btGoDis_Click);
-            // 
-            // btCapture
-            // 
-            this.btCapture.BackColor = System.Drawing.Color.Transparent;
-            this.btCapture.Caption = "Capture";
-            this.btCapture.FaceColor = System.Drawing.Color.Khaki;
-            this.btCapture.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btCapture.Image = null;
-            this.btCapture.Location = new System.Drawing.Point(6, 116);
-            this.btCapture.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btCapture.Name = "btCapture";
-            this.btCapture.Radius = 5;
-            this.btCapture.Size = new System.Drawing.Size(74, 30);
-            this.btCapture.TabIndex = 143;
-            this.btCapture.Click += new System.EventHandler(this.btCapture_Click);
-            // 
-            // btGo
-            // 
-            this.btGo.BackColor = System.Drawing.Color.Transparent;
-            this.btGo.Caption = "Go";
-            this.btGo.FaceColor = System.Drawing.Color.Lime;
-            this.btGo.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btGo.Image = null;
-            this.btGo.Location = new System.Drawing.Point(94, 154);
-            this.btGo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btGo.Name = "btGo";
-            this.btGo.Radius = 5;
-            this.btGo.Size = new System.Drawing.Size(66, 30);
-            this.btGo.TabIndex = 142;
-            this.btGo.Click += new System.EventHandler(this.btGo_Click);
-            // 
-            // btUpdate
-            // 
-            this.btUpdate.BackColor = System.Drawing.Color.Transparent;
-            this.btUpdate.Caption = "Update";
-            this.btUpdate.FaceColor = System.Drawing.Color.Khaki;
-            this.btUpdate.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btUpdate.Image = null;
-            this.btUpdate.Location = new System.Drawing.Point(6, 154);
-            this.btUpdate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btUpdate.Name = "btUpdate";
-            this.btUpdate.Radius = 5;
-            this.btUpdate.Size = new System.Drawing.Size(74, 30);
-            this.btUpdate.TabIndex = 141;
-            this.btUpdate.Click += new System.EventHandler(this.btUpdate_Click);
-            // 
-            // nUDXyyY2
-            // 
-            this.nUDXyyY2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.nUDXyyY2.Location = new System.Drawing.Point(73, 86);
-            this.nUDXyyY2.Maximum = new decimal(new int[] {
-            2500000,
-            0,
-            0,
-            0});
-            this.nUDXyyY2.Minimum = new decimal(new int[] {
-            2500000,
-            0,
-            0,
-            -2147483648});
-            this.nUDXyyY2.Name = "nUDXyyY2";
-            this.nUDXyyY2.Size = new System.Drawing.Size(90, 30);
-            this.nUDXyyY2.TabIndex = 119;
-            // 
-            // nUDXyyY1
-            // 
-            this.nUDXyyY1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.nUDXyyY1.Location = new System.Drawing.Point(73, 55);
-            this.nUDXyyY1.Maximum = new decimal(new int[] {
-            2500000,
-            0,
-            0,
-            0});
-            this.nUDXyyY1.Minimum = new decimal(new int[] {
-            2500000,
-            0,
-            0,
-            -2147483648});
-            this.nUDXyyY1.Name = "nUDXyyY1";
-            this.nUDXyyY1.Size = new System.Drawing.Size(90, 30);
-            this.nUDXyyY1.TabIndex = 118;
-            // 
-            // nUDXyyX
-            // 
-            this.nUDXyyX.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.nUDXyyX.Location = new System.Drawing.Point(73, 24);
-            this.nUDXyyX.Maximum = new decimal(new int[] {
-            2500000,
-            0,
-            0,
-            0});
-            this.nUDXyyX.Minimum = new decimal(new int[] {
-            2500000,
-            0,
-            0,
-            -2147483648});
-            this.nUDXyyX.Name = "nUDXyyX";
-            this.nUDXyyX.Size = new System.Drawing.Size(90, 30);
-            this.nUDXyyX.TabIndex = 117;
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Enabled = false;
-            this.label17.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label17.Location = new System.Drawing.Point(8, 59);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(74, 24);
-            this.label17.TabIndex = 98;
-            this.label17.Text = "XYY-Y1";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Enabled = false;
-            this.label16.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label16.Location = new System.Drawing.Point(8, 90);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(74, 24);
-            this.label16.TabIndex = 96;
-            this.label16.Text = "XYY-Y2";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Enabled = false;
-            this.label15.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label15.Location = new System.Drawing.Point(16, 28);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(64, 24);
-            this.label15.TabIndex = 94;
-            this.label15.Text = "XYY-X";
-            // 
             // lbDebugMsg
             // 
             this.lbDebugMsg.AutoSize = true;
             this.lbDebugMsg.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbDebugMsg.Location = new System.Drawing.Point(20, 996);
             this.lbDebugMsg.Name = "lbDebugMsg";
-            this.lbDebugMsg.Size = new System.Drawing.Size(62, 29);
+            this.lbDebugMsg.Size = new System.Drawing.Size(49, 22);
             this.lbDebugMsg.TabIndex = 143;
             this.lbDebugMsg.Text = "time";
             // 
@@ -2089,7 +1897,7 @@
             this.lbRightXYW.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbRightXYW.Location = new System.Drawing.Point(979, 378);
             this.lbRightXYW.Name = "lbRightXYW";
-            this.lbRightXYW.Size = new System.Drawing.Size(106, 29);
+            this.lbRightXYW.Size = new System.Drawing.Size(84, 22);
             this.lbRightXYW.TabIndex = 145;
             this.lbRightXYW.Text = "RightXY";
             // 
@@ -2099,7 +1907,7 @@
             this.lbLeftXYW.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbLeftXYW.Location = new System.Drawing.Point(41, 378);
             this.lbLeftXYW.Name = "lbLeftXYW";
-            this.lbLeftXYW.Size = new System.Drawing.Size(88, 29);
+            this.lbLeftXYW.Size = new System.Drawing.Size(71, 22);
             this.lbLeftXYW.TabIndex = 146;
             this.lbLeftXYW.Text = "LeftXY";
             // 
@@ -2109,9 +1917,9 @@
             this.cBTopMask.Checked = true;
             this.cBTopMask.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cBTopMask.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cBTopMask.Location = new System.Drawing.Point(916, 199);
+            this.cBTopMask.Location = new System.Drawing.Point(534, 191);
             this.cBTopMask.Name = "cBTopMask";
-            this.cBTopMask.Size = new System.Drawing.Size(104, 38);
+            this.cBTopMask.Size = new System.Drawing.Size(84, 31);
             this.cBTopMask.TabIndex = 147;
             this.cBTopMask.Text = "Mask";
             this.cBTopMask.UseVisualStyleBackColor = true;
@@ -2122,9 +1930,9 @@
             // 
             this.cBBottomMask.AutoSize = true;
             this.cBBottomMask.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cBBottomMask.Location = new System.Drawing.Point(917, 227);
+            this.cBBottomMask.Location = new System.Drawing.Point(535, 219);
             this.cBBottomMask.Name = "cBBottomMask";
-            this.cBBottomMask.Size = new System.Drawing.Size(104, 38);
+            this.cBBottomMask.Size = new System.Drawing.Size(83, 31);
             this.cBBottomMask.TabIndex = 148;
             this.cBBottomMask.Text = "Bond";
             this.cBBottomMask.UseVisualStyleBackColor = true;
@@ -2135,21 +1943,22 @@
             // 
             this.cBAdjZ.AutoSize = true;
             this.cBAdjZ.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cBAdjZ.Location = new System.Drawing.Point(1102, 277);
+            this.cBAdjZ.Location = new System.Drawing.Point(761, 118);
             this.cBAdjZ.Name = "cBAdjZ";
-            this.cBAdjZ.Size = new System.Drawing.Size(97, 38);
+            this.cBAdjZ.Size = new System.Drawing.Size(77, 31);
             this.cBAdjZ.TabIndex = 149;
             this.cBAdjZ.Text = "AdjZ";
             this.cBAdjZ.UseVisualStyleBackColor = true;
+            this.cBAdjZ.Visible = false;
             this.cBAdjZ.CheckedChanged += new System.EventHandler(this.CBAdjZ_CheckedChanged);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label7.Location = new System.Drawing.Point(1245, 31);
+            this.label7.Location = new System.Drawing.Point(145, -11);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(120, 24);
+            this.label7.Size = new System.Drawing.Size(95, 19);
             this.label7.TabIndex = 151;
             this.label7.Text = "CCD Z  High";
             this.label7.Visible = false;
@@ -2157,7 +1966,7 @@
             // NUDLMaskY
             // 
             this.NUDLMaskY.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.NUDLMaskY.Location = new System.Drawing.Point(630, 254);
+            this.NUDLMaskY.Location = new System.Drawing.Point(812, 468);
             this.NUDLMaskY.Maximum = new decimal(new int[] {
             2500000,
             0,
@@ -2169,13 +1978,14 @@
             0,
             -2147483648});
             this.NUDLMaskY.Name = "NUDLMaskY";
-            this.NUDLMaskY.Size = new System.Drawing.Size(90, 30);
+            this.NUDLMaskY.Size = new System.Drawing.Size(14, 26);
             this.NUDLMaskY.TabIndex = 160;
+            this.NUDLMaskY.Visible = false;
             // 
             // NUDLMaskX
             // 
             this.NUDLMaskX.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.NUDLMaskX.Location = new System.Drawing.Point(630, 223);
+            this.NUDLMaskX.Location = new System.Drawing.Point(813, 431);
             this.NUDLMaskX.Maximum = new decimal(new int[] {
             300,
             0,
@@ -2187,57 +1997,62 @@
             0,
             -2147483648});
             this.NUDLMaskX.Name = "NUDLMaskX";
-            this.NUDLMaskX.Size = new System.Drawing.Size(90, 30);
+            this.NUDLMaskX.Size = new System.Drawing.Size(14, 26);
             this.NUDLMaskX.TabIndex = 159;
+            this.NUDLMaskX.Visible = false;
             // 
             // lblLMaskX
             // 
             this.lblLMaskX.AutoSize = true;
             this.lblLMaskX.Enabled = false;
             this.lblLMaskX.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.lblLMaskX.Location = new System.Drawing.Point(555, 227);
+            this.lblLMaskX.Location = new System.Drawing.Point(720, 433);
             this.lblLMaskX.Name = "lblLMaskX";
-            this.lblLMaskX.Size = new System.Drawing.Size(87, 24);
+            this.lblLMaskX.Size = new System.Drawing.Size(70, 19);
             this.lblLMaskX.TabIndex = 161;
             this.lblLMaskX.Text = "LMask-X";
+            this.lblLMaskX.Visible = false;
             // 
             // lblLMaskY
             // 
             this.lblLMaskY.AutoSize = true;
             this.lblLMaskY.Enabled = false;
             this.lblLMaskY.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.lblLMaskY.Location = new System.Drawing.Point(555, 256);
+            this.lblLMaskY.Location = new System.Drawing.Point(720, 467);
             this.lblLMaskY.Name = "lblLMaskY";
-            this.lblLMaskY.Size = new System.Drawing.Size(86, 24);
+            this.lblLMaskY.Size = new System.Drawing.Size(69, 19);
             this.lblLMaskY.TabIndex = 162;
             this.lblLMaskY.Text = "LMask-Y";
+            this.lblLMaskY.Visible = false;
             // 
             // lblRMaskY
             // 
             this.lblRMaskY.AutoSize = true;
             this.lblRMaskY.Enabled = false;
             this.lblRMaskY.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.lblRMaskY.Location = new System.Drawing.Point(1171, 258);
+            this.lblRMaskY.Location = new System.Drawing.Point(980, 468);
             this.lblRMaskY.Name = "lblRMaskY";
-            this.lblRMaskY.Size = new System.Drawing.Size(88, 24);
+            this.lblRMaskY.Size = new System.Drawing.Size(71, 19);
             this.lblRMaskY.TabIndex = 166;
             this.lblRMaskY.Text = "RMask-Y";
+            this.lblRMaskY.Visible = false;
             // 
             // lblRMaskX
             // 
             this.lblRMaskX.AutoSize = true;
             this.lblRMaskX.Enabled = false;
             this.lblRMaskX.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.lblRMaskX.Location = new System.Drawing.Point(1171, 229);
+            this.lblRMaskX.Location = new System.Drawing.Point(980, 433);
             this.lblRMaskX.Name = "lblRMaskX";
-            this.lblRMaskX.Size = new System.Drawing.Size(89, 24);
+            this.lblRMaskX.Size = new System.Drawing.Size(72, 19);
             this.lblRMaskX.TabIndex = 165;
             this.lblRMaskX.Text = "RMask-X";
+            this.lblRMaskX.Visible = false;
             // 
             // NUDRMaskY
             // 
             this.NUDRMaskY.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.NUDRMaskY.Location = new System.Drawing.Point(1246, 256);
+            this.NUDRMaskY.Location = new System.Drawing.Point(1083, 467);
             this.NUDRMaskY.Maximum = new decimal(new int[] {
             2500000,
             0,
@@ -2249,13 +2064,14 @@
             0,
             -2147483648});
             this.NUDRMaskY.Name = "NUDRMaskY";
-            this.NUDRMaskY.Size = new System.Drawing.Size(90, 30);
+            this.NUDRMaskY.Size = new System.Drawing.Size(14, 26);
             this.NUDRMaskY.TabIndex = 164;
+            this.NUDRMaskY.Visible = false;
             // 
             // NUDRMaskX
             // 
             this.NUDRMaskX.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.NUDRMaskX.Location = new System.Drawing.Point(1246, 225);
+            this.NUDRMaskX.Location = new System.Drawing.Point(1083, 431);
             this.NUDRMaskX.Maximum = new decimal(new int[] {
             300,
             0,
@@ -2267,31 +2083,34 @@
             0,
             -2147483648});
             this.NUDRMaskX.Name = "NUDRMaskX";
-            this.NUDRMaskX.Size = new System.Drawing.Size(90, 30);
+            this.NUDRMaskX.Size = new System.Drawing.Size(14, 26);
             this.NUDRMaskX.TabIndex = 163;
+            this.NUDRMaskX.Visible = false;
             // 
             // BtLMaskAdjSave
             // 
             this.BtLMaskAdjSave.BackColor = System.Drawing.Color.LightCoral;
             this.BtLMaskAdjSave.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtLMaskAdjSave.Location = new System.Drawing.Point(645, 285);
+            this.BtLMaskAdjSave.Location = new System.Drawing.Point(825, 504);
             this.BtLMaskAdjSave.Name = "BtLMaskAdjSave";
             this.BtLMaskAdjSave.Size = new System.Drawing.Size(60, 30);
             this.BtLMaskAdjSave.TabIndex = 167;
             this.BtLMaskAdjSave.Text = "Save";
             this.BtLMaskAdjSave.UseVisualStyleBackColor = false;
+            this.BtLMaskAdjSave.Visible = false;
             this.BtLMaskAdjSave.Click += new System.EventHandler(this.BtLMaskAdjSave_Click);
             // 
             // BtRMaskAdjSave
             // 
             this.BtRMaskAdjSave.BackColor = System.Drawing.Color.LightCoral;
             this.BtRMaskAdjSave.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtRMaskAdjSave.Location = new System.Drawing.Point(1264, 288);
+            this.BtRMaskAdjSave.Location = new System.Drawing.Point(770, 155);
             this.BtRMaskAdjSave.Name = "BtRMaskAdjSave";
-            this.BtRMaskAdjSave.Size = new System.Drawing.Size(60, 30);
+            this.BtRMaskAdjSave.Size = new System.Drawing.Size(60, 33);
             this.BtRMaskAdjSave.TabIndex = 168;
             this.BtRMaskAdjSave.Text = "Save";
             this.BtRMaskAdjSave.UseVisualStyleBackColor = false;
+            this.BtRMaskAdjSave.Visible = false;
             this.BtRMaskAdjSave.Click += new System.EventHandler(this.BtRMaskAdjSave_Click);
             // 
             // btSave
@@ -2300,13 +2119,47 @@
             this.btSave.Enabled = false;
             this.btSave.Font = new System.Drawing.Font("Arial", 12F);
             this.btSave.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btSave.Location = new System.Drawing.Point(894, 166);
+            this.btSave.Location = new System.Drawing.Point(535, 193);
             this.btSave.Name = "btSave";
             this.btSave.Size = new System.Drawing.Size(113, 30);
             this.btSave.TabIndex = 169;
             this.btSave.Text = "SAVE";
             this.btSave.UseVisualStyleBackColor = false;
             this.btSave.Click += new System.EventHandler(this.BtSave_Click);
+            // 
+            // buttonL
+            // 
+            this.buttonL.Location = new System.Drawing.Point(681, 373);
+            this.buttonL.Name = "buttonL";
+            this.buttonL.Size = new System.Drawing.Size(94, 34);
+            this.buttonL.TabIndex = 170;
+            this.buttonL.Text = "buttonL";
+            this.buttonL.UseVisualStyleBackColor = true;
+            this.buttonL.Click += new System.EventHandler(this.buttonL_Click);
+            // 
+            // buttonR
+            // 
+            this.buttonR.Location = new System.Drawing.Point(791, 374);
+            this.buttonR.Name = "buttonR";
+            this.buttonR.Size = new System.Drawing.Size(94, 34);
+            this.buttonR.TabIndex = 170;
+            this.buttonR.Text = "buttonR";
+            this.buttonR.UseVisualStyleBackColor = true;
+            this.buttonR.Click += new System.EventHandler(this.buttonR_Click);
+            // 
+            // OpenFileDialogRead
+            // 
+            this.OpenFileDialogRead.FileName = "openFileDialog1";
+            // 
+            // buttonF
+            // 
+            this.buttonF.Location = new System.Drawing.Point(571, 374);
+            this.buttonF.Name = "buttonF";
+            this.buttonF.Size = new System.Drawing.Size(94, 33);
+            this.buttonF.TabIndex = 171;
+            this.buttonF.Text = "file";
+            this.buttonF.UseVisualStyleBackColor = true;
+            this.buttonF.Click += new System.EventHandler(this.buttonF_Click);
             // 
             // BtMaskCenter
             // 
@@ -2315,7 +2168,7 @@
             this.BtMaskCenter.FaceColor = System.Drawing.Color.Khaki;
             this.BtMaskCenter.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.BtMaskCenter.Image = null;
-            this.BtMaskCenter.Location = new System.Drawing.Point(1246, 97);
+            this.BtMaskCenter.Location = new System.Drawing.Point(557, 294);
             this.BtMaskCenter.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.BtMaskCenter.Name = "BtMaskCenter";
             this.BtMaskCenter.Radius = 5;
@@ -2330,7 +2183,7 @@
             this.btChuckAlignN.FaceColor = System.Drawing.Color.Khaki;
             this.btChuckAlignN.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btChuckAlignN.Image = null;
-            this.btChuckAlignN.Location = new System.Drawing.Point(1139, 176);
+            this.btChuckAlignN.Location = new System.Drawing.Point(534, 229);
             this.btChuckAlignN.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btChuckAlignN.Name = "btChuckAlignN";
             this.btChuckAlignN.Radius = 5;
@@ -2346,7 +2199,7 @@
             this.btRollBack.FaceColor = System.Drawing.Color.Khaki;
             this.btRollBack.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btRollBack.Image = null;
-            this.btRollBack.Location = new System.Drawing.Point(1139, 138);
+            this.btRollBack.Location = new System.Drawing.Point(534, 199);
             this.btRollBack.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btRollBack.Name = "btRollBack";
             this.btRollBack.Radius = 5;
@@ -2361,7 +2214,7 @@
             this.btAlignTest.FaceColor = System.Drawing.Color.Khaki;
             this.btAlignTest.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btAlignTest.Image = null;
-            this.btAlignTest.Location = new System.Drawing.Point(1246, 59);
+            this.btAlignTest.Location = new System.Drawing.Point(657, 294);
             this.btAlignTest.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btAlignTest.Name = "btAlignTest";
             this.btAlignTest.Radius = 5;
@@ -2376,7 +2229,7 @@
             this.btWafer.FaceColor = System.Drawing.Color.Khaki;
             this.btWafer.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btWafer.Image = null;
-            this.btWafer.Location = new System.Drawing.Point(1248, 176);
+            this.btWafer.Location = new System.Drawing.Point(667, 151);
             this.btWafer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btWafer.Name = "btWafer";
             this.btWafer.Radius = 5;
@@ -2392,7 +2245,7 @@
             this.btMask.FaceColor = System.Drawing.Color.Khaki;
             this.btMask.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btMask.Image = null;
-            this.btMask.Location = new System.Drawing.Point(1248, 59);
+            this.btMask.Location = new System.Drawing.Point(667, 113);
             this.btMask.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btMask.Name = "btMask";
             this.btMask.Radius = 5;
@@ -2426,11 +2279,11 @@
             this.btCaptureN.FaceColor = System.Drawing.Color.Khaki;
             this.btCaptureN.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btCaptureN.Image = null;
-            this.btCaptureN.Location = new System.Drawing.Point(1246, 136);
+            this.btCaptureN.Location = new System.Drawing.Point(534, 151);
             this.btCaptureN.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btCaptureN.Name = "btCaptureN";
             this.btCaptureN.Radius = 5;
-            this.btCaptureN.Size = new System.Drawing.Size(90, 30);
+            this.btCaptureN.Size = new System.Drawing.Size(113, 30);
             this.btCaptureN.TabIndex = 156;
             this.btCaptureN.Click += new System.EventHandler(this.btCaptureN_Click);
             // 
@@ -2441,7 +2294,7 @@
             this.btCapMask.FaceColor = System.Drawing.Color.Khaki;
             this.btCapMask.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btCapMask.Image = null;
-            this.btCapMask.Location = new System.Drawing.Point(894, 126);
+            this.btCapMask.Location = new System.Drawing.Point(534, 115);
             this.btCapMask.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btCapMask.Name = "btCapMask";
             this.btCapMask.Radius = 5;
@@ -2449,44 +2302,962 @@
             this.btCapMask.TabIndex = 153;
             this.btCapMask.Click += new System.EventHandler(this.BtCapMask_Click);
             // 
-            // buttonL
+            // label15
             // 
-            this.buttonL.Location = new System.Drawing.Point(743, 227);
-            this.buttonL.Name = "buttonL";
-            this.buttonL.Size = new System.Drawing.Size(94, 34);
-            this.buttonL.TabIndex = 170;
-            this.buttonL.Text = "buttonL";
-            this.buttonL.UseVisualStyleBackColor = true;
-            this.buttonL.Click += new System.EventHandler(this.buttonL_Click);
+            this.label15.AutoSize = true;
+            this.label15.Enabled = false;
+            this.label15.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label15.Location = new System.Drawing.Point(10, 75);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(53, 19);
+            this.label15.TabIndex = 94;
+            this.label15.Text = "XYY-X";
             // 
-            // buttonR
+            // label16
             // 
-            this.buttonR.Location = new System.Drawing.Point(743, 268);
-            this.buttonR.Name = "buttonR";
-            this.buttonR.Size = new System.Drawing.Size(94, 34);
-            this.buttonR.TabIndex = 170;
-            this.buttonR.Text = "buttonR";
-            this.buttonR.UseVisualStyleBackColor = true;
-            this.buttonR.Click += new System.EventHandler(this.buttonR_Click);
+            this.label16.AutoSize = true;
+            this.label16.Enabled = false;
+            this.label16.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label16.Location = new System.Drawing.Point(8, 131);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(61, 19);
+            this.label16.TabIndex = 96;
+            this.label16.Text = "XYY-Y2";
             // 
-            // OpenFileDialogRead
+            // label17
             // 
-            this.OpenFileDialogRead.FileName = "openFileDialog1";
+            this.label17.AutoSize = true;
+            this.label17.Enabled = false;
+            this.label17.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label17.Location = new System.Drawing.Point(6, 102);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(61, 19);
+            this.label17.TabIndex = 98;
+            this.label17.Text = "XYY-Y1";
             // 
-            // buttonF
+            // nUDXyyX
             // 
-            this.buttonF.Location = new System.Drawing.Point(743, 188);
-            this.buttonF.Name = "buttonF";
-            this.buttonF.Size = new System.Drawing.Size(94, 33);
-            this.buttonF.TabIndex = 171;
-            this.buttonF.Text = "file";
-            this.buttonF.UseVisualStyleBackColor = true;
-            this.buttonF.Click += new System.EventHandler(this.buttonF_Click);
+            this.nUDXyyX.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nUDXyyX.Location = new System.Drawing.Point(81, -103);
+            this.nUDXyyX.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nUDXyyX.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nUDXyyX.Name = "nUDXyyX";
+            this.nUDXyyX.Size = new System.Drawing.Size(15, 26);
+            this.nUDXyyX.TabIndex = 117;
+            // 
+            // nUDXyyY1
+            // 
+            this.nUDXyyY1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nUDXyyY1.Location = new System.Drawing.Point(80, -68);
+            this.nUDXyyY1.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nUDXyyY1.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nUDXyyY1.Name = "nUDXyyY1";
+            this.nUDXyyY1.Size = new System.Drawing.Size(15, 26);
+            this.nUDXyyY1.TabIndex = 118;
+            // 
+            // nUDXyyY2
+            // 
+            this.nUDXyyY2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nUDXyyY2.Location = new System.Drawing.Point(80, 68);
+            this.nUDXyyY2.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nUDXyyY2.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nUDXyyY2.Name = "nUDXyyY2";
+            this.nUDXyyY2.Size = new System.Drawing.Size(15, 26);
+            this.nUDXyyY2.TabIndex = 119;
+            // 
+            // btGo
+            // 
+            this.btGo.BackColor = System.Drawing.Color.Transparent;
+            this.btGo.Caption = "Go";
+            this.btGo.FaceColor = System.Drawing.Color.Lime;
+            this.btGo.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btGo.Image = null;
+            this.btGo.Location = new System.Drawing.Point(96, 239);
+            this.btGo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btGo.Name = "btGo";
+            this.btGo.Radius = 5;
+            this.btGo.Size = new System.Drawing.Size(66, 30);
+            this.btGo.TabIndex = 142;
+            this.btGo.Visible = false;
+            this.btGo.Click += new System.EventHandler(this.btGo_Click);
+            // 
+            // btCapture
+            // 
+            this.btCapture.BackColor = System.Drawing.Color.Transparent;
+            this.btCapture.Caption = "Capture";
+            this.btCapture.FaceColor = System.Drawing.Color.Khaki;
+            this.btCapture.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btCapture.Image = null;
+            this.btCapture.Location = new System.Drawing.Point(8, 239);
+            this.btCapture.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btCapture.Name = "btCapture";
+            this.btCapture.Radius = 5;
+            this.btCapture.Size = new System.Drawing.Size(74, 30);
+            this.btCapture.TabIndex = 143;
+            this.btCapture.Visible = false;
+            this.btCapture.Click += new System.EventHandler(this.btCapture_Click);
+            // 
+            // btGoDis
+            // 
+            this.btGoDis.BackColor = System.Drawing.Color.Transparent;
+            this.btGoDis.Caption = "GoDis+";
+            this.btGoDis.FaceColor = System.Drawing.Color.Lime;
+            this.btGoDis.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btGoDis.Image = null;
+            this.btGoDis.Location = new System.Drawing.Point(96, 239);
+            this.btGoDis.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btGoDis.Name = "btGoDis";
+            this.btGoDis.Radius = 5;
+            this.btGoDis.Size = new System.Drawing.Size(66, 30);
+            this.btGoDis.TabIndex = 144;
+            this.btGoDis.Visible = false;
+            this.btGoDis.Click += new System.EventHandler(this.btGoDis_Click);
+            // 
+            // btGoDisN
+            // 
+            this.btGoDisN.BackColor = System.Drawing.Color.Transparent;
+            this.btGoDisN.Caption = "GoDis-";
+            this.btGoDisN.FaceColor = System.Drawing.Color.Lime;
+            this.btGoDisN.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btGoDisN.Image = null;
+            this.btGoDisN.Location = new System.Drawing.Point(8, 241);
+            this.btGoDisN.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btGoDisN.Name = "btGoDisN";
+            this.btGoDisN.Radius = 5;
+            this.btGoDisN.Size = new System.Drawing.Size(66, 30);
+            this.btGoDisN.TabIndex = 145;
+            this.btGoDisN.Visible = false;
+            this.btGoDisN.Click += new System.EventHandler(this.btGoDisN_Click);
+            // 
+            // btUpdate
+            // 
+            this.btUpdate.BackColor = System.Drawing.Color.Transparent;
+            this.btUpdate.Caption = "Update";
+            this.btUpdate.FaceColor = System.Drawing.Color.Khaki;
+            this.btUpdate.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btUpdate.Image = null;
+            this.btUpdate.Location = new System.Drawing.Point(8, 241);
+            this.btUpdate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btUpdate.Name = "btUpdate";
+            this.btUpdate.Radius = 5;
+            this.btUpdate.Size = new System.Drawing.Size(74, 30);
+            this.btUpdate.TabIndex = 141;
+            this.btUpdate.Click += new System.EventHandler(this.btUpdate_Click);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.btUpdate);
+            this.groupBox4.Controls.Add(this.btGoDisN);
+            this.groupBox4.Controls.Add(this.btGoDis);
+            this.groupBox4.Controls.Add(this.btCapture);
+            this.groupBox4.Controls.Add(this.btGo);
+            this.groupBox4.Controls.Add(this.nUDXyyY2);
+            this.groupBox4.Controls.Add(this.nUDXyyY1);
+            this.groupBox4.Controls.Add(this.nUDXyyX);
+            this.groupBox4.Controls.Add(this.label17);
+            this.groupBox4.Controls.Add(this.label16);
+            this.groupBox4.Controls.Add(this.label15);
+            this.groupBox4.Location = new System.Drawing.Point(645, 229);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(185, 32);
+            this.groupBox4.TabIndex = 142;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Table Location";
+            this.groupBox4.Visible = false;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.nudWriteBackRightZ);
+            this.groupBox1.Controls.Add(this.nudWriteBackRightY);
+            this.groupBox1.Controls.Add(this.nudWriteBackRightX);
+            this.groupBox1.Controls.Add(this.nudWriteBackLeftZ);
+            this.groupBox1.Controls.Add(this.btUpCCDGo);
+            this.groupBox1.Controls.Add(this.nudWriteBackLeftY);
+            this.groupBox1.Controls.Add(this.nudWriteBackLeftX);
+            this.groupBox1.Controls.Add(this.btBackCCDUpdate);
+            this.groupBox1.Controls.Add(this.nudWriteUpBigY);
+            this.groupBox1.Controls.Add(this.numericUpDown1);
+            this.groupBox1.Controls.Add(this.nudReadBackRightZ);
+            this.groupBox1.Controls.Add(this.nudReadBackRightY);
+            this.groupBox1.Controls.Add(this.nudReadBackRightX);
+            this.groupBox1.Controls.Add(this.nudReadBackLeftZ);
+            this.groupBox1.Controls.Add(this.nudReadBackLeftY);
+            this.groupBox1.Controls.Add(this.nudReadBigY);
+            this.groupBox1.Controls.Add(this.nudReadBackLeftX);
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.label19);
+            this.groupBox1.Controls.Add(this.label18);
+            this.groupBox1.Controls.Add(this.label14);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.label10);
+            this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.label12);
+            this.groupBox1.Controls.Add(this.label13);
+            this.groupBox1.Location = new System.Drawing.Point(1080, 4);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(291, 321);
+            this.groupBox1.TabIndex = 172;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "CCD Location";
+            // 
+            // btUpCCDGo
+            // 
+            this.btUpCCDGo.BackColor = System.Drawing.Color.Transparent;
+            this.btUpCCDGo.Caption = "Go";
+            this.btUpCCDGo.FaceColor = System.Drawing.Color.Lime;
+            this.btUpCCDGo.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btUpCCDGo.Image = null;
+            this.btUpCCDGo.Location = new System.Drawing.Point(89, 286);
+            this.btUpCCDGo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btUpCCDGo.Name = "btUpCCDGo";
+            this.btUpCCDGo.Radius = 5;
+            this.btUpCCDGo.Size = new System.Drawing.Size(66, 30);
+            this.btUpCCDGo.TabIndex = 142;
+            this.btUpCCDGo.Visible = false;
+            // 
+            // btBackCCDUpdate
+            // 
+            this.btBackCCDUpdate.BackColor = System.Drawing.Color.Transparent;
+            this.btBackCCDUpdate.Caption = "Update";
+            this.btBackCCDUpdate.FaceColor = System.Drawing.Color.Khaki;
+            this.btBackCCDUpdate.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btBackCCDUpdate.Image = null;
+            this.btBackCCDUpdate.Location = new System.Drawing.Point(9, 286);
+            this.btBackCCDUpdate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btBackCCDUpdate.Name = "btBackCCDUpdate";
+            this.btBackCCDUpdate.Radius = 5;
+            this.btBackCCDUpdate.Size = new System.Drawing.Size(98, 30);
+            this.btBackCCDUpdate.TabIndex = 141;
+            this.btBackCCDUpdate.Click += new System.EventHandler(this.BtBackCCDUpdate_Click);
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.numericUpDown1.Enabled = false;
+            this.numericUpDown1.Location = new System.Drawing.Point(175, 285);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(15, 26);
+            this.numericUpDown1.TabIndex = 143;
+            this.numericUpDown1.Visible = false;
+            // 
+            // nudReadBackRightZ
+            // 
+            this.nudReadBackRightZ.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadBackRightZ.Enabled = false;
+            this.nudReadBackRightZ.Location = new System.Drawing.Point(175, 246);
+            this.nudReadBackRightZ.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadBackRightZ.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadBackRightZ.Name = "nudReadBackRightZ";
+            this.nudReadBackRightZ.Size = new System.Drawing.Size(15, 26);
+            this.nudReadBackRightZ.TabIndex = 119;
+            // 
+            // nudReadBackRightY
+            // 
+            this.nudReadBackRightY.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadBackRightY.Enabled = false;
+            this.nudReadBackRightY.Location = new System.Drawing.Point(175, 212);
+            this.nudReadBackRightY.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadBackRightY.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadBackRightY.Name = "nudReadBackRightY";
+            this.nudReadBackRightY.Size = new System.Drawing.Size(15, 26);
+            this.nudReadBackRightY.TabIndex = 119;
+            // 
+            // nudReadBackRightX
+            // 
+            this.nudReadBackRightX.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadBackRightX.Enabled = false;
+            this.nudReadBackRightX.Location = new System.Drawing.Point(175, 180);
+            this.nudReadBackRightX.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadBackRightX.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadBackRightX.Name = "nudReadBackRightX";
+            this.nudReadBackRightX.Size = new System.Drawing.Size(15, 26);
+            this.nudReadBackRightX.TabIndex = 119;
+            // 
+            // nudReadBackLeftZ
+            // 
+            this.nudReadBackLeftZ.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadBackLeftZ.Enabled = false;
+            this.nudReadBackLeftZ.Location = new System.Drawing.Point(175, 148);
+            this.nudReadBackLeftZ.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadBackLeftZ.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadBackLeftZ.Name = "nudReadBackLeftZ";
+            this.nudReadBackLeftZ.Size = new System.Drawing.Size(15, 26);
+            this.nudReadBackLeftZ.TabIndex = 119;
+            // 
+            // nudReadBackLeftY
+            // 
+            this.nudReadBackLeftY.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadBackLeftY.Enabled = false;
+            this.nudReadBackLeftY.Location = new System.Drawing.Point(175, 113);
+            this.nudReadBackLeftY.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadBackLeftY.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadBackLeftY.Name = "nudReadBackLeftY";
+            this.nudReadBackLeftY.Size = new System.Drawing.Size(15, 26);
+            this.nudReadBackLeftY.TabIndex = 118;
+            // 
+            // nudReadBigY
+            // 
+            this.nudReadBigY.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadBigY.Enabled = false;
+            this.nudReadBigY.Location = new System.Drawing.Point(175, 45);
+            this.nudReadBigY.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadBigY.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadBigY.Name = "nudReadBigY";
+            this.nudReadBigY.Size = new System.Drawing.Size(15, 26);
+            this.nudReadBigY.TabIndex = 117;
+            this.nudReadBigY.Visible = false;
+            // 
+            // nudReadBackLeftX
+            // 
+            this.nudReadBackLeftX.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadBackLeftX.Enabled = false;
+            this.nudReadBackLeftX.Location = new System.Drawing.Point(175, 81);
+            this.nudReadBackLeftX.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadBackLeftX.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadBackLeftX.Name = "nudReadBackLeftX";
+            this.nudReadBackLeftX.Size = new System.Drawing.Size(15, 26);
+            this.nudReadBackLeftX.TabIndex = 117;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Enabled = false;
+            this.label8.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label8.Location = new System.Drawing.Point(9, 115);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(48, 19);
+            this.label8.TabIndex = 98;
+            this.label8.Text = "Left Y";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Enabled = false;
+            this.label19.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label19.Location = new System.Drawing.Point(9, 248);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(60, 19);
+            this.label19.TabIndex = 96;
+            this.label19.Text = "Right Z";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Enabled = false;
+            this.label18.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label18.Location = new System.Drawing.Point(9, 216);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(60, 19);
+            this.label18.TabIndex = 96;
+            this.label18.Text = "Right Y";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Enabled = false;
+            this.label14.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label14.Location = new System.Drawing.Point(9, 184);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(61, 19);
+            this.label14.TabIndex = 96;
+            this.label14.Text = "Right X";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Enabled = false;
+            this.label9.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label9.Location = new System.Drawing.Point(9, 151);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(48, 19);
+            this.label9.TabIndex = 96;
+            this.label9.Text = "Left Z";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Enabled = false;
+            this.label10.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label10.Location = new System.Drawing.Point(84, 22);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(59, 19);
+            this.label10.TabIndex = 94;
+            this.label10.Text = "Setting";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Enabled = false;
+            this.label11.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label11.Location = new System.Drawing.Point(160, 22);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(101, 19);
+            this.label11.TabIndex = 94;
+            this.label11.Text = "Now Located";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Enabled = false;
+            this.label12.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label12.Location = new System.Drawing.Point(9, 48);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(45, 19);
+            this.label12.TabIndex = 94;
+            this.label12.Text = "Big Y";
+            this.label12.Visible = false;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Enabled = false;
+            this.label13.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label13.Location = new System.Drawing.Point(9, 79);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(49, 19);
+            this.label13.TabIndex = 94;
+            this.label13.Text = "Left X";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.nudWriteChuckY2);
+            this.groupBox2.Controls.Add(this.btChuckGo);
+            this.groupBox2.Controls.Add(this.nudWriteChuckY1);
+            this.groupBox2.Controls.Add(this.nudWriteChuckX);
+            this.groupBox2.Controls.Add(this.btBackChuckUpdate);
+            this.groupBox2.Controls.Add(this.nudWriteChuckZ);
+            this.groupBox2.Controls.Add(this.nudReadChuckR);
+            this.groupBox2.Controls.Add(this.nudReadChuckY2);
+            this.groupBox2.Controls.Add(this.nudReadChuckY1);
+            this.groupBox2.Controls.Add(this.nudReadChuckZ);
+            this.groupBox2.Controls.Add(this.nudReadChuckX);
+            this.groupBox2.Controls.Add(this.label20);
+            this.groupBox2.Controls.Add(this.label21);
+            this.groupBox2.Controls.Add(this.label22);
+            this.groupBox2.Controls.Add(this.label23);
+            this.groupBox2.Controls.Add(this.label24);
+            this.groupBox2.Controls.Add(this.label25);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Location = new System.Drawing.Point(783, 8);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(291, 249);
+            this.groupBox2.TabIndex = 173;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "WEC Location";
+            this.groupBox2.Visible = false;
+            // 
+            // btChuckGo
+            // 
+            this.btChuckGo.BackColor = System.Drawing.Color.Transparent;
+            this.btChuckGo.Caption = "Go";
+            this.btChuckGo.FaceColor = System.Drawing.Color.Lime;
+            this.btChuckGo.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btChuckGo.Image = null;
+            this.btChuckGo.Location = new System.Drawing.Point(93, 212);
+            this.btChuckGo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btChuckGo.Name = "btChuckGo";
+            this.btChuckGo.Radius = 5;
+            this.btChuckGo.Size = new System.Drawing.Size(66, 30);
+            this.btChuckGo.TabIndex = 142;
+            this.btChuckGo.Visible = false;
+            // 
+            // btBackChuckUpdate
+            // 
+            this.btBackChuckUpdate.BackColor = System.Drawing.Color.Transparent;
+            this.btBackChuckUpdate.Caption = "Update";
+            this.btBackChuckUpdate.FaceColor = System.Drawing.Color.Khaki;
+            this.btBackChuckUpdate.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btBackChuckUpdate.Image = null;
+            this.btBackChuckUpdate.Location = new System.Drawing.Point(6, 212);
+            this.btBackChuckUpdate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btBackChuckUpdate.Name = "btBackChuckUpdate";
+            this.btBackChuckUpdate.Radius = 5;
+            this.btBackChuckUpdate.Size = new System.Drawing.Size(102, 30);
+            this.btBackChuckUpdate.TabIndex = 141;
+            // 
+            // nudReadChuckR
+            // 
+            this.nudReadChuckR.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadChuckR.Enabled = false;
+            this.nudReadChuckR.Location = new System.Drawing.Point(175, 212);
+            this.nudReadChuckR.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadChuckR.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadChuckR.Name = "nudReadChuckR";
+            this.nudReadChuckR.Size = new System.Drawing.Size(15, 26);
+            this.nudReadChuckR.TabIndex = 143;
+            this.nudReadChuckR.Visible = false;
+            // 
+            // nudReadChuckY2
+            // 
+            this.nudReadChuckY2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadChuckY2.Enabled = false;
+            this.nudReadChuckY2.Location = new System.Drawing.Point(175, 176);
+            this.nudReadChuckY2.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadChuckY2.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadChuckY2.Name = "nudReadChuckY2";
+            this.nudReadChuckY2.Size = new System.Drawing.Size(15, 26);
+            this.nudReadChuckY2.TabIndex = 119;
+            // 
+            // nudReadChuckY1
+            // 
+            this.nudReadChuckY1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadChuckY1.Enabled = false;
+            this.nudReadChuckY1.Location = new System.Drawing.Point(175, 139);
+            this.nudReadChuckY1.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadChuckY1.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadChuckY1.Name = "nudReadChuckY1";
+            this.nudReadChuckY1.Size = new System.Drawing.Size(15, 26);
+            this.nudReadChuckY1.TabIndex = 118;
+            // 
+            // nudReadChuckZ
+            // 
+            this.nudReadChuckZ.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadChuckZ.Enabled = false;
+            this.nudReadChuckZ.Location = new System.Drawing.Point(175, 67);
+            this.nudReadChuckZ.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadChuckZ.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadChuckZ.Name = "nudReadChuckZ";
+            this.nudReadChuckZ.Size = new System.Drawing.Size(15, 26);
+            this.nudReadChuckZ.TabIndex = 117;
+            // 
+            // nudReadChuckX
+            // 
+            this.nudReadChuckX.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nudReadChuckX.Enabled = false;
+            this.nudReadChuckX.Location = new System.Drawing.Point(175, 103);
+            this.nudReadChuckX.Maximum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            0});
+            this.nudReadChuckX.Minimum = new decimal(new int[] {
+            2500000,
+            0,
+            0,
+            -2147483648});
+            this.nudReadChuckX.Name = "nudReadChuckX";
+            this.nudReadChuckX.Size = new System.Drawing.Size(15, 26);
+            this.nudReadChuckX.TabIndex = 117;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Enabled = false;
+            this.label20.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label20.Location = new System.Drawing.Point(9, 145);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(61, 19);
+            this.label20.TabIndex = 98;
+            this.label20.Text = "XYY-Y1";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Enabled = false;
+            this.label21.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label21.Location = new System.Drawing.Point(9, 182);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(61, 19);
+            this.label21.TabIndex = 96;
+            this.label21.Text = "XYY-Y2";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Enabled = false;
+            this.label22.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label22.Location = new System.Drawing.Point(84, 39);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(59, 19);
+            this.label22.TabIndex = 94;
+            this.label22.Text = "Setting";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Enabled = false;
+            this.label23.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label23.Location = new System.Drawing.Point(160, 39);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(101, 19);
+            this.label23.TabIndex = 94;
+            this.label23.Text = "Now Located";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Enabled = false;
+            this.label24.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label24.Location = new System.Drawing.Point(9, 69);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(55, 19);
+            this.label24.TabIndex = 94;
+            this.label24.Text = "WEC Z";
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Enabled = false;
+            this.label25.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label25.Location = new System.Drawing.Point(9, 105);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(53, 19);
+            this.label25.TabIndex = 94;
+            this.label25.Text = "XYY-X";
+            // 
+            // nudWriteChuckY2
+            // 
+            this.nudWriteChuckY2.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckY2.DrawBorder = false;
+            this.nudWriteChuckY2.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckY2.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckY2.Location = new System.Drawing.Point(83, 180);
+            this.nudWriteChuckY2.Name = "nudWriteChuckY2";
+            this.nudWriteChuckY2.Radius = 0;
+            this.nudWriteChuckY2.Size = new System.Drawing.Size(80, 26);
+            this.nudWriteChuckY2.TabIndex = 145;
+            this.nudWriteChuckY2.Text = "0";
+            this.nudWriteChuckY2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteChuckY1
+            // 
+            this.nudWriteChuckY1.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckY1.DrawBorder = false;
+            this.nudWriteChuckY1.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckY1.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckY1.Location = new System.Drawing.Point(83, 143);
+            this.nudWriteChuckY1.Name = "nudWriteChuckY1";
+            this.nudWriteChuckY1.Radius = 0;
+            this.nudWriteChuckY1.Size = new System.Drawing.Size(80, 28);
+            this.nudWriteChuckY1.TabIndex = 145;
+            this.nudWriteChuckY1.Text = "0";
+            this.nudWriteChuckY1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteChuckX
+            // 
+            this.nudWriteChuckX.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckX.DrawBorder = false;
+            this.nudWriteChuckX.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckX.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckX.Location = new System.Drawing.Point(83, 102);
+            this.nudWriteChuckX.Name = "nudWriteChuckX";
+            this.nudWriteChuckX.Radius = 0;
+            this.nudWriteChuckX.Size = new System.Drawing.Size(80, 28);
+            this.nudWriteChuckX.TabIndex = 145;
+            this.nudWriteChuckX.Text = "0";
+            this.nudWriteChuckX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteChuckZ
+            // 
+            this.nudWriteChuckZ.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckZ.DrawBorder = false;
+            this.nudWriteChuckZ.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckZ.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckZ.Location = new System.Drawing.Point(83, 67);
+            this.nudWriteChuckZ.Name = "nudWriteChuckZ";
+            this.nudWriteChuckZ.Radius = 0;
+            this.nudWriteChuckZ.Size = new System.Drawing.Size(80, 27);
+            this.nudWriteChuckZ.TabIndex = 145;
+            this.nudWriteChuckZ.Text = "0";
+            this.nudWriteChuckZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackRightZ
+            // 
+            this.nudWriteBackRightZ.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackRightZ.DrawBorder = false;
+            this.nudWriteBackRightZ.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackRightZ.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackRightZ.Location = new System.Drawing.Point(83, 246);
+            this.nudWriteBackRightZ.Name = "nudWriteBackRightZ";
+            this.nudWriteBackRightZ.Radius = 0;
+            this.nudWriteBackRightZ.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteBackRightZ.TabIndex = 145;
+            this.nudWriteBackRightZ.Text = "0";
+            this.nudWriteBackRightZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackRightY
+            // 
+            this.nudWriteBackRightY.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackRightY.DrawBorder = false;
+            this.nudWriteBackRightY.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackRightY.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackRightY.Location = new System.Drawing.Point(83, 213);
+            this.nudWriteBackRightY.Name = "nudWriteBackRightY";
+            this.nudWriteBackRightY.Radius = 0;
+            this.nudWriteBackRightY.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteBackRightY.TabIndex = 145;
+            this.nudWriteBackRightY.Text = "0";
+            this.nudWriteBackRightY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackRightX
+            // 
+            this.nudWriteBackRightX.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackRightX.DrawBorder = false;
+            this.nudWriteBackRightX.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackRightX.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackRightX.Location = new System.Drawing.Point(83, 180);
+            this.nudWriteBackRightX.Name = "nudWriteBackRightX";
+            this.nudWriteBackRightX.Radius = 0;
+            this.nudWriteBackRightX.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteBackRightX.TabIndex = 145;
+            this.nudWriteBackRightX.Text = "0";
+            this.nudWriteBackRightX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackLeftZ
+            // 
+            this.nudWriteBackLeftZ.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftZ.DrawBorder = false;
+            this.nudWriteBackLeftZ.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackLeftZ.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftZ.Location = new System.Drawing.Point(83, 147);
+            this.nudWriteBackLeftZ.Name = "nudWriteBackLeftZ";
+            this.nudWriteBackLeftZ.Radius = 0;
+            this.nudWriteBackLeftZ.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteBackLeftZ.TabIndex = 145;
+            this.nudWriteBackLeftZ.Text = "0";
+            this.nudWriteBackLeftZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackLeftY
+            // 
+            this.nudWriteBackLeftY.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftY.DrawBorder = false;
+            this.nudWriteBackLeftY.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackLeftY.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftY.Location = new System.Drawing.Point(83, 114);
+            this.nudWriteBackLeftY.Name = "nudWriteBackLeftY";
+            this.nudWriteBackLeftY.Radius = 0;
+            this.nudWriteBackLeftY.Size = new System.Drawing.Size(80, 29);
+            this.nudWriteBackLeftY.TabIndex = 145;
+            this.nudWriteBackLeftY.Text = "0";
+            this.nudWriteBackLeftY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackLeftX
+            // 
+            this.nudWriteBackLeftX.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftX.DrawBorder = false;
+            this.nudWriteBackLeftX.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackLeftX.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftX.Location = new System.Drawing.Point(83, 80);
+            this.nudWriteBackLeftX.Name = "nudWriteBackLeftX";
+            this.nudWriteBackLeftX.Radius = 0;
+            this.nudWriteBackLeftX.Size = new System.Drawing.Size(80, 27);
+            this.nudWriteBackLeftX.TabIndex = 145;
+            this.nudWriteBackLeftX.Text = "0";
+            this.nudWriteBackLeftX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteUpBigY
+            // 
+            this.nudWriteUpBigY.BackColor = System.Drawing.Color.White;
+            this.nudWriteUpBigY.DrawBorder = false;
+            this.nudWriteUpBigY.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteUpBigY.ForeColor = System.Drawing.Color.White;
+            this.nudWriteUpBigY.Location = new System.Drawing.Point(83, 48);
+            this.nudWriteUpBigY.Name = "nudWriteUpBigY";
+            this.nudWriteUpBigY.Radius = 0;
+            this.nudWriteUpBigY.Size = new System.Drawing.Size(80, 27);
+            this.nudWriteUpBigY.TabIndex = 145;
+            this.nudWriteUpBigY.Text = "0";
+            this.nudWriteUpBigY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.nudWriteUpBigY.Visible = false;
+            // 
+            // ucNavigatorBackMaskR
+            // 
+            this.ucNavigatorBackMaskR.AutoSize = true;
+            this.ucNavigatorBackMaskR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorBackMaskR.Location = new System.Drawing.Point(73, 30);
+            this.ucNavigatorBackMaskR.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorBackMaskR.Name = "ucNavigatorBackMaskR";
+            this.ucNavigatorBackMaskR.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorBackMaskR.TabIndex = 51;
+            this.ucNavigatorBackMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
+            // 
+            // ucNavigatorTopMaskR
+            // 
+            this.ucNavigatorTopMaskR.AutoSize = true;
+            this.ucNavigatorTopMaskR.Location = new System.Drawing.Point(85, 28);
+            this.ucNavigatorTopMaskR.Name = "ucNavigatorTopMaskR";
+            this.ucNavigatorTopMaskR.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorTopMaskR.TabIndex = 54;
+            this.ucNavigatorTopMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
+            // 
+            // ucPattern1
+            // 
+            this.ucPattern1.Location = new System.Drawing.Point(31082, 32732);
+            this.ucPattern1.Margin = new System.Windows.Forms.Padding(0);
+            this.ucPattern1.Name = "ucPattern1";
+            this.ucPattern1.Size = new System.Drawing.Size(65535, 65535);
+            this.ucPattern1.TabIndex = 53;
+            // 
+            // ucNavigatorWaferR
+            // 
+            this.ucNavigatorWaferR.AutoSize = true;
+            this.ucNavigatorWaferR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorWaferR.Location = new System.Drawing.Point(77, 28);
+            this.ucNavigatorWaferR.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorWaferR.Name = "ucNavigatorWaferR";
+            this.ucNavigatorWaferR.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorWaferR.TabIndex = 50;
+            this.ucNavigatorWaferR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferR_CommandPressed);
+            // 
+            // ucNavigatorBackMaskL
+            // 
+            this.ucNavigatorBackMaskL.AutoSize = true;
+            this.ucNavigatorBackMaskL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorBackMaskL.Location = new System.Drawing.Point(31, 28);
+            this.ucNavigatorBackMaskL.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorBackMaskL.Name = "ucNavigatorBackMaskL";
+            this.ucNavigatorBackMaskL.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorBackMaskL.TabIndex = 50;
+            this.ucNavigatorBackMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
+            // 
+            // ucNavigatorWaferL
+            // 
+            this.ucNavigatorWaferL.AutoSize = true;
+            this.ucNavigatorWaferL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorWaferL.Location = new System.Drawing.Point(36, 28);
+            this.ucNavigatorWaferL.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorWaferL.Name = "ucNavigatorWaferL";
+            this.ucNavigatorWaferL.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorWaferL.TabIndex = 49;
+            this.ucNavigatorWaferL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferL_CommandPressed);
+            // 
+            // ucNavigatorTopMaskL
+            // 
+            this.ucNavigatorTopMaskL.AutoSize = true;
+            this.ucNavigatorTopMaskL.Location = new System.Drawing.Point(37, 27);
+            this.ucNavigatorTopMaskL.Name = "ucNavigatorTopMaskL";
+            this.ucNavigatorTopMaskL.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorTopMaskL.TabIndex = 15;
+            this.ucNavigatorTopMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
             // 
             // CMLearnPatternBack
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.buttonF);
             this.Controls.Add(this.buttonR);
             this.Controls.Add(this.buttonL);
@@ -2506,7 +3277,6 @@
             this.Controls.Add(this.btRollBack);
             this.Controls.Add(this.btAlignTest);
             this.Controls.Add(this.btWafer);
-            this.Controls.Add(this.label7);
             this.Controls.Add(this.btMask);
             this.Controls.Add(this.cBAdjZ);
             this.Controls.Add(this.cBBottomMask);
@@ -2585,15 +3355,32 @@
             this.gBMag.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tBRShowImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBLShowImage)).EndInit();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUDLMaskY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUDLMaskX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUDRMaskY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUDRMaskX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUDXyyY2)).EndInit();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackRightZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackRightY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackRightX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackLeftZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackLeftY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBigY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadBackLeftX)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckR)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckX)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2712,22 +3499,10 @@
         private System.Windows.Forms.Button btBTAlignWafer;
         private System.Windows.Forms.Button btReadMaskMat;
         private System.Windows.Forms.Button btNG;
-        public System.Windows.Forms.GroupBox groupBox4;
-        private MRLibrary.UCButton btGo;
-        private MRLibrary.UCButton btUpdate;
-        private System.Windows.Forms.NumericUpDown nUDXyyY2;
-        private System.Windows.Forms.NumericUpDown nUDXyyY1;
-        private System.Windows.Forms.NumericUpDown nUDXyyX;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label lbDebugMsg;
-        private MRLibrary.UCButton btCapture;
         private System.Windows.Forms.Button btBTAlignWaferRotate;
-        private MRLibrary.UCButton btGoDis;
         private System.Windows.Forms.Label lbRightXYW;
         private System.Windows.Forms.Label lbLeftXYW;
-        private MRLibrary.UCButton btGoDisN;
         private System.Windows.Forms.CheckBox cBTopMask;
         private System.Windows.Forms.CheckBox cBBottomMask;
         private System.Windows.Forms.CheckBox cBAdjZ;
@@ -2764,5 +3539,62 @@
         private System.Windows.Forms.ComboBox cbRBackMaskClassList;
         private System.Windows.Forms.Button btBackLabelPatternLM;
         private System.Windows.Forms.Button btBackLabelPatternRM;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.NumericUpDown nUDXyyX;
+        private System.Windows.Forms.NumericUpDown nUDXyyY1;
+        private System.Windows.Forms.NumericUpDown nUDXyyY2;
+        private MRLibrary.UCButton btGo;
+        private MRLibrary.UCButton btCapture;
+        private MRLibrary.UCButton btGoDis;
+        private MRLibrary.UCButton btGoDisN;
+        private MRLibrary.UCButton btUpdate;
+        public System.Windows.Forms.GroupBox groupBox4;
+        public System.Windows.Forms.GroupBox groupBox1;
+        private UCRoundedRectangleLabel nudWriteBackRightZ;
+        private UCRoundedRectangleLabel nudWriteBackRightY;
+        private UCRoundedRectangleLabel nudWriteBackRightX;
+        private UCRoundedRectangleLabel nudWriteBackLeftZ;
+        private MRLibrary.UCButton btUpCCDGo;
+        private UCRoundedRectangleLabel nudWriteBackLeftY;
+        private UCRoundedRectangleLabel nudWriteBackLeftX;
+        private MRLibrary.UCButton btBackCCDUpdate;
+        private UCRoundedRectangleLabel nudWriteUpBigY;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown nudReadBackRightZ;
+        private System.Windows.Forms.NumericUpDown nudReadBackRightY;
+        private System.Windows.Forms.NumericUpDown nudReadBackRightX;
+        private System.Windows.Forms.NumericUpDown nudReadBackLeftZ;
+        private System.Windows.Forms.NumericUpDown nudReadBackLeftY;
+        private System.Windows.Forms.NumericUpDown nudReadBigY;
+        private System.Windows.Forms.NumericUpDown nudReadBackLeftX;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        public System.Windows.Forms.GroupBox groupBox2;
+        private UCRoundedRectangleLabel nudWriteChuckY2;
+        private MRLibrary.UCButton btChuckGo;
+        private UCRoundedRectangleLabel nudWriteChuckY1;
+        private UCRoundedRectangleLabel nudWriteChuckX;
+        private MRLibrary.UCButton btBackChuckUpdate;
+        private UCRoundedRectangleLabel nudWriteChuckZ;
+        private System.Windows.Forms.NumericUpDown nudReadChuckR;
+        private System.Windows.Forms.NumericUpDown nudReadChuckY2;
+        private System.Windows.Forms.NumericUpDown nudReadChuckY1;
+        private System.Windows.Forms.NumericUpDown nudReadChuckZ;
+        private System.Windows.Forms.NumericUpDown nudReadChuckX;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label25;
     }
 }

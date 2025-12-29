@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -254,10 +255,11 @@ namespace MRLibrary
                     {
                         return;
                     }
-                    localFitWindowImage = _fitWindowImage;
+                    localFitWindowImage = _fitWindowImage.Clone();
                 }
                 //if (!_fitWindowImage.Empty())
                 //{
+                using(localFitWindowImage)
                 using (Mat roi = new Mat())
                 {
                     try
@@ -268,7 +270,8 @@ namespace MRLibrary
                         }
                         //int failTimes = 0;
                         //roiCheckPoint:   //to check if ZoomRatio changed after resize before DstImage = new Mat(roi, s);
-                        Cv2.Resize(_fitWindowImage, roi, new OpenCvSharp.Size(0, 0), _ratio[_ratioIndex], _ratio[_ratioIndex], InterpolationFlags.Linear);
+                        //Cv2.Resize(_fitWindowImage, roi, new OpenCvSharp.Size(0, 0), _ratio[_ratioIndex], _ratio[_ratioIndex], InterpolationFlags.Linear);
+                        Cv2.Resize(localFitWindowImage, roi, new OpenCvSharp.Size(0, 0), _ratio[_ratioIndex], _ratio[_ratioIndex], InterpolationFlags.Linear);
                         Rect s = new Rect(_aftZoomRoiLeftUpPt.X, _aftZoomRoiLeftUpPt.Y, ClientSize.Width, ClientSize.Height);
                         if (0 <= s.X && 0 <= s.Width && s.X + s.Width <= roi.Cols
                             && 0 <= s.Y && 0 <= s.Height && s.Y + s.Height <= roi.Rows)
@@ -383,7 +386,7 @@ namespace MRLibrary
             }
             catch (Exception)
             {
-                throw;
+                return;
             }
         }
 
@@ -399,6 +402,11 @@ namespace MRLibrary
 
         private void DisplayImage()
         {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(DisplayImage));
+                return;
+            }
             try
             {
                 if (!_fitWindowImage.Empty())
@@ -489,6 +497,18 @@ namespace MRLibrary
 
         public void SetImage(Mat image)
         {
+            if (InvokeRequired)
+            {
+                // 傳入的 image 可能會被外部重用，建議 Clone 一份或確保生命週期安全
+                Mat imgCopy = image?.Clone();
+                BeginInvoke(new Action(() =>
+                {
+                    try { SetImage(imgCopy); }
+                    finally { imgCopy?.Dispose(); }
+                }));
+                return;
+            }
+            
             if (image != null)
             {
                 lock (ImageLock)
@@ -713,21 +733,45 @@ namespace MRLibrary
             }
         }
         */
-        public Mat GetWindowImage()
+        //public Mat GetWindowImage()
+        //{
+        //    lock (_lock)
+        //    {
+        //        //_isGettingWindowImage = true;
+        //        //while (true)
+        //        //{
+        //        //    if (_isGettingWindowImage == false)
+        //        //        return _gettingWindowImage.GetMat(AccessType.Fast);
+        //        //    Thread.Sleep(10);
+        //        //}
+        //        if (!_getWindowImageEvent.WaitOne(1000))
+        //            throw new Exception("Get window image fail.");
+        //        else
+        //            return _fitWindowImage.GetMat(AccessFlag.FAST);
+        //    }
+        //}
+        public Mat GetWindowImage(int timeoutMs = 1000)
         {
             lock (_lock)
             {
-                //_isGettingWindowImage = true;
-                //while (true)
-                //{
-                //    if (_isGettingWindowImage == false)
-                //        return _gettingWindowImage.GetMat(AccessType.Fast);
-                //    Thread.Sleep(10);
-                //}
-                if (!_getWindowImageEvent.WaitOne(1000))
-                    throw new Exception("Get window image fail.");
-                else
-                    return _fitWindowImage.GetMat(AccessFlag.FAST);
+                if (_fitWindowImage != null && !_fitWindowImage.Empty())
+                {
+                    using (var mat = _fitWindowImage.GetMat(AccessFlag.FAST))
+                    {
+                        return mat.Clone(); // 回傳獨立複本，使用者須負責 Dispose
+                    }
+                }
+
+                if (this.InvokeRequired)
+                    throw new InvalidOperationException("Image not ready and UI thread cannot wait.");
+
+                if (!_getWindowImageEvent.WaitOne(timeoutMs))
+                    throw new TimeoutException("Get window image fail.");
+
+                using (var mat = _fitWindowImage.GetMat(AccessFlag.FAST))
+                {
+                    return mat.Clone();
+                }
             }
         }
 

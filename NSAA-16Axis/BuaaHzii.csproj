@@ -38,6 +38,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -289,6 +290,12 @@
     <Compile Include="UCPattern.Designer.cs">
       <DependentUpon>UCPattern.cs</DependentUpon>
     </Compile>
+    <Compile Include="UCRountdedRectangleLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UCRountdedRectangleLabel.Designer.cs">
+      <DependentUpon>UCRountdedRectangleLabel.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="CCDPad.resx">
       <DependentUpon>CCDPad.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -417,6 +424,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ICON.ico" />
+    <Content Include="Python\FlaskApi.py" />
     <None Include="Resources\Image1.bmp" />
   </ItemGroup>
   <ItemGroup>
@@ -445,10 +453,10 @@
       <Version>4.11.0.20250507</Version>
     </PackageReference>
     <PackageReference Include="System.Drawing.Common">
-      <Version>10.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>10.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

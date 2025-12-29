@@ -1,17 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using OpenCvSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
-using OpenCvSharp;
-using System.Threading;
 using System.Net.Http;
-using System.Text.Json.Nodes;
-using Newtonsoft.Json.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace MRLibrary
 {
@@ -81,8 +77,8 @@ namespace MRLibrary
             sSample = new Mat(4000, 3000, MatType.CV_8UC1);
             TransImg1 = new Mat(4000, 3000, MatType.CV_8UC1);
             sTemplate = new Mat(4000, 3000, MatType.CV_8UC1);
-            Tr1=new Mat(4000, 3000, MatType.CV_8UC1);
-            Tr2= new Mat(4000, 3000, MatType.CV_8UC1);
+            Tr1 = new Mat(4000, 3000, MatType.CV_8UC1);
+            Tr2 = new Mat(4000, 3000, MatType.CV_8UC1);
             for (int i = 0; i < 10; i++)
             {
                 sLevel[i] = new Mat();
@@ -245,7 +241,7 @@ namespace MRLibrary
                 mp.X = mx + sx;
                 mp.Y = my + sy;
                 mp.Score = (float)maxValm;
-                mp.TemplateSize = new System.Drawing.SizeF(template.Width, template.Height) ;
+                mp.TemplateSize = new System.Drawing.SizeF(template.Width, template.Height);
             }
             catch (Exception)
             {
@@ -857,9 +853,9 @@ namespace MRLibrary
                 Cv2.GaussianBlur(pattern, sTemplate, new Size(7, 7), 0);
                 Learn(sTemplate, dontCare);
             }
-            else if(algorithm==AlignAlgorithm.AIMatch)
+            else if (algorithm == AlignAlgorithm.AIMatch)
             {
-                if(template != null)
+                if (template != null)
                 {
                     template.Dispose();
                 }
@@ -999,63 +995,101 @@ namespace MRLibrary
 
         private void AIMatch(int debug, Mat sSample, ref MatchPosition mPos, int classId = -1)
         {
-            string result = PostMatAsync(sSample).GetAwaiter().GetResult();
-            var boxes = JArray.Parse(result);
-            if (boxes.Count > 0)
+            try
             {
-                // 如果指定了 classId，只匹配該類別
-                JToken targetBox = null;
-                if (classId >= 0)
+                if (AIService.IsRestarting)
                 {
-                    foreach (var box in boxes)
+                    System.Diagnostics.Debug.WriteLine("[AI推論] 服務正在重啟，跳過推論");
+                    mPos.X = 0;
+                    mPos.Y = 0;
+                    mPos.Score = 0.01F;
+                    mPos.TemplateSize = new System.Drawing.SizeF(100, 100);
+                    return;
+                }
+                string result = PostMatAsync(sSample).GetAwaiter().GetResult();
+                var boxes = JArray.Parse(result);
+                if (boxes.Count > 0)
+                {
+                    // 如果指定了 classId，只匹配該類別
+                    JToken targetBox = null;
+                    if (classId >= 0)
                     {
-                        int cls = (int)box["class"];
-                        if (cls == classId)
+                        foreach (var box in boxes)
                         {
-                            targetBox = box;
-                            break;
+                            int cls = (int)box["class"];
+                            if (cls == classId)
+                            {
+                                targetBox = box;
+                                break;
+                            }
                         }
+                    }
+                    else
+                    {
+                        // 沒有指定 classId，取第一個結果
+                        targetBox = boxes[0];
+                    }
+
+                    if (targetBox != null)
+                    {
+                        int cls = (int)targetBox["class"];
+                        string clsName = (string)targetBox["name"];
+                        int x1 = (int)targetBox["x1"];
+                        int y1 = (int)targetBox["y1"];
+                        int x2 = (int)targetBox["x2"];
+                        int y2 = (int)targetBox["y2"];
+                        float Score = (float)targetBox["conf"];
+                        mPos.X = (x1 + x2) / 2;
+                        mPos.Y = (y1 + y2) / 2;
+                        mPos.Score = (double)Score;
+                    }
+                    else
+                    {
+                        // 找不到指定類別
+                        mPos.X = 0;
+                        mPos.Y = 0;
+                        mPos.Score = 0.1F;
+                        AIImageProcess.SaveAIFailImage(sSample, mPos);
                     }
                 }
                 else
                 {
-                    // 沒有指定 classId，取第一個結果
-                    targetBox = boxes[0];
-                }
-
-                if (targetBox != null)
-                {
-                    int cls = (int)targetBox["class"];
-                    string clsName = (string)targetBox["name"];
-                    int x1 = (int)targetBox["x1"];
-                    int y1 = (int)targetBox["y1"];
-                    int x2 = (int)targetBox["x2"];
-                    int y2 = (int)targetBox["y2"];
-                    float Score = (float)targetBox["conf"];
-                    mPos.X = (x1 + x2) / 2;
-                    mPos.Y = (y1 + y2) / 2;
-                    mPos.Score = (double)Score;
-                }
-                else
-                {
-                    // 找不到指定類別
                     mPos.X = 0;
                     mPos.Y = 0;
                     mPos.Score = 0.1F;
                     AIImageProcess.SaveAIFailImage(sSample, mPos);
                 }
             }
-            else
+            catch (HttpRequestException ex)
             {
+                // AI 服務連接錯誤，返回低分數
+                System.Diagnostics.Debug.WriteLine($"[AI推論錯誤] {ex.Message}");
                 mPos.X = 0;
                 mPos.Y = 0;
-                mPos.Score = 0.1F;
-                AIImageProcess.SaveAIFailImage(sSample, mPos);
+                mPos.Score = 0.01F; // 使用極低分數表示服務異常
+                mPos.TemplateSize = new System.Drawing.SizeF(100, 100);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[AI推論異常] {ex.Message}");
+                mPos.X = 0;
+                mPos.Y = 0;
+                mPos.Score = 0.01F;
+                mPos.TemplateSize = new System.Drawing.SizeF(100, 100);
             }
             if (debug == 1) LogActivities.GDebugMatch(dMsg, sSample, ref mPos);
         }
-        public async Task AIMatchAsync(int debug, Mat sSample, MatchPosition mPos, CancellationToken ct = default,int classId = -1)
+        public async Task AIMatchAsync(int debug, Mat sSample, MatchPosition mPos, CancellationToken ct = default, int classId = -1)
         {
+            if (AIService.IsRestarting)
+            {
+                System.Diagnostics.Debug.WriteLine("[AI推論Async] 服務正在重啟，跳過推論");
+                mPos.X = 0;
+                mPos.Y = 0;
+                mPos.Score = 0.01F;
+                mPos.TemplateSize = new System.Drawing.SizeF(100, 100);
+                return;
+            }
             string result = await PostMatAsync(sSample, ct).ConfigureAwait(false);
             var boxes = JArray.Parse(result);
 
@@ -1113,29 +1147,98 @@ namespace MRLibrary
             }
         }
 
-        private async Task<string> PostMatAsync(Mat mat, CancellationToken ct=default)
+        //private async Task<string> PostMatAsync(Mat mat, CancellationToken ct=default)
+        //{
+        //    if (_enableInferGate)
+        //        await _inferGate.WaitAsync(ct).ConfigureAwait(false);
+        //    try
+        //    {
+        //        byte[] imgBytes = MatToBytes(mat);
+        //        using (var content= new MultipartFormDataContent())
+        //        using (var imgContent= new ByteArrayContent(imgBytes))
+        //        {
+        //            imgContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+        //            content.Add(imgContent, "image", "frame.jpg");
+        //            using (var response= await _client.PostAsync("infer", content, ct).ConfigureAwait(false))
+        //            {
+        //                response.EnsureSuccessStatusCode();
+        //                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        //            }
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        if (_enableInferGate) _inferGate.Release();
+        //    }
+        //}
+        private async Task<string> PostMatAsync(Mat mat, CancellationToken ct = default)
         {
-            if (_enableInferGate)
-                await _inferGate.WaitAsync(ct).ConfigureAwait(false);
-            try
+            const int maxRetries = 3;
+            int retryCount = 0;
+            TimeSpan retryDelay = TimeSpan.FromSeconds(1);
+
+            while (retryCount < maxRetries)
             {
-                byte[] imgBytes = MatToBytes(mat);
-                using (var content= new MultipartFormDataContent())
-                using (var imgContent= new ByteArrayContent(imgBytes))
+                if (AIService.IsRestarting)
                 {
-                    imgContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
-                    content.Add(imgContent, "image", "frame.jpg");
-                    using (var response= await _client.PostAsync("infer", content, ct).ConfigureAwait(false))
+                    throw new OperationCanceledException("AI 服務正在重啟");
+                }
+                if (_enableInferGate)
+                    await _inferGate.WaitAsync(ct).ConfigureAwait(false);
+
+                try
+                {
+                    byte[] imgBytes = MatToBytes(mat);
+                    using (var content = new MultipartFormDataContent())
+                    using (var imgContent = new ByteArrayContent(imgBytes))
                     {
-                        response.EnsureSuccessStatusCode();
-                        return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        imgContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+                        content.Add(imgContent, "image", "frame.jpg");
+
+                        using (var response = await _client.PostAsync("infer", content, ct).ConfigureAwait(false))
+                        {
+                            response.EnsureSuccessStatusCode();
+                            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        }
                     }
                 }
+                catch (HttpRequestException ex) when (retryCount < maxRetries - 1)
+                {
+                    // 檢查是否為連接關閉錯誤
+                    bool isConnectionClosed = ex.InnerException is System.Net.WebException webEx &&
+                                             (webEx.Status == System.Net.WebExceptionStatus.ConnectionClosed ||
+                                              webEx.Status == System.Net.WebExceptionStatus.ReceiveFailure ||
+                                              webEx.InnerException is System.IO.IOException);
+
+                    if (isConnectionClosed)
+                    {
+                        retryCount++;
+                        System.Diagnostics.Debug.WriteLine($"[AI推論] 連接中斷，重試 {retryCount}/{maxRetries}...");
+
+                        if (_enableInferGate)
+                            _inferGate.Release();
+
+                        // 等待服務重啟
+                        await Task.Delay(retryDelay, ct).ConfigureAwait(false);
+                        continue;
+                    }
+
+                    throw;
+                }
+                catch
+                {
+                    if (_enableInferGate)
+                        _inferGate.Release();
+                    throw;
+                }
+                finally
+                {
+                    if (_enableInferGate && retryCount == 0)
+                        _inferGate.Release();
+                }
             }
-            finally
-            {
-                if (_enableInferGate) _inferGate.Release();
-            }
+
+            throw new HttpRequestException("AI 推論服務無法連接，已重試 " + maxRetries + " 次");
         }
 
         private static byte[] MatToBytes(Mat mat)
@@ -1198,11 +1301,11 @@ namespace MRLibrary
                         mPos.X = center.X;
                         mPos.Y = center.Y;
                         mPos.Score = goodMatches.Count > 0 ? 1.0f - goodMatches.Average(m => m.Distance / 256f) : 0f;
-                        mPos.TemplateSize = new System.Drawing.SizeF( patternSize.Width,patternSize.Height);
+                        mPos.TemplateSize = new System.Drawing.SizeF(patternSize.Width, patternSize.Height);
                         Cv2.Circle(resultImage, new Point(center.X, center.Y), 5, Scalar.Red, -1);
                         if (debug == 1)
                         {
-                            Cv2.ImShow("ORB Match",resultImage);
+                            Cv2.ImShow("ORB Match", resultImage);
                             Cv2.WaitKey(0);
                         }
                         return true;
@@ -1320,7 +1423,7 @@ namespace MRLibrary
             //{
 
             //}
-            else if(MatchAlgorithm== AlignAlgorithm.AIMatch)
+            else if (MatchAlgorithm == AlignAlgorithm.AIMatch)
             {
                 AIMatch(0, image, ref mPos);
             }
@@ -1339,13 +1442,13 @@ namespace MRLibrary
             Gaussian = iGaussian;
             Threashold = iThreshold;
         }
-        public async Task MatMatchWithAlgoAsync(int debug, Mat image, MatchPosition mPos,AlignAlgorithm algorithm,CancellationToken ct = default)
+        public async Task MatMatchWithAlgoAsync(int debug, Mat image, MatchPosition mPos, AlignAlgorithm algorithm, CancellationToken ct = default)
         {
             if (algorithm == AlignAlgorithm.TemplateMatch)
             {
                 MatMatch(debug, image, ref mPos);
             }
-            else if (algorithm== AlignAlgorithm.EdgeMatch)
+            else if (algorithm == AlignAlgorithm.EdgeMatch)
             {
                 Cv2.GaussianBlur(image, Tr1, new Size(7, 7), 0);
                 Cv2.AdaptiveThreshold(Tr1, Tr2, 255, AdaptiveThresholdTypes.MeanC, ThresholdTypes.Binary, 27, 2);

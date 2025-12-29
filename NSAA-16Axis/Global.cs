@@ -24,7 +24,7 @@ namespace NSAA_16Axis
         public static Tab TabOption = Tab.Align;
         public enum Status { Standby, Align, ChangeRecipe, DownAlign, DownWaferAlign, DownStandby };
         public static Status MachineStatus = Status.Standby;
-
+        public static volatile bool _isAIServiceRestarting = false;
         // public static ThreeAMLightSource Light = new ThreeAMLightSource();
         // public static CPLightSource Light = new CPLightSource("Light");
         public static NCPLightSource Light = new NCPLightSource("Light");
@@ -1706,12 +1706,12 @@ namespace NSAA_16Axis
             }
             else if (iHighLow == 2)
             {
-                Cv2.ImWrite(folderName + "//LM-" + time1 + ".bmp", recipe.LeftLowWaferMat);
-                Cv2.ImWrite(folderName + "//RM-" + time1 + ".bmp", recipe.RightLowWaferMat);
+                //Cv2.ImWrite(folderName + "//LM-" + time1 + ".bmp", recipe.LeftLowWaferMat);
+                //Cv2.ImWrite(folderName + "//RM-" + time1 + ".bmp", recipe.RightLowWaferMat);
                 Cv2.ImWrite(folderName + "//LW-" + time1 + ".bmp", recipe.LeftHighWaferMat);
                 Cv2.ImWrite(folderName + "//RW-" + time1 + ".bmp", recipe.RightHighWaferMat);
-                recipe.LeftLowWaferMask.Save(folderName + "//MLM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                recipe.RightLowWaferMask.Save(folderName + "//MRM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+                //recipe.LeftLowWaferMask.Save(folderName + "//MLM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+                //recipe.RightLowWaferMask.Save(folderName + "//MRM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
                 recipe.LeftHighWaferMask.Save(folderName + "//MLW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
                 recipe.RightHighWaferMask.Save(folderName + "//MRW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
             }
@@ -2146,7 +2146,7 @@ namespace NSAA_16Axis
         public double YPrecision = 1F;
         public double ThetaPrecision = 1.0;
         public double MaxExpansion = 3F;
-        public int RecipeNumber = -1;
+        public int RecipeNumber = 1;
         public int UpBackAlign = 1;     // 1 = 上對位， 2 下對位
         public int UpBotMask = 1;       // 下對位時，1 = 上光罩， 2 = 下光罩;
         public int AdjuestZ = 0;
@@ -3181,6 +3181,75 @@ namespace NSAA_16Axis
         public string strTChinese = "Traditional Chinese";
         public string strSChinese = "Simplified Chinese";
         public string strMessage1 = "The labeled information has been saved!";
+        public string strLabelImageTitle = "Label Image - Recipe";
+        public string strLabelImagePath = "Path";
+        public string strBtnPrev = "Previous";
+        public string strBtnNext = "Next";
+        public string strBtnSave = "Save";
+        public string strBtnClear = "Clear All";
+        public string strBtnAddClass = "Add";
+        public string strBtnDeleteClass = "Delete";
+        public string strBtnTrain = "Train Model";
+        public string strBtnDeleteImage = "Delete Image";
+        public string strLabelClass = "Class:";
+        public string strLabelNewClass = "New Class:";
+        public string strConfirmClearAll = "Are you sure you want to clear all annotations?\n\n{0} annotation boxes will be cleared.";
+        public string strConfirmClear = "Confirm Clear";
+        public string strNoAnnotation = "No annotations to delete!";
+        public string strClassExists = "Class '{0}' already exists!";
+        public string strEnterClassName = "Please enter a class name!";
+        public string strDeleteClassTitle = "Delete Class - Recipe";
+        public string strSelectClassToDelete = "Select classes to delete: (Recipe{0})";
+        public string strConfirmDelete = "Confirm Delete";
+        public string strNoClassSelected = "No class selected!";
+        public string strConfirmDeleteClass = "Are you sure you want to delete the following {0} classes?\n\n{1}\n\nWarning: This will affect annotated images!";
+        public string strDeleteSuccess = "Successfully deleted {0} classes!";
+        public string strComplete = "Complete";
+        public string strConfirmDeleteImage = "Are you sure you want to delete the current image?";
+        public string strCannotUndo = "Warning: This action cannot be undone!";
+        public string strImageDeleted = "Image deleted!\nNo images left in this folder.";
+        public string strDeleteComplete = "Delete Complete";
+        public string strNoImageFound = "No image files found!";
+        public string strTrainingConfirm = "Preparing to train model for Recipe {0}\n\nDataset: {1}\nBase Model: {2}\nParameters: epochs=50, imgsz=2000\n\nTraining will run in background.\nContinue?";
+        public string strConfirmTraining = "Confirm Training";
+        public string strTrainingStarted = "Recipe {0} background training started!\n\nTraining will run in background.\nYou will be notified when complete.";
+        public string strTrainingLaunched = "Training Launched";
+        public string strTrainingComplete = "Recipe {0} model training complete!\n\nNew model saved to:\n{1}\n\nTraining results at:\n{2}";
+        public string strTrainingSuccess = "Training Success";
+        public string strHint = "Hint";
+        public string strError = "Error";
+        public string strWarning = "Warning";
+        public string strPermissionError = "Permission Error";
+        public string strNoPermission = "No permission to access folder: {0}\nError: {1}";
+        public string strLoadImageError = "Error loading images: {0}";
+        public string strSaveError = "Error saving: {0}";
+        public string strDeleteError = "Error deleting: {0}";
+        public string strTraining = "Training...";
+        public string gbWECLocation = "WEC Location";
+        public string lbCurrentPosition = "Current Position";
+        public string lbTargetPosition = "Target Position";
+        public string lbChuckX = "Chuck X";
+        public string lbChuckY1 = "Chuck Y1";
+        public string lbChuckY2 = "Chuck Y2";
+        public string lbChuckZ = "Chuck Z";
+        public string lbChuckR = "Chuck R";
+        public string btChuckUpdate = "Update";
+        public string btChuckGo = "Go";
+        public string gbCCDLocation = "CCD Location";
+        public string lbBigY = "Big Y";
+        public string lbLeftX = "Left X";
+        public string lbLeftY = "Left Y";
+        public string lbLeftZ = "Left Z";
+        public string lbRightX = "Right X";
+        public string lbRightY = "Right Y";
+        public string lbRightZ = "Right Z";
+        public string btCCDUpdate = "Update";
+        public string btCCDGo = "Go";
+        public string strConfirmUpdateWEC = "Confirm to update current position to target position?";
+        public string strConfirmUpdateCCD = "Confirm to update current CCD position to target position?";
+        public string strUpdateSuccess = "Update successful";
+        public string strUpdateWECLocation = "Update WEC Location";
+        public string strUpdateCCDLocation = "Update CCD Location";
     }
 
     public class PLCAlarmCode
@@ -3207,5 +3276,6 @@ namespace NSAA_16Axis
     {
         public int ClassId;
         public float X, Y, W, H;
+        public string ClassName { get; set; }
     }
 }

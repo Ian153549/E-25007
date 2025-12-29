@@ -55,7 +55,7 @@
             this.checkBoxWheatherInitialLens.Font = new System.Drawing.Font("Arial", 12F);
             this.checkBoxWheatherInitialLens.Location = new System.Drawing.Point(30, 26);
             this.checkBoxWheatherInitialLens.Name = "checkBoxWheatherInitialLens";
-            this.checkBoxWheatherInitialLens.Size = new System.Drawing.Size(269, 27);
+            this.checkBoxWheatherInitialLens.Size = new System.Drawing.Size(210, 22);
             this.checkBoxWheatherInitialLens.TabIndex = 0;
             this.checkBoxWheatherInitialLens.Text = "Initial zoom lens when start";
             this.checkBoxWheatherInitialLens.UseVisualStyleBackColor = true;
@@ -68,7 +68,7 @@
             this.cbEnableContactShift.Font = new System.Drawing.Font("Arial", 12F);
             this.cbEnableContactShift.Location = new System.Drawing.Point(30, 108);
             this.cbEnableContactShift.Name = "cbEnableContactShift";
-            this.cbEnableContactShift.Size = new System.Drawing.Size(269, 27);
+            this.cbEnableContactShift.Size = new System.Drawing.Size(215, 22);
             this.cbEnableContactShift.TabIndex = 1;
             this.cbEnableContactShift.Text = "Contact shift compensation";
             this.cbEnableContactShift.UseVisualStyleBackColor = true;
@@ -85,9 +85,8 @@
             0,
             0});
             this.numericUpDown3By3SearchingSteps.Name = "numericUpDown3By3SearchingSteps";
-            this.numericUpDown3By3SearchingSteps.Size = new System.Drawing.Size(75, 30);
+            this.numericUpDown3By3SearchingSteps.Size = new System.Drawing.Size(75, 26);
             this.numericUpDown3By3SearchingSteps.TabIndex = 2;
-            this.numericUpDown3By3SearchingSteps.Visible = false;
             // 
             // lbSearchSteps
             // 
@@ -95,21 +94,19 @@
             this.lbSearchSteps.Font = new System.Drawing.Font("Arial", 12F);
             this.lbSearchSteps.Location = new System.Drawing.Point(27, 188);
             this.lbSearchSteps.Name = "lbSearchSteps";
-            this.lbSearchSteps.Size = new System.Drawing.Size(169, 23);
+            this.lbSearchSteps.Size = new System.Drawing.Size(133, 18);
             this.lbSearchSteps.TabIndex = 3;
             this.lbSearchSteps.Text = "Searching steps : ";
-            this.lbSearchSteps.Visible = false;
             // 
             // cbEnableAutoSearch
             // 
             this.cbEnableAutoSearch.AutoSize = true;
             this.cbEnableAutoSearch.Location = new System.Drawing.Point(29, 148);
             this.cbEnableAutoSearch.Name = "cbEnableAutoSearch";
-            this.cbEnableAutoSearch.Size = new System.Drawing.Size(162, 27);
+            this.cbEnableAutoSearch.Size = new System.Drawing.Size(131, 22);
             this.cbEnableAutoSearch.TabIndex = 4;
             this.cbEnableAutoSearch.Text = "Auto searching";
             this.cbEnableAutoSearch.UseVisualStyleBackColor = true;
-            this.cbEnableAutoSearch.Visible = false;
             this.cbEnableAutoSearch.CheckedChanged += new System.EventHandler(this.CheckBoxEnableAutoSearch_CheckedChanged);
             // 
             // btnChangeEngineerPassword
@@ -148,7 +145,7 @@
             this.cbDownThruHome.AutoSize = true;
             this.cbDownThruHome.Location = new System.Drawing.Point(30, 66);
             this.cbDownThruHome.Name = "cbDownThruHome";
-            this.cbDownThruHome.Size = new System.Drawing.Size(252, 27);
+            this.cbDownThruHome.Size = new System.Drawing.Size(200, 22);
             this.cbDownThruHome.TabIndex = 8;
             this.cbDownThruHome.Text = "Lens down through home";
             this.cbDownThruHome.UseVisualStyleBackColor = true;
@@ -173,7 +170,7 @@
             this.rbCChinese.AutoSize = true;
             this.rbCChinese.Location = new System.Drawing.Point(47, 121);
             this.rbCChinese.Name = "rbCChinese";
-            this.rbCChinese.Size = new System.Drawing.Size(191, 27);
+            this.rbCChinese.Size = new System.Drawing.Size(158, 22);
             this.rbCChinese.TabIndex = 15;
             this.rbCChinese.TabStop = true;
             this.rbCChinese.Text = "Simplified Chinese";
@@ -184,7 +181,7 @@
             this.rbCustom.AutoSize = true;
             this.rbCustom.Location = new System.Drawing.Point(47, 86);
             this.rbCustom.Name = "rbCustom";
-            this.rbCustom.Size = new System.Drawing.Size(197, 27);
+            this.rbCustom.Size = new System.Drawing.Size(160, 22);
             this.rbCustom.TabIndex = 12;
             this.rbCustom.TabStop = true;
             this.rbCustom.Text = "Traditional Chinese";
@@ -195,7 +192,7 @@
             this.rbDefault.AutoSize = true;
             this.rbDefault.Location = new System.Drawing.Point(47, 51);
             this.rbDefault.Name = "rbDefault";
-            this.rbDefault.Size = new System.Drawing.Size(93, 27);
+            this.rbDefault.Size = new System.Drawing.Size(77, 22);
             this.rbDefault.TabIndex = 12;
             this.rbDefault.TabStop = true;
             this.rbDefault.Text = "English";
@@ -206,7 +203,7 @@
             this.cbEmulationMode.AutoSize = true;
             this.cbEmulationMode.Location = new System.Drawing.Point(30, 237);
             this.cbEmulationMode.Name = "cbEmulationMode";
-            this.cbEmulationMode.Size = new System.Drawing.Size(173, 27);
+            this.cbEmulationMode.Size = new System.Drawing.Size(140, 22);
             this.cbEmulationMode.TabIndex = 12;
             this.cbEmulationMode.Text = "Emulation Mode";
             this.cbEmulationMode.UseVisualStyleBackColor = true;
@@ -241,7 +238,7 @@
             this.cBPLCStatus.AutoSize = true;
             this.cBPLCStatus.Location = new System.Drawing.Point(30, 270);
             this.cBPLCStatus.Name = "cBPLCStatus";
-            this.cBPLCStatus.Size = new System.Drawing.Size(218, 27);
+            this.cBPLCStatus.Size = new System.Drawing.Size(175, 22);
             this.cBPLCStatus.TabIndex = 15;
             this.cBPLCStatus.Text = "PLC Status Windows";
             this.cBPLCStatus.UseVisualStyleBackColor = true;

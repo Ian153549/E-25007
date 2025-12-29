@@ -761,6 +761,8 @@ namespace NSAA_16Axis
 
     public class UpperArmWECPosition
     {
+        public double Z;
+
         public double X;
 
         public double Y;
@@ -895,6 +897,8 @@ namespace NSAA_16Axis
 
     public class LowerArmWECPosition
     {
+        public double Z;
+
         public double X;
 
         public double Y;
