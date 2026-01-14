@@ -65,7 +65,23 @@ namespace NSAA_16Axis
         private bool LeftButtonDown;
 
         private int PaintLayer;
+        private List<Rectangle> drawnRectangles= new List<Rectangle>();
+        private Rectangle currentRectangle= Rectangle.Empty;
+        private System.Drawing.Point rectangleStartPoint= System.Drawing.Point.Empty;
+        private bool isDrawingRectangle= false;
 
+        public List<Rectangle> GetDrawnRectangles()
+        {
+            return new List<Rectangle>(drawnRectangles);
+        }
+        public void ClearDrawnRectangles()
+        {
+            drawnRectangles.Clear();
+            currentRectangle = Rectangle.Empty;
+            rectangleStartPoint = System.Drawing.Point.Empty;
+            isDrawingRectangle = false;
+            Invalidate();
+        }
         public int LineThickness
         {
             get
@@ -384,6 +400,13 @@ namespace NSAA_16Axis
         {
             base.OnMouseDown(e);
             IsMouseDown = true;
+            if(Tool==EnumTool.Rectangle)
+            {
+                isDrawingRectangle = true;
+                rectangleStartPoint = e.Location;
+                currentRectangle = Rectangle.Empty;
+                return;
+            }
             if (PaintLayer == 0)
             {
                 SaveLayer = new Bitmap(CoverLayer);
@@ -429,6 +452,17 @@ namespace NSAA_16Axis
             base.OnMouseMove(e);
             if (IsMouseDown)
             {
+                if(Tool==EnumTool.Rectangle && isDrawingRectangle)
+                {
+                    int x = Math.Min(rectangleStartPoint.X, e.X);
+                    int y = Math.Min(rectangleStartPoint.Y, e.Y);
+                    int width = Math.Abs(e.X - rectangleStartPoint.X);
+                    int height = Math.Abs(e.Y - rectangleStartPoint.Y);
+
+                    currentRectangle = new Rectangle(x, y, width, height);
+                    Invalidate(); // 觸發重繪
+                    return;
+                }
                 bool mouseButtons = (Control.MouseButtons & MouseButtons.Left) != MouseButtons.None;
                 switch (Tool)
                 {
@@ -481,6 +515,34 @@ namespace NSAA_16Axis
             base.OnMouseUp(e);
             if (IsMouseDown)
             {
+                if (Tool == EnumTool.Rectangle && isDrawingRectangle)
+                {
+                    isDrawingRectangle = false;
+
+                    // 如果矩形有效（寬度和高度都大於 10 像素），則加入列表
+                    if (currentRectangle.Width > 10 && currentRectangle.Height > 10)
+                    {
+                        // ✅ 轉換為虛擬座標（圖像座標）
+                        PointF topLeft = DeviceToVirtual(new System.Drawing.Point(currentRectangle.X, currentRectangle.Y));
+                        PointF bottomRight = DeviceToVirtual(new System.Drawing.Point(
+                            currentRectangle.Right,
+                            currentRectangle.Bottom));
+
+                        Rectangle virtualRect = new Rectangle(
+                            (int)topLeft.X,
+                            (int)topLeft.Y,
+                            (int)(bottomRight.X - topLeft.X),
+                            (int)(bottomRight.Y - topLeft.Y)
+                        );
+
+                        drawnRectangles.Add(virtualRect);
+                        Invalidate(); // 重繪以顯示新矩形
+                    }
+
+                    currentRectangle = Rectangle.Empty;
+                    rectangleStartPoint = System.Drawing.Point.Empty;
+                    return; // 不執行原有的繪製邏輯
+                }
                 IsMouseDown = false;
             }
         }
@@ -493,8 +555,61 @@ namespace NSAA_16Axis
         protected override void OnPaint(PaintEventArgs e)
         {
             myBuffer?.Render();
-        }
+            if ( (drawnRectangles.Count > 0 || isDrawingRectangle))
+            {
+                Graphics g = e.Graphics;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
 
+                // 繪製已完成的矩形
+                using (Pen pen = new Pen(Color.Lime, 2))
+                {
+                    foreach (Rectangle rect in drawnRectangles)
+                    {
+                        // ✅ 轉換為設備座標
+                        Rectangle deviceRect = VirtualToDeviceRect(rect);
+                        g.DrawRectangle(pen, deviceRect);
+
+                        // 繪製矩形編號
+                        using (Font font = new Font("Arial", 10, FontStyle.Bold))
+                        using (SolidBrush brush = new SolidBrush(Color.Lime))
+                        {
+                            int index = drawnRectangles.IndexOf(rect) + 1;
+                            g.DrawString($"ROI-{index}", font, brush,
+                                new PointF(deviceRect.X + 5, deviceRect.Y + 5));
+                        }
+                    }
+                }
+
+                // 繪製正在框選的矩形
+                if (isDrawingRectangle && !currentRectangle.IsEmpty)
+                {
+                    using (Pen pen = new Pen(Color.Yellow, 2))
+                    {
+                        pen.DashStyle = DashStyle.Dash;
+                        g.DrawRectangle(pen, currentRectangle);
+                    }
+                }
+            }
+        }
+        private Rectangle VirtualToDeviceRect(Rectangle virtualRect)
+        {
+            PointF topLeft = new PointF(
+                virtualRect.X * ImgZoomer.CurrentRatio + ImgZoomer.Location.X,
+                virtualRect.Y * ImgZoomer.CurrentRatio + ImgZoomer.Location.Y
+            );
+
+            PointF bottomRight = new PointF(
+                (virtualRect.X + virtualRect.Width) * ImgZoomer.CurrentRatio + ImgZoomer.Location.X,
+                (virtualRect.Y + virtualRect.Height) * ImgZoomer.CurrentRatio + ImgZoomer.Location.Y
+            );
+
+            return new Rectangle(
+                (int)topLeft.X,
+                (int)topLeft.Y,
+                (int)(bottomRight.X - topLeft.X),
+                (int)(bottomRight.Y - topLeft.Y)
+            );
+        }
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
@@ -747,6 +862,8 @@ namespace NSAA_16Axis
                     }
             }
         }
+
+        
 
         public event UCGrayPaintMask.ExtraPaitEvent ExtraPaint;
 

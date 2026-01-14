@@ -975,6 +975,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -1005,6 +1006,18 @@ namespace NSAA_16Axis
         public int Threashold = 127;
         public GrayImage imgM;
         public GrayImage imgK;
+        private List<CrossROI> selectedROIs = new List<CrossROI>();
+        private bool isSelectingROI = false;
+        private CrossROI currentROI = null;
+        public bool IsMultiCrossMode { get; private set; } = false;
+        public class CrossROI
+        {
+            public int Index { get; set; }
+            public OpenCvSharp.Rect Region { get; set; }
+            public string Name { get; set; }
+            public OpenCvSharp.Point Center { get; set; }
+            public bool isValid { get; set; }
+        }
 
         private readonly string[] errstr = {
             "成功!",
@@ -1488,7 +1501,7 @@ namespace NSAA_16Axis
             Mat colorMat = null;
             Mat mat = null;
             Mat imgForContour = null;
-
+            IsMultiCrossMode = false;
             try
             {
                 // 轉換為彩色影像以便繪製
@@ -1968,8 +1981,360 @@ namespace NSAA_16Axis
 
         private void cbControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(rbMask.Checked)
+            if (rbMask.Checked)
                 ProcessView.Tool = (UCPaintMask.EnumTool)cbControl.SelectedIndex;
+        }
+
+        //private void btSelectedCenter_Click(object sender, EventArgs e)
+        //{
+        //    Mat colorMat = null;
+        //    Mat mat = null;
+        //    Mat imgForContour = null;
+
+        //    try
+        //    {
+        //        // 轉換為彩色影像以便繪製
+        //        colorMat = new Mat();
+        //        Cv2.CvtColor(img, colorMat, ColorConversionCodes.GRAY2BGR);
+        //        mat = colorMat.Clone();
+
+        //        // 準備輪廓檢測影像
+        //        //imgForContour = img.Clone();
+        //        imgForContour = new Mat();
+        //        imgM = ProcessView.GetMask();
+        //        if (imgM != null)
+        //        {
+        //            Mat dontCareMask = new Mat();
+        //            dontCareMask = MRLibrary.ImageConvert.GrayImageToMat(imgM);
+        //            Cv2.BitwiseAnd(img, dontCareMask, imgForContour);
+        //        }
+        //        // 尋找輪廓
+        //        Cv2.FindContours(imgForContour, out OpenCvSharp.Point[][] contours, out HierarchyIndex[] hierarchy,
+        //            RetrievalModes.External, ContourApproximationModes.ApproxNone);
+
+        //        if (contours == null || contours.Length == 0)
+        //        {
+        //            MessageBox.Show("未檢測到任何輪廓！", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //            return;
+        //        }
+
+        //        // 找最大面積的輪廓
+        //        OpenCvSharp.Rect boundingBox = new OpenCvSharp.Rect();
+        //        double areaMax = 0;
+
+        //        foreach (OpenCvSharp.Point[] contour in contours)
+        //        {
+        //            double contourArea = Cv2.ContourArea(contour);
+        //            OpenCvSharp.Rect currentRect = Cv2.BoundingRect(contour);
+        //            double area = currentRect.Width * currentRect.Height;
+
+        //            if (area > areaMax)
+        //            {
+        //                Moments moments = Cv2.Moments(contour);
+
+        //                if (CbCenterAlgorithm.SelectedIndex == 0)
+        //                {
+        //                    // 使用質心計算中心
+        //                    if (moments.M00 != 0)
+        //                    {
+        //                        centerX = (int)(moments.M10 / moments.M00 + 0.5);
+        //                        centerY = (int)(moments.M01 / moments.M00 + 0.5);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    // 使用最小外接圓計算中心
+        //                    Point2f center;
+        //                    float radius;
+        //                    Cv2.MinEnclosingCircle(contour, out center, out radius);
+        //                    centerX = (int)(center.X + 0.5);
+        //                    centerY = (int)(center.Y + 0.5);
+        //                }
+
+        //                areaMax = area;
+        //                boundingBox = currentRect;
+        //            }
+        //        }
+
+        //        // 繪製邊界框
+        //        Cv2.Rectangle(mat, boundingBox, new Scalar(255, 0, 0), 2);
+
+        //        // 更新 mat1 和 matFind
+        //        mat1?.Dispose();
+        //        mat1 = new Mat(img, boundingBox);
+
+        //        matFind?.Dispose();
+        //        matFind = mat.Clone();
+
+        //        // 計算目標矩形
+        //        int width = (int)(mat1.Width * iMaskWaferRadio);
+        //        int height = (int)(mat1.Height * iMaskWaferRadio);
+        //        int x = (int)(centerX - width / 2);
+        //        int y = (int)(centerY - height / 2);
+
+        //        // X 方向邊界檢查與調整
+        //        if ((x < 0) || ((x + width) > OriginalImage.Width))
+        //        {
+        //            if (x < 0)
+        //            {
+        //                x = 0;
+        //            }
+
+        //            if ((x + width) > OriginalImage.Width)
+        //            {
+        //                width = OriginalImage.Width - x;
+        //            }
+
+        //            int minx = centerX - x;
+        //            int x1 = (x + width) - centerX;
+        //            if (x1 < minx) minx = x1;
+        //            x = centerX - minx;
+        //            width = minx * 2;
+        //        }
+
+        //        // Y 方向邊界檢查與調整
+        //        if ((y < 0) || ((y + height) > OriginalImage.Height))
+        //        {
+        //            if (y < 0)
+        //            {
+        //                y = 0;
+        //            }
+
+        //            if ((y + height) > OriginalImage.Height)
+        //            {
+        //                height = OriginalImage.Height - y;
+        //            }
+
+        //            int miny = centerY - y;
+        //            int y1 = (y + height) - centerY;
+        //            if (y1 < miny) miny = y1;
+        //            y = centerY - miny;
+        //            height = miny * 2;
+        //        }
+
+        //        // 驗證並設定錯誤碼
+        //        if (x < 0)
+        //        {
+        //            rect = new OpenCvSharp.Rect(0, 0, OriginalImage.Width, OriginalImage.Height);
+        //            err = 1; // 左邊留白不夠
+        //        }
+        //        else if (y < 0)
+        //        {
+        //            rect = new OpenCvSharp.Rect(0, 0, OriginalImage.Width, OriginalImage.Height);
+        //            err = 2; // 上邊留白不夠
+        //        }
+        //        else if ((x + width) > OriginalImage.Width)
+        //        {
+        //            rect = new OpenCvSharp.Rect(0, 0, OriginalImage.Width, OriginalImage.Height);
+        //            err = 3; // 右邊留白不夠 
+        //        }
+        //        else if ((y + height) > OriginalImage.Height)
+        //        {
+        //            rect = new OpenCvSharp.Rect(0, 0, OriginalImage.Width, OriginalImage.Height);
+        //            err = 4; // 下邊留白不夠 
+        //        }
+        //        else if (width < 64)
+        //        {
+        //            rect = new OpenCvSharp.Rect(0, 0, OriginalImage.Width, OriginalImage.Height);
+        //            err = 5; // 不夠寬
+        //        }
+        //        else if (height < 64)
+        //        {
+        //            rect = new OpenCvSharp.Rect(0, 0, OriginalImage.Width, OriginalImage.Height);
+        //            err = 6; // 不夠高 
+        //        }
+        //        else
+        //        {
+        //            btOK.Enabled = true;
+        //            rect = new OpenCvSharp.Rect(x, y, width, height);
+        //            err = 0; // 成功
+        //        }
+
+        //        // 顯示錯誤訊息
+        //        if ((err > 0) && (err < 7))
+        //        {
+        //            string ErrorMessage = errstr[err];
+        //            MessageBox.Show(ErrorMessage, "自動找中心失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+
+        //        // 繪製中心點和矩形
+        //        Cv2.Circle(mat, new OpenCvSharp.Point(centerX, centerY), 3, new Scalar(0, 255, 0), -1);
+
+        //        OpenCvSharp.Rect drawRect = new OpenCvSharp.Rect(rect.X, rect.Y, rect.Width, rect.Height);
+        //        Cv2.Rectangle(mat, drawRect, new Scalar(0, 0, 255), 2);
+
+        //        // 更新顯示
+        //        //ProcessView.Image = mat.ToBitmap();
+        //        GrayImage imgK = new GrayImage(mat.Width, mat.Height);
+        //        imgK.Fill(255);
+        //        ProcessView.SetBackImage(mat, imgK, imgM);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"BtFind_Click 錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //    finally
+        //    {
+        //        // 清理資源
+        //        colorMat?.Dispose();
+        //        imgForContour?.Dispose();
+        //        mat?.Dispose();
+        //    }
+        //}
+        private void btSelectedCenter_Click(object sender, EventArgs e)
+        {
+            Mat colorMat = null;
+            Mat mat = null;
+            Mat imgForContour = null;
+            IsMultiCrossMode = true;
+
+            try
+            {
+                // ✅ 轉換為彩色影像以便繪製
+                colorMat = new Mat();
+                Cv2.CvtColor(img, colorMat, ColorConversionCodes.GRAY2BGR);
+                mat = colorMat.Clone();
+
+                // ✅ 準備輪廓檢測影像(使用遮罩屏蔽不需要的區域)
+                imgForContour = new Mat();
+                imgM = ProcessView.GetMask();
+                if (imgM != null)
+                {
+                    Mat dontCareMask = MRLibrary.ImageConvert.GrayImageToMat(imgM);
+                    Cv2.BitwiseAnd(img, dontCareMask, imgForContour);
+                }
+                else
+                {
+                    imgForContour = img.Clone();
+                }
+
+                // ✅ 尋找輪廓
+                Cv2.FindContours(imgForContour, out OpenCvSharp.Point[][] contours, out HierarchyIndex[] hierarchy,
+                    RetrievalModes.External, ContourApproximationModes.ApproxNone);
+
+                if (contours == null || contours.Length == 0)
+                {
+                    MessageBox.Show("未檢測到任何輪廓！", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // ✅ 找最大面積的輪廓
+                OpenCvSharp.Rect boundingBox = new OpenCvSharp.Rect();
+                double areaMax = 0;
+
+                foreach (OpenCvSharp.Point[] contour in contours)
+                {
+                    double contourArea = Cv2.ContourArea(contour);
+                    OpenCvSharp.Rect currentRect = Cv2.BoundingRect(contour);
+                    double area = currentRect.Width * currentRect.Height;
+
+                    if (area > areaMax)
+                    {
+                        Moments moments = Cv2.Moments(contour);
+
+                        if (CbCenterAlgorithm.SelectedIndex == 0)
+                        {
+                            if (moments.M00 != 0)
+                            {
+                                centerX = (int)(moments.M10 / moments.M00 + 0.5);
+                                centerY = (int)(moments.M01 / moments.M00 + 0.5);
+                            }
+                        }
+                        else
+                        {
+                            Point2f center;
+                            float radius;
+                            Cv2.MinEnclosingCircle(contour, out center, out radius);
+                            centerX = (int)(center.X + 0.5);
+                            centerY = (int)(center.Y + 0.5);
+                        }
+
+                        areaMax = area;
+                        boundingBox = currentRect;
+                    }
+                }
+
+                // ✅ 關鍵修改:保留原始完整影像作為 template
+                mat1?.Dispose();
+                mat1 = img.Clone();  // ← 完整的原始影像
+
+                matFind?.Dispose();
+                matFind = mat.Clone();
+
+                // ✅ 計算偏移量 (相對於原始影像中心)
+                int imgCenterX = img.Width / 2;
+                int imgCenterY = img.Height / 2;
+
+                // ✅ rect.Width 和 rect.Height 儲存的是偏移量
+                int offsetX = centerX - imgCenterX;
+                int offsetY = centerY - imgCenterY;
+
+                // ✅ 儲存偏移量到 rect (使用 Width 和 Height 欄位)
+                rect = new OpenCvSharp.Rect(centerX, centerY, offsetX, offsetY);
+
+                btOK.Enabled = true;
+                err = 0;
+
+                // ✅ 繪製找到的中心點
+                Cv2.Circle(mat, new OpenCvSharp.Point(centerX, centerY), 5, new Scalar(0, 255, 0), -1);
+                Cv2.Line(mat, new OpenCvSharp.Point(centerX - 20, centerY),
+                         new OpenCvSharp.Point(centerX + 20, centerY), new Scalar(0, 255, 0), 2);
+                Cv2.Line(mat, new OpenCvSharp.Point(centerX, centerY - 20),
+                         new OpenCvSharp.Point(centerX, centerY + 20), new Scalar(0, 255, 0), 2);
+                Cv2.PutText(mat, $"Center: ({centerX}, {centerY})",
+                            new OpenCvSharp.Point(centerX + 10, centerY - 10),
+                            HersheyFonts.HersheySimplex, 0.5, new Scalar(0, 255, 0), 2);
+
+                // ✅ 更新顯示(顯示原始 template 加上中心點標記)
+                GrayImage imgK = new GrayImage(mat.Width, mat.Height);
+                imgK.Fill(255);
+                ProcessView.SetBackImage(mat, imgK, imgM);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"btSelectedCenter_Click 錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                colorMat?.Dispose();
+                imgForContour?.Dispose();
+                mat?.Dispose();
+            }
+        }
+
+        private void btCancelMask_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 清除遮罩:建立全白遮罩(255 = 不遮罩)
+                if (img != null && !img.Empty())
+                {
+                    imgM = new GrayImage(img.Width, img.Height);
+                    imgM.Fill(255); // 全白 = 完全不遮罩
+
+                    // ✅ 判斷是否已經找到中心點
+                    if (matFind != null && !matFind.Empty())
+                    {
+                        // 如果已找到中心,重新顯示找到的結果(保留中心標記)
+                        GrayImage imgK = new GrayImage(matFind.Width, matFind.Height);
+                        imgK.Fill(255);
+                        ProcessView.SetBackImage(matFind, imgK, imgM);
+                    }
+                    else
+                    {
+                        // 如果尚未找中心,顯示處理後的影像
+                        GrayImage imgK = new GrayImage(img.Width, img.Height);
+                        imgK.Fill(255);
+                        ProcessView.SetBackImage(img, imgK, imgM);
+                    }
+
+                    MessageBox.Show("已清除所有遮罩\n中心點偏差資料已保留", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"清除遮罩錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

@@ -88,7 +88,9 @@
             this.label21 = new System.Windows.Forms.Label();
             this.cbControl = new System.Windows.Forms.ComboBox();
             this.rbMask = new System.Windows.Forms.RadioButton();
+            this.btSelectedCenter = new System.Windows.Forms.Button();
             this.ProcessView = new NSAA_16Axis.UCPaintMask();
+            this.btCancelMask = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.TrackBarGaussian)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrackBarThreashold1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrackBarMax)).BeginInit();
@@ -817,7 +819,7 @@
             this.udPenSize.Size = new System.Drawing.Size(83, 25);
             this.udPenSize.TabIndex = 286;
             this.udPenSize.Value = new decimal(new int[] {
-            10,
+            40,
             0,
             0,
             0});
@@ -856,11 +858,13 @@
             this.cbControl.Name = "cbControl";
             this.cbControl.Size = new System.Drawing.Size(121, 23);
             this.cbControl.TabIndex = 284;
+            this.cbControl.Text = "圖型";
             this.cbControl.SelectedIndexChanged += new System.EventHandler(this.cbControl_SelectedIndexChanged);
             // 
             // rbMask
             // 
             this.rbMask.AutoSize = true;
+            this.rbMask.Checked = true;
             this.rbMask.Location = new System.Drawing.Point(35, 24);
             this.rbMask.Name = "rbMask";
             this.rbMask.Size = new System.Drawing.Size(58, 19);
@@ -869,6 +873,17 @@
             this.rbMask.Text = "遮罩";
             this.rbMask.UseVisualStyleBackColor = true;
             this.rbMask.CheckedChanged += new System.EventHandler(this.rbMask_CheckedChanged);
+            // 
+            // btSelectedCenter
+            // 
+            this.btSelectedCenter.Location = new System.Drawing.Point(2559, 801);
+            this.btSelectedCenter.Margin = new System.Windows.Forms.Padding(5);
+            this.btSelectedCenter.Name = "btSelectedCenter";
+            this.btSelectedCenter.Size = new System.Drawing.Size(165, 60);
+            this.btSelectedCenter.TabIndex = 249;
+            this.btSelectedCenter.Text = "找特定中心";
+            this.btSelectedCenter.UseVisualStyleBackColor = true;
+            this.btSelectedCenter.Click += new System.EventHandler(this.btSelectedCenter_Click);
             // 
             // ProcessView
             // 
@@ -885,11 +900,22 @@
             this.ProcessView.TabIndex = 281;
             this.ProcessView.Tool = NSAA_16Axis.UCPaintMask.EnumTool.Pen;
             // 
+            // btCancelMask
+            // 
+            this.btCancelMask.Location = new System.Drawing.Point(2559, 880);
+            this.btCancelMask.Name = "btCancelMask";
+            this.btCancelMask.Size = new System.Drawing.Size(165, 64);
+            this.btCancelMask.TabIndex = 283;
+            this.btCancelMask.Text = "取消遮罩效果";
+            this.btCancelMask.UseVisualStyleBackColor = true;
+            this.btCancelMask.Click += new System.EventHandler(this.btCancelMask_Click);
+            // 
             // DialogFindCenter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1924, 1055);
+            this.ClientSize = new System.Drawing.Size(2761, 1055);
+            this.Controls.Add(this.btCancelMask);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.ProcessView);
             this.Controls.Add(this.LbBlockSize);
@@ -923,6 +949,7 @@
             this.Controls.Add(this.LblRadio);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.TrackBarRadio);
+            this.Controls.Add(this.btSelectedCenter);
             this.Controls.Add(this.BtFind);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -1028,6 +1055,8 @@
         private System.Windows.Forms.ComboBox cbControl;
         private System.Windows.Forms.NumericUpDown udPenSize;
         private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Button btSelectedCenter;
+        private System.Windows.Forms.Button btCancelMask;
         //private UCPaintMask ProcessView;
     }
 }

@@ -2166,7 +2166,32 @@ namespace NSAA_16Axis
         public OpenCV3MatchUMat.AlignAlgorithm RHMaskAlgorithm = OpenCV3MatchUMat.AlignAlgorithm.TemplateMatch;
         public OpenCV3MatchUMat.AlignAlgorithm RHWaferAlgorithm = OpenCV3MatchUMat.AlignAlgorithm.TemplateMatch;
 
+        //public Rect LLMaskROI { get; set; } = new Rect();
+        //public Rect LHMaskROI { get; set; } = new Rect();
+        //public Rect RLMaskROI { get; set; } = new Rect();
+        //public Rect RHMaskROI { get; set; } = new Rect();
+        //public Rect LLWaferROI { get; set; } = new Rect();
+        //public Rect LHWaferROI { get; set; } = new Rect();
+        //public Rect RLWaferROI { get; set; } = new Rect();
+        //public Rect RHWaferROI { get; set; } = new Rect();
 
+        public int LLMaskOffsetX { get; set; } = 0;
+        public int LLMaskOffsetY { get; set; } = 0;
+        public int LHMaskOffsetX { get; set; } = 0;
+        public int LHMaskOffsetY { get; set; } = 0;
+        public int RLMaskOffsetX { get; set; } = 0;
+        public int RLMaskOffsetY { get; set; } = 0;
+        public int RHMaskOffsetX { get; set; } = 0;
+        public int RHMaskOffsetY { get; set; } = 0;
+
+        public int LLWaferOffsetX { get; set; } = 0;
+        public int LLWaferOffsetY { get; set; } = 0;
+        public int LHWaferOffsetX { get; set; } = 0;
+        public int LHWaferOffsetY { get; set; } = 0;
+        public int RLWaferOffsetX { get; set; } = 0;
+        public int RLWaferOffsetY { get; set; } = 0;
+        public int RHWaferOffsetX { get; set; } = 0;
+        public int RHWaferOffsetY { get; set; } = 0;
         public int LLWaferAIClassId { get; set; } = -1;
         public int LHWaferAIClassId { get; set; } = -1;
 

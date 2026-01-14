@@ -110,7 +110,7 @@ namespace NSAA_16Axis
             this.lbLMsgW = new System.Windows.Forms.Label();
             this.lbRMsgM = new System.Windows.Forms.Label();
             this.lbLMsgM = new System.Windows.Forms.Label();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.groupBoxT4 = new System.Windows.Forms.GroupBox();
             this.nudWriteChuckY2 = new NSAA_16Axis.UCRoundedRectangleLabel();
             this.btChuckGo = new MRLibrary.UCButton();
             this.nudWriteChuckY1 = new NSAA_16Axis.UCRoundedRectangleLabel();
@@ -138,7 +138,7 @@ namespace NSAA_16Axis
             this.btTLRead = new System.Windows.Forms.Button();
             this.btTRRead = new System.Windows.Forms.Button();
             this.OpenFileDialogReadT = new System.Windows.Forms.OpenFileDialog();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBoxT1 = new System.Windows.Forms.GroupBox();
             this.nudWriteUpRightZ = new NSAA_16Axis.UCRoundedRectangleLabel();
             this.nudWriteUpRightY = new NSAA_16Axis.UCRoundedRectangleLabel();
             this.nudWriteUpRightX = new NSAA_16Axis.UCRoundedRectangleLabel();
@@ -165,6 +165,7 @@ namespace NSAA_16Axis
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
+            this.ucPosition = new MRLibrary.UCButton();
             this.gbLMask.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLMaskImage)).BeginInit();
             this.gbLWafer.SuspendLayout();
@@ -178,13 +179,13 @@ namespace NSAA_16Axis
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftRingLight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftCoaLight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBRightCoaLight)).BeginInit();
-            this.groupBox4.SuspendLayout();
+            this.groupBoxT4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckR)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckZ)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckX)).BeginInit();
-            this.groupBox1.SuspendLayout();
+            this.groupBoxT1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadUpRightZ)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadUpRightY)).BeginInit();
@@ -249,7 +250,7 @@ namespace NSAA_16Axis
             "X12"});
             this.cbLMaskClassList.Location = new System.Drawing.Point(14, 203);
             this.cbLMaskClassList.Name = "cbLMaskClassList";
-            this.cbLMaskClassList.Size = new System.Drawing.Size(153, 26);
+            this.cbLMaskClassList.Size = new System.Drawing.Size(153, 31);
             this.cbLMaskClassList.TabIndex = 143;
             this.cbLMaskClassList.Visible = false;
             // 
@@ -325,7 +326,7 @@ namespace NSAA_16Axis
             "AI Identify"});
             this.cbLMaskAlgorithm.Location = new System.Drawing.Point(66, 71);
             this.cbLMaskAlgorithm.Name = "cbLMaskAlgorithm";
-            this.cbLMaskAlgorithm.Size = new System.Drawing.Size(100, 26);
+            this.cbLMaskAlgorithm.Size = new System.Drawing.Size(100, 31);
             this.cbLMaskAlgorithm.TabIndex = 1;
             this.cbLMaskAlgorithm.SelectedIndexChanged += new System.EventHandler(this.CbLMaskAlgorithm_SelectedIndexChanged);
             // 
@@ -336,7 +337,7 @@ namespace NSAA_16Axis
             this.label2.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label2.Location = new System.Drawing.Point(10, 74);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 18);
+            this.label2.Size = new System.Drawing.Size(72, 23);
             this.label2.TabIndex = 0;
             this.label2.Text = "ALGO.";
             // 
@@ -394,7 +395,7 @@ namespace NSAA_16Axis
             "X12"});
             this.cbLWaferClassList.Location = new System.Drawing.Point(13, 205);
             this.cbLWaferClassList.Name = "cbLWaferClassList";
-            this.cbLWaferClassList.Size = new System.Drawing.Size(153, 26);
+            this.cbLWaferClassList.Size = new System.Drawing.Size(153, 31);
             this.cbLWaferClassList.TabIndex = 75;
             this.cbLWaferClassList.Visible = false;
             // 
@@ -470,7 +471,7 @@ namespace NSAA_16Axis
             "AI Identify"});
             this.cbLWaferAlgorithm.Location = new System.Drawing.Point(66, 76);
             this.cbLWaferAlgorithm.Name = "cbLWaferAlgorithm";
-            this.cbLWaferAlgorithm.Size = new System.Drawing.Size(100, 26);
+            this.cbLWaferAlgorithm.Size = new System.Drawing.Size(100, 31);
             this.cbLWaferAlgorithm.TabIndex = 1;
             this.cbLWaferAlgorithm.SelectedIndexChanged += new System.EventHandler(this.CbLWaferAlgorithm_SelectedIndexChanged);
             // 
@@ -481,7 +482,7 @@ namespace NSAA_16Axis
             this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label1.Location = new System.Drawing.Point(10, 79);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 18);
+            this.label1.Size = new System.Drawing.Size(72, 23);
             this.label1.TabIndex = 0;
             this.label1.Text = "ALGO.";
             // 
@@ -541,7 +542,7 @@ namespace NSAA_16Axis
             "X12"});
             this.cbRWaferClassList.Location = new System.Drawing.Point(13, 205);
             this.cbRWaferClassList.Name = "cbRWaferClassList";
-            this.cbRWaferClassList.Size = new System.Drawing.Size(153, 26);
+            this.cbRWaferClassList.Size = new System.Drawing.Size(153, 31);
             this.cbRWaferClassList.TabIndex = 74;
             this.cbRWaferClassList.Visible = false;
             // 
@@ -632,7 +633,7 @@ namespace NSAA_16Axis
             "AI Identify"});
             this.cbRWaferAlgorithm.Location = new System.Drawing.Point(68, 75);
             this.cbRWaferAlgorithm.Name = "cbRWaferAlgorithm";
-            this.cbRWaferAlgorithm.Size = new System.Drawing.Size(100, 26);
+            this.cbRWaferAlgorithm.Size = new System.Drawing.Size(100, 31);
             this.cbRWaferAlgorithm.TabIndex = 1;
             this.cbRWaferAlgorithm.SelectedIndexChanged += new System.EventHandler(this.CbRWaferAlgorithm_SelectedIndexChanged);
             // 
@@ -643,7 +644,7 @@ namespace NSAA_16Axis
             this.label3.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label3.Location = new System.Drawing.Point(12, 78);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(56, 18);
+            this.label3.Size = new System.Drawing.Size(72, 23);
             this.label3.TabIndex = 0;
             this.label3.Text = "ALGO.";
             // 
@@ -702,7 +703,7 @@ namespace NSAA_16Axis
             "X12"});
             this.cbRMaskClassList.Location = new System.Drawing.Point(13, 205);
             this.cbRMaskClassList.Name = "cbRMaskClassList";
-            this.cbRMaskClassList.Size = new System.Drawing.Size(153, 26);
+            this.cbRMaskClassList.Size = new System.Drawing.Size(153, 31);
             this.cbRMaskClassList.TabIndex = 144;
             this.cbRMaskClassList.Visible = false;
             // 
@@ -778,7 +779,7 @@ namespace NSAA_16Axis
             "AI Identify"});
             this.cbRMaskAlgorithm.Location = new System.Drawing.Point(66, 75);
             this.cbRMaskAlgorithm.Name = "cbRMaskAlgorithm";
-            this.cbRMaskAlgorithm.Size = new System.Drawing.Size(100, 26);
+            this.cbRMaskAlgorithm.Size = new System.Drawing.Size(100, 31);
             this.cbRMaskAlgorithm.TabIndex = 1;
             this.cbRMaskAlgorithm.SelectedIndexChanged += new System.EventHandler(this.CbRMaskAlgorithm_SelectedIndexChanged);
             // 
@@ -789,7 +790,7 @@ namespace NSAA_16Axis
             this.label4.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label4.Location = new System.Drawing.Point(10, 78);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(56, 18);
+            this.label4.Size = new System.Drawing.Size(72, 23);
             this.label4.TabIndex = 0;
             this.label4.Text = "ALGO.";
             // 
@@ -799,7 +800,7 @@ namespace NSAA_16Axis
             this.lbRecipeNumber.Font = new System.Drawing.Font("Arial", 20F, System.Drawing.FontStyle.Bold);
             this.lbRecipeNumber.Location = new System.Drawing.Point(478, 62);
             this.lbRecipeNumber.Name = "lbRecipeNumber";
-            this.lbRecipeNumber.Size = new System.Drawing.Size(244, 32);
+            this.lbRecipeNumber.Size = new System.Drawing.Size(297, 40);
             this.lbRecipeNumber.TabIndex = 11;
             this.lbRecipeNumber.Text = "Recipe Number : ";
             // 
@@ -854,7 +855,7 @@ namespace NSAA_16Axis
             this.rBHighMagnification.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rBHighMagnification.Location = new System.Drawing.Point(11, 86);
             this.rBHighMagnification.Name = "rBHighMagnification";
-            this.rBHighMagnification.Size = new System.Drawing.Size(58, 22);
+            this.rBHighMagnification.Size = new System.Drawing.Size(69, 27);
             this.rBHighMagnification.TabIndex = 21;
             this.rBHighMagnification.Text = "High";
             this.rBHighMagnification.UseVisualStyleBackColor = true;
@@ -866,7 +867,7 @@ namespace NSAA_16Axis
             this.rBLowMagnification.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rBLowMagnification.Location = new System.Drawing.Point(12, 36);
             this.rBLowMagnification.Name = "rBLowMagnification";
-            this.rBLowMagnification.Size = new System.Drawing.Size(55, 22);
+            this.rBLowMagnification.Size = new System.Drawing.Size(68, 27);
             this.rBLowMagnification.TabIndex = 20;
             this.rBLowMagnification.Text = "Low";
             this.rBLowMagnification.UseVisualStyleBackColor = true;
@@ -885,7 +886,7 @@ namespace NSAA_16Axis
             "Center"});
             this.cbPatterhShift.Location = new System.Drawing.Point(152, 83);
             this.cbPatterhShift.Name = "cbPatterhShift";
-            this.cbPatterhShift.Size = new System.Drawing.Size(80, 26);
+            this.cbPatterhShift.Size = new System.Drawing.Size(80, 31);
             this.cbPatterhShift.TabIndex = 25;
             this.cbPatterhShift.SelectedIndexChanged += new System.EventHandler(this.CbPatterhShift_SelectedIndexChanged);
             // 
@@ -909,7 +910,7 @@ namespace NSAA_16Axis
             "X12"});
             this.cbHighMagnification.Location = new System.Drawing.Point(86, 82);
             this.cbHighMagnification.Name = "cbHighMagnification";
-            this.cbHighMagnification.Size = new System.Drawing.Size(60, 26);
+            this.cbHighMagnification.Size = new System.Drawing.Size(60, 31);
             this.cbHighMagnification.TabIndex = 17;
             this.cbHighMagnification.SelectedIndexChanged += new System.EventHandler(this.CbHighMagnification_SelectedIndexChanged);
             // 
@@ -933,7 +934,7 @@ namespace NSAA_16Axis
             "X12"});
             this.cbLowMagnification.Location = new System.Drawing.Point(86, 32);
             this.cbLowMagnification.Name = "cbLowMagnification";
-            this.cbLowMagnification.Size = new System.Drawing.Size(60, 26);
+            this.cbLowMagnification.Size = new System.Drawing.Size(60, 31);
             this.cbLowMagnification.TabIndex = 16;
             this.cbLowMagnification.SelectedIndexChanged += new System.EventHandler(this.CbLowMagnification_SelectedIndexChanged);
             // 
@@ -947,7 +948,7 @@ namespace NSAA_16Axis
             this.tBRightRingLight.Maximum = 255;
             this.tBRightRingLight.Name = "tBRightRingLight";
             this.tBRightRingLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBRightRingLight.Size = new System.Drawing.Size(45, 216);
+            this.tBRightRingLight.Size = new System.Drawing.Size(56, 216);
             this.tBRightRingLight.TabIndex = 50;
             this.tBRightRingLight.Visible = false;
             this.tBRightRingLight.ValueChanged += new System.EventHandler(this.TBRightRingLight_ValueChanged);
@@ -962,7 +963,7 @@ namespace NSAA_16Axis
             this.tBLeftRingLight.Maximum = 255;
             this.tBLeftRingLight.Name = "tBLeftRingLight";
             this.tBLeftRingLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBLeftRingLight.Size = new System.Drawing.Size(45, 270);
+            this.tBLeftRingLight.Size = new System.Drawing.Size(56, 270);
             this.tBLeftRingLight.TabIndex = 51;
             this.tBLeftRingLight.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.tBLeftRingLight.Visible = false;
@@ -974,11 +975,11 @@ namespace NSAA_16Axis
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tBLeftCoaLight.LargeChange = 1;
-            this.tBLeftCoaLight.Location = new System.Drawing.Point(415, 89);
+            this.tBLeftCoaLight.Location = new System.Drawing.Point(415, 76);
             this.tBLeftCoaLight.Maximum = 255;
             this.tBLeftCoaLight.Name = "tBLeftCoaLight";
             this.tBLeftCoaLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBLeftCoaLight.Size = new System.Drawing.Size(45, 216);
+            this.tBLeftCoaLight.Size = new System.Drawing.Size(56, 216);
             this.tBLeftCoaLight.TabIndex = 54;
             this.tBLeftCoaLight.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.tBLeftCoaLight.ValueChanged += new System.EventHandler(this.TBLeftCoaLight_ValueChanged);
@@ -989,11 +990,11 @@ namespace NSAA_16Axis
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tBRightCoaLight.LargeChange = 1;
-            this.tBRightCoaLight.Location = new System.Drawing.Point(1455, 82);
+            this.tBRightCoaLight.Location = new System.Drawing.Point(1455, 74);
             this.tBRightCoaLight.Maximum = 255;
             this.tBRightCoaLight.Name = "tBRightCoaLight";
             this.tBRightCoaLight.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tBRightCoaLight.Size = new System.Drawing.Size(45, 216);
+            this.tBRightCoaLight.Size = new System.Drawing.Size(56, 216);
             this.tBRightCoaLight.TabIndex = 56;
             this.tBRightCoaLight.ValueChanged += new System.EventHandler(this.TBRightCoaLight_ValueChanged);
             // 
@@ -1006,7 +1007,7 @@ namespace NSAA_16Axis
             this.LRingLight.ForeColor = System.Drawing.Color.Green;
             this.LRingLight.Location = new System.Drawing.Point(362, 20);
             this.LRingLight.Name = "LRingLight";
-            this.LRingLight.Size = new System.Drawing.Size(84, 28);
+            this.LRingLight.Size = new System.Drawing.Size(101, 33);
             this.LRingLight.TabIndex = 57;
             this.LRingLight.Text = "RingLight";
             this.LRingLight.UseVisualStyleBackColor = true;
@@ -1022,7 +1023,7 @@ namespace NSAA_16Axis
             this.LCoaLight.ForeColor = System.Drawing.Color.Red;
             this.LCoaLight.Location = new System.Drawing.Point(394, 20);
             this.LCoaLight.Name = "LCoaLight";
-            this.LCoaLight.Size = new System.Drawing.Size(82, 28);
+            this.LCoaLight.Size = new System.Drawing.Size(98, 33);
             this.LCoaLight.TabIndex = 59;
             this.LCoaLight.Text = "CoaLight";
             this.LCoaLight.UseVisualStyleBackColor = true;
@@ -1037,7 +1038,7 @@ namespace NSAA_16Axis
             this.RCoaLight.ForeColor = System.Drawing.Color.Red;
             this.RCoaLight.Location = new System.Drawing.Point(1432, 20);
             this.RCoaLight.Name = "RCoaLight";
-            this.RCoaLight.Size = new System.Drawing.Size(82, 28);
+            this.RCoaLight.Size = new System.Drawing.Size(98, 33);
             this.RCoaLight.TabIndex = 60;
             this.RCoaLight.Text = "CoaLight";
             this.RCoaLight.UseVisualStyleBackColor = true;
@@ -1052,7 +1053,7 @@ namespace NSAA_16Axis
             this.RRingLight.ForeColor = System.Drawing.Color.Green;
             this.RRingLight.Location = new System.Drawing.Point(1491, 20);
             this.RRingLight.Name = "RRingLight";
-            this.RRingLight.Size = new System.Drawing.Size(84, 28);
+            this.RRingLight.Size = new System.Drawing.Size(101, 33);
             this.RRingLight.TabIndex = 61;
             this.RRingLight.Text = "RingLight";
             this.RRingLight.UseVisualStyleBackColor = true;
@@ -1157,7 +1158,7 @@ namespace NSAA_16Axis
             this.lbEmulationModeL.Font = new System.Drawing.Font("標楷體", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbEmulationModeL.Location = new System.Drawing.Point(306, 672);
             this.lbEmulationModeL.Name = "lbEmulationModeL";
-            this.lbEmulationModeL.Size = new System.Drawing.Size(267, 35);
+            this.lbEmulationModeL.Size = new System.Drawing.Size(327, 44);
             this.lbEmulationModeL.TabIndex = 71;
             this.lbEmulationModeL.Text = "Emulation Mode";
             // 
@@ -1167,7 +1168,7 @@ namespace NSAA_16Axis
             this.lbEmulationModeR.Font = new System.Drawing.Font("標楷體", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbEmulationModeR.Location = new System.Drawing.Point(1313, 672);
             this.lbEmulationModeR.Name = "lbEmulationModeR";
-            this.lbEmulationModeR.Size = new System.Drawing.Size(267, 35);
+            this.lbEmulationModeR.Size = new System.Drawing.Size(327, 44);
             this.lbEmulationModeR.TabIndex = 72;
             this.lbEmulationModeR.Text = "Emulation Mode";
             // 
@@ -1229,7 +1230,7 @@ namespace NSAA_16Axis
             this.lbNowTime.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbNowTime.Location = new System.Drawing.Point(506, 24);
             this.lbNowTime.Name = "lbNowTime";
-            this.lbNowTime.Size = new System.Drawing.Size(49, 22);
+            this.lbNowTime.Size = new System.Drawing.Size(62, 29);
             this.lbNowTime.TabIndex = 77;
             this.lbNowTime.Text = "time";
             // 
@@ -1237,9 +1238,9 @@ namespace NSAA_16Axis
             // 
             this.lbDebugMsg.AutoSize = true;
             this.lbDebugMsg.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbDebugMsg.Location = new System.Drawing.Point(328, 409);
+            this.lbDebugMsg.Location = new System.Drawing.Point(480, 102);
             this.lbDebugMsg.Name = "lbDebugMsg";
-            this.lbDebugMsg.Size = new System.Drawing.Size(49, 22);
+            this.lbDebugMsg.Size = new System.Drawing.Size(62, 29);
             this.lbDebugMsg.TabIndex = 78;
             this.lbDebugMsg.Text = "time";
             this.lbDebugMsg.Visible = false;
@@ -1276,7 +1277,7 @@ namespace NSAA_16Axis
             this.lbRMsgW.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbRMsgW.Location = new System.Drawing.Point(986, 369);
             this.lbRMsgW.Name = "lbRMsgW";
-            this.lbRMsgW.Size = new System.Drawing.Size(130, 20);
+            this.lbRMsgW.Size = new System.Drawing.Size(164, 25);
             this.lbRMsgW.TabIndex = 133;
             this.lbRMsgW.Text = "Debug Message";
             // 
@@ -1286,7 +1287,7 @@ namespace NSAA_16Axis
             this.lbLMsgW.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbLMsgW.Location = new System.Drawing.Point(36, 369);
             this.lbLMsgW.Name = "lbLMsgW";
-            this.lbLMsgW.Size = new System.Drawing.Size(130, 20);
+            this.lbLMsgW.Size = new System.Drawing.Size(164, 25);
             this.lbLMsgW.TabIndex = 132;
             this.lbLMsgW.Text = "Debug Message";
             // 
@@ -1296,7 +1297,7 @@ namespace NSAA_16Axis
             this.lbRMsgM.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbRMsgM.Location = new System.Drawing.Point(986, 340);
             this.lbRMsgM.Name = "lbRMsgM";
-            this.lbRMsgM.Size = new System.Drawing.Size(130, 20);
+            this.lbRMsgM.Size = new System.Drawing.Size(164, 25);
             this.lbRMsgM.TabIndex = 131;
             this.lbRMsgM.Text = "Debug Message";
             // 
@@ -1306,36 +1307,36 @@ namespace NSAA_16Axis
             this.lbLMsgM.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbLMsgM.Location = new System.Drawing.Point(36, 340);
             this.lbLMsgM.Name = "lbLMsgM";
-            this.lbLMsgM.Size = new System.Drawing.Size(130, 20);
+            this.lbLMsgM.Size = new System.Drawing.Size(164, 25);
             this.lbLMsgM.TabIndex = 130;
             this.lbLMsgM.Text = "Debug Message";
             // 
-            // groupBox4
+            // groupBoxT4
             // 
-            this.groupBox4.Controls.Add(this.nudWriteChuckY2);
-            this.groupBox4.Controls.Add(this.btChuckGo);
-            this.groupBox4.Controls.Add(this.nudWriteChuckY1);
-            this.groupBox4.Controls.Add(this.nudWriteChuckX);
-            this.groupBox4.Controls.Add(this.btChuckUpdate);
-            this.groupBox4.Controls.Add(this.nudWriteChuckZ);
-            this.groupBox4.Controls.Add(this.nudReadChuckR);
-            this.groupBox4.Controls.Add(this.nudReadChuckY2);
-            this.groupBox4.Controls.Add(this.nudReadChuckY1);
-            this.groupBox4.Controls.Add(this.nudReadChuckZ);
-            this.groupBox4.Controls.Add(this.nudReadChuckX);
-            this.groupBox4.Controls.Add(this.label17);
-            this.groupBox4.Controls.Add(this.label16);
-            this.groupBox4.Controls.Add(this.label6);
-            this.groupBox4.Controls.Add(this.label5);
-            this.groupBox4.Controls.Add(this.label8);
-            this.groupBox4.Controls.Add(this.label15);
-            this.groupBox4.Location = new System.Drawing.Point(821, 20);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(291, 249);
-            this.groupBox4.TabIndex = 141;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "WEC Location";
-            this.groupBox4.Visible = false;
+            this.groupBoxT4.Controls.Add(this.nudWriteChuckY2);
+            this.groupBoxT4.Controls.Add(this.btChuckGo);
+            this.groupBoxT4.Controls.Add(this.nudWriteChuckY1);
+            this.groupBoxT4.Controls.Add(this.nudWriteChuckX);
+            this.groupBoxT4.Controls.Add(this.btChuckUpdate);
+            this.groupBoxT4.Controls.Add(this.nudWriteChuckZ);
+            this.groupBoxT4.Controls.Add(this.nudReadChuckR);
+            this.groupBoxT4.Controls.Add(this.nudReadChuckY2);
+            this.groupBoxT4.Controls.Add(this.nudReadChuckY1);
+            this.groupBoxT4.Controls.Add(this.nudReadChuckZ);
+            this.groupBoxT4.Controls.Add(this.nudReadChuckX);
+            this.groupBoxT4.Controls.Add(this.label17);
+            this.groupBoxT4.Controls.Add(this.label16);
+            this.groupBoxT4.Controls.Add(this.label6);
+            this.groupBoxT4.Controls.Add(this.label5);
+            this.groupBoxT4.Controls.Add(this.label8);
+            this.groupBoxT4.Controls.Add(this.label15);
+            this.groupBoxT4.Location = new System.Drawing.Point(821, 20);
+            this.groupBoxT4.Name = "groupBoxT4";
+            this.groupBoxT4.Size = new System.Drawing.Size(291, 249);
+            this.groupBoxT4.TabIndex = 141;
+            this.groupBoxT4.TabStop = false;
+            this.groupBoxT4.Text = "WEC Location";
+            this.groupBoxT4.Visible = false;
             // 
             // nudWriteChuckY2
             // 
@@ -1440,7 +1441,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadChuckR.Name = "nudReadChuckR";
-            this.nudReadChuckR.Size = new System.Drawing.Size(90, 26);
+            this.nudReadChuckR.Size = new System.Drawing.Size(90, 30);
             this.nudReadChuckR.TabIndex = 143;
             this.nudReadChuckR.Visible = false;
             this.nudReadChuckR.ValueChanged += new System.EventHandler(this.NuDRotate_ValueChanged);
@@ -1461,7 +1462,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadChuckY2.Name = "nudReadChuckY2";
-            this.nudReadChuckY2.Size = new System.Drawing.Size(90, 26);
+            this.nudReadChuckY2.Size = new System.Drawing.Size(90, 30);
             this.nudReadChuckY2.TabIndex = 119;
             // 
             // nudReadChuckY1
@@ -1480,7 +1481,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadChuckY1.Name = "nudReadChuckY1";
-            this.nudReadChuckY1.Size = new System.Drawing.Size(90, 26);
+            this.nudReadChuckY1.Size = new System.Drawing.Size(90, 30);
             this.nudReadChuckY1.TabIndex = 118;
             // 
             // nudReadChuckZ
@@ -1499,7 +1500,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadChuckZ.Name = "nudReadChuckZ";
-            this.nudReadChuckZ.Size = new System.Drawing.Size(90, 26);
+            this.nudReadChuckZ.Size = new System.Drawing.Size(90, 30);
             this.nudReadChuckZ.TabIndex = 117;
             // 
             // nudReadChuckX
@@ -1518,7 +1519,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadChuckX.Name = "nudReadChuckX";
-            this.nudReadChuckX.Size = new System.Drawing.Size(90, 26);
+            this.nudReadChuckX.Size = new System.Drawing.Size(90, 30);
             this.nudReadChuckX.TabIndex = 117;
             // 
             // label17
@@ -1528,7 +1529,7 @@ namespace NSAA_16Axis
             this.label17.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label17.Location = new System.Drawing.Point(9, 145);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(61, 19);
+            this.label17.Size = new System.Drawing.Size(74, 24);
             this.label17.TabIndex = 98;
             this.label17.Text = "XYY-Y1";
             // 
@@ -1539,7 +1540,7 @@ namespace NSAA_16Axis
             this.label16.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label16.Location = new System.Drawing.Point(9, 182);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(61, 19);
+            this.label16.Size = new System.Drawing.Size(74, 24);
             this.label16.TabIndex = 96;
             this.label16.Text = "XYY-Y2";
             // 
@@ -1550,7 +1551,7 @@ namespace NSAA_16Axis
             this.label6.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label6.Location = new System.Drawing.Point(84, 39);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(59, 19);
+            this.label6.Size = new System.Drawing.Size(75, 24);
             this.label6.TabIndex = 94;
             this.label6.Text = "Setting";
             // 
@@ -1561,7 +1562,7 @@ namespace NSAA_16Axis
             this.label5.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label5.Location = new System.Drawing.Point(160, 39);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(101, 19);
+            this.label5.Size = new System.Drawing.Size(128, 24);
             this.label5.TabIndex = 94;
             this.label5.Text = "Now Located";
             // 
@@ -1572,7 +1573,7 @@ namespace NSAA_16Axis
             this.label8.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label8.Location = new System.Drawing.Point(9, 69);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(55, 19);
+            this.label8.Size = new System.Drawing.Size(69, 24);
             this.label8.TabIndex = 94;
             this.label8.Text = "WEC Z";
             // 
@@ -1583,7 +1584,7 @@ namespace NSAA_16Axis
             this.label15.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label15.Location = new System.Drawing.Point(9, 105);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(53, 19);
+            this.label15.Size = new System.Drawing.Size(64, 24);
             this.label15.TabIndex = 94;
             this.label15.Text = "XYY-X";
             // 
@@ -1701,40 +1702,40 @@ namespace NSAA_16Axis
             // 
             this.OpenFileDialogReadT.FileName = "openFileDialogT1";
             // 
-            // groupBox1
+            // groupBoxT1
             // 
-            this.groupBox1.Controls.Add(this.nudWriteUpRightZ);
-            this.groupBox1.Controls.Add(this.nudWriteUpRightY);
-            this.groupBox1.Controls.Add(this.nudWriteUpRightX);
-            this.groupBox1.Controls.Add(this.nudWriteUpLeftZ);
-            this.groupBox1.Controls.Add(this.btUpCCDGo);
-            this.groupBox1.Controls.Add(this.nudWriteUpLeftY);
-            this.groupBox1.Controls.Add(this.nudWriteUpLeftX);
-            this.groupBox1.Controls.Add(this.btUpCCDUpdate);
-            this.groupBox1.Controls.Add(this.nudWriteUpBigY);
-            this.groupBox1.Controls.Add(this.numericUpDown1);
-            this.groupBox1.Controls.Add(this.nudReadUpRightZ);
-            this.groupBox1.Controls.Add(this.nudReadUpRightY);
-            this.groupBox1.Controls.Add(this.nudReadUpRightX);
-            this.groupBox1.Controls.Add(this.nudReadUpLeftZ);
-            this.groupBox1.Controls.Add(this.nudReadUpLeftY);
-            this.groupBox1.Controls.Add(this.nudReadBigY);
-            this.groupBox1.Controls.Add(this.nudReadUpLeftX);
-            this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.label19);
-            this.groupBox1.Controls.Add(this.label18);
-            this.groupBox1.Controls.Add(this.label14);
-            this.groupBox1.Controls.Add(this.label9);
-            this.groupBox1.Controls.Add(this.label10);
-            this.groupBox1.Controls.Add(this.label11);
-            this.groupBox1.Controls.Add(this.label12);
-            this.groupBox1.Controls.Add(this.label13);
-            this.groupBox1.Location = new System.Drawing.Point(1135, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(291, 321);
-            this.groupBox1.TabIndex = 141;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "CCD Location";
+            this.groupBoxT1.Controls.Add(this.nudWriteUpRightZ);
+            this.groupBoxT1.Controls.Add(this.nudWriteUpRightY);
+            this.groupBoxT1.Controls.Add(this.nudWriteUpRightX);
+            this.groupBoxT1.Controls.Add(this.nudWriteUpLeftZ);
+            this.groupBoxT1.Controls.Add(this.btUpCCDGo);
+            this.groupBoxT1.Controls.Add(this.nudWriteUpLeftY);
+            this.groupBoxT1.Controls.Add(this.nudWriteUpLeftX);
+            this.groupBoxT1.Controls.Add(this.btUpCCDUpdate);
+            this.groupBoxT1.Controls.Add(this.nudWriteUpBigY);
+            this.groupBoxT1.Controls.Add(this.numericUpDown1);
+            this.groupBoxT1.Controls.Add(this.nudReadUpRightZ);
+            this.groupBoxT1.Controls.Add(this.nudReadUpRightY);
+            this.groupBoxT1.Controls.Add(this.nudReadUpRightX);
+            this.groupBoxT1.Controls.Add(this.nudReadUpLeftZ);
+            this.groupBoxT1.Controls.Add(this.nudReadUpLeftY);
+            this.groupBoxT1.Controls.Add(this.nudReadBigY);
+            this.groupBoxT1.Controls.Add(this.nudReadUpLeftX);
+            this.groupBoxT1.Controls.Add(this.label7);
+            this.groupBoxT1.Controls.Add(this.label19);
+            this.groupBoxT1.Controls.Add(this.label18);
+            this.groupBoxT1.Controls.Add(this.label14);
+            this.groupBoxT1.Controls.Add(this.label9);
+            this.groupBoxT1.Controls.Add(this.label10);
+            this.groupBoxT1.Controls.Add(this.label11);
+            this.groupBoxT1.Controls.Add(this.label12);
+            this.groupBoxT1.Controls.Add(this.label13);
+            this.groupBoxT1.Location = new System.Drawing.Point(1135, 3);
+            this.groupBoxT1.Name = "groupBoxT1";
+            this.groupBoxT1.Size = new System.Drawing.Size(291, 321);
+            this.groupBoxT1.TabIndex = 141;
+            this.groupBoxT1.TabStop = false;
+            this.groupBoxT1.Text = "CCD Location";
             // 
             // nudWriteUpRightZ
             // 
@@ -1881,7 +1882,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(90, 26);
+            this.numericUpDown1.Size = new System.Drawing.Size(90, 30);
             this.numericUpDown1.TabIndex = 143;
             this.numericUpDown1.Visible = false;
             this.numericUpDown1.ValueChanged += new System.EventHandler(this.NuDRotate_ValueChanged);
@@ -1902,7 +1903,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadUpRightZ.Name = "nudReadUpRightZ";
-            this.nudReadUpRightZ.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpRightZ.Size = new System.Drawing.Size(90, 30);
             this.nudReadUpRightZ.TabIndex = 119;
             // 
             // nudReadUpRightY
@@ -1921,7 +1922,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadUpRightY.Name = "nudReadUpRightY";
-            this.nudReadUpRightY.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpRightY.Size = new System.Drawing.Size(90, 30);
             this.nudReadUpRightY.TabIndex = 119;
             // 
             // nudReadUpRightX
@@ -1940,7 +1941,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadUpRightX.Name = "nudReadUpRightX";
-            this.nudReadUpRightX.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpRightX.Size = new System.Drawing.Size(90, 30);
             this.nudReadUpRightX.TabIndex = 119;
             // 
             // nudReadUpLeftZ
@@ -1959,7 +1960,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadUpLeftZ.Name = "nudReadUpLeftZ";
-            this.nudReadUpLeftZ.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpLeftZ.Size = new System.Drawing.Size(90, 30);
             this.nudReadUpLeftZ.TabIndex = 119;
             // 
             // nudReadUpLeftY
@@ -1978,7 +1979,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadUpLeftY.Name = "nudReadUpLeftY";
-            this.nudReadUpLeftY.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpLeftY.Size = new System.Drawing.Size(90, 30);
             this.nudReadUpLeftY.TabIndex = 118;
             // 
             // nudReadBigY
@@ -1997,7 +1998,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadBigY.Name = "nudReadBigY";
-            this.nudReadBigY.Size = new System.Drawing.Size(90, 26);
+            this.nudReadBigY.Size = new System.Drawing.Size(90, 30);
             this.nudReadBigY.TabIndex = 117;
             // 
             // nudReadUpLeftX
@@ -2016,7 +2017,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nudReadUpLeftX.Name = "nudReadUpLeftX";
-            this.nudReadUpLeftX.Size = new System.Drawing.Size(90, 26);
+            this.nudReadUpLeftX.Size = new System.Drawing.Size(90, 30);
             this.nudReadUpLeftX.TabIndex = 117;
             // 
             // label7
@@ -2026,7 +2027,7 @@ namespace NSAA_16Axis
             this.label7.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label7.Location = new System.Drawing.Point(9, 115);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(48, 19);
+            this.label7.Size = new System.Drawing.Size(60, 24);
             this.label7.TabIndex = 98;
             this.label7.Text = "Left Y";
             // 
@@ -2037,7 +2038,7 @@ namespace NSAA_16Axis
             this.label19.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label19.Location = new System.Drawing.Point(9, 248);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(60, 19);
+            this.label19.Size = new System.Drawing.Size(75, 24);
             this.label19.TabIndex = 96;
             this.label19.Text = "Right Z";
             // 
@@ -2048,7 +2049,7 @@ namespace NSAA_16Axis
             this.label18.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label18.Location = new System.Drawing.Point(9, 216);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(60, 19);
+            this.label18.Size = new System.Drawing.Size(74, 24);
             this.label18.TabIndex = 96;
             this.label18.Text = "Right Y";
             // 
@@ -2059,7 +2060,7 @@ namespace NSAA_16Axis
             this.label14.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label14.Location = new System.Drawing.Point(9, 184);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(61, 19);
+            this.label14.Size = new System.Drawing.Size(75, 24);
             this.label14.TabIndex = 96;
             this.label14.Text = "Right X";
             // 
@@ -2070,7 +2071,7 @@ namespace NSAA_16Axis
             this.label9.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label9.Location = new System.Drawing.Point(9, 151);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(48, 19);
+            this.label9.Size = new System.Drawing.Size(61, 24);
             this.label9.TabIndex = 96;
             this.label9.Text = "Left Z";
             // 
@@ -2081,7 +2082,7 @@ namespace NSAA_16Axis
             this.label10.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label10.Location = new System.Drawing.Point(84, 22);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(59, 19);
+            this.label10.Size = new System.Drawing.Size(75, 24);
             this.label10.TabIndex = 94;
             this.label10.Text = "Setting";
             // 
@@ -2092,7 +2093,7 @@ namespace NSAA_16Axis
             this.label11.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label11.Location = new System.Drawing.Point(160, 22);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(101, 19);
+            this.label11.Size = new System.Drawing.Size(128, 24);
             this.label11.TabIndex = 94;
             this.label11.Text = "Now Located";
             // 
@@ -2103,7 +2104,7 @@ namespace NSAA_16Axis
             this.label12.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label12.Location = new System.Drawing.Point(9, 48);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(45, 19);
+            this.label12.Size = new System.Drawing.Size(55, 24);
             this.label12.TabIndex = 94;
             this.label12.Text = "Big Y";
             // 
@@ -2114,19 +2115,35 @@ namespace NSAA_16Axis
             this.label13.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label13.Location = new System.Drawing.Point(9, 79);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(49, 19);
+            this.label13.Size = new System.Drawing.Size(61, 24);
             this.label13.TabIndex = 94;
             this.label13.Text = "Left X";
+            // 
+            // ucPosition
+            // 
+            this.ucPosition.BackColor = System.Drawing.Color.Transparent;
+            this.ucPosition.Caption = "Show Position";
+            this.ucPosition.FaceColor = System.Drawing.Color.Khaki;
+            this.ucPosition.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ucPosition.Image = null;
+            this.ucPosition.Location = new System.Drawing.Point(703, 287);
+            this.ucPosition.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.ucPosition.Name = "ucPosition";
+            this.ucPosition.Radius = 5;
+            this.ucPosition.Size = new System.Drawing.Size(112, 30);
+            this.ucPosition.TabIndex = 143;
+            this.ucPosition.Click += new System.EventHandler(this.ucPosition_Click);
             // 
             // CMLearnPatternUp
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.Controls.Add(this.ucPosition);
             this.Controls.Add(this.btTRRead);
             this.Controls.Add(this.btTLRead);
             this.Controls.Add(this.btTfile);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.groupBoxT1);
+            this.Controls.Add(this.groupBoxT4);
             this.Controls.Add(this.btChuckAlignN);
             this.Controls.Add(this.btCapture);
             this.Controls.Add(this.btRollBack);
@@ -2192,15 +2209,15 @@ namespace NSAA_16Axis
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftRingLight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftCoaLight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBRightCoaLight)).EndInit();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
+            this.groupBoxT4.ResumeLayout(false);
+            this.groupBoxT4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckR)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckY1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckZ)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadChuckX)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.groupBoxT1.ResumeLayout(false);
+            this.groupBoxT1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadUpRightZ)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudReadUpRightY)).EndInit();
@@ -2288,7 +2305,7 @@ namespace NSAA_16Axis
         private MRLibrary.UCButton btRollBack;
         private MRLibrary.UCButton btCapture;
         private MRLibrary.UCButton btChuckAlignN;
-        public System.Windows.Forms.GroupBox groupBox4;
+        public System.Windows.Forms.GroupBox groupBoxT4;
         private MRLibrary.UCButton btChuckGo;
         private MRLibrary.UCButton btChuckUpdate;
         private System.Windows.Forms.NumericUpDown nudReadChuckY2;
@@ -2324,7 +2341,7 @@ namespace NSAA_16Axis
         private UCRoundedRectangleLabel nudWriteChuckY1;
         private UCRoundedRectangleLabel nudWriteChuckX;
         private UCRoundedRectangleLabel nudWriteChuckZ;
-        public System.Windows.Forms.GroupBox groupBox1;
+        public System.Windows.Forms.GroupBox groupBoxT1;
         private UCRoundedRectangleLabel nudWriteUpLeftZ;
         private MRLibrary.UCButton btUpCCDGo;
         private UCRoundedRectangleLabel nudWriteUpLeftY;
@@ -2351,5 +2368,6 @@ namespace NSAA_16Axis
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label14;
+        private MRLibrary.UCButton ucPosition;
     }
 }

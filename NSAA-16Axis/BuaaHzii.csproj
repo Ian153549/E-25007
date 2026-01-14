@@ -461,6 +461,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y /E /I /D "$(TargetDir)*.*" "\\192.168.2.54\Project\E-25007\NSAA-16Axis\bin\x64\DebugIV"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

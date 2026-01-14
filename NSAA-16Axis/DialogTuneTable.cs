@@ -141,24 +141,24 @@ namespace NSAA_16Axis
                 var nudTReadUpRightY = FindControlRecursive("nudTReadUpRightY") as NumericUpDown;
                 var nudTReadUpRightZ = FindControlRecursive("nudTReadUpRightZ") as NumericUpDown;
 
+                // ✅ 將 PLC 數值除以 10 後顯示
                 if (nudTReadUpBigY != null)
-                    nudTReadUpBigY.Value = GV.NowLocation[GV.Plc.iiDUpBigY];
+                    nudTReadUpBigY.Value = (decimal)(GV.NowLocation[GV.Plc.iiDUpBigY] / 10.0);
                 if (nudTReadUpLeftX != null)
-                    nudTReadUpLeftX.Value = GV.NowLocation[GV.Plc.iiDUpLeftX];
+                    nudTReadUpLeftX.Value = (decimal)(GV.NowLocation[GV.Plc.iiDUpLeftX] / 10.0);
                 if (nudTReadUpLeftY != null)
-                    nudTReadUpLeftY.Value = GV.NowLocation[GV.Plc.iiDUpLeftY];
+                    nudTReadUpLeftY.Value = (decimal)(GV.NowLocation[GV.Plc.iiDUpLeftY] / 10.0);
                 if (nudTReadUpLeftZ != null)
-                    nudTReadUpLeftZ.Value = GV.NowLocation[GV.Plc.iiDSUpLeftZ];
+                    nudTReadUpLeftZ.Value = (decimal)(GV.NowLocation[GV.Plc.iiDSUpLeftZ] / 10.0);
                 if (nudTReadUpRightX != null)
-                    nudTReadUpRightX.Value = GV.NowLocation[GV.Plc.iiDUpRightX];
+                    nudTReadUpRightX.Value = (decimal)(GV.NowLocation[GV.Plc.iiDUpRightX] / 10.0);
                 if (nudTReadUpRightY != null)
-                    nudTReadUpRightY.Value = GV.NowLocation[GV.Plc.iiDUpRightY];
+                    nudTReadUpRightY.Value = (decimal)(GV.NowLocation[GV.Plc.iiDUpRightY] / 10.0);
                 if (nudTReadUpRightZ != null)
-                    nudTReadUpRightZ.Value = GV.NowLocation[GV.Plc.iiDSUpRightZ];
+                    nudTReadUpRightZ.Value = (decimal)(GV.NowLocation[GV.Plc.iiDSUpRightZ] / 10.0);
             }
             else if (GV.UpBackAlign == 2) // Bottom CCD - groupBoxTT2
             {
-                // 注意：BigY 相關欄位被忽略
                 var nudTReadBackLeftX = FindControlRecursive("nudTReadBackLeftX") as NumericUpDown;
                 var nudTReadBackLeftY = FindControlRecursive("nudTReadBackLeftY") as NumericUpDown;
                 var nudTReadBackLeftZ = FindControlRecursive("nudTReadBackLeftZ") as NumericUpDown;
@@ -166,18 +166,19 @@ namespace NSAA_16Axis
                 var nudTReadBackRightY = FindControlRecursive("nudTReadBackRightY") as NumericUpDown;
                 var nudTReadBackRightZ = FindControlRecursive("nudTReadBackRightZ") as NumericUpDown;
 
+                // ✅ 將 PLC 數值除以 10 後顯示
                 if (nudTReadBackLeftX != null)
-                    nudTReadBackLeftX.Value = GV.NowLocation[GV.Plc.iiDDownLeftX];
+                    nudTReadBackLeftX.Value = (decimal)(GV.NowLocation[GV.Plc.iiDDownLeftX] / 10.0);
                 if (nudTReadBackLeftY != null)
-                    nudTReadBackLeftY.Value = GV.NowLocation[GV.Plc.iiDDownLeftY];
+                    nudTReadBackLeftY.Value = (decimal)(GV.NowLocation[GV.Plc.iiDDownLeftY] / 10.0);
                 if (nudTReadBackLeftZ != null)
-                    nudTReadBackLeftZ.Value = GV.NowLocation[GV.Plc.iiDDownLeftZ];
+                    nudTReadBackLeftZ.Value = (decimal)(GV.NowLocation[GV.Plc.iiDDownLeftZ] / 10.0);
                 if (nudTReadBackRightX != null)
-                    nudTReadBackRightX.Value = GV.NowLocation[GV.Plc.iiDDownRightX];
+                    nudTReadBackRightX.Value = (decimal)(GV.NowLocation[GV.Plc.iiDDownRightX] / 10.0);
                 if (nudTReadBackRightY != null)
-                    nudTReadBackRightY.Value = GV.NowLocation[GV.Plc.iiDDownRightY];
+                    nudTReadBackRightY.Value = (decimal)(GV.NowLocation[GV.Plc.iiDDownRightY] / 10.0);
                 if (nudTReadBackRightZ != null)
-                    nudTReadBackRightZ.Value = GV.NowLocation[GV.Plc.iiDDownRightZ];
+                    nudTReadBackRightZ.Value = (decimal)(GV.NowLocation[GV.Plc.iiDDownRightZ] / 10.0);
             }
         }
         private void UpdateCameraTargetPositionDisplay()
@@ -192,24 +193,24 @@ namespace NSAA_16Axis
                 var nudTWriteUpRightY = FindControlRecursive("nudTWriteUpRightY") as NumericUpDown;
                 var nudTWriteUpRightZ = FindControlRecursive("nudTWriteUpRightZ") as NumericUpDown;
 
+                // ✅ 將 RecipeData 數值除以 10 後顯示
                 if (nudTWriteUpBigY != null)
-                    nudTWriteUpBigY.Value = (decimal)GV.Plc.RecipeData[29];
+                    nudTWriteUpBigY.Value = (decimal)(GV.Plc.RecipeData[29] / 10.0);
                 if (nudTWriteUpLeftX != null)
-                    nudTWriteUpLeftX.Value = (decimal)GV.Plc.RecipeData[30];
+                    nudTWriteUpLeftX.Value = (decimal)(GV.Plc.RecipeData[30] / 10.0);
                 if (nudTWriteUpLeftY != null)
-                    nudTWriteUpLeftY.Value = (decimal)GV.Plc.RecipeData[32];
+                    nudTWriteUpLeftY.Value = (decimal)(GV.Plc.RecipeData[32] / 10.0);
                 if (nudTWriteUpLeftZ != null)
-                    nudTWriteUpLeftZ.Value = (decimal)GV.Plc.RecipeData[34];
+                    nudTWriteUpLeftZ.Value = (decimal)(GV.Plc.RecipeData[34] / 10.0);
                 if (nudTWriteUpRightX != null)
-                    nudTWriteUpRightX.Value = (decimal)GV.Plc.RecipeData[31];
+                    nudTWriteUpRightX.Value = (decimal)(GV.Plc.RecipeData[31] / 10.0);
                 if (nudTWriteUpRightY != null)
-                    nudTWriteUpRightY.Value = (decimal)GV.Plc.RecipeData[33];
+                    nudTWriteUpRightY.Value = (decimal)(GV.Plc.RecipeData[33] / 10.0);
                 if (nudTWriteUpRightZ != null)
-                    nudTWriteUpRightZ.Value = (decimal)GV.Plc.RecipeData[35];
+                    nudTWriteUpRightZ.Value = (decimal)(GV.Plc.RecipeData[35] / 10.0);
             }
             else if (GV.UpBackAlign == 2) // Bottom CCD - groupBoxTT2
             {
-                // 注意：BigY 相關欄位被忽略 (ucRoundedRectangleLabelT1 和 numericUpDownT3)
                 var nudTWriteBackLeftX = FindControlRecursive("nudTWriteBackLeftX") as NumericUpDown;
                 var nudTWriteBackLeftY = FindControlRecursive("nudTWriteBackLeftY") as NumericUpDown;
                 var nudTWriteBackLeftZ = FindControlRecursive("nudTWriteBackLeftZ") as NumericUpDown;
@@ -217,18 +218,19 @@ namespace NSAA_16Axis
                 var nudTWriteBackRightY = FindControlRecursive("nudTWriteBackRightY") as NumericUpDown;
                 var nudTWriteBackRightZ = FindControlRecursive("nudTWriteBackRightZ") as NumericUpDown;
 
+                // ✅ 將 RecipeData 數值除以 10 後顯示
                 if (nudTWriteBackLeftX != null)
-                    nudTWriteBackLeftX.Value = (decimal)GV.Plc.RecipeData[39];
+                    nudTWriteBackLeftX.Value = (decimal)(GV.Plc.RecipeData[39] / 10.0);
                 if (nudTWriteBackLeftY != null)
-                    nudTWriteBackLeftY.Value = (decimal)GV.Plc.RecipeData[41];
+                    nudTWriteBackLeftY.Value = (decimal)(GV.Plc.RecipeData[41] / 10.0);
                 if (nudTWriteBackLeftZ != null)
-                    nudTWriteBackLeftZ.Value = (decimal)GV.Plc.RecipeData[43];
+                    nudTWriteBackLeftZ.Value = (decimal)(GV.Plc.RecipeData[43] / 10.0);
                 if (nudTWriteBackRightX != null)
-                    nudTWriteBackRightX.Value = (decimal)GV.Plc.RecipeData[40];
+                    nudTWriteBackRightX.Value = (decimal)(GV.Plc.RecipeData[40] / 10.0);
                 if (nudTWriteBackRightY != null)
-                    nudTWriteBackRightY.Value = (decimal)GV.Plc.RecipeData[42];
+                    nudTWriteBackRightY.Value = (decimal)(GV.Plc.RecipeData[42] / 10.0);
                 if (nudTWriteBackRightZ != null)
-                    nudTWriteBackRightZ.Value = (decimal)GV.Plc.RecipeData[44];
+                    nudTWriteBackRightZ.Value = (decimal)(GV.Plc.RecipeData[44] / 10.0);
             }
         }
 
@@ -260,12 +262,13 @@ namespace NSAA_16Axis
             var nudTReadChuckY1 = FindControlRecursive("nudTReadChuckY1") as NumericUpDown;
             var nudTReadChuckY2 = FindControlRecursive("nudTReadChuckY2") as NumericUpDown;
 
+            // ✅ 將 PLC 數值除以 10 後顯示
             if (nudTReadChuckX != null)
-                nudTReadChuckX.Value = GV.NowLocation[GV.Plc.iiDChuckX];
+                nudTReadChuckX.Value = (decimal)(GV.NowLocation[GV.Plc.iiDChuckX] / 10.0);
             if (nudTReadChuckY1 != null)
-                nudTReadChuckY1.Value = GV.NowLocation[GV.Plc.iiDChuckY1];
+                nudTReadChuckY1.Value = (decimal)(GV.NowLocation[GV.Plc.iiDChuckY1] / 10.0);
             if (nudTReadChuckY2 != null)
-                nudTReadChuckY2.Value = GV.NowLocation[GV.Plc.iiDChuckY2];
+                nudTReadChuckY2.Value = (decimal)(GV.NowLocation[GV.Plc.iiDChuckY2] / 10.0);
         }
         private void UpdateTableTargetPositionDisplay()
         {
@@ -273,12 +276,13 @@ namespace NSAA_16Axis
             var nudTWriteChuckY1 = FindControlRecursive("nudTWriteChuckY1") as NumericUpDown;
             var nudTWriteChuckY2 = FindControlRecursive("nudTWriteChuckY2") as NumericUpDown;
 
+            // ✅ 將 RecipeData 數值除以 10 後顯示
             if (nudTWriteChuckX != null)
-                nudTWriteChuckX.Value = (decimal)GV.Plc.RecipeData[36];
+                nudTWriteChuckX.Value = (decimal)(GV.Plc.RecipeData[36] / 10.0);
             if (nudTWriteChuckY1 != null)
-                nudTWriteChuckY1.Value = (decimal)GV.Plc.RecipeData[37];
+                nudTWriteChuckY1.Value = (decimal)(GV.Plc.RecipeData[37] / 10.0);
             if (nudTWriteChuckY2 != null)
-                nudTWriteChuckY2.Value = (decimal)GV.Plc.RecipeData[38];
+                nudTWriteChuckY2.Value = (decimal)(GV.Plc.RecipeData[38] / 10.0);
         }
 
         private void DialogTuneTable_Load(object sender, EventArgs e)

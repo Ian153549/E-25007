@@ -26,6 +26,9 @@ namespace MRLibrary
 
         public string dMsg = null;
 
+        private bool isInitialized = false;
+       
+
         public EVisionMatch(string debugmsg)
         {
             try
@@ -43,7 +46,7 @@ namespace MRLibrary
                 Locker = new object();
             }
             catch (Exception exception1)
-            {
+            {                
                 Exception exception = exception1;
                 MessageBoxM.Show(exception.Message, "Open eVision", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 Application.Exit();

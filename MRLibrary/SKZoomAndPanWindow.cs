@@ -66,6 +66,107 @@ namespace MRLibrary
         public bool CanShowOcrInfo;
         public bool CanCenterLine;
 
+        //selected ROI
+        public List<OpenCvSharp.Rect> selectedSearchROIs { get; private set; } = new List<OpenCvSharp.Rect>();
+        private bool _isROISelectionMode = false;
+        private System.Drawing.Point roiStartPoint;
+        private System.Drawing.Point roiCurrentPoint;
+        private bool _isDrawingROI = false;
+        private OpenCvSharp.Rect tempROI;
+
+        public void EnableROISelectionMode(bool enable)
+        {
+            _isROISelectionMode = true;
+            if (enable)
+            {
+                this.Cursor = Cursors.Cross;
+            }
+            else
+            {
+                this.Cursor = Cursors.Default;
+                _isDrawingROI = false;
+            }
+            this.Invalidate();
+        }
+
+        public List<OpenCvSharp.Rect> GetSelectedROIs()
+        {
+            return new List<OpenCvSharp.Rect>(selectedSearchROIs);
+        }
+        public void ClearAllROIs()
+        {
+            selectedSearchROIs.Clear();
+            tempROI = new OpenCvSharp.Rect();
+            _isDrawingROI = false;
+            this.Invalidate();
+        }
+        public void RemoveLastROI()
+        {
+            if (selectedSearchROIs.Count > 0)
+            {
+                selectedSearchROIs.RemoveAt(selectedSearchROIs.Count - 1);
+                this.Invalidate();
+            }
+        }
+        //protected override void OnMouseDown(MouseEventArgs e)
+        //{
+        //    if (_isROISelectionMode)
+        //    {
+        //        if (e.Button == MouseButtons.Left)
+        //        {
+        //            roiStartPoint = e.Location;
+        //            _isDrawingROI = true;
+        //        }
+        //        else if (e.Button == MouseButtons.Right)
+        //        {
+        //            RemoveLastROI();
+        //        }
+        //        return;
+        //    }
+        //    base.OnMouseDown(e);
+        //}
+        //protected override void OnMouseMove(MouseEventArgs e)
+        //{
+        //    if (_isROISelectionMode && _isDrawingROI)
+        //    {
+        //        roiCurrentPoint = e.Location;
+        //        this.Invalidate();
+        //        return;
+        //    }
+        //    base.OnMouseMove(e);
+        //}
+        //protected override void OnMouseUp(MouseEventArgs e)
+        //{
+        ////    if (_isROISelectionMode && _isDrawingROI && e.Button == MouseButtons.Left)
+        ////    {
+        ////        _isDrawingROI = false;
+        ////        System.Drawing.Point imgStart = ScreenToImage(roiStartPoint);
+        ////        System.Drawing.Point imgEnd = ScreenToImage(roiCurrentPoint);
+        ////        int x= Math.Min(imgStart.X, imgEnd.X);
+        ////        int y = Math.Min(imgStart.Y, imgEnd.Y);
+        ////        int width= Math.Abs(imgEnd.X - imgStart.X);
+        ////        int height= Math.Abs(imgEnd.Y - imgStart.Y);
+        ////        if(width>0 && height > 0)                
+        ////        {
+        ////            OpenCvSharp.Rect roi = new OpenCvSharp.Rect(x, y, width, height);
+        ////            selectedSearchROIs.Add(roi);
+        ////            this.Invalidate();
+        ////        }
+        ////        return;
+        ////    }
+        ////    base.OnMouseUp(e);
+        //}
+        //protected override void OnPaint(PaintEventArgs e)
+        //{
+        //    base.OnPaint(e);
+        //    if (!_isROISelectionMode) return;
+        //}
+
+        //private System.Drawing.Point ScreenToImage(System.Drawing.Point roiStartPoint)
+        //{
+            
+        //}
+
         public SKZoomAndPanWindow()
         {
             InitializeComponent();
@@ -251,7 +352,7 @@ namespace MRLibrary
                 UMat localFitWindowImage = null;
                 lock (ImageLock)
                 {
-                    if(_fitWindowImage==null|| _fitWindowImage.Empty())
+                    if (_fitWindowImage == null || _fitWindowImage.Empty())
                     {
                         return;
                     }
@@ -259,12 +360,12 @@ namespace MRLibrary
                 }
                 //if (!_fitWindowImage.Empty())
                 //{
-                using(localFitWindowImage)
+                using (localFitWindowImage)
                 using (Mat roi = new Mat())
                 {
                     try
                     {
-                        if(localFitWindowImage==null || localFitWindowImage.Empty())
+                        if (localFitWindowImage == null || localFitWindowImage.Empty())
                         {
                             return;
                         }
@@ -411,7 +512,7 @@ namespace MRLibrary
             {
                 if (!_fitWindowImage.Empty())
                 {
-                    lock (ImageLock) 
+                    lock (ImageLock)
                     {
                         if (_dstImage == null || _dstImage.IsDisposed)
                         {
@@ -508,7 +609,7 @@ namespace MRLibrary
                 }));
                 return;
             }
-            
+
             if (image != null)
             {
                 lock (ImageLock)
@@ -538,7 +639,7 @@ namespace MRLibrary
 
                 if (bwithMaskImage)
                 {
-                    if(_MaskImage.Size()== image.Size() && _MaskImage.Type() == image.Type())
+                    if (_MaskImage.Size() == image.Size() && _MaskImage.Type() == image.Type())
                     {
                         double beta = 1.0 - alpha;
                         Cv2.AddWeighted(image, alpha, _MaskImage, beta, 0.0, Dimage);
@@ -546,7 +647,7 @@ namespace MRLibrary
                     else
                     {
                         image.CopyTo(Dimage);
-                    }                    
+                    }
                 }
                 else
                 {
@@ -558,7 +659,7 @@ namespace MRLibrary
                 GC.KeepAlive(Dimage);
             }
         }
-        
+
 
         public void SetShowMask(bool bShow, double dalpha, Mat MaskImage)
         {
@@ -604,7 +705,7 @@ namespace MRLibrary
         //public Rectangle GetMaskRectangle()
         //{
         //    RectangleF correctRectF= new RectangleF(0,0,2584,1944);
-         
+
         //    try
         //    {
         //        if (_mask != null)
@@ -636,7 +737,7 @@ namespace MRLibrary
             catch (Exception)
             {
 
-            }            
+            }
             return correctRect;
         }
         public Rect GetWaferRect()
@@ -658,7 +759,7 @@ namespace MRLibrary
         }
         public OpenCvSharp.Rect GetCommonRectangle()
         {
-            
+
             float defaultWidth = 2584f;
             float defaultHeight = 1944f;
             RectangleF correctRectF = new RectangleF(0, 0, defaultWidth, defaultHeight);
@@ -677,17 +778,17 @@ namespace MRLibrary
             if (_common != null && _imgMagnificationX > 0 && _imgMagnificationY > 0)
             {
                 correctRectF = new RectangleF(
-                    _common.PatternRoi.X/_imgMagnificationX,
-                    _common.PatternRoi.Y/_imgMagnificationY,
-                    _common.PatternRoi.Width/_imgMagnificationX,
-                    _common.PatternRoi.Height/ _imgMagnificationY
+                    _common.PatternRoi.X / _imgMagnificationX,
+                    _common.PatternRoi.Y / _imgMagnificationY,
+                    _common.PatternRoi.Width / _imgMagnificationX,
+                    _common.PatternRoi.Height / _imgMagnificationY
                     );
             }
-            int x= (int)Math.Round(correctRectF.X);
-            int y= (int)Math.Round(correctRectF.Y);
-            int width= (int)Math.Round(correctRectF.Width);
-            int height= (int)Math.Round(correctRectF.Height);
-            return new OpenCvSharp.Rect(x,y,width,height);
+            int x = (int)Math.Round(correctRectF.X);
+            int y = (int)Math.Round(correctRectF.Y);
+            int width = (int)Math.Round(correctRectF.Width);
+            int height = (int)Math.Round(correctRectF.Height);
+            return new OpenCvSharp.Rect(x, y, width, height);
         }
         public OpenCvSharp.Rect GetCommonRectangleO()
         {
@@ -708,9 +809,9 @@ namespace MRLibrary
                 }
 
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
-                
+
             }
             int x = (int)Math.Round(roiRectF.X);
             int y = (int)Math.Round(roiRectF.Y);
