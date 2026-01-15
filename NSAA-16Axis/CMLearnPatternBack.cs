@@ -103,7 +103,7 @@ namespace NSAA_16Axis
 
         private async void CMLearnPattern_Load(object sender, EventArgs e)
         {
-            
+
             if (GV.AppSettingParm.DebugMode)
             {
                 lbDebugMsg.Visible = true;
@@ -1294,7 +1294,7 @@ namespace NSAA_16Axis
             {
                 cbRBackWaferClassList.SelectedIndex = -1;
             }
-                int iL = (int)(_AlignC.dLalpha * 100);
+            int iL = (int)(_AlignC.dLalpha * 100);
             if (iL > 100) iL = 100;
             if (iL < 0) iL = 0;
             int iR = (int)(_AlignC.dRalpha * 100);
@@ -1523,7 +1523,7 @@ namespace NSAA_16Axis
             groupBoxB1.Text = GV.Dlang.gbCCDLocation;
             label10.Text = GV.Dlang.lbTargetPosition;   // "Setting" -> 目標位置
             label11.Text = GV.Dlang.lbCurrentPosition;    // "Now Located" -> 現在位置
-                                                         // label12.Text = GV.Dlang.lbBigY;           // "Big Y" (目前隱藏)
+                                                          // label12.Text = GV.Dlang.lbBigY;           // "Big Y" (目前隱藏)
             label13.Text = GV.Dlang.lbLeftX;             // "Left X"
             label8.Text = GV.Dlang.lbLeftY;              // "Left Y"
             label9.Text = GV.Dlang.lbLeftZ;              // "Left Z"
@@ -1887,7 +1887,7 @@ namespace NSAA_16Axis
             _AlignC.RHWaferAlgorithm = Algorithm(cbRWaferAlgo.SelectedIndex);
             if (cbRBackMaskAlgo.SelectedIndex == 2)
             {
-                if(cbRBackWaferClassList.SelectedIndex>=0 && cbRBackWaferClassList.SelectedItem != null)
+                if (cbRBackWaferClassList.SelectedIndex >= 0 && cbRBackWaferClassList.SelectedItem != null)
                 {
                     string selectedClassName = cbRBackWaferClassList.SelectedItem.ToString();
                     Dictionary<string, Int16> ClassList = GV.AIClassList.GetClassList();
@@ -1913,10 +1913,10 @@ namespace NSAA_16Axis
                 _AlignC.RHWaferAIClassId = -1;
                 _AlignC.RHBitwiseNot = -1;
             }
-            if(GV.AppSettingParm.Emulation != true && GV.matcherRHW != null)
+            if (GV.AppSettingParm.Emulation != true && GV.matcherRHW != null)
             {
                 GV.matcherRHW.LearnWithAlgo(m, d, _AlignC.RHWaferAlgorithm);
-            }                
+            }
             _AlignC.LastModifyTime = DateTime.Now;
             GM.WriteRecipeXml(EditRecipe);
             //if (cbRWaferAlgo.SelectedIndex == 2)
@@ -1941,7 +1941,7 @@ namespace NSAA_16Axis
             //    catch
             //    {
             //    }
-                
+
             //}
         }
 
@@ -2006,7 +2006,7 @@ namespace NSAA_16Axis
             _AlignC.RLMaskAlgorithm = Algorithm(cbRBackMaskAlgo.SelectedIndex);
             if (cbRBackMaskAlgo.SelectedIndex == 2)
             {
-                if(cbRBackMaskClassList.SelectedIndex >=0 && cbRBackMaskClassList.SelectedItem != null)
+                if (cbRBackMaskClassList.SelectedIndex >= 0 && cbRBackMaskClassList.SelectedItem != null)
                 {
                     string selectedClassName = cbRBackMaskClassList.SelectedItem.ToString();
                     Dictionary<string, Int16> ClassList = GV.AIClassList.GetClassList();
@@ -2029,11 +2029,11 @@ namespace NSAA_16Axis
             {
                 _AlignC.RLMaskAIClassId = -1;
             }
-            if(GV.AppSettingParm.Emulation != true && GV.matcherRLM != null)
+            if (GV.AppSettingParm.Emulation != true && GV.matcherRLM != null)
             {
                 GV.matcherRLM.LearnWithAlgo(m, d, _AlignC.RLMaskAlgorithm);
             }
-                
+
             if (!BtRMaskAdjSave.Visible)
             {
                 if (GV.Plc.ReadData16(13028) == 0)
@@ -3351,7 +3351,7 @@ namespace NSAA_16Axis
         {
             try
             {
-                
+
                 // ✅ 初始化基本可見性設定
                 if (GV.AppSettingParm.Author == 0)
                 {
@@ -3364,7 +3364,7 @@ namespace NSAA_16Axis
                     buttonF.Visible = true;
                     buttonL.Visible = true;
                     buttonR.Visible = true;
-                    
+
                 }
 
                 // ✅ 初始化 Mat 物件
@@ -3461,6 +3461,7 @@ namespace NSAA_16Axis
                 skRight.CanRectMaskAndWafer = true;
                 skRight.CanTrackPattern = true;
                 skRight.CanZoom = true;
+                btBackLabelPatternL.Visible = true;
 
                 // ✅ 設定 Mask Mat
                 if (GV.LeftMaskMat != null && !GV.LeftMaskMat.Empty())
@@ -4197,12 +4198,16 @@ namespace NSAA_16Axis
                 cbLBackMaskClassList.Visible = true;
                 btBackLabelPatternLM.Visible = false;
                 pbLBackMask.Visible = false;
+                btFindLBMaskCenter.Visible = false;
+                btLBackMask.Visible = false;
             }
             else
             {
                 cbLBackMaskClassList.Visible = false;
                 btBackLabelPatternLM.Visible = false;
                 pbLBackMask.Visible = true;
+                btFindLBMaskCenter.Visible = true;
+                btLBackMask.Visible = true;
             }
 
             if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty())
@@ -4221,15 +4226,19 @@ namespace NSAA_16Axis
             if (cbLWaferAlgo.SelectedIndex == 2)
             {
                 cbLBackWaferClassList.Visible = true;
-                btBackLabelPatternL.Visible = true;
+                //btBackLabelPatternL.Visible = true;
                 pbLWafer.Visible = false;
+                btFindLWaferCenter.Visible = false;
+                btLWaferMask.Visible = false;
 
             }
             else
             {
                 cbLBackWaferClassList.Visible = false;
-                btBackLabelPatternL.Visible = false;
+                //btBackLabelPatternL.Visible = false;
                 pbLWafer.Visible = true;
+                btFindLWaferCenter.Visible = true;
+                btLWaferMask.Visible = true;
 
             }
             if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty())
@@ -4248,14 +4257,18 @@ namespace NSAA_16Axis
             if (cbRWaferAlgo.SelectedIndex == 2)
             {
                 cbRBackWaferClassList.Visible = true;
-                btBackLabelPatternR.Visible = true;
+                btBackLabelPatternR.Visible = false;
                 pbRWafer.Visible = false;
+                btFindRWaferCenter.Visible = false;
+                btRWaferMask.Visible = false;
             }
             else
             {
                 cbRBackWaferClassList.Visible = false;
                 btBackLabelPatternR.Visible = false;
                 pbRWafer.Visible = true;
+                btFindRWaferCenter.Visible = true;
+                btRWaferMask.Visible = true;
             }
             if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty())
             {
@@ -4275,12 +4288,16 @@ namespace NSAA_16Axis
                 cbRBackMaskClassList.Visible = true;
                 btBackLabelPatternRM.Visible = false;
                 pbRBackMask.Visible = false;
+                btFindRBMaskCenter.Visible = false;
+                btRBackMask.Visible = false;
             }
             else
             {
                 cbRBackMaskClassList.Visible = false;
                 btBackLabelPatternRM.Visible = false;
                 pbRBackMask.Visible = true;
+                btFindRBMaskCenter.Visible = true;
+                btRBackMask.Visible = true;
             }
             if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty())
             {

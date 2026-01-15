@@ -507,7 +507,6 @@
             // gbLWafer
             // 
             this.gbLWafer.BackColor = System.Drawing.Color.LightYellow;
-            this.gbLWafer.Controls.Add(this.btBackLabelPatternL);
             this.gbLWafer.Controls.Add(this.cbLBackWaferClassList);
             this.gbLWafer.Controls.Add(this.btLWaferLightMinus);
             this.gbLWafer.Controls.Add(this.rbLWafer);
@@ -536,9 +535,9 @@
             this.btBackLabelPatternL.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.btBackLabelPatternL.Font = new System.Drawing.Font("Arial", 12F);
             this.btBackLabelPatternL.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btBackLabelPatternL.Location = new System.Drawing.Point(34, 254);
+            this.btBackLabelPatternL.Location = new System.Drawing.Point(771, 259);
             this.btBackLabelPatternL.Name = "btBackLabelPatternL";
-            this.btBackLabelPatternL.Size = new System.Drawing.Size(129, 33);
+            this.btBackLabelPatternL.Size = new System.Drawing.Size(131, 33);
             this.btBackLabelPatternL.TabIndex = 76;
             this.btBackLabelPatternL.Text = "Label Image";
             this.btBackLabelPatternL.UseVisualStyleBackColor = false;
@@ -1686,7 +1685,7 @@
             this.btDelete.Enabled = false;
             this.btDelete.Font = new System.Drawing.Font("Arial", 12F);
             this.btDelete.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btDelete.Location = new System.Drawing.Point(857, 291);
+            this.btDelete.Location = new System.Drawing.Point(857, 295);
             this.btDelete.Name = "btDelete";
             this.btDelete.Size = new System.Drawing.Size(85, 30);
             this.btDelete.TabIndex = 80;
@@ -1828,7 +1827,7 @@
             this.btDefault.Enabled = false;
             this.btDefault.Font = new System.Drawing.Font("Arial", 12F);
             this.btDefault.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btDefault.Location = new System.Drawing.Point(771, 291);
+            this.btDefault.Location = new System.Drawing.Point(771, 295);
             this.btDefault.Name = "btDefault";
             this.btDefault.Size = new System.Drawing.Size(80, 30);
             this.btDefault.TabIndex = 81;
@@ -3303,6 +3302,7 @@
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.Controls.Add(this.btBackLabelPatternL);
             this.Controls.Add(this.ucRightROI);
             this.Controls.Add(this.ucLeftROI);
             this.Controls.Add(this.ucBackPosition);

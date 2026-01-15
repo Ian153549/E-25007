@@ -344,7 +344,6 @@ namespace NSAA_16Axis
             // gbLWafer
             // 
             this.gbLWafer.BackColor = System.Drawing.Color.LightYellow;
-            this.gbLWafer.Controls.Add(this.btLabelPatternL);
             this.gbLWafer.Controls.Add(this.cbLWaferClassList);
             this.gbLWafer.Controls.Add(this.btFindLWaferCenter);
             this.gbLWafer.Controls.Add(this.ucLeftWaferNavigator);
@@ -368,7 +367,7 @@ namespace NSAA_16Axis
             this.btLabelPatternL.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.btLabelPatternL.Font = new System.Drawing.Font("Arial", 12F);
             this.btLabelPatternL.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btLabelPatternL.Location = new System.Drawing.Point(30, 248);
+            this.btLabelPatternL.Location = new System.Drawing.Point(808, 283);
             this.btLabelPatternL.Name = "btLabelPatternL";
             this.btLabelPatternL.Size = new System.Drawing.Size(129, 33);
             this.btLabelPatternL.TabIndex = 76;
@@ -1250,7 +1249,7 @@ namespace NSAA_16Axis
             this.btDelete.BackColor = System.Drawing.Color.LightCoral;
             this.btDelete.Font = new System.Drawing.Font("Arial", 12F);
             this.btDelete.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btDelete.Location = new System.Drawing.Point(990, 283);
+            this.btDelete.Location = new System.Drawing.Point(1029, 283);
             this.btDelete.Name = "btDelete";
             this.btDelete.Size = new System.Drawing.Size(80, 30);
             this.btDelete.TabIndex = 79;
@@ -1263,7 +1262,7 @@ namespace NSAA_16Axis
             this.btDefault.BackColor = System.Drawing.Color.LightCoral;
             this.btDefault.Font = new System.Drawing.Font("Arial", 12F);
             this.btDefault.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btDefault.Location = new System.Drawing.Point(894, 283);
+            this.btDefault.Location = new System.Drawing.Point(943, 283);
             this.btDefault.Name = "btDefault";
             this.btDefault.Size = new System.Drawing.Size(80, 30);
             this.btDefault.TabIndex = 80;
@@ -1611,7 +1610,7 @@ namespace NSAA_16Axis
             this.btCapture.FaceColor = System.Drawing.Color.Khaki;
             this.btCapture.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btCapture.Image = null;
-            this.btCapture.Location = new System.Drawing.Point(607, 287);
+            this.btCapture.Location = new System.Drawing.Point(581, 287);
             this.btCapture.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btCapture.Name = "btCapture";
             this.btCapture.Radius = 5;
@@ -1642,7 +1641,7 @@ namespace NSAA_16Axis
             this.btAlignTest.FaceColor = System.Drawing.Color.Khaki;
             this.btAlignTest.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btAlignTest.Image = null;
-            this.btAlignTest.Location = new System.Drawing.Point(511, 287);
+            this.btAlignTest.Location = new System.Drawing.Point(485, 288);
             this.btAlignTest.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btAlignTest.Name = "btAlignTest";
             this.btAlignTest.Radius = 5;
@@ -2126,7 +2125,7 @@ namespace NSAA_16Axis
             this.ucPosition.FaceColor = System.Drawing.Color.Khaki;
             this.ucPosition.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.ucPosition.Image = null;
-            this.ucPosition.Location = new System.Drawing.Point(703, 287);
+            this.ucPosition.Location = new System.Drawing.Point(677, 287);
             this.ucPosition.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ucPosition.Name = "ucPosition";
             this.ucPosition.Radius = 5;
@@ -2138,6 +2137,7 @@ namespace NSAA_16Axis
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.Controls.Add(this.btLabelPatternL);
             this.Controls.Add(this.ucPosition);
             this.Controls.Add(this.btTRRead);
             this.Controls.Add(this.btTLRead);

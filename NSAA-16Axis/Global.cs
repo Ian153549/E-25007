@@ -1682,38 +1682,94 @@ namespace NSAA_16Axis
 
             string time1 = now.ToString("HHmmss");
 
-            if (iHighLow == 1)
+            if (iHighLow == 1) // Low Magnification
             {
-                Cv2.ImWrite(folderName + "//LM-" + time1 + ".bmp", recipe.LeftLowMaskMat);
-                Cv2.ImWrite(folderName + "//RM-" + time1 + ".bmp", recipe.RightLowMaskMat);
-                Cv2.ImWrite(folderName + "//LW-" + time1 + ".bmp", recipe.LeftLowWaferMat);
-                Cv2.ImWrite(folderName + "//RW-" + time1 + ".bmp", recipe.RightLowWaferMat);
-                recipe.LeftLowMaskMask.Save(folderName + "//MLM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                recipe.RightLowMaskMask.Save(folderName + "//MRM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                recipe.LeftLowWaferMask.Save(folderName + "//MLW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                recipe.RightLowWaferMask.Save(folderName + "//MRW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+                // ✅ 檢查 Mat 是否有效
+                if (recipe.LeftLowMaskMat != null && !recipe.LeftLowMaskMat.Empty())
+                    Cv2.ImWrite(folderName + "//LM-" + time1 + ".bmp", recipe.LeftLowMaskMat);
+                else
+                    WriteToStatusTextBox("⚠️ LeftLowMaskMat 是空的，無法儲存");
+
+                if (recipe.RightLowMaskMat != null && !recipe.RightLowMaskMat.Empty())
+                    Cv2.ImWrite(folderName + "//RM-" + time1 + ".bmp", recipe.RightLowMaskMat);
+                else
+                    WriteToStatusTextBox("⚠️ RightLowMaskMat 是空的，無法儲存");
+
+                if (recipe.LeftLowWaferMat != null && !recipe.LeftLowWaferMat.Empty())
+                    Cv2.ImWrite(folderName + "//LW-" + time1 + ".bmp", recipe.LeftLowWaferMat);
+                else
+                    WriteToStatusTextBox("⚠️ LeftLowWaferMat 是空的，無法儲存");
+
+                if (recipe.RightLowWaferMat != null && !recipe.RightLowWaferMat.Empty())
+                    Cv2.ImWrite(folderName + "//RW-" + time1 + ".bmp", recipe.RightLowWaferMat);
+                else
+                    WriteToStatusTextBox("⚠️ RightLowWaferMat 是空的，無法儲存");
+
+                // ✅ 檢查 GrayImage Mask 是否有效
+                if (recipe.LeftLowMaskMask != null)
+                    recipe.LeftLowMaskMask.Save(folderName + "//MLM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
+                if (recipe.RightLowMaskMask != null)
+                    recipe.RightLowMaskMask.Save(folderName + "//MRM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
+                if (recipe.LeftLowWaferMask != null)
+                    recipe.LeftLowWaferMask.Save(folderName + "//MLW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
+                if (recipe.RightLowWaferMask != null)
+                    recipe.RightLowWaferMask.Save(folderName + "//MRW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
             }
-            else if (iHighLow == 0)
+            else if (iHighLow == 0) // High Magnification
             {
-                Cv2.ImWrite(folderName + "//LM-" + time1 + ".bmp", recipe.LeftHighMaskMat);
-                Cv2.ImWrite(folderName + "//RM-" + time1 + ".bmp", recipe.RightHighMaskMat);
-                Cv2.ImWrite(folderName + "//LW-" + time1 + ".bmp", recipe.LeftHighWaferMat);
-                Cv2.ImWrite(folderName + "//RW-" + time1 + ".bmp", recipe.RightHighWaferMat);
-                recipe.LeftHighMaskMask.Save(folderName + "//MLM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                recipe.RightHighMaskMask.Save(folderName + "//MRM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                recipe.LeftHighWaferMask.Save(folderName + "//MLW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                recipe.RightHighWaferMask.Save(folderName + "//MRW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+                if (recipe.LeftHighMaskMat != null && !recipe.LeftHighMaskMat.Empty())
+                    Cv2.ImWrite(folderName + "//LM-" + time1 + ".bmp", recipe.LeftHighMaskMat);
+                else
+                    WriteToStatusTextBox("⚠️ LeftHighMaskMat 是空的，無法儲存");
+
+                if (recipe.RightHighMaskMat != null && !recipe.RightHighMaskMat.Empty())
+                    Cv2.ImWrite(folderName + "//RM-" + time1 + ".bmp", recipe.RightHighMaskMat);
+                else
+                    WriteToStatusTextBox("⚠️ RightHighMaskMat 是空的，無法儲存");
+
+                if (recipe.LeftHighWaferMat != null && !recipe.LeftHighWaferMat.Empty())
+                    Cv2.ImWrite(folderName + "//LW-" + time1 + ".bmp", recipe.LeftHighWaferMat);
+                else
+                    WriteToStatusTextBox("⚠️ LeftHighWaferMat 是空的，無法儲存");
+
+                if (recipe.RightHighWaferMat != null && !recipe.RightHighWaferMat.Empty())
+                    Cv2.ImWrite(folderName + "//RW-" + time1 + ".bmp", recipe.RightHighWaferMat);
+                else
+                    WriteToStatusTextBox("⚠️ RightHighWaferMat 是空的，無法儲存");
+
+                if (recipe.LeftHighMaskMask != null)
+                    recipe.LeftHighMaskMask.Save(folderName + "//MLM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
+                if (recipe.RightHighMaskMask != null)
+                    recipe.RightHighMaskMask.Save(folderName + "//MRM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
+                if (recipe.LeftHighWaferMask != null)
+                    recipe.LeftHighWaferMask.Save(folderName + "//MLW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
+                if (recipe.RightHighWaferMask != null)
+                    recipe.RightHighWaferMask.Save(folderName + "//MRW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
             }
-            else if (iHighLow == 2)
+            else if (iHighLow == 2) // High Wafer Only (Bottom)
             {
-                //Cv2.ImWrite(folderName + "//LM-" + time1 + ".bmp", recipe.LeftLowWaferMat);
-                //Cv2.ImWrite(folderName + "//RM-" + time1 + ".bmp", recipe.RightLowWaferMat);
-                Cv2.ImWrite(folderName + "//LW-" + time1 + ".bmp", recipe.LeftHighWaferMat);
-                Cv2.ImWrite(folderName + "//RW-" + time1 + ".bmp", recipe.RightHighWaferMat);
-                //recipe.LeftLowWaferMask.Save(folderName + "//MLM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                //recipe.RightLowWaferMask.Save(folderName + "//MRM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                recipe.LeftHighWaferMask.Save(folderName + "//MLW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                recipe.RightHighWaferMask.Save(folderName + "//MRW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+                // ✅ 只儲存 Wafer，不儲存 Mask
+                if (recipe.LeftHighWaferMat != null && !recipe.LeftHighWaferMat.Empty())
+                    Cv2.ImWrite(folderName + "//LW-" + time1 + ".bmp", recipe.LeftHighWaferMat);
+                else
+                    WriteToStatusTextBox("⚠️ LeftHighWaferMat 是空的，無法儲存");
+
+                if (recipe.RightHighWaferMat != null && !recipe.RightHighWaferMat.Empty())
+                    Cv2.ImWrite(folderName + "//RW-" + time1 + ".bmp", recipe.RightHighWaferMat);
+                else
+                    WriteToStatusTextBox("⚠️ RightHighWaferMat 是空的，無法儲存");
+
+                if (recipe.LeftHighWaferMask != null)
+                    recipe.LeftHighWaferMask.Save(folderName + "//MLW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
+                if (recipe.RightHighWaferMask != null)
+                    recipe.RightHighWaferMask.Save(folderName + "//MRW-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
             }
         }
 
@@ -2249,6 +2305,9 @@ namespace NSAA_16Axis
 
         public bool bLShowMask = false;
         public bool bRShowMask = false;
+
+        public double dLalphaAlign { get; set; } = 1.0;  // 預設 100% 實時影像
+        public double dRalphaAlign { get; set; } = 1.0;
 
         public double dLalpha = 1.0;
         public double dRalpha = 1.0;

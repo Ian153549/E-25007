@@ -35,6 +35,16 @@ namespace NSAA_16Axis
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tBLShowImage = new System.Windows.Forms.TrackBar();
+            this.tBRShowImage = new System.Windows.Forms.TrackBar();
+            this.btLShowImagePlus = new System.Windows.Forms.Button();
+            this.btLShowImageMinus = new System.Windows.Forms.Button();
+            this.btRShowImagePlus = new System.Windows.Forms.Button();
+            this.btRShowImageMinus = new System.Windows.Forms.Button();
+            this.btLShowImageSave = new System.Windows.Forms.Button();
+            this.btRShowImageSave = new System.Windows.Forms.Button();
+            this.lbLShowImage = new System.Windows.Forms.Label();
+            this.lbRShowImage = new System.Windows.Forms.Label();
             this.BtGetMask = new System.Windows.Forms.Button();
             this.btCapMask = new System.Windows.Forms.Button();
             this.lbMagnification = new System.Windows.Forms.Label();
@@ -188,6 +198,9 @@ namespace NSAA_16Axis
             this.timerNowTime = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tBLShowImage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tBRShowImage)).BeginInit();
+
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftCoaLight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBRightCoaLight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinAlignTimes)).BeginInit();
@@ -284,6 +297,18 @@ namespace NSAA_16Axis
             this.tabPage1.Controls.Add(this.btSystemSetting);
             this.tabPage1.Controls.Add(this.buttonTestMode);
             this.tabPage1.Controls.Add(this.buttonCapture);
+
+            this.tabPage1.Controls.Add(this.lbRShowImage);
+            this.tabPage1.Controls.Add(this.btRShowImageSave);
+            this.tabPage1.Controls.Add(this.btRShowImageMinus);
+            this.tabPage1.Controls.Add(this.btRShowImagePlus);
+            this.tabPage1.Controls.Add(this.tBRShowImage);
+            this.tabPage1.Controls.Add(this.lbLShowImage);
+            this.tabPage1.Controls.Add(this.btLShowImageSave);
+            this.tabPage1.Controls.Add(this.btLShowImageMinus);
+            this.tabPage1.Controls.Add(this.btLShowImagePlus);
+            this.tabPage1.Controls.Add(this.tBLShowImage);
+
             this.tabPage1.Location = new System.Drawing.Point(4, 38);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -292,6 +317,143 @@ namespace NSAA_16Axis
             this.tabPage1.Tag = "1";
             this.tabPage1.Text = "|  Align  |";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // lbLShowImage
+            // 
+            this.lbLShowImage.AutoSize = true;
+            this.lbLShowImage.Location = new System.Drawing.Point(10, 875);
+            this.lbLShowImage.Name = "lbLShowImage";
+            this.lbLShowImage.Size = new System.Drawing.Size(120, 29);
+            this.lbLShowImage.TabIndex = 95;
+            this.lbLShowImage.Text = "左側透明度:";
+            this.lbLShowImage.Visible = false;
+
+            // 
+            // tBLShowImage
+            // 
+            this.tBLShowImage.LargeChange = 10;
+            this.tBLShowImage.Location = new System.Drawing.Point(135, 870);
+            this.tBLShowImage.Maximum = 100;
+            this.tBLShowImage.Name = "tBLShowImage";
+            this.tBLShowImage.Size = new System.Drawing.Size(450, 56);
+            this.tBLShowImage.TabIndex = 87;
+            this.tBLShowImage.TickFrequency = 10;
+            this.tBLShowImage.Value = 100;
+            this.tBLShowImage.Enabled = false;
+            this.tBLShowImage.Visible = false;
+            this.tBLShowImage.ValueChanged += new System.EventHandler(this.TBLShowImage_ValueChanged);
+            this.tBLShowImage.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TBLShowImage_MouseUp);
+            this.tBLShowImage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TBLShowImage_KeyUp);
+
+            // 
+            // btLShowImagePlus
+            // 
+            this.btLShowImagePlus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.btLShowImagePlus.Location = new System.Drawing.Point(590, 870);
+            this.btLShowImagePlus.Name = "btLShowImagePlus";
+            this.btLShowImagePlus.Size = new System.Drawing.Size(38, 30);
+            this.btLShowImagePlus.TabIndex = 89;
+            this.btLShowImagePlus.Text = "+";
+            this.btLShowImagePlus.Visible = false;
+            this.btLShowImagePlus.UseVisualStyleBackColor = true;
+            this.btLShowImagePlus.Click += new System.EventHandler(this.BtLShowImagePlus_Click);
+
+            // 
+            // btLShowImageMinus
+            // 
+            this.btLShowImageMinus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.btLShowImageMinus.Location = new System.Drawing.Point(590, 905);
+            this.btLShowImageMinus.Name = "btLShowImageMinus";
+            this.btLShowImageMinus.Size = new System.Drawing.Size(38, 30);
+            this.btLShowImageMinus.TabIndex = 90;
+            this.btLShowImageMinus.Text = "-";
+            this.btLShowImageMinus.Visible = false;
+            this.btLShowImageMinus.UseVisualStyleBackColor = true;
+            this.btLShowImageMinus.Click += new System.EventHandler(this.BtLShowImageMinus_Click);
+
+            // 
+            // btLShowImageSave
+            // 
+            this.btLShowImageSave.BackColor = System.Drawing.Color.LightCoral;
+            this.btLShowImageSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btLShowImageSave.Font = new System.Drawing.Font("Arial", 10F);
+            this.btLShowImageSave.Location = new System.Drawing.Point(635, 870);
+            this.btLShowImageSave.Name = "btLShowImageSave";
+            this.btLShowImageSave.Size = new System.Drawing.Size(60, 65);
+            this.btLShowImageSave.TabIndex = 93;
+            this.btLShowImageSave.Text = "Save";
+            this.btLShowImageSave.Visible = false;
+            this.btLShowImageSave.UseVisualStyleBackColor = false;
+            this.btLShowImageSave.Click += new System.EventHandler(this.BtLShowImageSave_Click);
+
+            // 
+            // lbRShowImage
+            // 
+            this.lbRShowImage.AutoSize = true;
+            this.lbRShowImage.Location = new System.Drawing.Point(955, 875);
+            this.lbRShowImage.Name = "lbRShowImage";
+            this.lbRShowImage.Size = new System.Drawing.Size(120, 29);
+            this.lbRShowImage.TabIndex = 96;
+            this.lbRShowImage.Text = "右側透明度:";
+            this.lbRShowImage.Visible = false;
+
+            // 
+            // tBRShowImage
+            // 
+            this.tBRShowImage.LargeChange = 10;
+            this.tBRShowImage.Location = new System.Drawing.Point(1080, 870);
+            this.tBRShowImage.Maximum = 100;
+            this.tBRShowImage.Name = "tBRShowImage";
+            this.tBRShowImage.Size = new System.Drawing.Size(450, 56);
+            this.tBRShowImage.TabIndex = 88;
+            this.tBRShowImage.TickFrequency = 10;
+            this.tBRShowImage.Value = 100;
+            this.tBRShowImage.Enabled = false;
+            this.tBRShowImage.Visible = false;
+            this.tBRShowImage.ValueChanged += new System.EventHandler(this.TBRShowImage_ValueChanged);
+            this.tBRShowImage.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TBRShowImage_MouseUp);
+            this.tBRShowImage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TBRShowImage_KeyUp);
+
+            // 
+            // btRShowImagePlus
+            // 
+            this.btRShowImagePlus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.btRShowImagePlus.Location = new System.Drawing.Point(1535, 870);
+            this.btRShowImagePlus.Name = "btRShowImagePlus";
+            this.btRShowImagePlus.Size = new System.Drawing.Size(38, 30);
+            this.btRShowImagePlus.TabIndex = 91;
+            this.btRShowImagePlus.Text = "+";
+            this.btRShowImagePlus.Visible = false;
+            this.btRShowImagePlus.UseVisualStyleBackColor = true;
+            this.btRShowImagePlus.Click += new System.EventHandler(this.BtRShowImagePlus_Click);
+
+            // 
+            // btRShowImageMinus
+            // 
+            this.btRShowImageMinus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.btRShowImageMinus.Location = new System.Drawing.Point(1535, 905);
+            this.btRShowImageMinus.Name = "btRShowImageMinus";
+            this.btRShowImageMinus.Size = new System.Drawing.Size(38, 30);
+            this.btRShowImageMinus.TabIndex = 92;
+            this.btRShowImageMinus.Text = "-";
+            this.btRShowImageMinus.Visible= false;
+            this.btRShowImageMinus.UseVisualStyleBackColor = true;
+            this.btRShowImageMinus.Click += new System.EventHandler(this.BtRShowImageMinus_Click);
+
+            // 
+            // btRShowImageSave
+            // 
+            this.btRShowImageSave.BackColor = System.Drawing.Color.LightCoral;
+            this.btRShowImageSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btRShowImageSave.Font = new System.Drawing.Font("Arial", 10F);
+            this.btRShowImageSave.Location = new System.Drawing.Point(1580, 870);
+            this.btRShowImageSave.Name = "btRShowImageSave";
+            this.btRShowImageSave.Size = new System.Drawing.Size(60, 65);
+            this.btRShowImageSave.TabIndex = 94;
+            this.btRShowImageSave.Text = "Save";
+            this.btRShowImageSave.Visible = false;
+            this.btRShowImageSave.UseVisualStyleBackColor = false;
+            this.btRShowImageSave.Click += new System.EventHandler(this.BtRShowImageSave_Click);
             // 
             // BtGetMask
             // 
@@ -2300,7 +2462,10 @@ namespace NSAA_16Axis
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.Shown += new System.EventHandler(this.FormMain_Shown);
             this.tabControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tBLShowImage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tBRShowImage)).EndInit();
             this.tabPage1.ResumeLayout(false);
+            
             this.tabPage1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftCoaLight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBRightCoaLight)).EndInit();
@@ -2343,6 +2508,17 @@ namespace NSAA_16Axis
         }
 
         #endregion
+
+        private System.Windows.Forms.TrackBar tBLShowImage;
+        private System.Windows.Forms.TrackBar tBRShowImage;
+        private System.Windows.Forms.Button btLShowImagePlus;
+        private System.Windows.Forms.Button btLShowImageMinus;
+        private System.Windows.Forms.Button btRShowImagePlus;
+        private System.Windows.Forms.Button btRShowImageMinus;
+        private System.Windows.Forms.Button btLShowImageSave;
+        private System.Windows.Forms.Button btRShowImageSave;
+        private System.Windows.Forms.Label lbLShowImage;
+        private System.Windows.Forms.Label lbRShowImage;
 
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage2;

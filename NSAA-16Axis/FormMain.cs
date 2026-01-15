@@ -18,6 +18,13 @@ namespace NSAA_16Axis
 {
     public partial class FormMain : Form
     {
+        private double _dLalphaAlign = 1.0;  // 左側透明度 (預設 100% 實時影像)
+        private double _dRalphaAlign = 1.0;  // 右側透明度
+        private int iLalphaAlign = 100;      // 左側 TrackBar 初始值
+        private int iRalphaAlign = 100;
+
+
+
         //object _locker = new object();
         Recipe _recipe;
         AlignCondition AlignC;
@@ -213,6 +220,151 @@ namespace NSAA_16Axis
             lbRightCCD.Location = new System.Drawing.Point(skRightAlign.Width - 140, 20);
         }
 
+        private void TBLShowImage_ValueChanged(object sender, EventArgs e)
+        {
+            _dLalphaAlign = (double)tBLShowImage.Value / 100;
+
+            // 只有在 MaskImage 勾選時才更新顯示
+            if (MaskImage.Checked && _LeftMask != null && !_LeftMask.Empty())
+            {
+                skLeftAlign.SetShowMask(true, _dLalphaAlign, _LeftMask);
+            }
+
+            // 更新標籤顯示
+            lbLShowImage.Text = $"左側透明度: {tBLShowImage.Value}%";
+        }
+
+        private void TBRShowImage_ValueChanged(object sender, EventArgs e)
+        {
+            _dRalphaAlign = (double)tBRShowImage.Value / 100;
+
+            if (MaskImage.Checked && _RightMask != null && !_RightMask.Empty())
+            {
+                skRightAlign.SetShowMask(true, _dRalphaAlign, _RightMask);
+            }
+
+            lbRShowImage.Text = $"右側透明度: {tBRShowImage.Value}%";
+        }
+
+        // ===== MouseUp/KeyUp 事件（檢查是否需要儲存）=====
+        private void TBLShowImage_MouseUp(object sender, MouseEventArgs e)
+        {
+            CheckAlignMaskParam();
+        }
+
+        private void TBLShowImage_KeyUp(object sender, KeyEventArgs e)
+        {
+            CheckAlignMaskParam();
+        }
+
+        private void TBRShowImage_MouseUp(object sender, MouseEventArgs e)
+        {
+            CheckAlignMaskParam();
+        }
+
+        private void TBRShowImage_KeyUp(object sender, KeyEventArgs e)
+        {
+            CheckAlignMaskParam();
+        }
+
+        // ===== +/- 按鈕事件 =====
+        private void BtLShowImagePlus_Click(object sender, EventArgs e)
+        {
+            if (tBLShowImage.Value < 100)
+            {
+                tBLShowImage.Value += 1;
+            }
+        }
+
+        private void BtLShowImageMinus_Click(object sender, EventArgs e)
+        {
+            if (tBLShowImage.Value > 0)
+            {
+                tBLShowImage.Value -= 1;
+            }
+        }
+
+        private void BtRShowImagePlus_Click(object sender, EventArgs e)
+        {
+            if (tBRShowImage.Value < 100)
+            {
+                tBRShowImage.Value += 1;
+            }
+        }
+
+        private void BtRShowImageMinus_Click(object sender, EventArgs e)
+        {
+            if (tBRShowImage.Value > 0)
+            {
+                tBRShowImage.Value -= 1;
+            }
+        }
+
+        // ===== Save 按鈕事件 =====
+        private void BtLShowImageSave_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("確定要儲存左側 Mask 顯示透明度?", "儲存左側透明度",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                return;
+
+            iLalphaAlign = tBLShowImage.Value;
+
+            // 儲存到 AlignCondition
+            if (GV.acar != null && GV.NowRecipeNumber >= 0 && GV.NowRecipeNumber < GV.acar.Length)
+            {
+                GV.acar[GV.NowRecipeNumber].dLalphaAlign = _dLalphaAlign;
+                GV.acar[GV.NowRecipeNumber].LastModifyTime = DateTime.Now;
+                GM.WriteAlignConditionsAcarToXml("AlignConditions.xml");
+            }
+
+            btLShowImageSave.BackColor = Color.MintCream;
+            MessageBox.Show("已儲存左側 Mask 透明度", "儲存成功",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void BtRShowImageSave_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("確定要儲存右側 Mask 顯示透明度?", "儲存右側透明度",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                return;
+
+            iRalphaAlign = tBRShowImage.Value;
+
+            if (GV.acar != null && GV.NowRecipeNumber >= 0 && GV.NowRecipeNumber < GV.acar.Length)
+            {
+                GV.acar[GV.NowRecipeNumber].dRalphaAlign = _dRalphaAlign;
+                GV.acar[GV.NowRecipeNumber].LastModifyTime = DateTime.Now;
+                GM.WriteAlignConditionsAcarToXml("AlignConditions.xml");
+            }
+
+            btRShowImageSave.BackColor = Color.MintCream;
+            MessageBox.Show("已儲存右側 Mask 透明度", "儲存成功",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        // ===== 檢查參數是否變更 =====
+        private void CheckAlignMaskParam()
+        {
+            // 檢查左側透明度是否變更
+            if (tBLShowImage.Enabled && iLalphaAlign != tBLShowImage.Value)
+            {
+                btLShowImageSave.BackColor = Color.LightCoral;
+            }
+            else
+            {
+                btLShowImageSave.BackColor = Color.MintCream;
+            }
+
+            // 檢查右側透明度是否變更
+            if (tBRShowImage.Enabled && iRalphaAlign != tBRShowImage.Value)
+            {
+                btRShowImageSave.BackColor = Color.LightCoral;
+            }
+            else
+            {
+                btRShowImageSave.BackColor = Color.MintCream;
+            }
+        }
         public void GetActiveHighMethod()
         {
             GV.NowMagnification = 2;
@@ -8386,33 +8538,103 @@ namespace NSAA_16Axis
             await DAlignWafer();
         }
 
+        //private void MaskImage_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    if (MaskImage.Checked)
+        //    {
+        //        if ((RightMask == null) || (LeftMask == null))
+        //        {
+        //            LeftMask = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
+        //            RightMask = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
+        //            GV.LeftMaskMat = LeftMask;
+        //            GV.RightMaskMat = RightMask;
+        //        }
+        //        skLeftAlign.SetShowMask(true, AlignC.dLalpha, LeftMask);
+        //        skRightAlign.SetShowMask(true, AlignC.dRalpha, RightMask);
+        //    }
+        //    else
+        //    {
+        //        if ((RightMask == null) || (LeftMask == null))
+        //        {
+        //            LeftMask = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
+        //            RightMask = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
+        //            skLeftAlign.SetShowMask(true, AlignC.dLalpha, LeftMask);
+        //            skRightAlign.SetShowMask(true, AlignC.dRalpha, RightMask);
+        //            GV.LeftMaskMat = LeftMask;
+        //            GV.RightMaskMat = RightMask;
+        //        }
+        //        skLeftAlign.SetShowMask(false, 0, LeftMask);
+        //        skRightAlign.SetShowMask(false, 0, RightMask);
+        //    }
+        //}
         private void MaskImage_CheckedChanged(object sender, EventArgs e)
         {
+            // ✅ 讀取當前的 Up/Down 模式
+            int iUpDownAlign = GV.Plc.ReadData16(GV.Plc.iUpDownAlign);
+
+            // ✅ 判斷是否應該顯示透明度調整控制項
+            // 只有在 MaskImage 勾選且為 Bottom CCD 模式 (iUpDownAlign == 1) 時才顯示
+            bool shouldShowControls = MaskImage.Checked && (iUpDownAlign == 1);
+
+            // ✅ 設定所有透明度調整控制項的可見性
+            tBLShowImage.Visible = shouldShowControls;
+            tBRShowImage.Visible = shouldShowControls;
+            btLShowImagePlus.Visible = shouldShowControls;
+            btLShowImageMinus.Visible = shouldShowControls;
+            btRShowImagePlus.Visible = shouldShowControls;
+            btRShowImageMinus.Visible = shouldShowControls;
+            //btLShowImageSave.Visible = shouldShowControls;
+            //btRShowImageSave.Visible = shouldShowControls;
+            lbLShowImage.Visible = shouldShowControls;
+            lbRShowImage.Visible = shouldShowControls;
+
             if (MaskImage.Checked)
             {
-                if ((RightMask == null) || (LeftMask == null))
+                // ✅ 只有在 Bottom CCD 模式才啟用 TrackBar
+                if (iUpDownAlign == 1)
                 {
-                    LeftMask = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
-                    RightMask = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
-                    GV.LeftMaskMat = LeftMask;
-                    GV.RightMaskMat = RightMask;
+                    tBLShowImage.Enabled = true;
+                    tBRShowImage.Enabled = true;
+
+                    // ✅ 載入儲存的透明度值
+                    if (GV.acar != null && GV.NowRecipeNumber >= 0 && GV.NowRecipeNumber < GV.acar.Length)
+                    {
+                        // 從 AlignCondition 載入透明度設定
+                        int iL = (int)(GV.acar[GV.NowRecipeNumber].dLalphaAlign * 100);
+                        int iR = (int)(GV.acar[GV.NowRecipeNumber].dRalphaAlign * 100);
+
+                        // 限制範圍 0-100
+                        iL = Math.Max(0, Math.Min(100, iL));
+                        iR = Math.Max(0, Math.Min(100, iR));
+
+                        tBLShowImage.Value = iL;
+                        tBRShowImage.Value = iR;
+                        iLalphaAlign = iL;
+                        iRalphaAlign = iR;
+
+                        _dLalphaAlign = (double)iL / 100;
+                        _dRalphaAlign = (double)iR / 100;
+                    }
                 }
-                skLeftAlign.SetShowMask(true, AlignC.dLalpha, LeftMask);
-                skRightAlign.SetShowMask(true, AlignC.dRalpha, RightMask);
+
+                // ✅ 設定 Mask 顯示（不論 iUpDownAlign 值都執行）
+                if (_LeftMask != null && !_LeftMask.Empty())
+                {
+                    skLeftAlign.SetShowMask(true, _dLalphaAlign, _LeftMask);
+                }
+
+                if (_RightMask != null && !_RightMask.Empty())
+                {
+                    skRightAlign.SetShowMask(true, _dRalphaAlign, _RightMask);
+                }
             }
             else
             {
-                if ((RightMask == null) || (LeftMask == null))
-                {
-                    LeftMask = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
-                    RightMask = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
-                    skLeftAlign.SetShowMask(true, AlignC.dLalpha, LeftMask);
-                    skRightAlign.SetShowMask(true, AlignC.dRalpha, RightMask);
-                    GV.LeftMaskMat = LeftMask;
-                    GV.RightMaskMat = RightMask;
-                }
-                skLeftAlign.SetShowMask(false, 0, LeftMask);
-                skRightAlign.SetShowMask(false, 0, RightMask);
+                // ✅ 停用 TrackBar 並清除 Mask 顯示
+                tBLShowImage.Enabled = false;
+                tBRShowImage.Enabled = false;
+                skLeftAlign.SetShowMask(false, 0, null);
+                skRightAlign.SetShowMask(false, 0, null);
             }
         }
 

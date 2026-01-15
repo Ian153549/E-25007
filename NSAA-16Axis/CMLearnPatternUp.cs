@@ -1460,6 +1460,7 @@ namespace NSAA_16Axis
                 _AlignC = _recipe.AlignC;
                 //EditRecipe = _recipe.RecipeNumber;
                 lbRecipeNumber.Text = GV.Dlang.strRecipeNumber + EditRecipe.ToString();
+                btLabelPatternL.Visible = true;
                 // ✅ 2. 快速更新 UI 狀態（不阻塞）
                 if (GV.AppSettingParm.Author == 0)
                 {
@@ -2610,12 +2611,16 @@ namespace NSAA_16Axis
                 cbLMaskClassList.Visible = true;
                 btLabelPatternLM.Visible = false;
                 pbLMaskImage.Visible = false;
+                btFindLMaskCenter.Visible = false;
+                btCreateLMaskPatternMask.Visible = false;
             }
             else
             {
                 cbLMaskClassList.Visible = false;
                 btLabelPatternLM.Visible = false;
                 pbLMaskImage.Visible = true;
+                btFindLMaskCenter.Visible = true;
+                btCreateLMaskPatternMask.Visible = true;
             }
             CheckParam();
         }
@@ -2644,14 +2649,18 @@ namespace NSAA_16Axis
             if (cbRWaferAlgorithm.SelectedIndex == 2)
             {
                 cbRWaferClassList.Visible = true;
-                btLabelPatternR.Visible = true;
+                btLabelPatternR.Visible = false;
                 pbRWaferImage.Visible = false;
+                btFindRWaferCenter.Visible = false;
+                btCreateRWaferPatternMask.Visible = false;
             }
             else
             {
                 cbRWaferClassList.Visible = false;
                 btLabelPatternR.Visible = false;
                 pbRWaferImage.Visible = true;
+                btFindRWaferCenter.Visible = true;
+                btCreateRWaferPatternMask.Visible = true;
             }
             CheckParam();
         }
@@ -3703,14 +3712,19 @@ namespace NSAA_16Axis
             {
 
                 cbLWaferClassList.Visible = true;
-                btLabelPatternL.Visible = true;
+                //btLabelPatternL.Visible = true;
                 pbLWaferImage.Visible = false;
+                btFindLWaferCenter.Visible = false;
+                btCreateLWaferPatternMask.Visible = false;
+
             }
             else
             {
                 cbLWaferClassList.Visible = false;
-                btLabelPatternL.Visible = false;
+                //btLabelPatternL.Visible = false;
                 pbLWaferImage.Visible = true;
+                btFindLWaferCenter.Visible = true;
+                btCreateLWaferPatternMask.Visible = true;
             }
 
             CheckParam();
@@ -3747,12 +3761,16 @@ namespace NSAA_16Axis
                 cbRMaskClassList.Visible = true;
                 btLabelPatternRM.Visible = false;
                 pbRMaskImage.Visible = false;
+                btFindRMaskCenter.Visible = false;
+                btCreateRMaskPatternMask.Visible = false;
             }
             else
             {
                 cbRMaskClassList.Visible = false;
                 btLabelPatternRM.Visible = false;
                 pbRMaskImage.Visible = true;
+                btFindRMaskCenter.Visible = true;
+                btCreateRMaskPatternMask.Visible = true;
             }
             CheckParam();
         }
