@@ -522,7 +522,7 @@ namespace NSAA_16Axis
                     // 如果矩形有效（寬度和高度都大於 10 像素），則加入列表
                     if (currentRectangle.Width > 10 && currentRectangle.Height > 10)
                     {
-                        // ✅ 轉換為虛擬座標（圖像座標）
+                        //  轉換為虛擬座標（圖像座標）
                         PointF topLeft = DeviceToVirtual(new System.Drawing.Point(currentRectangle.X, currentRectangle.Y));
                         PointF bottomRight = DeviceToVirtual(new System.Drawing.Point(
                             currentRectangle.Right,
@@ -565,7 +565,7 @@ namespace NSAA_16Axis
                 {
                     foreach (Rectangle rect in drawnRectangles)
                     {
-                        // ✅ 轉換為設備座標
+                        //  轉換為設備座標
                         Rectangle deviceRect = VirtualToDeviceRect(rect);
                         g.DrawRectangle(pen, deviceRect);
 

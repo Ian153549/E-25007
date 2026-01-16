@@ -1684,7 +1684,7 @@ namespace NSAA_16Axis
 
             if (iHighLow == 1) // Low Magnification
             {
-                // ✅ 檢查 Mat 是否有效
+                //  檢查 Mat 是否有效
                 if (recipe.LeftLowMaskMat != null && !recipe.LeftLowMaskMat.Empty())
                     Cv2.ImWrite(folderName + "//LM-" + time1 + ".bmp", recipe.LeftLowMaskMat);
                 else
@@ -1705,7 +1705,7 @@ namespace NSAA_16Axis
                 else
                     WriteToStatusTextBox("⚠️ RightLowWaferMat 是空的，無法儲存");
 
-                // ✅ 檢查 GrayImage Mask 是否有效
+                //  檢查 GrayImage Mask 是否有效
                 if (recipe.LeftLowMaskMask != null)
                     recipe.LeftLowMaskMask.Save(folderName + "//MLM-" + time1 + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
 
@@ -1754,7 +1754,7 @@ namespace NSAA_16Axis
             }
             else if (iHighLow == 2) // High Wafer Only (Bottom)
             {
-                // ✅ 只儲存 Wafer，不儲存 Mask
+                //  只儲存 Wafer，不儲存 Mask
                 if (recipe.LeftHighWaferMat != null && !recipe.LeftHighWaferMat.Empty())
                     Cv2.ImWrite(folderName + "//LW-" + time1 + ".bmp", recipe.LeftHighWaferMat);
                 else
@@ -2310,7 +2310,7 @@ namespace NSAA_16Axis
         public double dRalphaAlign { get; set; } = 1.0;
 
         public double dLalpha = 1.0;
-        public double dRalpha = 1.0;
+        public double dRalpha =1.0;
 
         public void CopyToObj(ref AlignCondition align)
         {

@@ -141,7 +141,7 @@ namespace NSAA_16Axis
                 var nudTReadUpRightY = FindControlRecursive("nudTReadUpRightY") as NumericUpDown;
                 var nudTReadUpRightZ = FindControlRecursive("nudTReadUpRightZ") as NumericUpDown;
 
-                // ✅ 將 PLC 數值除以 10 後顯示
+                //  將 PLC 數值除以 10 後顯示
                 if (nudTReadUpBigY != null)
                     nudTReadUpBigY.Value = (decimal)(GV.NowLocation[GV.Plc.iiDUpBigY] / 10.0);
                 if (nudTReadUpLeftX != null)
@@ -166,7 +166,7 @@ namespace NSAA_16Axis
                 var nudTReadBackRightY = FindControlRecursive("nudTReadBackRightY") as NumericUpDown;
                 var nudTReadBackRightZ = FindControlRecursive("nudTReadBackRightZ") as NumericUpDown;
 
-                // ✅ 將 PLC 數值除以 10 後顯示
+                //  將 PLC 數值除以 10 後顯示
                 if (nudTReadBackLeftX != null)
                     nudTReadBackLeftX.Value = (decimal)(GV.NowLocation[GV.Plc.iiDDownLeftX] / 10.0);
                 if (nudTReadBackLeftY != null)
@@ -193,7 +193,7 @@ namespace NSAA_16Axis
                 var nudTWriteUpRightY = FindControlRecursive("nudTWriteUpRightY") as NumericUpDown;
                 var nudTWriteUpRightZ = FindControlRecursive("nudTWriteUpRightZ") as NumericUpDown;
 
-                // ✅ 將 RecipeData 數值除以 10 後顯示
+                //  將 RecipeData 數值除以 10 後顯示
                 if (nudTWriteUpBigY != null)
                     nudTWriteUpBigY.Value = (decimal)(GV.Plc.RecipeData[29] / 10.0);
                 if (nudTWriteUpLeftX != null)
@@ -218,7 +218,7 @@ namespace NSAA_16Axis
                 var nudTWriteBackRightY = FindControlRecursive("nudTWriteBackRightY") as NumericUpDown;
                 var nudTWriteBackRightZ = FindControlRecursive("nudTWriteBackRightZ") as NumericUpDown;
 
-                // ✅ 將 RecipeData 數值除以 10 後顯示
+                //  將 RecipeData 數值除以 10 後顯示
                 if (nudTWriteBackLeftX != null)
                     nudTWriteBackLeftX.Value = (decimal)(GV.Plc.RecipeData[39] / 10.0);
                 if (nudTWriteBackLeftY != null)
@@ -262,7 +262,7 @@ namespace NSAA_16Axis
             var nudTReadChuckY1 = FindControlRecursive("nudTReadChuckY1") as NumericUpDown;
             var nudTReadChuckY2 = FindControlRecursive("nudTReadChuckY2") as NumericUpDown;
 
-            // ✅ 將 PLC 數值除以 10 後顯示
+            //  將 PLC 數值除以 10 後顯示
             if (nudTReadChuckX != null)
                 nudTReadChuckX.Value = (decimal)(GV.NowLocation[GV.Plc.iiDChuckX] / 10.0);
             if (nudTReadChuckY1 != null)
@@ -276,7 +276,7 @@ namespace NSAA_16Axis
             var nudTWriteChuckY1 = FindControlRecursive("nudTWriteChuckY1") as NumericUpDown;
             var nudTWriteChuckY2 = FindControlRecursive("nudTWriteChuckY2") as NumericUpDown;
 
-            // ✅ 將 RecipeData 數值除以 10 後顯示
+            //  將 RecipeData 數值除以 10 後顯示
             if (nudTWriteChuckX != null)
                 nudTWriteChuckX.Value = (decimal)(GV.Plc.RecipeData[36] / 10.0);
             if (nudTWriteChuckY1 != null)
@@ -845,19 +845,19 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ 新增方法：載入當前 Recipe
+        //  新增方法：載入當前 Recipe
         private void LoadCurrentRecipe()
         {
             currentRecipe = GM.ReadRecipeXml(GV.NowRecipeNumber);
         }
 
-        // ✅ 新增事件：Recipe 選擇變更
+        //  新增事件：Recipe 選擇變更
         private void comboBoxRecipe_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadCurrentRecipe();
         }
 
-        // ✅ 新增事件：上層相機選擇
+        //  新增事件：上層相機選擇
         private void rbUpperCamera_CheckedChanged(object sender, EventArgs e)
         {
             if (rbUpperCamera.Checked)
@@ -867,7 +867,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ 新增事件：下層相機選擇
+        //  新增事件：下層相機選擇
         private void rbLowerCamera_CheckedChanged(object sender, EventArgs e)
         {
             if (rbLowerCamera.Checked)
@@ -877,7 +877,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ 新增方法：切換到上層相機
+        //  新增方法：切換到上層相機
         private void SwitchToUpperCamera()
         {
             // 確保在 UI 執行緒上執行
@@ -913,7 +913,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ 新增方法：切換到下層相機
+        //  新增方法：切換到下層相機
         private void SwitchToLowerCamera()
         {
             // 確保在 UI 執行緒上執行
@@ -958,7 +958,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ 新增事件：移動到 Recipe 位置
+        //  新增事件：移動到 Recipe 位置
         private async void btnMoveToRecipePos_Click(object sender, EventArgs e)
         {
             if (currentRecipe == null)
@@ -1003,7 +1003,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ 新增事件：儲存當前位置
+        //  新增事件：儲存當前位置
         private void btnSaveCurrentPos_Click(object sender, EventArgs e)
         {
             if (currentRecipe == null)
@@ -1051,7 +1051,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ 修改：取得相機影像的輔助方法
+        //  修改：取得相機影像的輔助方法
         private Mat GrabLeftCamera()
         {
             return isUpperCamera ? GV.LeftUpCam.Grab() : GV.LeftBackCam?.Grab() ?? new Mat();

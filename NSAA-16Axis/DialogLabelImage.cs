@@ -132,7 +132,7 @@ namespace NSAA_16Axis
                     currentIndex = 0;
                     LoadCurrentImage();
 
-                    // ✅ 如果有 initialImage，釋放它（不再使用）
+                    //  如果有 initialImage，釋放它（不再使用）
                     if (initialImage != null)
                     {
                         initialImage.Dispose();
@@ -751,7 +751,7 @@ namespace NSAA_16Axis
             //                }
             //                File.WriteAllText(trainModelConfig, jsonContent);
 
-            //                System.Diagnostics.Debug.WriteLine($"✅ AIConfig.json 已更新: labeledRecipeNumber = {currentRecipeNumber}");
+            //                System.Diagnostics.Debug.WriteLine($" AIConfig.json 已更新: labeledRecipeNumber = {currentRecipeNumber}");
             //                System.Diagnostics.Debug.WriteLine($"   完整路徑: {configPath}");
             //            }
             //            catch (Exception ex)
@@ -789,7 +789,7 @@ namespace NSAA_16Axis
             //                    };
 
             //                    Process.Start(psi);
-            //                    System.Diagnostics.Debug.WriteLine($"✅ 已啟動 LabelImage.exe");
+            //                    System.Diagnostics.Debug.WriteLine($" 已啟動 LabelImage.exe");
             //                    System.Diagnostics.Debug.WriteLine($"   執行檔路徑: {labelImageExePath}");
             //                    System.Diagnostics.Debug.WriteLine($"   工作目錄: {labelImageDir}");
             //                }
@@ -1149,7 +1149,7 @@ namespace NSAA_16Axis
                     return;
                 }
 
-                // ✅ 禁用訓練按鈕，顯示訓練中狀態
+                //  禁用訓練按鈕，顯示訓練中狀態
                 btTrain.Enabled = false;
                 btTrain.Text = "訓練中...";
 
@@ -1165,7 +1165,7 @@ namespace NSAA_16Axis
                 MessageBox.Show(launchedMessage, launchedTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
-                // ✅ 使用 Task.Run 在背景執行緒執行訓練
+                //  使用 Task.Run 在背景執行緒執行訓練
                 await Task.Run(async () =>
                 {
                     try
@@ -1209,10 +1209,10 @@ namespace NSAA_16Axis
                             process.BeginOutputReadLine();
                             process.BeginErrorReadLine();
 
-                            // ✅ 使用 WaitForExitAsync (自訂實現)
+                            //  使用 WaitForExitAsync (自訂實現)
                             await WaitForExitAsync(process);
 
-                            // ✅ 訓練完成後處理結果
+                            //  訓練完成後處理結果
                             if (process.ExitCode == 0)
                             {
                                 // 尋找並複製新模型
@@ -1247,7 +1247,7 @@ namespace NSAA_16Axis
                                         File.Copy(newBestPt, targetModelPath, true);
                                         System.Diagnostics.Debug.WriteLine($"[Recipe{currentRecipeNumber}] 新模型已儲存: {targetModelPath}");
 
-                                        // ✅ 在 UI 執行緒上顯示完成訊息
+                                        //  在 UI 執行緒上顯示完成訊息
                                         Invoke(new Action(() =>
                                         {
                                             string successMsg = GV.AppSettingParm.Language != "default"
@@ -1380,7 +1380,7 @@ namespace NSAA_16Axis
             }
             finally
             {
-                // ✅ 恢復按鈕狀態
+                //  恢復按鈕狀態
                 btTrain.Enabled = true;
                 btTrain.Text = "Train Model";
             }
@@ -1669,7 +1669,7 @@ names: [{names}]
                 }
                 File.WriteAllText(trainModelConfig, jsonContent);
 
-                System.Diagnostics.Debug.WriteLine($"✅ AIConfig.json 已更新: labeledRecipeNumber = {currentRecipeNumber}");
+                System.Diagnostics.Debug.WriteLine($" AIConfig.json 已更新: labeledRecipeNumber = {currentRecipeNumber}");
                 System.Diagnostics.Debug.WriteLine($"   完整路徑: {configPath}");
             }
             catch (Exception ex)
@@ -1710,7 +1710,7 @@ names: [{names}]
                     };
 
                     Process.Start(psi);
-                    //System.Diagnostics.Debug.WriteLine($"✅ 已啟動 TrainModel.exe");
+                    //System.Diagnostics.Debug.WriteLine($" 已啟動 TrainModel.exe");
                     //System.Diagnostics.Debug.WriteLine($"   執行檔路徑: {labelImageExePath}");
                     //System.Diagnostics.Debug.WriteLine($"   工作目錄: {labelImageDir}");
                 }

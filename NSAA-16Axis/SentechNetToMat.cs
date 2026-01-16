@@ -912,21 +912,21 @@ namespace NSAA_16Axis
             {
                 System.Diagnostics.Debug.WriteLine($"[Live] IsFileImage=true, FileImage.Empty={FileImage?.Empty() ?? true}");
 
-                // ✅ 確保 Timer 已初始化
+                //  確保 Timer 已初始化
                 if (_simulationTimer == null)
                 {
                     System.Diagnostics.Debug.WriteLine("[Live] _simulationTimer is null, calling InitializeSimulationTimer()");
                     InitializeSimulationTimer();
                 }
 
-                // ✅ 確保有影像可以顯示
+                //  確保有影像可以顯示
                 if (FileImage == null || FileImage.Empty())
                 {
                     System.Diagnostics.Debug.WriteLine("[Live] Warning: FileImage is null or empty!");
                     return;
                 }
 
-                // ✅ 啟動 Timer
+                //  啟動 Timer
                 if (!_simulationTimer.Enabled)
                 {
                     System.Diagnostics.Debug.WriteLine("[Live] Starting simulation timer");

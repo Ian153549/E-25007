@@ -23,8 +23,6 @@ namespace NSAA_16Axis
         private int iLalphaAlign = 100;      // 左側 TrackBar 初始值
         private int iRalphaAlign = 100;
 
-
-
         //object _locker = new object();
         Recipe _recipe;
         AlignCondition AlignC;
@@ -164,7 +162,17 @@ namespace NSAA_16Axis
             InitializeComponent();
 
             //Easy.Initialize();
+            tBLShowImageAlign.BringToFront();
+            lbLShowImage.BringToFront();
+            btLShowImagePlus.BringToFront();
+            btLShowImageMinus.BringToFront();
+            btLShowImageSave.BringToFront();
 
+            tBRShowImageAlign.BringToFront();
+            lbRShowImage.BringToFront();
+            btRShowImagePlus.BringToFront();
+            btRShowImageMinus.BringToFront();
+            btRShowImageSave.BringToFront();
             HwndFormMain = this;
             GV.HwndFormMain = this;
 
@@ -218,11 +226,19 @@ namespace NSAA_16Axis
             lbLeftCCD.Location = new System.Drawing.Point(10, 20);
             skRightAlign.Controls.Add(lbRightCCD);
             lbRightCCD.Location = new System.Drawing.Point(skRightAlign.Width - 140, 20);
+            tBLShowImageAlign.Visible = false;
+            tBRShowImageAlign.Visible = false;
+            btLShowImagePlus.Visible = false;
+            btLShowImageMinus.Visible = false;
+            btRShowImagePlus.Visible = false;
+            btRShowImageMinus.Visible = false;
+            lbLShowImage.Visible = false;
+            lbRShowImage.Visible = false;
         }
 
         private void TBLShowImage_ValueChanged(object sender, EventArgs e)
         {
-            _dLalphaAlign = (double)tBLShowImage.Value / 100;
+            _dLalphaAlign = (double)tBLShowImageAlign.Value / 100;
 
             // 只有在 MaskImage 勾選時才更新顯示
             if (MaskImage.Checked && _LeftMask != null && !_LeftMask.Empty())
@@ -231,19 +247,19 @@ namespace NSAA_16Axis
             }
 
             // 更新標籤顯示
-            lbLShowImage.Text = $"左側透明度: {tBLShowImage.Value}%";
+            lbLShowImage.Text = $"左側透明度: {tBLShowImageAlign.Value}%";
         }
 
         private void TBRShowImage_ValueChanged(object sender, EventArgs e)
         {
-            _dRalphaAlign = (double)tBRShowImage.Value / 100;
+            _dRalphaAlign = (double)tBRShowImageAlign.Value / 100;
 
             if (MaskImage.Checked && _RightMask != null && !_RightMask.Empty())
             {
                 skRightAlign.SetShowMask(true, _dRalphaAlign, _RightMask);
             }
 
-            lbRShowImage.Text = $"右側透明度: {tBRShowImage.Value}%";
+            lbRShowImage.Text = $"右側透明度: {tBRShowImageAlign.Value}%";
         }
 
         // ===== MouseUp/KeyUp 事件（檢查是否需要儲存）=====
@@ -270,33 +286,33 @@ namespace NSAA_16Axis
         // ===== +/- 按鈕事件 =====
         private void BtLShowImagePlus_Click(object sender, EventArgs e)
         {
-            if (tBLShowImage.Value < 100)
+            if (tBLShowImageAlign.Value < 100)
             {
-                tBLShowImage.Value += 1;
+                tBLShowImageAlign.Value += 1;
             }
         }
 
         private void BtLShowImageMinus_Click(object sender, EventArgs e)
         {
-            if (tBLShowImage.Value > 0)
+            if (tBLShowImageAlign.Value > 0)
             {
-                tBLShowImage.Value -= 1;
+                tBLShowImageAlign.Value -= 1;
             }
         }
 
         private void BtRShowImagePlus_Click(object sender, EventArgs e)
         {
-            if (tBRShowImage.Value < 100)
+            if (tBRShowImageAlign.Value < 100)
             {
-                tBRShowImage.Value += 1;
+                tBRShowImageAlign.Value += 1;
             }
         }
 
         private void BtRShowImageMinus_Click(object sender, EventArgs e)
         {
-            if (tBRShowImage.Value > 0)
+            if (tBRShowImageAlign.Value > 0)
             {
-                tBRShowImage.Value -= 1;
+                tBRShowImageAlign.Value -= 1;
             }
         }
 
@@ -307,7 +323,7 @@ namespace NSAA_16Axis
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                 return;
 
-            iLalphaAlign = tBLShowImage.Value;
+            iLalphaAlign = tBLShowImageAlign.Value;
 
             // 儲存到 AlignCondition
             if (GV.acar != null && GV.NowRecipeNumber >= 0 && GV.NowRecipeNumber < GV.acar.Length)
@@ -328,7 +344,7 @@ namespace NSAA_16Axis
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                 return;
 
-            iRalphaAlign = tBRShowImage.Value;
+            iRalphaAlign = tBRShowImageAlign.Value;
 
             if (GV.acar != null && GV.NowRecipeNumber >= 0 && GV.NowRecipeNumber < GV.acar.Length)
             {
@@ -346,7 +362,7 @@ namespace NSAA_16Axis
         private void CheckAlignMaskParam()
         {
             // 檢查左側透明度是否變更
-            if (tBLShowImage.Enabled && iLalphaAlign != tBLShowImage.Value)
+            if (tBLShowImageAlign.Enabled && iLalphaAlign != tBLShowImageAlign.Value)
             {
                 btLShowImageSave.BackColor = Color.LightCoral;
             }
@@ -356,7 +372,7 @@ namespace NSAA_16Axis
             }
 
             // 檢查右側透明度是否變更
-            if (tBRShowImage.Enabled && iRalphaAlign != tBRShowImage.Value)
+            if (tBRShowImageAlign.Enabled && iRalphaAlign != tBRShowImageAlign.Value)
             {
                 btRShowImageSave.BackColor = Color.LightCoral;
             }
@@ -1314,6 +1330,8 @@ namespace NSAA_16Axis
         //}
         private void FormMain_Load(object sender, EventArgs e)
         {
+            AIService.IsRestarting = true;
+
             try
             {
                 DlgInitial.Show();
@@ -1321,8 +1339,8 @@ namespace NSAA_16Axis
                 Application.DoEvents(); // 確保視窗完全顯示
                 Thread.Sleep(200);
                 writeStatus("Program Start " + lbVerson.Text);
-                
-                // ✅ 背景載入配置（不等待）
+
+                //  背景載入配置（不等待）
                 LoadConfigurationsAsync();
 
                 // 初始化相機物件（快速，不阻塞）
@@ -1348,9 +1366,45 @@ namespace NSAA_16Axis
             {
                 HandleLoadError(ex);
             }
+            finally
+            {
+                // ✅ 在 Load 結束時恢復 AI 服務
+                AIService.IsRestarting = false;
+            }
+            try
+            {
+                // 如果 AlignC 有儲存的值，使用它；否則使用預設值 50
+                if (AlignC != null)
+                {
+                    int iL = (int)(AlignC.dLalpha * 100);
+                    int iR = (int)(AlignC.dRalpha * 100);
+
+                    // 確保值在 0-100 範圍內
+                    iL = Math.Max(0, Math.Min(100, iL));
+                    iR = Math.Max(0, Math.Min(100, iR));
+
+                    // 反轉邏輯以符合直觀操作
+                    tBLShowImageAlign.Value = (int)((1.0 - AlignC.dLalpha) * 100);
+                    tBRShowImageAlign.Value = (int)((1.0 - AlignC.dRalpha) * 100);
+                }
+                else
+                {
+                    // 預設值：50（兩者各半）
+                    tBLShowImageAlign.Value = 50;
+                    tBRShowImageAlign.Value = 50;
+                }
+
+                // 初始停用，等 CheckBox 勾選後啟用
+                tBLShowImageAlign.Enabled = false;
+                tBRShowImageAlign.Enabled = false;
+            }
+            catch (Exception ex)
+            {
+                GM.WriteToStatusTextBox($"初始化 TrackBar 失敗: {ex.Message}");
+            }
         }
 
-        // ✅ 非同步載入配置檔
+        //  非同步載入配置檔
         private void LoadConfigurationsAsync()
         {
             try
@@ -1379,7 +1433,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ 初始化相機物件
+        //  初始化相機物件
         private void InitializeCameras()
         {
             GV.LeftUpCam = new SentechNetToMat();
@@ -1388,7 +1442,7 @@ namespace NSAA_16Axis
             GV.RightBackCam = new SentechNetToMat();
         }
 
-        // ✅ 設定使用者權限
+        //  設定使用者權限
         private void SetUserLevel()
         {
             if (GV.AppSettingParm.DefaultUserLevel == 1)
@@ -1405,7 +1459,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ UI 初始化
+        //  UI 初始化
         private void InitializeUI()
         {
             if (GV.AppSettingParm.Emulation)
@@ -1456,16 +1510,18 @@ namespace NSAA_16Axis
             URight = new Mat();
         }
 
-        // ✅ 非同步啟動設備
+        //  非同步啟動設備
         private async Task LaunchDeviceAsync()
         {
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 try
                 {
                     GV.Plc.GetLimit();
 
-                    // ✅ 在 UI 執行緒更新 DialogInitial
-                    Invoke((MethodInvoker)delegate {
+                    //  在 UI 執行緒更新 DialogInitial
+                    Invoke((MethodInvoker)delegate
+                    {
                         if (DlgInitial != null && !DlgInitial.IsDisposed && DlgInitial.IsHandleCreated)
                         {
                             DlgInitial.WriteToInitialTextBox(GV.Dlang.strLaunchSucc);
@@ -1479,7 +1535,8 @@ namespace NSAA_16Axis
 
                     if (GV.ModeSelected == GV.Mode.Educational)
                     {
-                        Invoke((MethodInvoker)delegate {
+                        Invoke((MethodInvoker)delegate
+                        {
                             HideTabAndSelectTabInEducationalMode();
                             HideToolsInEducationalMode();
                             GV.LeftUpCam.SetWindow(GV.LeftUpWindowOnParameterSettingPage);
@@ -1488,7 +1545,8 @@ namespace NSAA_16Axis
                     }
                     else if (GV.ModeSelected == GV.Mode.Production)
                     {
-                        Invoke((MethodInvoker)delegate {
+                        Invoke((MethodInvoker)delegate
+                        {
                             GV.LeftUpCam.SetWindow(GV.LeftUpWindowOnAlignPage);
                             GV.RightUpCam.SetWindow(GV.RightUpWindowOnAlignPage);
                         });
@@ -1496,7 +1554,8 @@ namespace NSAA_16Axis
                 }
                 catch (Exception ex)
                 {
-                    Invoke((MethodInvoker)delegate {
+                    Invoke((MethodInvoker)delegate
+                    {
                         MessageBox.Show(ex.ToString(), "LaunchDevice", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                         GM.WriteToStatusTextBox(ex.Message);
                     });
@@ -1504,7 +1563,7 @@ namespace NSAA_16Axis
             });
         }
 
-        // ✅ 其他初始化
+        //  其他初始化
         private void PostInitialize()
         {
             EnsureServiceRestart();
@@ -1518,15 +1577,15 @@ namespace NSAA_16Axis
 
             Update();
 
-            // ✅ 先載入模板，再啟動搜尋執行緒
+            //  先載入模板，再啟動搜尋執行緒
             if (GV.AppSettingParm.Emulation != true)
             {
                 _ = Task.Run(async () =>
                 {
-                    // ✅ 等待模板載入完成
+                    //  等待模板載入完成
                     await LoadTemplatesAsync();
                     Thread.Sleep(500);
-                    // ✅ 模板載入完成後再啟動對齊匹配執行緒
+                    //  模板載入完成後再啟動對齊匹配執行緒
                     if (iAlignMatcherRun == 0)
                     {
                         GV.OnLearnPattern = false;
@@ -1541,7 +1600,7 @@ namespace NSAA_16Axis
             }
             else
             {
-                // ✅ Emulation 模式也啟動執行緒
+                //  Emulation 模式也啟動執行緒
                 if (iAlignMatcherRun == 0)
                 {
                     GV.OnLearnPattern = false;
@@ -1647,7 +1706,7 @@ namespace NSAA_16Axis
             lbEmulationModeR.Visible = !(GV.AppSettingParm.RightUpCamEnable || GV.AppSettingParm.RightBackCamEnable);
         }
 
-        // ✅ 錯誤處理
+        //  錯誤處理
         private void HandleLoadError(Exception ex)
         {
             MessageBox.Show(ex.Message, "LoadParm", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -1673,7 +1732,7 @@ namespace NSAA_16Axis
                 GV.matcherRLW.iBlockSize = AlignC.RLWaferBlockSize;
                 GV.matcherRHW.iBlockSize = AlignC.RHWaferBlockSize;
 
-                // ✅ 並行學習模板
+                //  並行學習模板
                 var learnTasks = new List<Task>();
 
                 if (_recipe.LeftLowWaferMat != null && !_recipe.LeftLowWaferMat.Empty())
@@ -1685,33 +1744,34 @@ namespace NSAA_16Axis
                 if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty())
 
                     learnTasks.Add(Task.Run(() => GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, AlignC.LLMaskAlgorithm)));
-                
+
                 if (_recipe.LeftHighMaskMat != null && !_recipe.LeftHighMaskMat.Empty())
 
                     learnTasks.Add(Task.Run(() => GV.matcherLHM.LearnWithAlgo(_recipe.LeftHighMaskMat, _recipe.LeftHighMaskMask, AlignC.LHMaskAlgorithm)));
-               
+
                 if (_recipe.RightLowWaferMat != null && !_recipe.RightLowWaferMat.Empty())
 
                     learnTasks.Add(Task.Run(() => GV.matcherRLW.LearnWithAlgo(_recipe.RightLowWaferMat, _recipe.RightLowWaferMask, AlignC.RLWaferAlgorithm)));
-                
+
                 if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty())
 
                     learnTasks.Add(Task.Run(() => GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, AlignC.RHWaferAlgorithm)));
-               
+
                 if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty())
 
                     learnTasks.Add(Task.Run(() => GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, AlignC.RLMaskAlgorithm)));
-                
+
                 if (_recipe.RightHighMaskMat != null && !_recipe.RightHighMaskMat.Empty())
 
                     learnTasks.Add(Task.Run(() => GV.matcherRHM.LearnWithAlgo(_recipe.RightHighMaskMat, _recipe.RightHighMaskMask, AlignC.RHMaskAlgorithm)));
-               
+
 
                 await Task.WhenAll(learnTasks);
             }
             catch (Exception ex)
             {
-                Invoke((MethodInvoker)delegate {
+                Invoke((MethodInvoker)delegate
+                {
                     MessageBox.Show(ex.Message, "Pattern Learn", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 });
             }
@@ -1748,12 +1808,12 @@ namespace NSAA_16Axis
         //    {
         //        writeStatus("正在停止 AI 服務...");
 
-        //        // ✅ 方法 1: 通過 Port 找到進程並終止
+        //        //  方法 1: 通過 Port 找到進程並終止
         //        bool portKilled = KillProcessByPort(9300);
 
         //        if (!portKilled)
         //        {
-        //            // ✅ 方法 2: 通過進程名稱終止
+        //            //  方法 2: 通過進程名稱終止
         //            string[] processNames = { "waitress-serve", "python", "pythonw" };
 
         //            foreach (string processName in processNames)
@@ -1966,20 +2026,20 @@ namespace NSAA_16Axis
                 writeStatus($"讀取 PLC Recipe Number 失敗: {ex.Message}，使用預設值 1");
             }
 
-            // ✅ 快速檢查：模型檔案是否存在
+            //  快速檢查：模型檔案是否存在
             string modelsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "Models");
             string targetModelFileName = $"best{plcRecipe}.pt";
             string targetModelPath = Path.Combine(modelsPath, targetModelFileName);
 
-            // ✅ 直接使用三元運算，減少變數賦值
+            //  直接使用三元運算，減少變數賦值
             string loadRecipeValue = File.Exists(targetModelPath) ? targetModelFileName : "best.pt";
 
-            // ✅ 只在需要時建立配置物件
+            //  只在需要時建立配置物件
             string configPath = Path.Combine(serviceExePath, "AIConfig.json");
 
             try
             {
-                // ✅ 方案 1: 使用更快的 JSON 序列化（System.Text.Json）
+                //  方案 1: 使用更快的 JSON 序列化（System.Text.Json）
                 // 如果專案已引用 System.Text.Json，這會比 Newtonsoft.Json 快 2-3 倍
 
                 //string jsonContent = System.Text.Json.JsonSerializer.Serialize(new
@@ -1989,7 +2049,7 @@ namespace NSAA_16Axis
                 //}, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
 
 
-                // ✅ 方案 2: 手動建立 JSON（最快，避免序列化開銷）
+                //  方案 2: 手動建立 JSON（最快，避免序列化開銷）
                 string jsonContent = $@"{{
   ""loadRecipe"": ""{loadRecipeValue}"",
   ""recipeNumber"": {plcRecipe}
@@ -2002,14 +2062,17 @@ namespace NSAA_16Axis
             {
                 writeStatus($"儲存 AIConfig.json 失敗: {ex.Message}");
             }
-
-            // ✅ 優化：使用 CreateNoWindow 減少視窗建立開銷
+            //if (!IsAIServiceNeeded(plcRecipe))
+            //{
+            //    return;
+            //}
+            // 優化：使用 CreateNoWindow 減少視窗建立開銷
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = "Start.bat",
                 WorkingDirectory = serviceExePath,
-                UseShellExecute = true,  // ✅ 改為 false 可加速
-                CreateNoWindow = true,     // ✅ 不建立視窗更快
+                UseShellExecute = true,  //  改為 false 可加速
+                CreateNoWindow = true,     //  不建立視窗更快
                 WindowStyle = ProcessWindowStyle.Minimized
             };
 
@@ -2022,6 +2085,66 @@ namespace NSAA_16Axis
                 MessageBox.Show($"無法啟動背景服務:{ex.Message}");
             }
         }
+
+        private bool IsAIServiceNeeded(int recipeNumber)
+        {
+            try
+            {
+                // 讀取 Recipe
+                Recipe recipe = GM.ReadRecipeXml(recipeNumber);
+                if (recipe == null || recipe.AlignC == null)
+                {
+                    writeStatus($"無法讀取 Recipe {recipeNumber}，預設啟動 AI 服務");
+                    return true;
+                }
+
+                AlignCondition alignC = recipe.AlignC;
+
+                // 讀取 iUpDownAlign（0 或 1 = 上對位，2 = 下對位）
+                int iUpDownAlign = GV.Plc.ReadData16(GV.Plc.iUpDownAlign);
+
+                bool needAI = false;
+
+                if (iUpDownAlign == 0 || iUpDownAlign == 1)
+                {
+                    //   上對位：檢查 LL/LH/RL/RH 演算法
+                    needAI = alignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch ||
+                             alignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch ||
+                             alignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch ||
+                             alignC.RLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch ||
+                             alignC.LHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch ||
+                             alignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch ||
+                             alignC.RHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch ||
+                             alignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch;
+
+                    if (needAI)
+                    {
+                        writeStatus($"Recipe {recipeNumber} (上對位) 使用 AI 演算法，啟動 AI 服務");
+                    }
+                }
+                else if (iUpDownAlign == 2)
+                {
+                    //   下對位：檢查 LL/LH/RL/RH 演算法（下對位使用相同屬性）
+                    needAI = alignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch ||
+                             alignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch ||
+                             alignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch ||
+                             alignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch;
+
+                    if (needAI)
+                    {
+                        writeStatus($"Recipe {recipeNumber} (下對位) 使用 AI 演算法，啟動 AI 服務");
+                    }
+                }
+
+                return needAI;
+            }
+            catch (Exception ex)
+            {
+                writeStatus($"檢查 AI 服務需求時發生錯誤: {ex.Message}，預設啟動 AI 服務");
+                return true; // 發生錯誤時預設啟動 AI 服務
+            }
+        }
+
         public async Task<bool> RestartAIServiceAfterTraining(int recipeNumber)
         {
             try
@@ -2938,7 +3061,7 @@ namespace NSAA_16Axis
         //        ParameterCheckLevel();
         //        Update();
 
-        //        // ✅ 修正：使用 GV.skView 或 AlignC.UpBackAlign 來判斷
+        //        //  修正：使用 GV.skView 或 AlignC.UpBackAlign 來判斷
         //        if (GV.skView == 0 || AlignC.UpBackAlign == 1)
         //        {
         //            // Top CCD 模式
@@ -2948,7 +3071,7 @@ namespace NSAA_16Axis
         //            GV.LeftUpCam.Live();
         //            GV.RightUpCam.Live();
 
-        //            // ✅ 更新 Emulation Mode 標籤
+        //            //  更新 Emulation Mode 標籤
         //            lbEmulationModePL.Visible = !GV.AppSettingParm.LeftUpCamEnable;
         //            lbEmulationModePR.Visible = !GV.AppSettingParm.RightUpCamEnable;
         //        }
@@ -2961,7 +3084,7 @@ namespace NSAA_16Axis
         //            GV.LeftBackCam.Live();
         //            GV.RightBackCam.Live();
 
-        //            // ✅ 更新 Emulation Mode 標籤
+        //            //  更新 Emulation Mode 標籤
         //            lbEmulationModePL.Visible = !GV.AppSettingParm.LeftBackCamEnable;
         //            lbEmulationModePR.Visible = !GV.AppSettingParm.RightBackCamEnable;
         //        }
@@ -2996,40 +3119,59 @@ namespace NSAA_16Axis
         //        GM.WriteToStatusTextBox1(iAdmin, "BackSize Z Calibration");
         //    }
         //}
-        private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        private async void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             string sTag = tabControl1.SelectedTab.Tag.ToString();
             GV.TickCount = 0;
 
-            // ✅ 先處理離開頁面的邏輯（快速）
-            if (iTabIndex == 3 && sTag != "4")
-            {
-                cmLearnPatternBack1.OnPageLeave();
-            }
+            // ✅ 在切換頁面開始時設置為 true
+            AIService.IsRestarting = true;
 
-            // ✅ 根據目標頁面執行對應的初始化（非同步化）
-            switch (sTag)
+            try
             {
-                case "1": // Align Page
-                    _ = Task.Run(() => InitializeAlignPageAsync());
-                    break;
-                case "2": // Learn Pattern Up
-                    _ = Task.Run(() => InitializeLearnPatternUpPageAsync());
-                    break;
-                case "3": // Parameter Setting
-                    _ = Task.Run(() => InitializeParameterSettingPageAsync());
-                    break;
-                case "4": // Learn Pattern Back
-                    _ = Task.Run(() => InitializeLearnPatternBackPageAsync());
-                    break;
-                case "5": // Z Calibration
-                    iTabIndex = 4;
-                    GM.WriteToStatusTextBox1(iAdmin, "BackSize Z Calibration");
-                    break;
+                //  先處理離開頁面的邏輯（快速）
+                if (iTabIndex == 3 && sTag != "4")
+                {
+                    cmLearnPatternBack1.OnPageLeave();
+                }
+                if (iTabIndex == 1 && sTag != "2")
+                {
+                    cmLearnPatternUp1.OnPageLeave();
+                }
+
+                //  根據目標頁面執行對應的初始化（使用 await 等待完成）
+                switch (sTag)
+                {
+                    case "1": // Align Page
+                        await Task.Run(() => InitializeAlignPageAsync());
+                        break;
+                    case "2": // Learn Pattern Up
+                        await Task.Run(() => InitializeLearnPatternUpPageAsync());
+                        break;
+                    case "3": // Parameter Setting
+                        await Task.Run(() => InitializeParameterSettingPageAsync());
+                        break;
+                    case "4": // Learn Pattern Back
+                        await Task.Run(() => InitializeLearnPatternBackPageAsync());
+                        break;
+                    case "5": // Z Calibration
+                        iTabIndex = 4;
+                        GM.WriteToStatusTextBox1(iAdmin, "BackSize Z Calibration");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                GM.WriteToStatusTextBox($"頁面切換錯誤: {ex.Message}");
+            }
+            finally
+            {
+                // ✅ 在切換完成後設置為 false
+                AIService.IsRestarting = false;
             }
         }
 
-        // ✅ Align Page 初始化（非同步）
+        //  Align Page 初始化（非同步）
         private async Task InitializeAlignPageAsync()
         {
             try
@@ -3041,7 +3183,7 @@ namespace NSAA_16Axis
                 // 在 UI 執行緒更新權限檢查
                 await InvokeAsync(() => CMAlignCheckLevel());
 
-                // ✅ 啟動對齊匹配執行緒（如果尚未啟動）
+                //  啟動對齊匹配執行緒（如果尚未啟動）
                 if (iAlignMatcherRun == 0)
                 {
                     GV.OnLearnPattern = false;
@@ -3054,7 +3196,7 @@ namespace NSAA_16Axis
                     }
                 }
 
-                // ✅ 根據 GV.skView 設定相機（非阻塞）
+                //  根據 GV.skView 設定相機（非阻塞）
                 if (GV.skView == 0) // Top CCD
                 {
                     await SetupTopCCDAsync();
@@ -3064,7 +3206,7 @@ namespace NSAA_16Axis
                     await SetupBottomCCDAsync();
                 }
 
-                // ✅ 更新 Emulation Mode 標籤
+                //  更新 Emulation Mode 標籤
                 await InvokeAsync(() =>
                 {
                     if (GV.skView == 0) // Top CCD - 使用 Align 頁面標籤
@@ -3078,7 +3220,7 @@ namespace NSAA_16Axis
                         lbEmulationModeR.Visible = !(GV.AppSettingParm.RightBackCamEnable && GV.RightBackCam.IsLive);
                     }
 
-                    // ✅ 確保參數頁面的 Emulation Mode 標籤不會顯示在 Align 頁面
+                    //  確保參數頁面的 Emulation Mode 標籤不會顯示在 Align 頁面
                     lbEmulationModePL.Visible = false;
                     lbEmulationModePR.Visible = false;
                 });
@@ -3092,7 +3234,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ 設定 Top CCD（優化版）
+        //  設定 Top CCD（優化版）
         private async Task SetupTopCCDAsync()
         {
             try
@@ -3114,7 +3256,7 @@ namespace NSAA_16Axis
                     skRightAlign.SetShowMask(false, 0, RightMask);
                 });
 
-                // ✅ 減少等待時間（從 250ms 降到 100ms）
+                //  減少等待時間（從 250ms 降到 100ms）
                 await Task.Delay(100);
 
                 // 3. 設定相機視窗（確保在 UI 執行緒）
@@ -3145,7 +3287,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ 設定 Bottom CCD（優化版）
+        //  設定 Bottom CCD（優化版）
         private async Task SetupBottomCCDAsync()
         {
             try
@@ -3156,7 +3298,7 @@ namespace NSAA_16Axis
                 GV.LeftBackCam?.Freeze();
                 GV.RightBackCam?.Freeze();
 
-                // ✅ 減少等待時間
+                //  減少等待時間
                 await Task.Delay(100);
 
                 // 2. 在 UI 執行緒設定視窗
@@ -3177,7 +3319,7 @@ namespace NSAA_16Axis
                 // 3. 設定 Mask 顯示
                 if (MaskImage.Checked)
                 {
-                    // ✅ 非同步載入 Mask 影像
+                    //  非同步載入 Mask 影像
                     await Task.Run(() =>
                     {
                         if (LeftMask == null || RightMask == null)
@@ -3231,14 +3373,14 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ Learn Pattern Up Page 初始化
+        //  Learn Pattern Up Page 初始化
         private async Task InitializeLearnPatternUpPageAsync()
         {
             try
             {
                 iTabIndex = 1;
-                GV.LeftUpCam?.Freeze();
-                GV.RightUpCam?.Freeze();
+                //GV.LeftUpCam?.Freeze();
+                //GV.RightUpCam?.Freeze();
                 GV.LeftBackCam?.Freeze();
                 GV.RightBackCam?.Freeze();
 
@@ -3274,7 +3416,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ Parameter Setting Page 初始化
+        //  Parameter Setting Page 初始化
         private async Task InitializeParameterSettingPageAsync()
         {
             try
@@ -3296,7 +3438,7 @@ namespace NSAA_16Axis
 
                 await Task.Delay(100);
 
-                // ✅ 根據 GV.skView 或 AlignC.UpBackAlign 判斷使用哪組相機
+                //  根據 GV.skView 或 AlignC.UpBackAlign 判斷使用哪組相機
                 if (GV.skView == 0 || AlignC.UpBackAlign == 1)
                 {
                     await InvokeAsync(() =>
@@ -3350,7 +3492,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ Learn Pattern Back Page 初始化
+        //  Learn Pattern Back Page 初始化
         private async Task InitializeLearnPatternBackPageAsync()
         {
             try
@@ -3359,27 +3501,29 @@ namespace NSAA_16Axis
                 GV.TabOption = GV.Tab.BackLearn;
                 GV.LeftUpCam?.Freeze();
                 GV.RightUpCam?.Freeze();
-                GV.LeftBackCam?.Freeze();
-                GV.RightBackCam?.Freeze();
+                //GV.LeftBackCam?.Freeze();
+                //GV.RightBackCam?.Freeze();
 
-                await Task.Delay(100);
+                //await Task.Delay(100);
 
-                await InvokeAsync(() => cmLearnPatternBack1.CheckLevel());
+                _ = InvokeAsync(() => cmLearnPatternBack1.CheckLevel());
 
-                await Task.Delay(100);
+                //await Task.Delay(100);
 
-                await Task.Run(() =>
-                {
-                    GV.LeftBackCam?.Live();
-                    Thread.Sleep(100);
-                    GV.RightBackCam?.Live();
-                });
+                //await Task.Run(() =>
+                //{
+                //    GV.LeftBackCam?.Live();
+                //    Thread.Sleep(100);
+                //    GV.RightBackCam?.Live();
+                //});
 
                 await InvokeAsync(() =>
                 {
                     cmLearnPatternBack1.ShowMe();
                     Update();
                 });
+                await Task.Delay(50);
+                cmLearnPatternBack1.PostInitialize();
 
                 GM.WriteToStatusTextBox1(iAdmin, "Change to Pattern Edit Bottom");
             }
@@ -3389,7 +3533,7 @@ namespace NSAA_16Axis
             }
         }
 
-        // ✅ 輔助方法：在 UI 執行緒執行動作
+        //  輔助方法：在 UI 執行緒執行動作
         private Task InvokeAsync(Action action)
         {
             if (InvokeRequired)
@@ -3580,22 +3724,22 @@ namespace NSAA_16Axis
                     {
                         if (GV.NowMagnification == 1)  // 低倍率
                         {
-                            // ✅ 左上低倍率光罩搜尋（支援偏移量）
+                            //  左上低倍率光罩搜尋（支援偏移量）
                             GV.matcherLLM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lMaskMp, AlignC.LLMaskAlgorithm, AlignC.LLMaskAIClassId);
                             lMaskMp.X += AlignC.LLMaskOffsetX;
                             lMaskMp.Y += AlignC.LLMaskOffsetY;
 
-                            // ✅ 左上低倍率晶圓搜尋（支援偏移量）
+                            //  左上低倍率晶圓搜尋（支援偏移量）
                             GV.matcherLLW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lWaferMp, AlignC.LLWaferAlgorithm, AlignC.LLWaferAIClassId);
                             lWaferMp.X += AlignC.LLWaferOffsetX;
                             lWaferMp.Y += AlignC.LLWaferOffsetY;
 
-                            // ✅ 右上低倍率光罩搜尋（支援偏移量）
+                            //  右上低倍率光罩搜尋（支援偏移量）
                             GV.matcherRLM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rMaskMp, AlignC.RLMaskAlgorithm, AlignC.RLMaskAIClassId);
                             rMaskMp.X += AlignC.RLMaskOffsetX;
                             rMaskMp.Y += AlignC.RLMaskOffsetY;
 
-                            // ✅ 右上低倍率晶圓搜尋（支援偏移量）
+                            //  右上低倍率晶圓搜尋（支援偏移量）
                             GV.matcherRLW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rWaferMp, AlignC.RLWaferAlgorithm, AlignC.RLWaferAIClassId);
                             rWaferMp.X += AlignC.RLWaferOffsetX;
                             rWaferMp.Y += AlignC.RLWaferOffsetY;
@@ -3626,12 +3770,12 @@ namespace NSAA_16Axis
                             }
                             else
                             {
-                                // ✅ 左上高倍率光罩搜尋（支援偏移量）
+                                //  左上高倍率光罩搜尋（支援偏移量）
                                 GV.matcherLHM.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lMaskMp, AlignC.LHMaskAlgorithm, AlignC.LLMaskAIClassId);
                                 lMaskMp.X += AlignC.LHMaskOffsetX;
                                 lMaskMp.Y += AlignC.LHMaskOffsetY;
 
-                                // ✅ 右上高倍率光罩搜尋（支援偏移量）
+                                //  右上高倍率光罩搜尋（支援偏移量）
                                 GV.matcherRHM.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rMaskMp, AlignC.RHMaskAlgorithm, AlignC.RLMaskAIClassId);
                                 rMaskMp.X += AlignC.RHMaskOffsetX;
                                 rMaskMp.Y += AlignC.RHMaskOffsetY;
@@ -3644,12 +3788,12 @@ namespace NSAA_16Axis
                                 skRightAlign.MaskMp.Score = rMaskMp.Score;
                             }
 
-                            // ✅ 左上高倍率晶圓搜尋（支援偏移量）
+                            //  左上高倍率晶圓搜尋（支援偏移量）
                             GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftUpCam.Grab(), ref lWaferMp, AlignC.LHWaferAlgorithm, AlignC.LHWaferAIClassId);
                             lWaferMp.X += AlignC.LHWaferOffsetX;
                             lWaferMp.Y += AlignC.LHWaferOffsetY;
 
-                            // ✅ 右上高倍率晶圓搜尋（支援偏移量）
+                            //  右上高倍率晶圓搜尋（支援偏移量）
                             GV.matcherRHW.MatMatchWithAlgo(0, GV.RightUpCam.Grab(), ref rWaferMp, AlignC.RHWaferAlgorithm, AlignC.RHWaferAIClassId);
                             rWaferMp.X += AlignC.RHWaferOffsetX;
                             rWaferMp.Y += AlignC.RHWaferOffsetY;
@@ -3667,12 +3811,12 @@ namespace NSAA_16Axis
                     {
                         if (GV.NowWaferMask == 1)  // Mask Only
                         {
-                            // ✅ 左下光罩搜尋（支援偏移量）
+                            //  左下光罩搜尋（支援偏移量）
                             GV.matcherLLM.MatMatchWithAlgo(0, GV.LeftBackCam.Grab(), ref lMaskMp, AlignC.LLMaskAlgorithm, AlignC.LLMaskAIClassId);
                             lMaskMp.X += AlignC.LLMaskOffsetX;
                             lMaskMp.Y += AlignC.LLMaskOffsetY;
 
-                            // ✅ 右下光罩搜尋（支援偏移量）
+                            //  右下光罩搜尋（支援偏移量）
                             GV.matcherRLM.MatMatchWithAlgo(0, GV.RightBackCam.Grab(), ref rMaskMp, AlignC.RLMaskAlgorithm, AlignC.RLMaskAIClassId);
                             rMaskMp.X += AlignC.RLMaskOffsetX;
                             rMaskMp.Y += AlignC.RLMaskOffsetY;
@@ -3686,7 +3830,7 @@ namespace NSAA_16Axis
                         }
                         else if (GV.NowWaferMask == 2)  // Mask+Wafer
                         {
-                            // ✅ 使用 LeftMask/RightMask 搜尋光罩（支援偏移量）
+                            //  使用 LeftMask/RightMask 搜尋光罩（支援偏移量）
                             GV.matcherLLM.MatMatchWithAlgo(0, LeftMask, ref lMaskMp, AlignC.LLMaskAlgorithm, AlignC.LLMaskAIClassId);
                             lMaskMp.X += AlignC.LLMaskOffsetX;
                             lMaskMp.Y += AlignC.LLMaskOffsetY;
@@ -3695,12 +3839,12 @@ namespace NSAA_16Axis
                             rMaskMp.X += AlignC.RLMaskOffsetX;
                             rMaskMp.Y += AlignC.RLMaskOffsetY;
 
-                            // ✅ 左下晶圓搜尋（支援偏移量）
+                            //  左下晶圓搜尋（支援偏移量）
                             GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftBackCam.Grab(), ref lWaferMp, AlignC.LHWaferAlgorithm, AlignC.LHWaferAIClassId);
                             lWaferMp.X += AlignC.LHWaferOffsetX;
                             lWaferMp.Y += AlignC.LHWaferOffsetY;
 
-                            // ✅ 右下晶圓搜尋（支援偏移量）
+                            //  右下晶圓搜尋（支援偏移量）
                             GV.matcherRHW.MatMatchWithAlgo(0, GV.RightBackCam.Grab(), ref rWaferMp, AlignC.RHWaferAlgorithm, AlignC.RHWaferAIClassId);
                             rWaferMp.X += AlignC.RHWaferOffsetX;
                             rWaferMp.Y += AlignC.RHWaferOffsetY;
@@ -3724,7 +3868,7 @@ namespace NSAA_16Axis
                             skLeftAlign.MaskMp.Y = BLivePmps.LMaskMp.Y;
                             skLeftAlign.MaskMp.Score = BLivePmps.LMaskMp.Score;
 
-                            // ✅ 左下晶圓搜尋（支援偏移量）
+                            //  左下晶圓搜尋（支援偏移量）
                             GV.matcherLHW.MatMatchWithAlgo(0, GV.LeftBackCam.Grab(), ref lWaferMp, AlignC.LHWaferAlgorithm, AlignC.LHWaferAIClassId);
                             lWaferMp.X += AlignC.LHWaferOffsetX;
                             lWaferMp.Y += AlignC.LHWaferOffsetY;
@@ -3737,7 +3881,7 @@ namespace NSAA_16Axis
                             skRightAlign.MaskMp.Y = BLivePmps.RMaskMp.Y;
                             skRightAlign.MaskMp.Score = BLivePmps.RMaskMp.Score;
 
-                            // ✅ 右下晶圓搜尋（支援偏移量）
+                            //  右下晶圓搜尋（支援偏移量）
                             GV.matcherRHW.MatMatchWithAlgo(0, GV.RightBackCam.Grab(), ref rWaferMp, AlignC.RHWaferAlgorithm, AlignC.RHWaferAIClassId);
                             rWaferMp.X += AlignC.RHWaferOffsetX;
                             rWaferMp.Y += AlignC.RHWaferOffsetY;
@@ -3937,12 +4081,12 @@ namespace NSAA_16Axis
                         //        {
                         //            writeStatus($"正在切換 Recipe {oldRecipeNumber} → {iNowRecipeNumber}...");
 
-                        //            // ✅ 1. 先變更 Recipe（快速操作）
+                        //            //  1. 先變更 Recipe（快速操作）
                         //            BeginInvoke((MethodInvoker)delegate {
                         //                ChangeRecipeNumber(iNowRecipeNumber);
                         //            });
 
-                        //            // ✅ 2. 檢查是否需要重啟 AI 服務
+                        //            //  2. 檢查是否需要重啟 AI 服務
                         //            string configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "AIConfig.json");
                         //            bool needRestart = true;
 
@@ -3974,7 +4118,7 @@ namespace NSAA_16Axis
                         //                writeStatus($"讀取 AIConfig.json 失敗: {ex.Message}，將重啟 AI 服務");
                         //            }
 
-                        //            // ✅ 3. 只有在需要時才重啟 AI 服務
+                        //            //  3. 只有在需要時才重啟 AI 服務
                         //            if (needRestart)
                         //            {
                         //                AIService.IsRestarting = true;
@@ -3988,7 +4132,7 @@ namespace NSAA_16Axis
                         //                // 等待服務啟動
                         //                await Task.Delay(500);
 
-                        //                // ✅ 4. 更新類別列表
+                        //                //  4. 更新類別列表
                         //                //try
                         //                //{
                         //                //    var classNames = await GV.AIClassList.GetClassNamesAsync();
@@ -3998,7 +4142,7 @@ namespace NSAA_16Axis
                         //                //        classList.Add(classNames[i], (Int16)i);
                         //                //    }
 
-                        //                //    // ✅ 在 UI 執行緒更新控制項
+                        //                //    //  在 UI 執行緒更新控制項
                         //                //    Invoke((MethodInvoker)delegate {
                         //                //        cmLearnPatternUp1.UpdateClassList(classList);
                         //                //        cmLearnPatternBack1.UpdateClassList(classList);
@@ -4022,19 +4166,19 @@ namespace NSAA_16Axis
                         //        }
                         //    });
 
-                        //    // ✅ 不等待背景任務完成，立即繼續 PLC 輪詢
+                        //    //  不等待背景任務完成，立即繼續 PLC 輪詢
                         //}
-                        _ = Task.Run(async () =>
+                        var recipeChangeTask = Task.Run(async () =>
                         {
                             try
                             {
                                 writeStatus($"正在切換 Recipe {oldRecipeNumber} → {iNowRecipeNumber}...");
 
-                                // ✅ 1. 停止搜尋執行緒
+                                //  1. 停止搜尋執行緒
                                 GV.OnAlign = true; // 暫停搜尋
-                                await Task.Delay(500); // 等待執行緒暫停
+                                await Task.Delay(200); // 等待執行緒暫停
 
-                                // ✅ 2. 在背景執行緒載入 Recipe XML
+                                //  2. 在背景執行緒載入 Recipe XML
                                 Recipe newRecipe = null;
                                 AlignCondition newAlignC = null;
 
@@ -4044,7 +4188,7 @@ namespace NSAA_16Axis
                                     newAlignC = newRecipe.AlignC;
                                 });
 
-                                // ✅ 3. 快速更新全域變數
+                                //  3. 快速更新全域變數
                                 await InvokeAsync(() =>
                                 {
                                     GV._recipe = newRecipe;
@@ -4104,18 +4248,18 @@ namespace NSAA_16Axis
                                     Update();
                                 });
 
-                                // ✅ 4. 重新學習模板（在背景執行緒）
+                                //  4. 重新學習模板（在背景執行緒）
                                 await Task.Run(() =>
                                 {
                                     try
                                     {
-                                        // ✅ 重新初始化 Matcher（確保使用新的 BlockSize）
+                                        //  重新初始化 Matcher（確保使用新的 BlockSize）
                                         GV.matcherLLW.iBlockSize = AlignC.LLWaferBlockSize;
                                         GV.matcherLHW.iBlockSize = AlignC.LHWaferBlockSize;
                                         GV.matcherRLW.iBlockSize = AlignC.RLWaferBlockSize;
                                         GV.matcherRHW.iBlockSize = AlignC.RHWaferBlockSize;
 
-                                        // ✅ 重新學習所有模板
+                                        //  重新學習所有模板
                                         if (_recipe.LeftLowWaferMat != null && !_recipe.LeftLowWaferMat.Empty())
                                             GV.matcherLLW.LearnWithAlgo(_recipe.LeftLowWaferMat, _recipe.LeftLowWaferMask, AlignC.LLWaferAlgorithm);
 
@@ -4148,7 +4292,7 @@ namespace NSAA_16Axis
                                     }
                                 });
 
-                                // ✅ 5. 只在 Bottom CCD 模式時才取得 Mask 位置
+                                //  5. 只在 Bottom CCD 模式時才取得 Mask 位置
                                 if (AlignC.UpBackAlign == 2)
                                 {
                                     await Task.Run(() =>
@@ -4169,49 +4313,52 @@ namespace NSAA_16Axis
                                     await InvokeAsync(() => ChangeUpDown(1, 1));
                                 }
 
-                                // ✅ 6. 恢復搜尋執行緒
+                                //  6. 恢復搜尋執行緒
                                 GV.OnAlign = false;
 
                                 writeStatus($"Recipe 切換完成: {iNowRecipeNumber}");
                                 iPreviousRecipeNumber = iNowRecipeNumber;
 
-                                // ✅ 7. AI 服務重啟（獨立任務）
-                                string configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "AIConfig.json");
-                                bool needRestart = true;
-
-                                try
+                                await Task.Run(async () =>
                                 {
-                                    if (File.Exists(configPath))
-                                    {
-                                        string jsonContent = File.ReadAllText(configPath);
-                                        var aiConfig = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(jsonContent);
-                                        int configRecipeNumber = (int)aiConfig.recipeNumber;
+                                    string configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Python", "AIConfig.json");
+                                    bool needRestart = true;
 
-                                        if (configRecipeNumber == iNowRecipeNumber)
+                                    try
+                                    {
+                                        if (File.Exists(configPath))
                                         {
-                                            writeStatus($"AI 模型已載入 Recipe {iNowRecipeNumber}，無需重啟服務");
-                                            needRestart = false;
+                                            string jsonContent = File.ReadAllText(configPath);
+                                            var aiConfig = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(jsonContent);
+                                            int configRecipeNumber = (int)aiConfig.recipeNumber;
+
+                                            if (configRecipeNumber == iNowRecipeNumber)
+                                            {
+                                                writeStatus($"AI 模型已載入 Recipe {iNowRecipeNumber}，無需重啟服務");
+                                                needRestart = false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            writeStatus("AIConfig.json 不存在，需要重啟 AI 服務");
                                         }
                                     }
-                                    else
+                                    catch (Exception ex)
                                     {
-                                        writeStatus("AIConfig.json 不存在，需要重啟 AI 服務");
+                                        writeStatus($"讀取 AIConfig.json 失敗: {ex.Message}，將重啟 AI 服務");
                                     }
-                                }
-                                catch (Exception ex)
-                                {
-                                    writeStatus($"讀取 AIConfig.json 失敗: {ex.Message}，將重啟 AI 服務");
-                                }
 
-                                if (needRestart)
-                                {
-                                    AIService.IsRestarting = true;
-                                    await Task.Delay(500);
-                                    writeStatus($"正在重新啟動 AI 服務...");
-                                    EnsureServiceRestart();
-                                    await Task.Delay(500);
-                                    AIService.IsRestarting = false;
-                                }
+                                    if (needRestart)
+                                    {
+                                        AIService.IsRestarting = true;
+                                        await Task.Delay(500);
+                                        writeStatus($"正在重新啟動 AI 服務...");
+                                        EnsureServiceRestart();
+                                        await Task.Delay(500);
+                                        AIService.IsRestarting = false;
+                                    }
+                                });
+
                             }
                             catch (Exception ex)
                             {
@@ -4219,8 +4366,16 @@ namespace NSAA_16Axis
                                 AIService.IsRestarting = false;
                             }
                         });
+                        try
+                        {
+                            recipeChangeTask.Wait();
+                            writeStatus($"Recipe {iNowRecipeNumber} 變更處理已完成，繼續 PLC 輪詢");
+                        }
+                        catch (Exception ex)
+                        {
+                            writeStatus($"等待 Recipe 變更完成時發生錯誤: {ex.Message}");
+                        }
 
-                        // ✅ 不等待背景任務完成，立即繼續 PLC 輪詢
                     }
                     Thread.Sleep(250);
                     if (iTabIndex == 0)
@@ -4329,11 +4484,13 @@ namespace NSAA_16Axis
                             }
                             break;
                         case GV.Status.DownWaferAlign:
-                            if ((LeftMask == null) || (RightMask == null))
-                            {
-                                LeftMask = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
-                                RightMask = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
-                            }
+                            //if ((LeftMask == null) || (RightMask == null))
+                            //{
+                            //    LeftMask = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
+                            //    RightMask = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
+                            //}
+                            LeftMask = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
+                            RightMask = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
                             if (iStartAlign == 1)
                             {
                                 GV.TickCount = 0;
@@ -4428,7 +4585,7 @@ namespace NSAA_16Axis
                 }
                 await t1;
                 writeStatus(GV.Dlang.strMessageMaskCenter);
-                
+
                 await Task.Run(() => MoveCamera(AlignC.AlignLowMagnification));
                 if (iStartAlign == 0)
                 {
@@ -4645,7 +4802,7 @@ namespace NSAA_16Axis
                 {
                     if (AlignC.UpBotMask == 2)
                     {
-                        
+
                         ProductMatchPositions pmps = GetAllMatchPostion(GV.LeftBackCam.Grab(), GV.RightBackCam.Grab(), "backmask");
                         Thread.Sleep(500);
                         string TopMaskCheck2 = string.Format(GV.Dlang.strMessageMaskShift, pmps.LMaskMp.X, pmps.RMaskMp.X, pmps.LMaskMp.Y, pmps.RMaskMp.Y);
@@ -4663,8 +4820,7 @@ namespace NSAA_16Axis
                     }
                     else
                     {
-                        
-                        ProductMatchPositions pmps = GetAllMatchPostion(LeftMask, RightMask, "backmask");
+                        ProductMatchPositions pmps = GetAllMatchPostion(GV.LeftBackCam.Grab(), GV.RightBackCam.Grab(), "backmask");
                         Thread.Sleep(500);
                         if ((pmps.LMaskMp.Score > GV.AppSettingParm.LMaskScoreW) && (pmps.RMaskMp.Score > GV.AppSettingParm.RMaskScoreW))
                         {
@@ -5124,7 +5280,7 @@ namespace NSAA_16Axis
                 CheckIfPlcStop();
                 Thread.Sleep(200);
                 writeStatus(GV.Dlang.strMessageAlign1 + times.ToString() + " ========");
-               
+
                 ProductMatchPositions pmps = GetAllMatchPostion(GV.LeftUpCam.Grab(), GV.RightUpCam.Grab(), "high");
 
                 double beforeMoveLShiftXum = (pmps.LWaferMp.X - pmps.LMaskMp.X) * GV.ZoomLensInfo.LeftUmPerPixelX[AlignC.AlignHighMagnification];
@@ -5343,7 +5499,7 @@ namespace NSAA_16Axis
                 int[] motorSteps = CalcuteMaskWaferShiftAndReturnMotorSteps(pmps.LMaskMp, pmps.LWaferMp, pmps.RMaskMp, pmps.RWaferMp, pmps.PatternCenterDistance);
                 if (GV.AppSettingParm.DebugMode)
                     writeStatus("Top Contact Move");
-                
+
                 writeStatus(GV.Dlang.strMessageTableStep + " : " + motorSteps[0].ToString() + " , " + motorSteps[1].ToString() + " , " + motorSteps[2].ToString());
                 GV.Plc.AlignXyyTableMove(motorSteps[0], motorSteps[1], motorSteps[2]);
                 Thread.Sleep(200);
@@ -5582,7 +5738,7 @@ namespace NSAA_16Axis
                     iStartAlign = 0;
                     return;
                 }
-                
+
                 pmps = GetAllMatchPostion(GV.LeftUpCam.Grab(), GV.RightUpCam.Grab(), alignMagnification);
                 //Thread.Sleep(500);
                 if (pmps.LMaskMp.Score < AlignC.MaskSocre || pmps.RMaskMp.Score < AlignC.MaskSocre)
@@ -5601,7 +5757,7 @@ namespace NSAA_16Axis
             }
             else
             {
-               
+
                 pmps = GetAllMatchPostion(GV.LeftUpCam.Grab(), GV.RightUpCam.Grab(), alignMagnification);
                 //Thread.Sleep(500);
             }
@@ -6056,19 +6212,41 @@ namespace NSAA_16Axis
                 iAlignOK = 0;
                 return false;
             }
-
-            // GV.LeftMaskMat = LeftMask.Clone();
-            // GV.RightMaskMat = RightMask.Clone();
-            MaskShift(LeftMask, ref GV.LeftMaskMat);
-            MaskShift(RightMask, ref GV.RightMaskMat);
+            //20260116
+            GV.LeftMaskMat = LeftMask.Clone();
+            GV.RightMaskMat = RightMask.Clone();
+            //MaskShift(LeftMask, ref GV.LeftMaskMat);
+            //MaskShift(RightMask, ref GV.RightMaskMat);
 
             if (MaskImage.Checked)
             {
                 skLeftAlign.SetShowMask(true, AlignC.dLalpha, LeftMask);
                 skRightAlign.SetShowMask(true, AlignC.dRalpha, RightMask);
             }
-            Cv2.ImWrite(GetTemplateFileName("LeftMask"), LeftMask);
-            Cv2.ImWrite(GetTemplateFileName("RightMask"), RightMask);
+            string leftMaskPath = GetTemplateFileName("LeftMask");
+            string rightMaskPath = GetTemplateFileName("RightMask");
+
+            // 2. ✅ 強制刪除舊檔案（處理唯讀屬性）
+            if (File.Exists(leftMaskPath))
+            {
+                File.SetAttributes(leftMaskPath, FileAttributes.Normal);  // 移除唯讀屬性
+                File.Delete(leftMaskPath);
+                writeStatus($"已刪除舊的左側 Mask: {leftMaskPath}");
+            }
+
+            if (File.Exists(rightMaskPath))
+            {
+                File.SetAttributes(rightMaskPath, FileAttributes.Normal);
+                File.Delete(rightMaskPath);
+                writeStatus($"已刪除舊的右側 Mask: {rightMaskPath}");
+            }
+
+            // 3. ✅ 等待檔案系統完全釋放
+            Thread.Sleep(100);
+
+            // 4. ✅ 儲存新影像（檢查回傳值）
+            Cv2.ImWrite(leftMaskPath, LeftMask);
+            Cv2.ImWrite(rightMaskPath, RightMask);
             GV.NowWaferMask = 3;
             writeStatus("Do Mask Picture OK!");
             return true;
@@ -6409,13 +6587,13 @@ namespace NSAA_16Axis
             {
                 if (alignMmagnification == "low")
                 {
-                    // ✅ 使用完整影像搜尋
+                    //  使用完整影像搜尋
                     GV.matcherLLM.MatMatchWithAlgo(0, lSrc.Clone(), ref lMaskMp, AlignC.LLMaskAlgorithm);
                     GV.matcherRLM.MatMatchWithAlgo(0, rSrc.Clone(), ref rMaskMp, AlignC.RLMaskAlgorithm);
                     GV.matcherLLW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, AlignC.LLWaferAlgorithm);
                     GV.matcherRLW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, AlignC.RLWaferAlgorithm);
 
-                    // ✅ 套用偏移量校正座標
+                    //  套用偏移量校正座標
                     lMaskMp.X += AlignC.LLMaskOffsetX;
                     lMaskMp.Y += AlignC.LLMaskOffsetY;
 
@@ -6436,13 +6614,13 @@ namespace NSAA_16Axis
                 }
                 else if (alignMmagnification == "high")
                 {
-                    // ✅ 使用完整影像搜尋
+                    //  使用完整影像搜尋
                     GV.matcherLHM.MatMatchWithAlgo(0, lSrc.Clone(), ref lMaskMp, AlignC.LHMaskAlgorithm);
                     GV.matcherRHM.MatMatchWithAlgo(0, rSrc.Clone(), ref rMaskMp, AlignC.RHMaskAlgorithm);
                     GV.matcherLHW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, AlignC.LHWaferAlgorithm);
                     GV.matcherRHW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, AlignC.RHWaferAlgorithm);
 
-                    // ✅ 套用偏移量校正座標
+                    //  套用偏移量校正座標
                     lMaskMp.X += AlignC.LHMaskOffsetX;
                     lMaskMp.Y += AlignC.LHMaskOffsetY;
 
@@ -6463,7 +6641,7 @@ namespace NSAA_16Axis
                 }
                 else if (alignMmagnification == "back")
                 {
-                    // ✅ 判斷使用哪種光罩來源
+                    //  判斷使用哪種光罩來源
                     if (AlignC.UpBotMask == 2)
                     {
                         // 使用即時影像搜尋光罩
@@ -6502,14 +6680,14 @@ namespace NSAA_16Axis
                         GM.DebugMessage("back match UpBotMask != 2");
                     }
 
-                    // ✅ 套用偏移量校正座標（光罩）
+                    //  套用偏移量校正座標（光罩）
                     lMaskMp.X += AlignC.LLMaskOffsetX;
                     lMaskMp.Y += AlignC.LLMaskOffsetY;
 
                     rMaskMp.X += AlignC.RLMaskOffsetX;
                     rMaskMp.Y += AlignC.RLMaskOffsetY;
 
-                    // ✅ 搜尋晶圓
+                    //  搜尋晶圓
                     if (AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
                     {
                         GV.matcherLHW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, AlignC.LHWaferAlgorithm, AlignC.LHWaferAIClassId);
@@ -6528,7 +6706,7 @@ namespace NSAA_16Axis
                         GV.matcherRHW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, AlignC.RHWaferAlgorithm);
                     }
 
-                    // ✅ 套用偏移量校正座標（晶圓）
+                    //  套用偏移量校正座標（晶圓）
                     lWaferMp.X += AlignC.LHWaferOffsetX;
                     lWaferMp.Y += AlignC.LHWaferOffsetY;
 
@@ -6543,11 +6721,11 @@ namespace NSAA_16Axis
                 }
                 else if (alignMmagnification == "backmask")
                 {
-                    // ✅ 只搜尋光罩:使用完整影像搜尋
+                    //  只搜尋光罩:使用完整影像搜尋
                     GV.matcherLLM.MatMatchWithAlgo(0, lSrc.Clone(), ref lMaskMp, AlignC.LLMaskAlgorithm);
                     GV.matcherRLM.MatMatchWithAlgo(0, rSrc.Clone(), ref rMaskMp, AlignC.RLMaskAlgorithm);
 
-                    // ✅ 套用偏移量校正座標
+                    //  套用偏移量校正座標
                     lMaskMp.X += AlignC.LLMaskOffsetX;
                     lMaskMp.Y += AlignC.LLMaskOffsetY;
 
@@ -6556,11 +6734,11 @@ namespace NSAA_16Axis
                 }
                 else if (alignMmagnification == "backwafer")
                 {
-                    // ✅ 只搜尋晶圓:使用完整影像搜尋
+                    //  只搜尋晶圓:使用完整影像搜尋
                     GV.matcherLHW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, AlignC.LHWaferAlgorithm);
                     GV.matcherRHW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, AlignC.RHWaferAlgorithm);
 
-                    // ✅ 套用偏移量校正座標
+                    //  套用偏移量校正座標
                     lWaferMp.X += AlignC.LHWaferOffsetX;
                     lWaferMp.Y += AlignC.LHWaferOffsetY;
 
@@ -6569,11 +6747,11 @@ namespace NSAA_16Axis
                 }
                 else if (alignMmagnification == "checkmask")
                 {
-                    // ✅ 檢查光罩:使用完整影像搜尋
+                    //  檢查光罩:使用完整影像搜尋
                     GV.matcherLHM.MatMatchWithAlgo(0, lSrc.Clone(), ref lMaskMp, AlignC.LHMaskAlgorithm);
                     GV.matcherRHM.MatMatchWithAlgo(0, rSrc.Clone(), ref rMaskMp, AlignC.RHMaskAlgorithm);
 
-                    // ✅ 套用偏移量校正座標
+                    //  套用偏移量校正座標
                     lMaskMp.X += AlignC.LHMaskOffsetX;
                     lMaskMp.Y += AlignC.LHMaskOffsetY;
 
@@ -6582,22 +6760,22 @@ namespace NSAA_16Axis
                 }
                 else if (alignMmagnification == "backcheck")
                 {
-                    // ✅ 使用預存的 Mask 影像搜尋光罩
+                    //  使用預存的 Mask 影像搜尋光罩
                     GV.matcherLLM.MatMatchWithAlgo(0, LeftMask.Clone(), ref lMaskMp, AlignC.LLMaskAlgorithm);
                     GV.matcherRLM.MatMatchWithAlgo(0, RightMask.Clone(), ref rMaskMp, AlignC.RLMaskAlgorithm);
 
-                    // ✅ 套用偏移量校正座標（光罩）
+                    //  套用偏移量校正座標（光罩）
                     lMaskMp.X += AlignC.LLMaskOffsetX;
                     lMaskMp.Y += AlignC.LLMaskOffsetY;
 
                     rMaskMp.X += AlignC.RLMaskOffsetX;
                     rMaskMp.Y += AlignC.RLMaskOffsetY;
 
-                    // ✅ 搜尋晶圓
+                    //  搜尋晶圓
                     GV.matcherLHW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, AlignC.LHWaferAlgorithm);
                     GV.matcherRHW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, AlignC.RHWaferAlgorithm);
 
-                    // ✅ 套用偏移量校正座標（晶圓）
+                    //  套用偏移量校正座標（晶圓）
                     lWaferMp.X += AlignC.LHWaferOffsetX;
                     lWaferMp.Y += AlignC.LHWaferOffsetY;
 
@@ -6606,13 +6784,13 @@ namespace NSAA_16Axis
                 }
                 else if (alignMmagnification == "first")
                 {
-                    // ✅ 初始化模式:使用完整影像搜尋
+                    //  初始化模式:使用完整影像搜尋
                     GV.matcherLLM.MatMatchWithAlgo(0, lSrc.Clone(), ref lMaskMp, AlignC.LLMaskAlgorithm);
                     GV.matcherRLM.MatMatchWithAlgo(0, rSrc.Clone(), ref rMaskMp, AlignC.RLMaskAlgorithm);
                     GV.matcherLLW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, AlignC.LLWaferAlgorithm);
                     GV.matcherRLW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, AlignC.RLWaferAlgorithm);
 
-                    // ✅ 套用偏移量校正座標
+                    //  套用偏移量校正座標
                     lMaskMp.X += AlignC.LLMaskOffsetX;
                     lMaskMp.Y += AlignC.LLMaskOffsetY;
 
@@ -6633,7 +6811,7 @@ namespace NSAA_16Axis
                     GV.matcherLLW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, AlignC.LLWaferAlgorithm);
                     GV.matcherRLW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, AlignC.RLWaferAlgorithm);
 
-                    // ✅ 套用偏移量校正座標
+                    //  套用偏移量校正座標
                     lMaskMp.X += AlignC.LLMaskOffsetX;
                     lMaskMp.Y += AlignC.LLMaskOffsetY;
 
@@ -6782,21 +6960,21 @@ namespace NSAA_16Axis
         //}
         private ProductMatchPositions CheckWaferMatchPostion(Mat lSrc, Mat rSrc)
         {
-            // ✅ 直接使用 LastPmps 中的光罩位置(已經在前面步驟確定)
+            //  直接使用 LastPmps 中的光罩位置(已經在前面步驟確定)
             lMaskMp = LastPmps.LMaskMp;
             rMaskMp = LastPmps.RMaskMp;
 
-            // ✅ 搜尋左上高倍率晶圓(支援偏移量)
+            //  搜尋左上高倍率晶圓(支援偏移量)
             GV.matcherLHW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, AlignC.LHWaferAlgorithm);
 
-            // ✅ 套用偏移量校正座標
+            //  套用偏移量校正座標
             lWaferMp.X += AlignC.LHWaferOffsetX;
             lWaferMp.Y += AlignC.LHWaferOffsetY;
 
-            // ✅ 搜尋右上高倍率晶圓(支援偏移量)
+            //  搜尋右上高倍率晶圓(支援偏移量)
             GV.matcherRHW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, AlignC.RHWaferAlgorithm);
 
-            // ✅ 套用偏移量校正座標
+            //  套用偏移量校正座標
             rWaferMp.X += AlignC.RHWaferOffsetX;
             rWaferMp.Y += AlignC.RHWaferOffsetY;
 
@@ -6927,7 +7105,7 @@ namespace NSAA_16Axis
             MatchPosition lWaferMp = new MatchPosition();
             MatchPosition rWaferMp = new MatchPosition();
 
-            // ✅ 搜尋光罩（根據 UpBotMask 決定使用即時影像或預存的 Mask）
+            //  搜尋光罩（根據 UpBotMask 決定使用即時影像或預存的 Mask）
             if (AlignC.UpBotMask == 2)
             {
                 // 使用即時影像搜尋光罩
@@ -6977,14 +7155,14 @@ namespace NSAA_16Axis
             rMaskMp.X += AlignC.RMaskAdjX;
             rMaskMp.Y += AlignC.RMaskAdjY;
 
-            // ✅ 套用偏移量校正座標（光罩）
+            //  套用偏移量校正座標（光罩）
             lMaskMp.X += AlignC.LLMaskOffsetX;
             lMaskMp.Y += AlignC.LLMaskOffsetY;
 
             rMaskMp.X += AlignC.RLMaskOffsetX;
             rMaskMp.Y += AlignC.RLMaskOffsetY;
 
-            // ✅ 搜尋晶圓（支援偏移量）
+            //  搜尋晶圓（支援偏移量）
             if (AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
             {
                 GV.matcherLHW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, AlignC.LHWaferAlgorithm, AlignC.LHWaferAIClassId);
@@ -7003,7 +7181,7 @@ namespace NSAA_16Axis
                 GV.matcherRHW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, AlignC.RHWaferAlgorithm);
             }
 
-            // ✅ 套用偏移量校正座標（晶圓）
+            //  套用偏移量校正座標（晶圓）
             lWaferMp.X += AlignC.LHWaferOffsetX;
             lWaferMp.Y += AlignC.LHWaferOffsetY;
 
@@ -8538,105 +8716,174 @@ namespace NSAA_16Axis
             await DAlignWafer();
         }
 
-        //private void MaskImage_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    if (MaskImage.Checked)
-        //    {
-        //        if ((RightMask == null) || (LeftMask == null))
-        //        {
-        //            LeftMask = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
-        //            RightMask = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
-        //            GV.LeftMaskMat = LeftMask;
-        //            GV.RightMaskMat = RightMask;
-        //        }
-        //        skLeftAlign.SetShowMask(true, AlignC.dLalpha, LeftMask);
-        //        skRightAlign.SetShowMask(true, AlignC.dRalpha, RightMask);
-        //    }
-        //    else
-        //    {
-        //        if ((RightMask == null) || (LeftMask == null))
-        //        {
-        //            LeftMask = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
-        //            RightMask = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
-        //            skLeftAlign.SetShowMask(true, AlignC.dLalpha, LeftMask);
-        //            skRightAlign.SetShowMask(true, AlignC.dRalpha, RightMask);
-        //            GV.LeftMaskMat = LeftMask;
-        //            GV.RightMaskMat = RightMask;
-        //        }
-        //        skLeftAlign.SetShowMask(false, 0, LeftMask);
-        //        skRightAlign.SetShowMask(false, 0, RightMask);
-        //    }
-        //}
         private void MaskImage_CheckedChanged(object sender, EventArgs e)
         {
-            // ✅ 讀取當前的 Up/Down 模式
-            int iUpDownAlign = GV.Plc.ReadData16(GV.Plc.iUpDownAlign);
-
-            // ✅ 判斷是否應該顯示透明度調整控制項
-            // 只有在 MaskImage 勾選且為 Bottom CCD 模式 (iUpDownAlign == 1) 時才顯示
-            bool shouldShowControls = MaskImage.Checked && (iUpDownAlign == 1);
-
-            // ✅ 設定所有透明度調整控制項的可見性
-            tBLShowImage.Visible = shouldShowControls;
-            tBRShowImage.Visible = shouldShowControls;
-            btLShowImagePlus.Visible = shouldShowControls;
-            btLShowImageMinus.Visible = shouldShowControls;
-            btRShowImagePlus.Visible = shouldShowControls;
-            btRShowImageMinus.Visible = shouldShowControls;
-            //btLShowImageSave.Visible = shouldShowControls;
-            //btRShowImageSave.Visible = shouldShowControls;
-            lbLShowImage.Visible = shouldShowControls;
-            lbRShowImage.Visible = shouldShowControls;
-
             if (MaskImage.Checked)
             {
-                // ✅ 只有在 Bottom CCD 模式才啟用 TrackBar
-                if (iUpDownAlign == 1)
+                tBLShowImageAlign.Visible = true;
+                tBRShowImageAlign.Visible = true;
+                btLShowImagePlus.Visible = true;
+                btLShowImageMinus.Visible = true;
+                btRShowImagePlus.Visible = true;
+                btRShowImageMinus.Visible = true;
+                lbLShowImage.Visible = true;
+                lbRShowImage.Visible = true;
+                // ✅ 載入 Mask 影像（如果尚未載入）
+                if (LeftMask == null || LeftMask.Empty())
                 {
-                    tBLShowImage.Enabled = true;
-                    tBRShowImage.Enabled = true;
-
-                    // ✅ 載入儲存的透明度值
-                    if (GV.acar != null && GV.NowRecipeNumber >= 0 && GV.NowRecipeNumber < GV.acar.Length)
+                    try
                     {
-                        // 從 AlignCondition 載入透明度設定
-                        int iL = (int)(GV.acar[GV.NowRecipeNumber].dLalphaAlign * 100);
-                        int iR = (int)(GV.acar[GV.NowRecipeNumber].dRalphaAlign * 100);
-
-                        // 限制範圍 0-100
-                        iL = Math.Max(0, Math.Min(100, iL));
-                        iR = Math.Max(0, Math.Min(100, iR));
-
-                        tBLShowImage.Value = iL;
-                        tBRShowImage.Value = iR;
-                        iLalphaAlign = iL;
-                        iRalphaAlign = iR;
-
-                        _dLalphaAlign = (double)iL / 100;
-                        _dRalphaAlign = (double)iR / 100;
+                        LeftMask = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
+                        if (LeftMask != null && !LeftMask.Empty())
+                        {
+                            GV.LeftMaskMat = LeftMask;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        GM.WriteToStatusTextBox($"載入 LeftMask 失敗: {ex.Message}");
                     }
                 }
 
-                // ✅ 設定 Mask 顯示（不論 iUpDownAlign 值都執行）
-                if (_LeftMask != null && !_LeftMask.Empty())
+                if (RightMask == null || RightMask.Empty())
                 {
-                    skLeftAlign.SetShowMask(true, _dLalphaAlign, _LeftMask);
+                    try
+                    {
+                        RightMask = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
+                        if (RightMask != null && !RightMask.Empty())
+                        {
+                            GV.RightMaskMat = RightMask;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        GM.WriteToStatusTextBox($"載入 RightMask 失敗: {ex.Message}");
+                    }
                 }
 
-                if (_RightMask != null && !_RightMask.Empty())
+                // ✅ 根據 TrackBar 的值計算 alpha（0-1）
+                // TrackBar=0: 只顯示影像 (alpha=1.0)
+                // TrackBar=50: 兩者各半 (alpha=0.5)
+                // TrackBar=100: 只顯示 Mask (alpha=0.0)
+                _dLalphaAlign = 1.0 - ((double)tBLShowImageAlign.Value / 100.0);
+                _dRalphaAlign = 1.0 - ((double)tBRShowImageAlign.Value / 100.0);
+
+                // ✅ 啟用 Mask 顯示
+                if (LeftMask != null && !LeftMask.Empty())
                 {
-                    skRightAlign.SetShowMask(true, _dRalphaAlign, _RightMask);
+                    skLeftAlign.SetShowMask(true, _dLalphaAlign, LeftMask);
                 }
+                if (RightMask != null && !RightMask.Empty())
+                {
+                    skRightAlign.SetShowMask(true, _dRalphaAlign, RightMask);
+                }
+
+                // ✅ 啟用 TrackBar
+                tBLShowImageAlign.Enabled = true;
+                tBRShowImageAlign.Enabled = true;
             }
             else
             {
-                // ✅ 停用 TrackBar 並清除 Mask 顯示
-                tBLShowImage.Enabled = false;
-                tBRShowImage.Enabled = false;
-                skLeftAlign.SetShowMask(false, 0, null);
-                skRightAlign.SetShowMask(false, 0, null);
+                // ✅ 關閉 Mask 顯示
+                skLeftAlign.SetShowMask(false, 0, LeftMask);
+                skRightAlign.SetShowMask(false, 0, RightMask);
+
+                // ✅ 停用 TrackBar
+                tBLShowImageAlign.Enabled = false;
+                tBRShowImageAlign.Enabled = false;
+                tBLShowImageAlign.Visible = false;
+                tBRShowImageAlign.Visible = false;
+                btLShowImagePlus.Visible = false;
+                btLShowImageMinus.Visible = false;
+                btRShowImagePlus.Visible = false;
+                btRShowImageMinus.Visible = false;
+                lbLShowImage.Visible = false;
+                lbRShowImage.Visible = false;
             }
         }
+        //private void MaskImage_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    //  讀取當前的 Up/Down 模式
+        //    int iUpDownAlign = GV.Plc.ReadData16(GV.Plc.iUpDownAlign);
+
+        //    //  ✅ 加入診斷訊息
+        //    GM.WriteToStatusTextBox($"MaskImage.Checked: {MaskImage.Checked}, iUpDownAlign: {iUpDownAlign}, GV.skView: {GV.skView}");
+
+        //    //  判斷是否應該顯示透明度調整控制項
+        //    // 修正：使用 GV.skView == 1 作為判斷條件（更可靠）
+        //    bool shouldShowControls = MaskImage.Checked && (GV.skView == 1 || AlignC.UpBackAlign == 2);
+
+        //    GM.WriteToStatusTextBox($"shouldShowControls: {shouldShowControls}");
+
+        //    //  設定所有透明度調整控制項的可見性
+        //    tBLShowImage.Visible = shouldShowControls;
+        //    tBRShowImage.Visible = shouldShowControls;
+        //    btLShowImagePlus.Visible = shouldShowControls;
+        //    btLShowImageMinus.Visible = shouldShowControls;
+        //    btRShowImagePlus.Visible = shouldShowControls;
+        //    btRShowImageMinus.Visible = shouldShowControls;
+        //    lbLShowImage.Visible = shouldShowControls;
+        //    lbRShowImage.Visible = shouldShowControls;
+
+        //    if (MaskImage.Checked)
+        //    {
+        //        //  只有在 Bottom CCD 模式才啟用 TrackBar
+        //        if (shouldShowControls)
+        //        {
+        //            tBLShowImage.Enabled = true;
+        //            tBRShowImage.Enabled = true;
+
+        //            //  載入儲存的透明度值
+        //            if (GV.acar != null && GV.NowRecipeNumber >= 0 && GV.NowRecipeNumber < GV.acar.Length)
+        //            {
+        //                int iL = (int)(GV.acar[GV.NowRecipeNumber].dLalphaAlign * 100);
+        //                int iR = (int)(GV.acar[GV.NowRecipeNumber].dRalphaAlign * 100);
+
+        //                iL = Math.Max(0, Math.Min(100, iL));
+        //                iR = Math.Max(0, Math.Min(100, iR));
+
+        //                tBLShowImage.Value = iL;
+        //                tBRShowImage.Value = iR;
+        //                iLalphaAlign = iL;
+        //                iRalphaAlign = iR;
+
+        //                _dLalphaAlign = (double)iL / 100;
+        //                _dRalphaAlign = (double)iR / 100;
+        //            }
+        //        }
+
+        //        //  設定 Mask 顯示
+        //        if (LeftMask == null || LeftMask.Empty())
+        //        {
+        //            LeftMask = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
+        //            _LeftMask = LeftMask;
+        //        }
+
+        //        if (RightMask == null || RightMask.Empty())
+        //        {
+        //            RightMask = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
+        //            _RightMask = RightMask;
+        //        }
+
+        //        if (_LeftMask != null && !_LeftMask.Empty())
+        //        {
+        //            skLeftAlign.SetShowMask(true, _dLalphaAlign, _LeftMask);
+        //        }
+
+        //        if (_RightMask != null && !_RightMask.Empty())
+        //        {
+        //            skRightAlign.SetShowMask(true, _dRalphaAlign, _RightMask);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //  停用 TrackBar 並清除 Mask 顯示
+        //        tBLShowImage.Enabled = false;
+        //        tBRShowImage.Enabled = false;
+        //        skLeftAlign.SetShowMask(false, 0, null);
+        //        skRightAlign.SetShowMask(false, 0, null);
+        //    }
+        //}
 
         public void TurnOnLight()
         {
@@ -9033,6 +9280,92 @@ namespace NSAA_16Axis
             catch
             {
                 return Guid.NewGuid().ToString();
+            }
+        }
+        private void tBLShowImageAlign_MouseUp(object sender, MouseEventArgs e)
+        {
+            UpdateMaskAlphaAlign();
+        }
+
+        /// <summary>
+        /// 左側 TrackBar - KeyUp 事件（支援鍵盤調整）
+        /// </summary>
+        private void tBLShowImageAlign_KeyUp(object sender, KeyEventArgs e)
+        {
+            UpdateMaskAlphaAlign();
+        }
+
+        /// <summary>
+        /// 左側 TrackBar - Scroll 事件（即時預覽）
+        /// </summary>
+        private void tBLShowImageAlign_Scroll(object sender, EventArgs e)
+        {
+            UpdateMaskAlphaAlign();
+        }
+
+        /// <summary>
+        /// 右側 TrackBar - MouseUp 事件
+        /// </summary>
+        private void tBRShowImageAlign_MouseUp(object sender, MouseEventArgs e)
+        {
+            UpdateMaskAlphaAlign();
+        }
+
+        /// <summary>
+        /// 右側 TrackBar - KeyUp 事件
+        /// </summary>
+        private void tBRShowImageAlign_KeyUp(object sender, KeyEventArgs e)
+        {
+            UpdateMaskAlphaAlign();
+        }
+
+        /// <summary>
+        /// 右側 TrackBar - Scroll 事件（即時預覽）
+        /// </summary>
+        private void tBRShowImageAlign_Scroll(object sender, EventArgs e)
+        {
+            UpdateMaskAlphaAlign();
+        }
+
+        /// <summary>
+        /// 統一更新 Mask Alpha 值的方法
+        /// </summary>
+        private void UpdateMaskAlphaAlign()
+        {
+            // 如果 CheckBox 未勾選，不執行更新
+            if (!MaskImage.Checked) return;
+
+            try
+            {
+                // ✅ 將 TrackBar 值（0-100）轉換為 alpha（0-1）
+                // TrackBar=0: 只顯示原始影像 (alpha=1.0)
+                // TrackBar=50: 兩者各半 (alpha=0.5)
+                // TrackBar=100: 只顯示 Mask (alpha=0.0)
+                _dLalphaAlign = 1.0 - ((double)tBLShowImageAlign.Value / 100.0);
+                _dRalphaAlign = 1.0 - ((double)tBRShowImageAlign.Value / 100.0);
+
+                // ✅ 更新左側 Mask 顯示
+                if (LeftMask != null && !LeftMask.Empty())
+                {
+                    skLeftAlign.SetShowMask(true, _dLalphaAlign, LeftMask);
+                }
+
+                // ✅ 更新右側 Mask 顯示
+                if (RightMask != null && !RightMask.Empty())
+                {
+                    skRightAlign.SetShowMask(true, _dRalphaAlign, RightMask);
+                }
+
+                // ✅ 可選：儲存到 AlignC（如果需要持久化）
+                if (AlignC != null)
+                {
+                    AlignC.dLalpha = _dLalphaAlign;
+                    AlignC.dRalpha = _dRalphaAlign;
+                }
+            }
+            catch (Exception ex)
+            {
+                GM.WriteToStatusTextBox($"更新 Mask 透明度失敗: {ex.Message}");
             }
         }
     }

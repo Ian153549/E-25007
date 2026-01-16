@@ -1086,7 +1086,7 @@ namespace NSAA_16Axis
                 { -1, -1, -1 }
                     };
 
-                    // ✅ 使用 OpenCvSharp 建立 Mat 卷積核心
+                    //  使用 OpenCvSharp 建立 Mat 卷積核心
                     kernel = CreateKernelMat(sharpenKernel);
 
                     // 銳化圖像
@@ -2190,12 +2190,12 @@ namespace NSAA_16Axis
 
             try
             {
-                // ✅ 轉換為彩色影像以便繪製
+                //  轉換為彩色影像以便繪製
                 colorMat = new Mat();
                 Cv2.CvtColor(img, colorMat, ColorConversionCodes.GRAY2BGR);
                 mat = colorMat.Clone();
 
-                // ✅ 準備輪廓檢測影像(使用遮罩屏蔽不需要的區域)
+                //  準備輪廓檢測影像(使用遮罩屏蔽不需要的區域)
                 imgForContour = new Mat();
                 imgM = ProcessView.GetMask();
                 if (imgM != null)
@@ -2208,7 +2208,7 @@ namespace NSAA_16Axis
                     imgForContour = img.Clone();
                 }
 
-                // ✅ 尋找輪廓
+                //  尋找輪廓
                 Cv2.FindContours(imgForContour, out OpenCvSharp.Point[][] contours, out HierarchyIndex[] hierarchy,
                     RetrievalModes.External, ContourApproximationModes.ApproxNone);
 
@@ -2218,7 +2218,7 @@ namespace NSAA_16Axis
                     return;
                 }
 
-                // ✅ 找最大面積的輪廓
+                //  找最大面積的輪廓
                 OpenCvSharp.Rect boundingBox = new OpenCvSharp.Rect();
                 double areaMax = 0;
 
@@ -2254,28 +2254,28 @@ namespace NSAA_16Axis
                     }
                 }
 
-                // ✅ 關鍵修改:保留原始完整影像作為 template
+                //  關鍵修改:保留原始完整影像作為 template
                 mat1?.Dispose();
                 mat1 = img.Clone();  // ← 完整的原始影像
 
                 matFind?.Dispose();
                 matFind = mat.Clone();
 
-                // ✅ 計算偏移量 (相對於原始影像中心)
+                //  計算偏移量 (相對於原始影像中心)
                 int imgCenterX = img.Width / 2;
                 int imgCenterY = img.Height / 2;
 
-                // ✅ rect.Width 和 rect.Height 儲存的是偏移量
+                //  rect.Width 和 rect.Height 儲存的是偏移量
                 int offsetX = centerX - imgCenterX;
                 int offsetY = centerY - imgCenterY;
 
-                // ✅ 儲存偏移量到 rect (使用 Width 和 Height 欄位)
+                //  儲存偏移量到 rect (使用 Width 和 Height 欄位)
                 rect = new OpenCvSharp.Rect(centerX, centerY, offsetX, offsetY);
 
                 btOK.Enabled = true;
                 err = 0;
 
-                // ✅ 繪製找到的中心點
+                //  繪製找到的中心點
                 Cv2.Circle(mat, new OpenCvSharp.Point(centerX, centerY), 5, new Scalar(0, 255, 0), -1);
                 Cv2.Line(mat, new OpenCvSharp.Point(centerX - 20, centerY),
                          new OpenCvSharp.Point(centerX + 20, centerY), new Scalar(0, 255, 0), 2);
@@ -2285,7 +2285,7 @@ namespace NSAA_16Axis
                             new OpenCvSharp.Point(centerX + 10, centerY - 10),
                             HersheyFonts.HersheySimplex, 0.5, new Scalar(0, 255, 0), 2);
 
-                // ✅ 更新顯示(顯示原始 template 加上中心點標記)
+                //  更新顯示(顯示原始 template 加上中心點標記)
                 GrayImage imgK = new GrayImage(mat.Width, mat.Height);
                 imgK.Fill(255);
                 ProcessView.SetBackImage(mat, imgK, imgM);
@@ -2312,7 +2312,7 @@ namespace NSAA_16Axis
                     imgM = new GrayImage(img.Width, img.Height);
                     imgM.Fill(255); // 全白 = 完全不遮罩
 
-                    // ✅ 判斷是否已經找到中心點
+                    //  判斷是否已經找到中心點
                     if (matFind != null && !matFind.Empty())
                     {
                         // 如果已找到中心,重新顯示找到的結果(保留中心標記)
