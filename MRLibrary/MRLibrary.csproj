@@ -5,6 +5,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <PlatformTarget>x64</PlatformTarget>
     <Configurations>Debug;Release;</Configurations>
+    <UserSecretsId>9259bf1b-2884-4155-8437-662f923db5ef</UserSecretsId>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

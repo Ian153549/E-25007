@@ -1016,7 +1016,7 @@ namespace NSAA_16Axis
 
             rBLowMagnification.Checked = true;
             rBHighMagnification.Checked = false;
-
+            if (_AlignC.AlignLowMagnification < 0 || _AlignC.AlignLowMagnification >= _AlignC.LeftBrightness.Length) _AlignC.AlignLowMagnification = 0;
             NowMageni = _AlignC.AlignLowMagnification;
 
             if (_AlignC.LeftLight[NowMageni])

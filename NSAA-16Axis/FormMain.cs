@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net.Http;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -1334,6 +1335,10 @@ namespace NSAA_16Axis
 
             try
             {
+                writeStatus("正在清理舊的 AI 服務進程...");
+                StopAIService();
+                Thread.Sleep(500); // 等待進程完全終止並釋放 port
+
                 DlgInitial.Show();
                 DlgInitial.BringToFront();
                 Application.DoEvents(); // 確保視窗完全顯示
@@ -1345,7 +1350,7 @@ namespace NSAA_16Axis
 
                 // 初始化相機物件（快速，不阻塞）
                 InitializeCameras();
-
+                EnableDoubleBufferingForCameraWindows();
                 SetNewCam();
                 // 設定使用者權限
                 SetUserLevel();
@@ -1368,7 +1373,7 @@ namespace NSAA_16Axis
             }
             finally
             {
-                // ✅ 在 Load 結束時恢復 AI 服務
+                //   在 Load 結束時恢復 AI 服務
                 AIService.IsRestarting = false;
             }
             try
@@ -1440,6 +1445,44 @@ namespace NSAA_16Axis
             GV.RightUpCam = new SentechNetToMat();
             GV.LeftBackCam = new SentechNetToMat();
             GV.RightBackCam = new SentechNetToMat();
+            EnableDoubleBufferingForCameraWindows();
+        }
+
+        private void EnableDoubleBufferingForCameraWindows()
+        {
+            try
+            {
+                int successCount = 0;
+                Control[] cameraControls = new Control[]
+                {
+                    skLeftAlign,
+                    skRightAlign,
+                    skLeftParam,
+                    skRightParam,
+                };
+                successCount=DoubleBufferHelper.EnableDoubleBufferingForMultiple(cameraControls);
+                
+                if(tabPage1!= null)
+                {
+                    DoubleBufferHelper.EnableOptimizedDoubleBuffering(tabPage1);
+                }
+                if(tabPage3!= null)
+                {
+                    DoubleBufferHelper.EnableOptimizedDoubleBuffering(tabPage3);
+                }
+                if(cmLearnPatternUp1!= null)
+                {
+                    DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternUp1);
+                }
+                if(cmLearnPatternBack1!= null)
+                {
+                    DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternBack1);
+                }
+            }
+            catch
+            {
+
+            }
         }
 
         //  設定使用者權限
@@ -1697,8 +1740,9 @@ namespace NSAA_16Axis
             tBLeftCoaLight.Visible = false;
             tBRightCoaLight.Visible = false;
 
-            Thread.Sleep(1000);
-            GV.AIClassList.initialize();
+            Thread.Sleep(100);
+            
+                GV.AIClassList.initialize();
             GV.scanPlcThread = new Thread(CheckPlcDram);
             GV.scanPlcThread.Start();
 
@@ -3124,7 +3168,7 @@ namespace NSAA_16Axis
             string sTag = tabControl1.SelectedTab.Tag.ToString();
             GV.TickCount = 0;
 
-            // ✅ 在切換頁面開始時設置為 true
+            //   在切換頁面開始時設置為 true
             AIService.IsRestarting = true;
 
             try
@@ -3166,7 +3210,7 @@ namespace NSAA_16Axis
             }
             finally
             {
-                // ✅ 在切換完成後設置為 false
+                //   在切換完成後設置為 false
                 AIService.IsRestarting = false;
             }
         }
@@ -3389,7 +3433,31 @@ namespace NSAA_16Axis
                 GV.OnLearnPattern = true;
 
                 GV.skView = 0;
+                _ = InvokeAsync(() =>
+                {
+                    try
+                    {
+                        DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternUp1);
+                        int pbCount = DoubleBufferHelper.EnableDoubleBufferingForType<PictureBox>
+                        (
+                            cmLearnPatternUp1,
+                            enable: true,
+                            recursive: true
+                        );
+                        if (cmLearnPatternUp1.Controls.ContainsKey("skLeft"))
+                            DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternUp1.Controls["skLeft"]);
+                        if (cmLearnPatternUp1.Controls.ContainsKey("skRight"))
+                            DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternUp1.Controls["skRight"]);
+                        string message = $"[InitializeLearnPatternUpPageAsync] 成功為 {pbCount} 個 PictureBox 啟用 double buffering";
+                        LogActivities.GenerateLog(message);
+                        Debug.WriteLine($"[InitializeLearnPatternUpPageAsync] 成功為 {pbCount} 個 PictureBox 啟用 double buffering");
 
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[InitializeLearnPatternUpPageAsync] 啟用 double buffering 失敗: {ex.Message}");
+                    }
+                });
                 await InvokeAsync(() =>
                 {
                     GV.LeftUpCam.SetWindow(GV.LeftUpWindowOnLearnPage);
@@ -3404,8 +3472,17 @@ namespace NSAA_16Axis
 
                 await InvokeAsync(() =>
                 {
-                    cmLearnPatternUp1.CheckLevel();
-                    cmLearnPatternUp1.ShowMe();
+                    cmLearnPatternUp1.SuspendLayout();
+                    try 
+                    { 
+                        cmLearnPatternUp1.CheckLevel();
+                        cmLearnPatternUp1.ShowMe();
+                    }
+                    finally
+                    {
+                        cmLearnPatternUp1.ResumeLayout(true);
+
+                    }
                 });
 
                 GM.WriteToStatusTextBox1(iAdmin, "Change to Pattern Edit Top");
@@ -3505,6 +3582,30 @@ namespace NSAA_16Axis
                 //GV.RightBackCam?.Freeze();
 
                 //await Task.Delay(100);
+                _=InvokeAsync(() =>
+                {
+                    try
+                    {
+                        DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternBack1);
+                        int pbCount = DoubleBufferHelper.EnableDoubleBufferingForType<PictureBox>
+                        (
+                            cmLearnPatternBack1,
+                            enable: true,
+                            recursive: true
+                        );
+                        if (cmLearnPatternBack1.Controls.ContainsKey("skLeft"))
+                            DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternBack1.Controls["skLeft"]);
+                        if (cmLearnPatternBack1.Controls.ContainsKey("skRight"))
+                            DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternBack1.Controls["skRight"]);
+                        string message = $"[InitializeLearnPatternBackPageAsync] 成功為 {pbCount} 個 PictureBox 啟用 double buffering";
+                        LogActivities.GenerateLog(message);
+                        Debug.WriteLine($"[InitializeLearnPatternBackPageAsync] 成功為 {pbCount} 個 PictureBox 啟用 double buffering");
+                    }
+                    catch(Exception ex)
+                    {
+                        Debug.WriteLine($"[InitializeLearnPatternBackPageAsync] 啟用 double buffering 失敗: {ex.Message}");
+                    }
+                });
 
                 _ = InvokeAsync(() => cmLearnPatternBack1.CheckLevel());
 
@@ -3519,8 +3620,25 @@ namespace NSAA_16Axis
 
                 await InvokeAsync(() =>
                 {
-                    cmLearnPatternBack1.ShowMe();
-                    Update();
+                    cmLearnPatternBack1.SuspendLayout();
+                    try
+                    {
+                        cmLearnPatternBack1.ShowMe();
+                    }
+                    finally
+                    {
+                        cmLearnPatternBack1.ResumeLayout(true);
+                    }
+                    this.SuspendLayout();
+                    try
+                    {
+                        Update();
+                    }
+                    finally
+                    {
+                        this.ResumeLayout(false);
+                    }
+                    
                 });
                 await Task.Delay(50);
                 cmLearnPatternBack1.PostInitialize();
@@ -3900,8 +4018,13 @@ namespace NSAA_16Axis
 
         public async void ZoomToLow()
         {
-            Task t1 = Task.Run(() => ChangeLensMagnification("left", AlignC.LeftBrightness[AlignC.AlignLowMagnification], GV.ZoomLensInfo.LeftMagnificationMotorSteps, AlignC.AlignLowMagnification));
-            Task t2 = Task.Run(() => ChangeLensMagnification("right", AlignC.RightBrightness[AlignC.AlignLowMagnification], GV.ZoomLensInfo.RightMagnificationMotorSteps, AlignC.AlignLowMagnification));
+            int lowMagnification = AlignC.AlignLowMagnification;
+            if (lowMagnification < 0 || lowMagnification >= AlignC.LeftBrightness.Length)
+            {                
+                lowMagnification = 0;
+            }
+            Task t1 = Task.Run(() => ChangeLensMagnification("left", AlignC.LeftBrightness[lowMagnification], GV.ZoomLensInfo.LeftMagnificationMotorSteps, lowMagnification));
+            Task t2 = Task.Run(() => ChangeLensMagnification("right", AlignC.RightBrightness[lowMagnification], GV.ZoomLensInfo.RightMagnificationMotorSteps, lowMagnification));
             await t1; await t2;
         }
 
@@ -6226,7 +6349,7 @@ namespace NSAA_16Axis
             string leftMaskPath = GetTemplateFileName("LeftMask");
             string rightMaskPath = GetTemplateFileName("RightMask");
 
-            // 2. ✅ 強制刪除舊檔案（處理唯讀屬性）
+            // 2.   強制刪除舊檔案（處理唯讀屬性）
             if (File.Exists(leftMaskPath))
             {
                 File.SetAttributes(leftMaskPath, FileAttributes.Normal);  // 移除唯讀屬性
@@ -6241,10 +6364,10 @@ namespace NSAA_16Axis
                 writeStatus($"已刪除舊的右側 Mask: {rightMaskPath}");
             }
 
-            // 3. ✅ 等待檔案系統完全釋放
+            // 3.   等待檔案系統完全釋放
             Thread.Sleep(100);
 
-            // 4. ✅ 儲存新影像（檢查回傳值）
+            // 4.   儲存新影像（檢查回傳值）
             Cv2.ImWrite(leftMaskPath, LeftMask);
             Cv2.ImWrite(rightMaskPath, RightMask);
             GV.NowWaferMask = 3;
@@ -8728,7 +8851,7 @@ namespace NSAA_16Axis
                 btRShowImageMinus.Visible = true;
                 lbLShowImage.Visible = true;
                 lbRShowImage.Visible = true;
-                // ✅ 載入 Mask 影像（如果尚未載入）
+                //   載入 Mask 影像（如果尚未載入）
                 if (LeftMask == null || LeftMask.Empty())
                 {
                     try
@@ -8761,14 +8884,14 @@ namespace NSAA_16Axis
                     }
                 }
 
-                // ✅ 根據 TrackBar 的值計算 alpha（0-1）
+                //   根據 TrackBar 的值計算 alpha（0-1）
                 // TrackBar=0: 只顯示影像 (alpha=1.0)
                 // TrackBar=50: 兩者各半 (alpha=0.5)
                 // TrackBar=100: 只顯示 Mask (alpha=0.0)
                 _dLalphaAlign = 1.0 - ((double)tBLShowImageAlign.Value / 100.0);
                 _dRalphaAlign = 1.0 - ((double)tBRShowImageAlign.Value / 100.0);
 
-                // ✅ 啟用 Mask 顯示
+                //   啟用 Mask 顯示
                 if (LeftMask != null && !LeftMask.Empty())
                 {
                     skLeftAlign.SetShowMask(true, _dLalphaAlign, LeftMask);
@@ -8778,17 +8901,17 @@ namespace NSAA_16Axis
                     skRightAlign.SetShowMask(true, _dRalphaAlign, RightMask);
                 }
 
-                // ✅ 啟用 TrackBar
+                //   啟用 TrackBar
                 tBLShowImageAlign.Enabled = true;
                 tBRShowImageAlign.Enabled = true;
             }
             else
             {
-                // ✅ 關閉 Mask 顯示
+                //   關閉 Mask 顯示
                 skLeftAlign.SetShowMask(false, 0, LeftMask);
                 skRightAlign.SetShowMask(false, 0, RightMask);
 
-                // ✅ 停用 TrackBar
+                //   停用 TrackBar
                 tBLShowImageAlign.Enabled = false;
                 tBRShowImageAlign.Enabled = false;
                 tBLShowImageAlign.Visible = false;
@@ -8806,7 +8929,7 @@ namespace NSAA_16Axis
         //    //  讀取當前的 Up/Down 模式
         //    int iUpDownAlign = GV.Plc.ReadData16(GV.Plc.iUpDownAlign);
 
-        //    //  ✅ 加入診斷訊息
+        //    //    加入診斷訊息
         //    GM.WriteToStatusTextBox($"MaskImage.Checked: {MaskImage.Checked}, iUpDownAlign: {iUpDownAlign}, GV.skView: {GV.skView}");
 
         //    //  判斷是否應該顯示透明度調整控制項
@@ -9337,26 +9460,26 @@ namespace NSAA_16Axis
 
             try
             {
-                // ✅ 將 TrackBar 值（0-100）轉換為 alpha（0-1）
+                //   將 TrackBar 值（0-100）轉換為 alpha（0-1）
                 // TrackBar=0: 只顯示原始影像 (alpha=1.0)
                 // TrackBar=50: 兩者各半 (alpha=0.5)
                 // TrackBar=100: 只顯示 Mask (alpha=0.0)
                 _dLalphaAlign = 1.0 - ((double)tBLShowImageAlign.Value / 100.0);
                 _dRalphaAlign = 1.0 - ((double)tBRShowImageAlign.Value / 100.0);
 
-                // ✅ 更新左側 Mask 顯示
+                //   更新左側 Mask 顯示
                 if (LeftMask != null && !LeftMask.Empty())
                 {
                     skLeftAlign.SetShowMask(true, _dLalphaAlign, LeftMask);
                 }
 
-                // ✅ 更新右側 Mask 顯示
+                //   更新右側 Mask 顯示
                 if (RightMask != null && !RightMask.Empty())
                 {
                     skRightAlign.SetShowMask(true, _dRalphaAlign, RightMask);
                 }
 
-                // ✅ 可選：儲存到 AlignC（如果需要持久化）
+                //   可選：儲存到 AlignC（如果需要持久化）
                 if (AlignC != null)
                 {
                     AlignC.dLalpha = _dLalphaAlign;
@@ -9366,6 +9489,47 @@ namespace NSAA_16Axis
             catch (Exception ex)
             {
                 GM.WriteToStatusTextBox($"更新 Mask 透明度失敗: {ex.Message}");
+            }
+        }
+        private void StopAIService()
+        {
+            try
+            {
+                bool killed = KillProcessByPort(9300);
+                var processes = Process.GetProcessesByName("waitress-serve");
+                foreach(var proc in processes)
+                {
+                    try
+                    {
+                        proc.Kill();
+                        proc.WaitForExit(3000);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                var pythonProcesses = Process.GetProcessesByName("python");
+                foreach( var proc in pythonProcesses)
+                {
+                    try
+                    {
+                        if (proc.MainModule?.FileName?.Contains("Python") == true)
+                        {
+                            proc.Kill();
+                            proc.WaitForExit(3000);
+                            Debug.WriteLine($"已終止 python.exe (PID: {proc.Id})");
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"StopAIService 錯誤: {ex.Message}");
             }
         }
     }

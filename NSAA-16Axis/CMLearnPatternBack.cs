@@ -74,6 +74,15 @@ namespace NSAA_16Axis
         public Mat rotate = new Mat();
         public bool isLive = true;
         private System.Windows.Forms.Timer locationUpdateTimer;
+
+        private System.Windows.Forms.Timer _leftShowImageTimer;
+        private System.Windows.Forms.Timer _rightShowImageTimer;
+
+        private int _pendingLeftShowImageValue;
+        private int _pendingRightShowImageValue;
+
+        private bool _isProcessingLeftShowImage;
+        private bool _isProcessingRightShowImage;
         public CMLearnPatternBack()
         {
             InitializeComponent();
@@ -100,6 +109,108 @@ namespace NSAA_16Axis
             skRight.CanZoom = true;
             //GV.BackLearnLeft = skLeft;
             //GV.BackLearnRight = skRight;
+            _leftShowImageTimer = new System.Windows.Forms.Timer();
+            _leftShowImageTimer.Interval = 20; // 設定適當的間隔時間（毫秒）
+            _leftShowImageTimer.Tick += LeftShowImageTimer_Tick;
+
+            _rightShowImageTimer = new System.Windows.Forms.Timer();
+            _rightShowImageTimer.Interval = 20; // 設定適當的間隔時間（毫秒）
+            _rightShowImageTimer.Tick += RightShowImageTimer_Tick;
+        }
+
+        private void RightShowImageTimer_Tick(object sender, EventArgs e)
+        {
+            _rightShowImageTimer.Stop();
+            if (_isProcessingRightShowImage) return;
+            _isProcessingRightShowImage = true;
+            try
+            {
+                int value=_pendingRightShowImageValue;
+                double alpha=value/100.0;
+                _AlignC.dRalpha = alpha;
+                _ = Task.Run(() =>
+                {
+                    try
+                    {
+                        this.BeginInvoke(new Action(() =>
+                        {
+                            try
+                            {
+                                if (rbRTopMask.Checked == false && RightMask != null)
+                                {
+                                    skRight.SetShowMask(true, alpha, RightMaskMat);
+                                }
+                                else
+                                {
+                                    skRight.SetShowMask(false, 0, RightMaskMat);
+                                }
+                            }
+                            finally
+                            {
+                                _isProcessingRightShowImage = false;
+
+                            }
+                        }));
+
+                    }
+                    catch
+                    {
+                        _isProcessingRightShowImage = false;
+                    }
+                });
+            }
+            catch
+            {
+                _isProcessingRightShowImage = false;
+
+            }
+        }
+
+        private void LeftShowImageTimer_Tick(object sender, EventArgs e)
+        {
+            _leftShowImageTimer.Stop();
+            if (_isProcessingLeftShowImage) return;
+            _isProcessingLeftShowImage = true;
+            try
+            {
+                int value = _pendingLeftShowImageValue;
+                double alpha=value / 100.0;
+                _AlignC.dLalpha = alpha;
+
+                _ = Task.Run(() =>
+                {
+                    try
+                    {
+                        this.BeginInvoke(new Action(() =>
+                        {
+                            try
+                            {
+                                if (rbLTopMask.Checked == false && LeftMask != null)
+                                {
+                                    skLeft.SetShowMask(true, alpha, LeftMaskMat);
+                                }
+                                else
+                                {
+                                    skLeft.SetShowMask(false, 0, LeftMaskMat);
+                                }
+                            }
+                            finally
+                            {
+                                _isProcessingLeftShowImage = false;
+                            }
+                        }));
+                    }
+                    catch
+                    {
+                        _isProcessingLeftShowImage = false;
+                    }
+                });
+            }
+            catch
+            {
+                _isProcessingLeftShowImage = false;
+
+            }
         }
 
         private async void CMLearnPattern_Load(object sender, EventArgs e)
@@ -1490,7 +1601,7 @@ namespace NSAA_16Axis
         //    }
         public void UpdateUI()
         {
-            // ✅ 同步執行快速的初始化操作
+            //   同步執行快速的初始化操作
             if ((GV.NowRecipeNumber < 1) || (GV.NowRecipeNumber > 100))
             {
                 GV.NowRecipeNumber = 1;
@@ -1499,10 +1610,10 @@ namespace NSAA_16Axis
             EditRecipe = GV.NowRecipeNumber;
             ChangeRecipe();
 
-            // ✅ 更新標籤（UI 操作，必須在 UI 執行緒）
+            //   更新標籤（UI 操作，必須在 UI 執行緒）
             lbRecipeNumber.Text = GV.Dlang.strRecipeNumber + EditRecipe.ToString();
 
-            // ✅ 清空舊影像
+            //   清空舊影像
             pbLTopMask.Image = null;
             pbLBackMask.Image = null;
             pbLWafer.Image = null;
@@ -1510,7 +1621,7 @@ namespace NSAA_16Axis
             pbRBackMask.Image = null;
             pbRWafer.Image = null;
 
-            // ✅ 背景執行耗時操作
+            //   背景執行耗時操作
             _ = Task.Run(() =>
             {
                 try
@@ -1523,7 +1634,7 @@ namespace NSAA_16Axis
                     Bitmap rightBackMask = null;
                     Bitmap rightWafer = null;
 
-                    // ✅ 使用 Parallel.Invoke 並行執行影像處理
+                    //   使用 Parallel.Invoke 並行執行影像處理
                     Parallel.Invoke(
                         // 任務 1: 處理左下光罩影像
                         () =>
@@ -1641,7 +1752,7 @@ namespace NSAA_16Axis
                     {
                         try
                         {
-                            // ✅ 更新 PictureBox 影像
+                            //   更新 PictureBox 影像
                             if (leftBackMask != null)
                             {
                                 pbLBackMask.Image?.Dispose();
@@ -1666,13 +1777,13 @@ namespace NSAA_16Axis
                                 pbRWafer.Image = rightWafer;
                             }
 
-                            // ✅ 更新 ComboBox
+                            //   更新 ComboBox
                             cbLBackMaskAlgo.SelectedIndex = (int)_AlignC.LLMaskAlgorithm;
                             cbLWaferAlgo.SelectedIndex = (int)_AlignC.LHWaferAlgorithm;
                             cbRBackMaskAlgo.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
                             cbRWaferAlgo.SelectedIndex = (int)_AlignC.RHWaferAlgorithm;
 
-                            // ✅ 設定 AI ClassId
+                            //   設定 AI ClassId
                             if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
                             {
                                 SetComboBoxByClassId(cbLBackMaskClassList, _AlignC.LLMaskAIClassId);
@@ -1709,7 +1820,7 @@ namespace NSAA_16Axis
                                 cbRBackWaferClassList.SelectedIndex = -1;
                             }
 
-                            // ✅ 更新 TrackBar 和 Alpha 值
+                            //   更新 TrackBar 和 Alpha 值
                             int iL = (int)(_AlignC.dLalpha * 100);
                             if (iL > 100) iL = 100;
                             if (iL < 0) iL = 0;
@@ -1726,7 +1837,7 @@ namespace NSAA_16Axis
                             _dLalpha = (double)tBLShowImage.Value / 100;
                             _dRalpha = (double)tBRShowImage.Value / 100;
 
-                            // ✅ 設定 ShowMask
+                            //   設定 ShowMask
                             if (rbLTopMask.Checked == false)
                             {
                                 skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
@@ -1738,13 +1849,13 @@ namespace NSAA_16Axis
                                 skRight.SetShowMask(false, 0, RightMaskMat);
                             }
 
-                            // ✅ 更新按鈕 Enabled 狀態
+                            //   更新按鈕 Enabled 狀態
                             UpdateButtonStates();
 
-                            // ✅ 更新光源亮度（非 UI 操作，可以直接執行）
+                            //   更新光源亮度（非 UI 操作，可以直接執行）
                             UpdateLightBrightness();
 
-                            // ✅ 最後更新
+                            //   最後更新
                             Update();
                         }
                         catch (Exception ex)
@@ -1761,7 +1872,7 @@ namespace NSAA_16Axis
         }
         private void UpdateButtonStates()
         {
-            // ✅ 左上光罩按鈕
+            //   左上光罩按鈕
             if ((rbLTopMask.Enabled) && (rbLTopMask.Checked) && (GV.UserLevel != GV.User.Operator))
             {
                 btLTopMaskLightPlus.Enabled = true;
@@ -1777,7 +1888,7 @@ namespace NSAA_16Axis
                 btLTopMaskLSave.Enabled = false;
             }
 
-            // ✅ 左下光罩按鈕
+            //   左下光罩按鈕
             if ((rbLBackMask.Enabled) && (rbLBackMask.Checked) && (GV.UserLevel != GV.User.Operator))
             {
                 btLBackMaskLightPlus.Enabled = true;
@@ -1793,7 +1904,7 @@ namespace NSAA_16Axis
                 btLBackMaskLSave.Enabled = false;
             }
 
-            // ✅ 左下晶圓按鈕
+            //   左下晶圓按鈕
             if ((rbLWafer.Enabled) && (rbLWafer.Checked) && (GV.UserLevel != GV.User.Operator))
             {
                 btLWaferLightPlus.Enabled = true;
@@ -1809,7 +1920,7 @@ namespace NSAA_16Axis
                 btLWaferLSave.Enabled = false;
             }
 
-            // ✅ 右上光罩按鈕
+            //   右上光罩按鈕
             if ((rbRTopMask.Enabled) && (rbRTopMask.Checked) && (GV.UserLevel != GV.User.Operator))
             {
                 btRTopMaskLightPlus.Enabled = true;
@@ -1825,7 +1936,7 @@ namespace NSAA_16Axis
                 btRTopMaskLSave.Enabled = false;
             }
 
-            // ✅ 右下光罩按鈕
+            //   右下光罩按鈕
             if ((rbRBackMask.Enabled) && (rbRBackMask.Checked) && (GV.UserLevel != GV.User.Operator))
             {
                 btRBackMaskLightPlus.Enabled = true;
@@ -1841,7 +1952,7 @@ namespace NSAA_16Axis
                 btRBackMaskLSave.Enabled = false;
             }
 
-            // ✅ 右下晶圓按鈕
+            //   右下晶圓按鈕
             if ((rbRWafer.Enabled) && (rbRWafer.Checked) && (GV.UserLevel != GV.User.Operator))
             {
                 btRWaferLightPlus.Enabled = true;
@@ -1863,7 +1974,7 @@ namespace NSAA_16Axis
         /// </summary>
         private void UpdateLightBrightness()
         {
-            // ✅ 左上光源
+            //   左上光源
             if (rbLTopMask.Checked)
             {
                 GV.Light.ChangeBrightness("left", tBLeftTopMaskLight.Value);
@@ -1873,7 +1984,7 @@ namespace NSAA_16Axis
                 GV.Light.ChangeBrightness("left", 0);
             }
 
-            // ✅ 左下光源
+            //   左下光源
             if (rbLBackMask.Checked)
             {
                 GV.Light.ChangeBrightness("leftback", tBLeftBackMaskLight.Value);
@@ -1887,7 +1998,7 @@ namespace NSAA_16Axis
                 GV.Light.ChangeBrightness("leftback", 0);
             }
 
-            // ✅ 右上光源
+            //   右上光源
             if (rbRTopMask.Checked)
             {
                 GV.Light.ChangeBrightness("right", tBRightTopMaskLight.Value);
@@ -1897,7 +2008,7 @@ namespace NSAA_16Axis
                 GV.Light.ChangeBrightness("right", 0);
             }
 
-            // ✅ 右下光源
+            //   右下光源
             if (rbRBackMask.Checked)
             {
                 GV.Light.ChangeBrightness("rightback", tBRightBackMaskLight.Value);
@@ -2906,7 +3017,7 @@ namespace NSAA_16Axis
         }
         private void ExecuteBackMaskChangedAsync()
         {
-            // ✅ 使用 Task.Run 在背景執行緒執行
+            //   使用 Task.Run 在背景執行緒執行
             _ = Task.Run(async () =>
             {
                 try
@@ -2939,11 +3050,11 @@ namespace NSAA_16Axis
         }
         private void rbRBackMaskChangedCore()
         {
-            // ✅ 非 UI 操作可直接執行
+            //   非 UI 操作可直接執行
             GV.RightUpCam.Freeze();
             GV.RightBackCam.Freeze();
 
-            // ✅ UI 操作需要回到 UI 執行緒
+            //   UI 操作需要回到 UI 執行緒
             this.Invoke(new Action(() =>
             {
                 tBRightBackMaskLight.Value = _AlignC.RBMaskBright;
@@ -3003,11 +3114,11 @@ namespace NSAA_16Axis
                 tBRShowImage.Enabled = true;
             }));
 
-            // ✅ 非 UI 操作
+            //   非 UI 操作
             GV.Light.ChangeBrightness("rightback", _AlignC.RBMaskBright);
             GV.RightBackCam.SetWindow(skRight);
 
-            // ✅ UI 操作
+            //   UI 操作
             this.Invoke(new Action(() =>
             {
                 skRight.SetShowMask(true, _dRalpha, RightMaskMat);
@@ -3017,12 +3128,12 @@ namespace NSAA_16Axis
         }
         private void rbLBackMaskChangedCore()
         {
-            // ✅ 非 UI 操作可直接執行
+            //   非 UI 操作可直接執行
             GV.LeftUpCam.Freeze();
             GV.LeftBackCam.Freeze();
             GV.skView = 1;
 
-            // ✅ UI 操作需要回到 UI 執行緒
+            //   UI 操作需要回到 UI 執行緒
             this.Invoke(new Action(() =>
             {
                 tBLeftBackMaskLight.Value = _AlignC.LBMaskBright;
@@ -3084,11 +3195,11 @@ namespace NSAA_16Axis
                 tBLShowImage.Enabled = true;
             }));
 
-            // ✅ 非 UI 操作
+            //   非 UI 操作
             GV.Light.ChangeBrightness("leftback", _AlignC.LBMaskBright);
             GV.LeftBackCam.SetWindow(skLeft);
 
-            // ✅ UI 操作
+            //   UI 操作
             this.Invoke(new Action(() =>
             {
                 skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
@@ -4123,7 +4234,7 @@ namespace NSAA_16Axis
             {
                 try
                 {
-                    // ✅ 1. 根據已儲存的 AI ClassId 設定 ComboBox 選項
+                    //   1. 根據已儲存的 AI ClassId 設定 ComboBox 選項
                     if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
                     {
                         SetComboBoxByClassId(cbLBackMaskClassList, _AlignC.LLMaskAIClassId);
@@ -4141,7 +4252,7 @@ namespace NSAA_16Axis
                         SetComboBoxByClassId(cbRBackWaferClassList, _AlignC.RHWaferAIClassId);
                     }
 
-                    // ✅ 2. 使用 Task.Run 在背景執行 LearnWithAlgo
+                    //   2. 使用 Task.Run 在背景執行 LearnWithAlgo
                     _ = Task.Run(() =>
                     {
                         try
@@ -4323,16 +4434,19 @@ namespace NSAA_16Axis
         private void tBLShowImage_ValueChanged(object sender, EventArgs e)
         {
             // iLalpha = tBLShowImage.Value;
-            _dLalpha = (double)tBLShowImage.Value / 100;
-            _AlignC.dLalpha = _dLalpha;
-            if (rbLTopMask.Checked == false)
-            {
-                skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
-            }
-            else
-            {
-                skLeft.SetShowMask(false, 0, LeftMaskMat);
-            }
+            //_dLalpha = (double)tBLShowImage.Value / 100;
+            //_AlignC.dLalpha = _dLalpha;
+            //if (rbLTopMask.Checked == false)
+            //{
+            //    skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
+            //}
+            //else
+            //{
+            //    skLeft.SetShowMask(false, 0, LeftMaskMat);
+            //}
+            _pendingLeftShowImageValue = tBLShowImage.Value;
+            _leftShowImageTimer.Stop();
+            _leftShowImageTimer.Start();
         }
 
         private void ucNavigatorTopMaskL_CommandPressed(int dir)
@@ -4683,16 +4797,19 @@ namespace NSAA_16Axis
         private void tBRShowImage_ValueChanged(object sender, EventArgs e)
         {
             // iRalpha = tBRShowImage.Value;
-            _dRalpha = (double)tBRShowImage.Value / 100;
-            _AlignC.dRalpha = _dRalpha;
-            if (rbRTopMask.Checked == false)
-            {
-                skRight.SetShowMask(true, _dRalpha, RightMaskMat);
-            }
-            else
-            {
-                skRight.SetShowMask(false, 0, RightMaskMat);
-            }
+            //_dRalpha = (double)tBRShowImage.Value / 100;
+            //_AlignC.dRalpha = _dRalpha;
+            //if (rbRTopMask.Checked == false)
+            //{
+            //    skRight.SetShowMask(true, _dRalpha, RightMaskMat);
+            //}
+            //else
+            //{
+            //    skRight.SetShowMask(false, 0, RightMaskMat);
+            //}
+            _pendingRightShowImageValue = tBRShowImage.Value;
+            _rightShowImageTimer.Stop();
+            _rightShowImageTimer.Start();
         }
         private void btDelete_Click(object sender, EventArgs e)
         {
@@ -6567,7 +6684,7 @@ namespace NSAA_16Axis
         //                var t4 = GV.matcherRLW.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrWaferMp, _AlignC.RLWaferAlgorithm, ct);
         //                await Task.WhenAll(t1, t2, t3, t4).ConfigureAwait(false);
 
-        //                // ✅ 套用偏移量校正座標
+        //                //   套用偏移量校正座標
         //                GMPBacklMaskMp.X += _AlignC.LLMaskOffsetX;
         //                GMPBacklMaskMp.Y += _AlignC.LLMaskOffsetY;
 
@@ -6594,7 +6711,7 @@ namespace NSAA_16Axis
         //                var t4 = GV.matcherRHW.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrWaferMp, _AlignC.RHWaferAlgorithm, ct);
         //                await Task.WhenAll(t1, t2, t3, t4).ConfigureAwait(false);
 
-        //                // ✅ 套用偏移量校正座標
+        //                //   套用偏移量校正座標
         //                GMPBacklMaskMp.X += _AlignC.LHMaskOffsetX;
         //                GMPBacklMaskMp.Y += _AlignC.LHMaskOffsetY;
 
@@ -6615,14 +6732,14 @@ namespace NSAA_16Axis
         //            }
         //            else if (alignMagnification == "back")
         //            {
-        //                // ✅ 底部對齊模式:使用完整影像搜尋
+        //                //   底部對齊模式:使用完整影像搜尋
         //                var t1 = GV.matcherLLM.MatMatchWithAlgoAsync(0, LeftMaskMat, GMPBacklMaskMp, _AlignC.LLMaskAlgorithm);
         //                var t2 = GV.matcherRLM.MatMatchWithAlgoAsync(0, RightMaskMat, GMPBackrMaskMp, _AlignC.RLMaskAlgorithm);
         //                var t3 = GV.matcherLHW.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklWaferMp, _AlignC.LHWaferAlgorithm);
         //                var t4 = GV.matcherRHW.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrWaferMp, _AlignC.RHWaferAlgorithm);
         //                await Task.WhenAll(t1, t2, t3, t4).ConfigureAwait(false);
 
-        //                // ✅ 套用偏移量校正座標
+        //                //   套用偏移量校正座標
         //                GMPBacklMaskMp.X += _AlignC.LLMaskOffsetX;
         //                GMPBacklMaskMp.Y += _AlignC.LLMaskOffsetY;
 
@@ -6643,12 +6760,12 @@ namespace NSAA_16Axis
         //            }
         //            else if (alignMagnification == "backmask")
         //            {
-        //                // ✅ 只搜尋光罩:使用完整影像搜尋
+        //                //   只搜尋光罩:使用完整影像搜尋
         //                var t1 = GV.matcherLLM.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklMaskMp, _AlignC.LLMaskAlgorithm);
         //                var t2 = GV.matcherRLM.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrMaskMp, _AlignC.RLMaskAlgorithm);
         //                await Task.WhenAll(t1, t2).ConfigureAwait(false);
 
-        //                // ✅ 套用偏移量校正座標
+        //                //   套用偏移量校正座標
         //                GMPBacklMaskMp.X += _AlignC.LLMaskOffsetX;
         //                GMPBacklMaskMp.Y += _AlignC.LLMaskOffsetY;
 
@@ -6661,7 +6778,7 @@ namespace NSAA_16Axis
         //                var t2 = GV.matcherRHM.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrMaskMp, _AlignC.RHMaskAlgorithm, ct);
         //                await Task.WhenAll(t1, t2).ConfigureAwait(false);
 
-        //                // ✅ 套用偏移量校正座標
+        //                //   套用偏移量校正座標
         //                GMPBacklMaskMp.X += _AlignC.LHMaskOffsetX;
         //                GMPBacklMaskMp.Y += _AlignC.LHMaskOffsetY;
 
@@ -8274,6 +8391,19 @@ namespace NSAA_16Axis
                         _AlignC.RHWaferAIClassId = ClassList[selectedClassName];
                     }
                 }
+                if(_leftShowImageTimer != null)
+        {
+                    _leftShowImageTimer.Stop();
+                    _leftShowImageTimer.Dispose();
+                    _leftShowImageTimer = null;
+                }
+
+                if (_rightShowImageTimer != null)
+                {
+                    _rightShowImageTimer.Stop();
+                    _rightShowImageTimer.Dispose();
+                    _rightShowImageTimer = null;
+                }
 
                 //  5. 儲存 UpBackAlign 模式（表示使用底部對齊）
                 _AlignC.UpBackAlign = 2;
@@ -8305,14 +8435,14 @@ namespace NSAA_16Axis
                 }
 
                 // 儲存倍率設定
-                if (rBLowMagnification.Checked)
-                {
-                    _AlignC.AlignLowMagnification = cbLowMagnification.SelectedIndex;
-                }
-                else if (rBHighMagnification.Checked)
-                {
-                    _AlignC.AlignHighMagnification = cbHighMagnification.SelectedIndex;
-                }
+                //if (rBLowMagnification.Checked)
+                //{
+                //    _AlignC.AlignLowMagnification = cbLowMagnification.SelectedIndex;
+                //}
+                //else if (rBHighMagnification.Checked)
+                //{
+                //    _AlignC.AlignHighMagnification = cbHighMagnification.SelectedIndex;
+                //}
 
                 //停止執行緒和計時器
                 isLive = false;

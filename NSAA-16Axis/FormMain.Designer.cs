@@ -2461,6 +2461,7 @@ namespace NSAA_16Axis
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.Shown += new System.EventHandler(this.FormMain_Shown);
+            //this.FormClosing += new System.EventHandler(this.FormMain_FormClosing);
             this.tabControl1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tBLShowImageAlign)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBRShowImageAlign)).EndInit();
@@ -2505,6 +2506,11 @@ namespace NSAA_16Axis
             this.tabPage5.ResumeLayout(false);
             this.ResumeLayout(false);
 
+        }
+
+        private void FormMain_FormClosing(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

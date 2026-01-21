@@ -170,8 +170,6 @@ namespace NSAA_16Axis
         public Mat RightHighWaferMat;
         [XmlIgnore]
         public GrayImage LeftLowMaskMask;
-
-        //public GrayImage LeftLowMaskMask;
         public GrayImage LeftLowWaferMask;
         public GrayImage RightLowMaskMask;
         public GrayImage RightLowWaferMask;
