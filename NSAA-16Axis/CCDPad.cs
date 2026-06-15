@@ -561,7 +561,7 @@ namespace NSAA_16Axis
             }
             else if (iUpDown == 2)
             {
-                iWMemory[GV.Plc.iiDDownLeftX] += iMoving;
+                iWMemory[GV.Plc.iiDSDownLeftX] += iMoving;
             }
 
             thWaitRun = new Thread(WaitRun);

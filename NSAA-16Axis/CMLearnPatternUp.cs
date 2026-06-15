@@ -39,6 +39,11 @@ namespace NSAA_16Axis
         private System.Windows.Forms.Timer locationUpdateTimer;
         private bool isLocationUpdateEnabled = false;
 
+        private int _lastShowRecipe = -1;
+        private int _lastLearnRecipe = -1;
+        private int _lastClassListRecipe = -1;
+        private int _showMeBusy = 0;
+
         public Thread MatchThread = null;
         public AlignCondition _AlignC = null;
         public Recipe _recipe = null;
@@ -61,6 +66,7 @@ namespace NSAA_16Axis
         public MatchPosition LWaferMp = new MatchPosition();
         public MatchPosition RMaskMp = new MatchPosition();
         public MatchPosition RWaferMp = new MatchPosition();
+
         public CMLearnPatternUp()
         {
             InitializeComponent();
@@ -956,7 +962,13 @@ namespace NSAA_16Axis
                     GV.RingLight.ChangeBrightness("right", 0);
                 }
             });
-            
+            if (groupBoxT4.Visible || groupBoxT1.Visible)
+            {
+                isLocationUpdateEnabled = true;
+                if (!locationUpdateTimer.Enabled)
+                    locationUpdateTimer.Start();
+                UpdateCurrentLocationUI();
+            }
 
             Update();
         }
@@ -1234,6 +1246,53 @@ namespace NSAA_16Axis
             }
 
             UpdateUI();
+            //SyncAiClassListVisibility();
+        }
+        private void ApplyAlgorithmSelectionForCurrentMagnification()
+        {
+            if (_AlignC == null) return;
+
+            if (rBLowMagnification.Checked)
+            {
+                cbLMaskAlgorithm.SelectedIndex = (int)_AlignC.LLMaskAlgorithm;
+                cbLWaferAlgorithm.SelectedIndex = (int)_AlignC.LLWaferAlgorithm;
+                cbRMaskAlgorithm.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
+                cbRWaferAlgorithm.SelectedIndex = (int)_AlignC.RLWaferAlgorithm;
+            }
+            else if (rBHighMagnification.Checked)
+            {
+                cbLMaskAlgorithm.SelectedIndex = (int)_AlignC.LHMaskAlgorithm;
+                cbLWaferAlgorithm.SelectedIndex = (int)_AlignC.LHWaferAlgorithm;
+                cbRMaskAlgorithm.SelectedIndex = (int)_AlignC.RHMaskAlgorithm;
+                cbRWaferAlgorithm.SelectedIndex = (int)_AlignC.RHWaferAlgorithm;
+            }
+        }
+
+        private void SyncAiClassListVisibility()
+        {
+            bool lWaferAi = cbLWaferAlgorithm.SelectedIndex == 2;
+            cbLWaferClassList.Visible = lWaferAi;
+            pbLWaferImage.Visible = !lWaferAi;
+            btFindLWaferCenter.Visible = !lWaferAi;
+            btCreateLWaferPatternMask.Visible = !lWaferAi;
+
+            bool rWaferAi = cbRWaferAlgorithm.SelectedIndex == 2;
+            cbRWaferClassList.Visible = rWaferAi;
+            pbRWaferImage.Visible = !rWaferAi;
+            btFindRWaferCenter.Visible = !rWaferAi;
+            btCreateRWaferPatternMask.Visible = !rWaferAi;
+
+            bool lMaskAi = cbLMaskAlgorithm.SelectedIndex == 2;
+            cbLMaskClassList.Visible = lMaskAi;
+            pbLMaskImage.Visible = !lMaskAi;
+            btFindLMaskCenter.Visible = !lMaskAi;
+            btCreateLMaskPatternMask.Visible = !lMaskAi;
+
+            bool rMaskAi = cbRMaskAlgorithm.SelectedIndex == 2;
+            cbRMaskClassList.Visible = rMaskAi;
+            pbRMaskImage.Visible = !rMaskAi;
+            btFindRMaskCenter.Visible = !rMaskAi;
+            btCreateRMaskPatternMask.Visible = !rMaskAi;
         }
 
         private string GetTemplateFileName(string patternAndSide)
@@ -1411,38 +1470,293 @@ namespace NSAA_16Axis
             GM.WriteRecipeXml(EditRecipe);
         }
 
+        //internal void ShowMe()
+        //{
+        //    if (Interlocked.Exchange(ref _showMeBusy, 1) == 1) return;
+        //    Stopwatch sw = Stopwatch.StartNew();
+        //    try
+        //    {
+
+        //        EditRecipe = GV.NowRecipeNumber;
+        //        _recipe = GV._recipe;
+        //        _AlignC = _recipe.AlignC;
+        //        //EditRecipe = _recipe.RecipeNumber;
+        //        bool recipeChanged = (_lastShowRecipe != EditRecipe);
+        //        _lastShowRecipe = EditRecipe;
+
+        //        lbRecipeNumber.Text = GV.Dlang.strRecipeNumber + EditRecipe.ToString();
+        //        btLabelPatternL.Visible = true;
+
+        //        if (GV.AppSettingParm.Author == 0)
+        //        {
+        //            btTfile.Visible = false;
+        //            btTLRead.Visible = false;
+        //            btTRRead.Visible = false;
+        //        }
+        //        else
+        //        {
+        //            btTfile.Visible = true;
+        //            btTLRead.Visible = true;
+        //            btTRRead.Visible = true;
+        //        }
+
+
+        //        if (GMPLeft == null)
+        //        {
+        //            GMPLeft = new Mat();
+        //            GMPRight = new Mat();
+        //        }
+
+        //        if (MoveCCDLeft == null)
+        //        {
+        //            MoveCCDLeft = new Mat();
+        //            MoveCCDRight = new Mat();
+        //            GMPlMaskMp = new MatchPosition();
+        //            GMPrMaskMp = new MatchPosition();
+        //            GMPlWaferMp = new MatchPosition();
+        //            GMPrWaferMp = new MatchPosition();
+        //        }
+
+        //        if (MatchThread == null)
+        //        {
+        //            MatchThread = new Thread(DrawMatchPosition) { IsBackground = true };
+        //            MatchThread.Start();
+        //        }
+
+        //        //_ = Task.Run(async () => { CbHLMagni_Change(NowMageni); });
+        //        //_ = Task.Run(async () => { Changelight(); });
+        //        //_ = Task.Run(async () => { CheckParam(); });
+        //        CbHLMagni_Change(NowMageni);
+        //        Changelight();
+        //        CheckParam();
+        //        //Update();
+        //        //ApplyLanguage();
+
+        //        _ = Task.Run(async () =>
+        //        {
+        //            try
+        //            {
+        //                try
+        //                {
+        //                    var classNames = await GV.AIClassList.GetClassNamesAsync();
+        //                    var classList = new Dictionary<string, Int16>();
+        //                    for (int i = 0; i < classNames.Count; i++)
+        //                    {
+        //                        classList.Add(classNames[i], (Int16)i);
+        //                    }
+
+        //                    await InvokeAsync(() => UpdateClassList(classList));
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    Debug.WriteLine($"更新 AI 類別列表失敗: {ex.Message}");
+        //                }
+
+
+        //                await InvokeAsync(() =>
+        //                {
+        //                    try
+        //                    {
+        //                        if (rBLowMagnification.Checked)
+        //                        {
+        //                            if (_AlignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLWaferAIClassId >= 0)
+        //                            {
+        //                                SetComboBoxByClassId(cbLWaferClassList, _AlignC.LLWaferAIClassId);
+        //                            }
+        //                            if (_AlignC.RLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLWaferAIClassId >= 0)
+        //                            {
+        //                                SetComboBoxByClassId(cbRWaferClassList, _AlignC.RLWaferAIClassId);
+        //                            }
+        //                            if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
+        //                            {
+        //                                SetComboBoxByClassId(cbLMaskClassList, _AlignC.LLMaskAIClassId);
+        //                            }
+        //                            if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0)
+        //                            {
+        //                                SetComboBoxByClassId(cbRMaskClassList, _AlignC.RLMaskAIClassId);
+        //                            }
+        //                        }
+        //                        else if (rBHighMagnification.Checked)
+        //                        {
+        //                            if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0)
+        //                            {
+        //                                SetComboBoxByClassId(cbLWaferClassList, _AlignC.LHWaferAIClassId);
+        //                            }
+        //                            if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId >= 0)
+        //                            {
+        //                                SetComboBoxByClassId(cbRWaferClassList, _AlignC.RHWaferAIClassId);
+        //                            }
+        //                            if (_AlignC.LHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHMaskAIClassId >= 0)
+        //                            {
+        //                                SetComboBoxByClassId(cbLMaskClassList, _AlignC.LHMaskAIClassId);
+        //                            }
+        //                            if (_AlignC.RHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHMaskAIClassId >= 0)
+        //                            {
+        //                                SetComboBoxByClassId(cbRMaskClassList, _AlignC.RHMaskAIClassId);
+        //                            }
+        //                        }
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        Debug.WriteLine($"恢復 AI 類別選擇失敗: {ex.Message}");
+        //                    }
+        //                });
+
+        //                if (GV.AppSettingParm?.Emulation != true)
+        //                {
+        //                    await Task.Run(() =>
+        //                    {
+        //                        try
+        //                        {
+        //                            // 並行學習所有 Matcher
+        //                            var learnTasks = new List<Task>();
+
+        //                            if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() && GV.matcherLLM != null)
+        //                            {
+        //                                learnTasks.Add(Task.Run(() =>
+        //                                {
+        //                                    try
+        //                                    {
+        //                                        GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm);
+        //                                    }
+        //                                    catch (Exception ex) { Debug.WriteLine($"LLM Learn 失敗: {ex.Message}"); }
+        //                                }));
+        //                            }
+
+        //                            if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() && GV.matcherRLM != null)
+        //                            {
+        //                                learnTasks.Add(Task.Run(() =>
+        //                                {
+        //                                    try
+        //                                    {
+        //                                        GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm);
+        //                                    }
+        //                                    catch (Exception ex) { Debug.WriteLine($"RLM Learn 失敗: {ex.Message}"); }
+        //                                }));
+        //                            }
+
+        //                            if (_recipe.LeftLowWaferMat != null && !_recipe.LeftLowWaferMat.Empty() && GV.matcherLLW != null)
+        //                            {
+        //                                learnTasks.Add(Task.Run(() =>
+        //                                {
+        //                                    try
+        //                                    {
+        //                                        GV.matcherLLW.LearnWithAlgo(_recipe.LeftLowWaferMat, _recipe.LeftLowWaferMask, _AlignC.LLWaferAlgorithm);
+        //                                    }
+        //                                    catch (Exception ex) { Debug.WriteLine($"LLW Learn 失敗: {ex.Message}"); }
+        //                                }));
+        //                            }
+
+        //                            if (_recipe.RightLowWaferMat != null && !_recipe.RightLowWaferMat.Empty() && GV.matcherRLW != null)
+        //                            {
+        //                                learnTasks.Add(Task.Run(() =>
+        //                                {
+        //                                    try
+        //                                    {
+        //                                        GV.matcherRLW.LearnWithAlgo(_recipe.RightLowWaferMat, _recipe.RightLowWaferMask, _AlignC.RLWaferAlgorithm);
+        //                                    }
+        //                                    catch (Exception ex) { Debug.WriteLine($"RLW Learn 失敗: {ex.Message}"); }
+        //                                }));
+        //                            }
+
+        //                            if (_recipe.LeftHighMaskMat != null && !_recipe.LeftHighMaskMat.Empty() && GV.matcherLHM != null)
+        //                            {
+        //                                learnTasks.Add(Task.Run(() =>
+        //                                {
+        //                                    try
+        //                                    {
+        //                                        GV.matcherLHM.LearnWithAlgo(_recipe.LeftHighMaskMat, _recipe.LeftHighMaskMask, _AlignC.LHMaskAlgorithm);
+        //                                    }
+        //                                    catch (Exception ex) { Debug.WriteLine($"LHM Learn 失敗: {ex.Message}"); }
+        //                                }));
+        //                            }
+
+        //                            if (_recipe.RightHighMaskMat != null && !_recipe.RightHighMaskMat.Empty() && GV.matcherRHM != null)
+        //                            {
+        //                                learnTasks.Add(Task.Run(() =>
+        //                                {
+        //                                    try
+        //                                    {
+        //                                        GV.matcherRHM.LearnWithAlgo(_recipe.RightHighMaskMat, _recipe.RightHighMaskMask, _AlignC.RHMaskAlgorithm);
+        //                                    }
+        //                                    catch (Exception ex) { Debug.WriteLine($"RHM Learn 失敗: {ex.Message}"); }
+        //                                }));
+        //                            }
+
+        //                            if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() && GV.matcherLHW != null)
+        //                            {
+        //                                learnTasks.Add(Task.Run(() =>
+        //                                {
+        //                                    try
+        //                                    {
+        //                                        GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm);
+        //                                    }
+        //                                    catch (Exception ex) { Debug.WriteLine($"LHW Learn 失敗: {ex.Message}"); }
+        //                                }));
+        //                            }
+
+        //                            if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() && GV.matcherRHW != null)
+        //                            {
+        //                                learnTasks.Add(Task.Run(() =>
+        //                                {
+        //                                    try
+        //                                    {
+        //                                        GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm);
+        //                                    }
+        //                                    catch (Exception ex) { Debug.WriteLine($"RHW Learn 失敗: {ex.Message}"); }
+        //                                }));
+        //                            }
+
+        //                            if (learnTasks.Count > 0)
+        //                            {
+        //                                Task.WaitAll(learnTasks.ToArray(), 5000); // 最多等 5 秒
+        //                            }
+        //                        }
+        //                        catch (Exception ex)
+        //                        {
+        //                            Debug.WriteLine($"Matcher 學習失敗: {ex.Message}");
+        //                        }
+        //                    });
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Debug.WriteLine($"ShowMe 背景任務失敗: {ex.Message}");
+        //            }
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine($"ShowMe 錯誤: {ex.Message}");
+        //    }
+        //}
         internal void ShowMe()
         {
+            if (Interlocked.Exchange(ref _showMeBusy, 1) == 1) return;
+
+            Stopwatch sw = Stopwatch.StartNew();
             try
             {
-
                 EditRecipe = GV.NowRecipeNumber;
                 _recipe = GV._recipe;
                 _AlignC = _recipe.AlignC;
-                //EditRecipe = _recipe.RecipeNumber;
+
+                bool recipeChanged = (_lastShowRecipe != EditRecipe);
+                _lastShowRecipe = EditRecipe;
+
                 lbRecipeNumber.Text = GV.Dlang.strRecipeNumber + EditRecipe.ToString();
                 btLabelPatternL.Visible = true;
 
-                if (GV.AppSettingParm.Author == 0)
-                {
-                    btTfile.Visible = false;
-                    btTLRead.Visible = false;
-                    btTRRead.Visible = false;
-                }
-                else
-                {
-                    btTfile.Visible = true;
-                    btTLRead.Visible = true;
-                    btTRRead.Visible = true;
-                }
-
+                bool author = GV.AppSettingParm.Author != 0;
+                btTfile.Visible = author;
+                btTLRead.Visible = author;
+                btTRRead.Visible = author;
 
                 if (GMPLeft == null)
                 {
                     GMPLeft = new Mat();
                     GMPRight = new Mat();
                 }
-
                 if (MoveCCDLeft == null)
                 {
                     MoveCCDLeft = new Mat();
@@ -1452,229 +1766,119 @@ namespace NSAA_16Axis
                     GMPlWaferMp = new MatchPosition();
                     GMPrWaferMp = new MatchPosition();
                 }
-
                 if (MatchThread == null)
                 {
                     MatchThread = new Thread(DrawMatchPosition) { IsBackground = true };
                     MatchThread.Start();
                 }
 
-                _ = Task.Run(async () => { CbHLMagni_Change(NowMageni); });
-                _ = Task.Run(async () => { Changelight(); });
-                _ = Task.Run(async () => { CheckParam(); });
-                Update();
-                //ApplyLanguage();
+                // UI 立即可互動：輕量設定同步做
+                CbHLMagni_Change(NowMageni);
+                Changelight();
+                CheckParam();
+                ApplyAlgorithmSelectionForCurrentMagnification();
+                SyncAiClassListVisibility();
 
-                _ = Task.Run(async () =>
+                // class list：Recipe 切換或目前清單為空時重抓，避免首次失敗後不再更新
+                bool needRefreshClassList = recipeChanged || _lastClassListRecipe != EditRecipe || cbLWaferClassList.Items.Count == 0;
+                if (needRefreshClassList)
                 {
-                    try
+                    _ = Task.Run(async () =>
                     {
                         try
                         {
                             var classNames = await GV.AIClassList.GetClassNamesAsync();
-                            var classList = new Dictionary<string, Int16>();
-                            for (int i = 0; i < classNames.Count; i++)
+                            var classList = new Dictionary<string, short>();
+                            for (int i = 0; i < classNames.Count; i++) classList[classNames[i]] = (short)i;
+
+                            await InvokeAsync(() =>
                             {
-                                classList.Add(classNames[i], (Int16)i);
-                            }
-
-                            await InvokeAsync(() => UpdateClassList(classList));
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine($"更新 AI 類別列表失敗: {ex.Message}");
-                        }
-
-
-                        await InvokeAsync(() =>
-                        {
-                            try
+                                UpdateClassList(classList);
+                                ApplyAlgorithmSelectionForCurrentMagnification();
+                                SyncAiClassListVisibility();
+                            });
+                            await InvokeAsync(() =>
                             {
                                 if (rBLowMagnification.Checked)
                                 {
-                                    if (_AlignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLWaferAIClassId >= 0)
-                                    {
-                                        SetComboBoxByClassId(cbLWaferClassList, _AlignC.LLWaferAIClassId);
-                                    }
-                                    if (_AlignC.RLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLWaferAIClassId >= 0)
-                                    {
-                                        SetComboBoxByClassId(cbRWaferClassList, _AlignC.RLWaferAIClassId);
-                                    }
-                                    if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
-                                    {
-                                        SetComboBoxByClassId(cbLMaskClassList, _AlignC.LLMaskAIClassId);
-                                    }
-                                    if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0)
-                                    {
-                                        SetComboBoxByClassId(cbRMaskClassList, _AlignC.RLMaskAIClassId);
-                                    }
+                                    if (_AlignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLWaferAIClassId >= 0) SetComboBoxByClassId(cbLWaferClassList, _AlignC.LLWaferAIClassId);
+                                    if (_AlignC.RLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLWaferAIClassId >= 0) SetComboBoxByClassId(cbRWaferClassList, _AlignC.RLWaferAIClassId);
+                                    if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0) SetComboBoxByClassId(cbLMaskClassList, _AlignC.LLMaskAIClassId);
+                                    if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0) SetComboBoxByClassId(cbRMaskClassList, _AlignC.RLMaskAIClassId);
                                 }
-                                else if (rBHighMagnification.Checked)
+                                else
                                 {
-                                    if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0)
-                                    {
-                                        SetComboBoxByClassId(cbLWaferClassList, _AlignC.LHWaferAIClassId);
-                                    }
-                                    if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId >= 0)
-                                    {
-                                        SetComboBoxByClassId(cbRWaferClassList, _AlignC.RHWaferAIClassId);
-                                    }
-                                    if (_AlignC.LHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHMaskAIClassId >= 0)
-                                    {
-                                        SetComboBoxByClassId(cbLMaskClassList, _AlignC.LHMaskAIClassId);
-                                    }
-                                    if (_AlignC.RHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHMaskAIClassId >= 0)
-                                    {
-                                        SetComboBoxByClassId(cbRMaskClassList, _AlignC.RHMaskAIClassId);
-                                    }
+                                    if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0) SetComboBoxByClassId(cbLWaferClassList, _AlignC.LHWaferAIClassId);
+                                    if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId >= 0) SetComboBoxByClassId(cbRWaferClassList, _AlignC.RHWaferAIClassId);
+                                    if (_AlignC.LHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHMaskAIClassId >= 0) SetComboBoxByClassId(cbLMaskClassList, _AlignC.LHMaskAIClassId);
+                                    if (_AlignC.RHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHMaskAIClassId >= 0) SetComboBoxByClassId(cbRMaskClassList, _AlignC.RHMaskAIClassId);
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                Debug.WriteLine($"恢復 AI 類別選擇失敗: {ex.Message}");
-                            }
-                        });
 
-                        if (GV.AppSettingParm?.Emulation != true)
-                        {
-                            await Task.Run(() =>
-                            {
-                                try
-                                {
-                                    // 並行學習所有 Matcher
-                                    var learnTasks = new List<Task>();
-
-                                    if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() && GV.matcherLLM != null)
-                                    {
-                                        learnTasks.Add(Task.Run(() =>
-                                        {
-                                            try
-                                            {
-                                                GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm);
-                                            }
-                                            catch (Exception ex) { Debug.WriteLine($"LLM Learn 失敗: {ex.Message}"); }
-                                        }));
-                                    }
-
-                                    if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() && GV.matcherRLM != null)
-                                    {
-                                        learnTasks.Add(Task.Run(() =>
-                                        {
-                                            try
-                                            {
-                                                GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm);
-                                            }
-                                            catch (Exception ex) { Debug.WriteLine($"RLM Learn 失敗: {ex.Message}"); }
-                                        }));
-                                    }
-
-                                    if (_recipe.LeftLowWaferMat != null && !_recipe.LeftLowWaferMat.Empty() && GV.matcherLLW != null)
-                                    {
-                                        learnTasks.Add(Task.Run(() =>
-                                        {
-                                            try
-                                            {
-                                                GV.matcherLLW.LearnWithAlgo(_recipe.LeftLowWaferMat, _recipe.LeftLowWaferMask, _AlignC.LLWaferAlgorithm);
-                                            }
-                                            catch (Exception ex) { Debug.WriteLine($"LLW Learn 失敗: {ex.Message}"); }
-                                        }));
-                                    }
-
-                                    if (_recipe.RightLowWaferMat != null && !_recipe.RightLowWaferMat.Empty() && GV.matcherRLW != null)
-                                    {
-                                        learnTasks.Add(Task.Run(() =>
-                                        {
-                                            try
-                                            {
-                                                GV.matcherRLW.LearnWithAlgo(_recipe.RightLowWaferMat, _recipe.RightLowWaferMask, _AlignC.RLWaferAlgorithm);
-                                            }
-                                            catch (Exception ex) { Debug.WriteLine($"RLW Learn 失敗: {ex.Message}"); }
-                                        }));
-                                    }
-
-                                    if (_recipe.LeftHighMaskMat != null && !_recipe.LeftHighMaskMat.Empty() && GV.matcherLHM != null)
-                                    {
-                                        learnTasks.Add(Task.Run(() =>
-                                        {
-                                            try
-                                            {
-                                                GV.matcherLHM.LearnWithAlgo(_recipe.LeftHighMaskMat, _recipe.LeftHighMaskMask, _AlignC.LHMaskAlgorithm);
-                                            }
-                                            catch (Exception ex) { Debug.WriteLine($"LHM Learn 失敗: {ex.Message}"); }
-                                        }));
-                                    }
-
-                                    if (_recipe.RightHighMaskMat != null && !_recipe.RightHighMaskMat.Empty() && GV.matcherRHM != null)
-                                    {
-                                        learnTasks.Add(Task.Run(() =>
-                                        {
-                                            try
-                                            {
-                                                GV.matcherRHM.LearnWithAlgo(_recipe.RightHighMaskMat, _recipe.RightHighMaskMask, _AlignC.RHMaskAlgorithm);
-                                            }
-                                            catch (Exception ex) { Debug.WriteLine($"RHM Learn 失敗: {ex.Message}"); }
-                                        }));
-                                    }
-
-                                    if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() && GV.matcherLHW != null)
-                                    {
-                                        learnTasks.Add(Task.Run(() =>
-                                        {
-                                            try
-                                            {
-                                                GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm);
-                                            }
-                                            catch (Exception ex) { Debug.WriteLine($"LHW Learn 失敗: {ex.Message}"); }
-                                        }));
-                                    }
-
-                                    if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() && GV.matcherRHW != null)
-                                    {
-                                        learnTasks.Add(Task.Run(() =>
-                                        {
-                                            try
-                                            {
-                                                GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm);
-                                            }
-                                            catch (Exception ex) { Debug.WriteLine($"RHW Learn 失敗: {ex.Message}"); }
-                                        }));
-                                    }
-
-                                    if (learnTasks.Count > 0)
-                                    {
-                                        Task.WaitAll(learnTasks.ToArray(), 5000); // 最多等 5 秒
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Debug.WriteLine($"Matcher 學習失敗: {ex.Message}");
-                                }
+                                SyncAiClassListVisibility();
                             });
+
+                            if (classList.Count > 0)
+                            {
+                                _lastClassListRecipe = EditRecipe;
+                            }
                         }
-                    }
-                    catch (Exception ex)
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Up.ShowMe classlist error: " + ex.Message);
+                        }
+                    });
+                }
+
+                // matcher 學習只在 recipe 改變時做一次
+                if (GV.AppSettingParm?.Emulation != true && _lastLearnRecipe != EditRecipe)
+                {
+                    _lastLearnRecipe = EditRecipe;
+                    _ = Task.Run(() =>
                     {
-                        Debug.WriteLine($"ShowMe 背景任務失敗: {ex.Message}");
-                    }
-                });
+                        try
+                        {
+                            var learnTasks = new List<Task>();
+                            if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() && GV.matcherLLM != null) learnTasks.Add(Task.Run(() => GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm)));
+                            if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() && GV.matcherRLM != null) learnTasks.Add(Task.Run(() => GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm)));
+                            if (_recipe.LeftLowWaferMat != null && !_recipe.LeftLowWaferMat.Empty() && GV.matcherLLW != null) learnTasks.Add(Task.Run(() => GV.matcherLLW.LearnWithAlgo(_recipe.LeftLowWaferMat, _recipe.LeftLowWaferMask, _AlignC.LLWaferAlgorithm)));
+                            if (_recipe.RightLowWaferMat != null && !_recipe.RightLowWaferMat.Empty() && GV.matcherRLW != null) learnTasks.Add(Task.Run(() => GV.matcherRLW.LearnWithAlgo(_recipe.RightLowWaferMat, _recipe.RightLowWaferMask, _AlignC.RLWaferAlgorithm)));
+                            if (_recipe.LeftHighMaskMat != null && !_recipe.LeftHighMaskMat.Empty() && GV.matcherLHM != null) learnTasks.Add(Task.Run(() => GV.matcherLHM.LearnWithAlgo(_recipe.LeftHighMaskMat, _recipe.LeftHighMaskMask, _AlignC.LHMaskAlgorithm)));
+                            if (_recipe.RightHighMaskMat != null && !_recipe.RightHighMaskMat.Empty() && GV.matcherRHM != null) learnTasks.Add(Task.Run(() => GV.matcherRHM.LearnWithAlgo(_recipe.RightHighMaskMat, _recipe.RightHighMaskMask, _AlignC.RHMaskAlgorithm)));
+                            if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() && GV.matcherLHW != null) learnTasks.Add(Task.Run(() => GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm)));
+                            if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() && GV.matcherRHW != null) learnTasks.Add(Task.Run(() => GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm)));
+                            Task.WaitAll(learnTasks.ToArray(), 5000);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Up.ShowMe learn error: " + ex.Message);
+                        }
+                    });
+                }
+
+                Debug.WriteLine("CMLearnPatternUp.ShowMe ms=" + sw.ElapsedMilliseconds);
             }
-            catch (Exception ex)
+            finally
             {
-                Debug.WriteLine($"ShowMe 錯誤: {ex.Message}");
+                Interlocked.Exchange(ref _showMeBusy, 0);
             }
         }
 
         private Task InvokeAsync(Action action)
         {
-            if (InvokeRequired)
-            {
-                return Task.Run(() => Invoke(action));
-            }
-            else
+            if (IsDisposed) return Task.CompletedTask;
+            if (!InvokeRequired)
             {
                 action();
                 return Task.CompletedTask;
             }
+
+            var tcs = new TaskCompletionSource<bool>();
+            BeginInvoke((MethodInvoker)delegate
+            {
+                try { action(); tcs.SetResult(true); }
+                catch (Exception ex) { tcs.SetException(ex); }
+            });
+            return tcs.Task;
         }
         public void UpdateClassList(Dictionary<string, Int16> classList)
         {

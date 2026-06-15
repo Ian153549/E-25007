@@ -51,7 +51,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\DebugIV\</OutputPath>
+    <OutputPath>bin\x64\DebugII\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AIClassList.cs" />
+    <Compile Include="AIInferenceClient.cs" />
     <Compile Include="CCDPad.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -463,6 +464,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y /E /I /D "$(TargetDir)*.*" "Z:\E-25007\NSAA-16Axis\bin\x64\DebugIV"</PostBuildEvent>
+    <PostBuildEvent>xcopy /Y /E /I  "$(TargetDir)*.*" "Z:\E-25007\NSAA-16Axis\bin\x64\DebugII"</PostBuildEvent>
   </PropertyGroup>
 </Project>

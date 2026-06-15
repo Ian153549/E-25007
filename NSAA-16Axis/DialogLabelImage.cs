@@ -79,6 +79,198 @@ namespace NSAA_16Axis
             }
         }
 
+        private int GetPaddingPixels()
+        {
+            int value = (int)(nudPadding?.Value ?? 0);
+            bool isShrink = cbPaddingDir?.SelectedItem?.ToString() == "內縮";
+            return isShrink ? -value : value;
+        }
+
+        private Rectangle ApplyPaddingToRect(Rectangle rect, int paddingPx)
+        {
+            int x = rect.X - paddingPx;
+            int y = rect.Y - paddingPx;
+            int w = rect.Width + paddingPx * 2;
+            int h = rect.Height + paddingPx * 2;
+            if (w < 1) w = 1;
+            if (h < 1) h = 1;
+            return new Rectangle(x, y, w, h);
+        }
+        private Rectangle GetImageRectInPictureBox()
+        {
+            if (pictureBox1.Image == null)
+                return pictureBox1.ClientRectangle;
+
+            float imgW = pictureBox1.Image.Width;
+            float imgH = pictureBox1.Image.Height;
+            float boxW = pictureBox1.Width;
+            float boxH = pictureBox1.Height;
+
+            float scale = Math.Min(boxW / imgW, boxH / imgH);
+            int drawW = (int)(imgW * scale);
+            int drawH = (int)(imgH * scale);
+            int offsetX = (int)((boxW - drawW) / 2f);
+            int offsetY = (int)((boxH - drawH) / 2f);
+
+            return new Rectangle(offsetX, offsetY, drawW, drawH);
+        }
+        private Rectangle NormalizeRectangle(int x1, int y1, int x2, int y2)
+        {
+            int left = Math.Min(x1, x2);
+            int top = Math.Min(y1, y2);
+            int right = Math.Max(x1, x2);
+            int bottom = Math.Max(y1, y2);
+            return Rectangle.FromLTRB(left, top, right, bottom);
+        }
+
+        private Rectangle ImageRectToPictureBoxRect(Rectangle imageRect)
+        {
+            Rectangle pbImageRect = GetImageRectInPictureBox();
+
+            float scaleX = pbImageRect.Width / (float)pictureBox1.Image.Width;
+            float scaleY = pbImageRect.Height / (float)pictureBox1.Image.Height;
+
+            int x = pbImageRect.X + (int)Math.Round(imageRect.X * scaleX);
+            int y = pbImageRect.Y + (int)Math.Round(imageRect.Y * scaleY);
+            int w = (int)Math.Round(imageRect.Width * scaleX);
+            int h = (int)Math.Round(imageRect.Height * scaleY);
+
+            return new Rectangle(x, y, w, h);
+        }
+        private Rectangle PictureBoxRectToImageRect(Rectangle pictureBoxRect)
+        {
+            if (pictureBox1.Image == null)
+                return Rectangle.Empty;
+
+            Rectangle pbImageRect = GetImageRectInPictureBox();
+            Rectangle clippedPbRect = Rectangle.Intersect(pictureBoxRect, pbImageRect);
+
+            if (clippedPbRect.Width <= 0 || clippedPbRect.Height <= 0)
+                return Rectangle.Empty;
+
+            float scaleX = pictureBox1.Image.Width / (float)pbImageRect.Width;
+            float scaleY = pictureBox1.Image.Height / (float)pbImageRect.Height;
+
+            int x = (int)Math.Round((clippedPbRect.X - pbImageRect.X) * scaleX);
+            int y = (int)Math.Round((clippedPbRect.Y - pbImageRect.Y) * scaleY);
+            int w = Math.Max(1, (int)Math.Round(clippedPbRect.Width * scaleX));
+            int h = Math.Max(1, (int)Math.Round(clippedPbRect.Height * scaleY));
+
+            Rectangle imageBounds = new Rectangle(0, 0, pictureBox1.Image.Width, pictureBox1.Image.Height);
+            return Rectangle.Intersect(new Rectangle(x, y, w, h), imageBounds);
+        }
+
+        private bool TryBuildDetectedLabelRect(System.Drawing.Point startPoint, System.Drawing.Point endPoint, out Rectangle resultRect)
+        {
+            resultRect = Rectangle.Empty;
+
+            if (pictureBox1.Image == null)
+                return false;
+
+            Rectangle pbImageRect = GetImageRectInPictureBox();
+            Rectangle selectionPb = Rectangle.Intersect(
+                NormalizeRectangle(startPoint.X, startPoint.Y, endPoint.X, endPoint.Y),
+                pbImageRect);
+
+            if (selectionPb.Width < 2 || selectionPb.Height < 2)
+                return false;
+
+            float scaleX = pictureBox1.Image.Width / (float)pbImageRect.Width;
+            float scaleY = pictureBox1.Image.Height / (float)pbImageRect.Height;
+
+            Rectangle selectionImg = new Rectangle(
+                Math.Max(0, (int)Math.Floor((selectionPb.X - pbImageRect.X) * scaleX)),
+                Math.Max(0, (int)Math.Floor((selectionPb.Y - pbImageRect.Y) * scaleY)),
+                Math.Max(1, (int)Math.Ceiling(selectionPb.Width * scaleX)),
+                Math.Max(1, (int)Math.Ceiling(selectionPb.Height * scaleY)));
+
+            Rectangle imageBounds = new Rectangle(0, 0, pictureBox1.Image.Width, pictureBox1.Image.Height);
+            selectionImg = Rectangle.Intersect(selectionImg, imageBounds);
+
+            if (selectionImg.Width < 2 || selectionImg.Height < 2)
+                return false;
+
+            using (Bitmap bmp = new Bitmap(pictureBox1.Image))
+            using (Mat src = OpenCvSharp.Extensions.BitmapConverter.ToMat(bmp))
+            using (Mat roi = new Mat(src, new OpenCvSharp.Rect(selectionImg.X, selectionImg.Y, selectionImg.Width, selectionImg.Height)))
+            using (Mat gray = new Mat())
+            using (Mat blur = new Mat())
+            using (Mat bin = new Mat())
+            {
+                if (roi.Channels() == 1)
+                    roi.CopyTo(gray);
+                else
+                    Cv2.CvtColor(roi, gray, ColorConversionCodes.BGR2GRAY);
+
+                Cv2.GaussianBlur(gray, blur, new OpenCvSharp.Size(3, 3), 0);
+                Cv2.Threshold(blur, bin, 0, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
+
+                OpenCvSharp.Point[][] contours;
+                HierarchyIndex[] hierarchy;
+                Cv2.FindContours(bin, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
+
+                if (contours == null || contours.Length == 0)
+                    return false;
+
+                OpenCvSharp.Rect bestRect = new OpenCvSharp.Rect();
+                double bestArea = 0;
+
+                foreach (var contour in contours)
+                {
+                    OpenCvSharp.Rect rect = Cv2.BoundingRect(contour);
+                    double area = rect.Width * rect.Height;
+
+                    if (area < 25)
+                        continue;
+
+                    if (area > bestArea)
+                    {
+                        bestArea = area;
+                        bestRect = rect;
+                    }
+                }
+
+                if (bestArea <= 0)
+                    return false;
+
+                Rectangle detectedImgRect = new Rectangle(
+                    selectionImg.X + bestRect.X,
+                    selectionImg.Y + bestRect.Y,
+                    bestRect.Width,
+                    bestRect.Height);
+
+                int centerX = detectedImgRect.X + detectedImgRect.Width / 2;
+                int centerY = detectedImgRect.Y + detectedImgRect.Height / 2;
+
+                if (IsSquareLabelType())
+                {
+                    int side = Math.Max(detectedImgRect.Width, detectedImgRect.Height);
+                    detectedImgRect = new Rectangle(
+                        centerX - side / 2,
+                        centerY - side / 2,
+                        side,
+                        side);
+                }
+                else
+                {
+                    detectedImgRect = new Rectangle(
+                        centerX - detectedImgRect.Width / 2,
+                        centerY - detectedImgRect.Height / 2,
+                        detectedImgRect.Width,
+                        detectedImgRect.Height);
+                }
+
+                detectedImgRect = ApplyPaddingToRect(detectedImgRect, GetPaddingPixels());
+                detectedImgRect = Rectangle.Intersect(detectedImgRect, imageBounds);
+
+                if (detectedImgRect.Width <= 0 || detectedImgRect.Height <= 0)
+                    return false;
+
+                resultRect = detectedImgRect;
+                return true;
+            }
+        }
+
         private void btnOpenFolder_Click(object sender, EventArgs e)
         {
 
@@ -115,6 +307,13 @@ namespace NSAA_16Axis
                 {
                     comboBoxClass.SelectedIndex = 0;
                 }
+
+                if (cbLabelType != null && cbLabelType.Items.Count > 0 && cbLabelType.SelectedIndex < 0)
+                {
+                    int rectIndex = cbLabelType.Items.IndexOf("方形");
+                    cbLabelType.SelectedIndex = rectIndex >= 0 ? rectIndex : 0;
+                }
+
                 if (GV.AppSettingParm.Language != "default")
                 {
                     this.Text = $"{GV.Dlang.strLabelImageTitle}{currentRecipeNumber} - {GV.Dlang.strLabelImagePath}:{imageDir}";
@@ -169,8 +368,38 @@ namespace NSAA_16Axis
                     : "錯誤";
                 MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            RefreshLvInfo();
         }
 
+        private bool IsSquareLabelType()
+        {
+            return cbLabelType != null && cbLabelType.SelectedItem != null && cbLabelType.SelectedItem.ToString() == "正方形";
+        }
+
+        private Rectangle BuildDrawRectangle(int sx, int sy, int ex, int ey)
+        {
+            // 計算拖曳矩形的中心點
+            int cx = (sx + ex) / 2;
+            int cy = (sy + ey) / 2;
+
+            int halfW, halfH;
+
+            if (IsSquareLabelType())
+            {
+                // 正方形：以中心點為準，取長邊的一半作為邊長
+                int half = Math.Max(Math.Abs(ex - sx), Math.Abs(ey - sy)) / 2;
+                halfW = half;
+                halfH = half;
+            }
+            else
+            {
+                // 方形：以中心點為準，保留原始寬高
+                halfW = Math.Abs(ex - sx) / 2;
+                halfH = Math.Abs(ey - sy) / 2;
+            }
+
+            return new Rectangle(cx - halfW, cy - halfH, halfW * 2, halfH * 2);
+        }
         private void LoadCurrentImage()
         {
             if (imageFiles.Count == 0) return;
@@ -195,8 +424,8 @@ namespace NSAA_16Axis
                 {
                     var parts = line.Split(' ');
                     if (parts.Length == 5)
-                        
-                    boxes.Add(new YoloBox
+
+                        boxes.Add(new YoloBox
                         {
                             ClassId = int.Parse(parts[0]),
                             X = float.Parse(parts[1]),
@@ -208,19 +437,20 @@ namespace NSAA_16Axis
                 }
             }
             pictureBox1.Invalidate();
+            RefreshLvInfo();
         }
 
         private string GetClassNameById(int classId)
         {
             try
             {
-                if(classId>=0 && classId<comboBoxClass.Items.Count)
+                if (classId >= 0 && classId < comboBoxClass.Items.Count)
                 {
                     return comboBoxClass.Items[classId].ToString();
                 }
-                foreach(var kvp in labelClassList)
+                foreach (var kvp in labelClassList)
                 {
-                    if(kvp.Value == classId)
+                    if (kvp.Value == classId)
                     {
                         return kvp.Key;
                     }
@@ -236,19 +466,26 @@ namespace NSAA_16Axis
         private void skPattern_MouseUp(object sender, MouseEventArgs e)
         {
             isDrawing = false;
-            endX = e.X; endY = e.Y;
-            int minX = Math.Min(startX, endX), minY = Math.Min(startY, endY);
-            int maxX = Math.Max(startX, endX), maxY = Math.Max(startY, endY);
+            endX = e.X;
+            endY = e.Y;
 
-            // 轉 YOLO 格式（歸一化中心、寬高）
-            float xCenter = (minX + maxX) / 2f / skPattern.Width;
-            float yCenter = (minY + maxY) / 2f / skPattern.Height;
-            float w = (maxX - minX) / (float)skPattern.Width;
-            float h = (maxY - minY) / (float)skPattern.Height;
+            Rectangle rect = BuildDrawRectangle(startX, startY, endX, endY);
+            if (rect.Width <= 0 || rect.Height <= 0)
+            {
+                skPattern.Invalidate();
+                return;
+            }
+
+            // 存入前套用 padding
+            Rectangle paddedRect = ApplyPaddingToRect(rect, GetPaddingPixels());
+
+            float xCenter = (paddedRect.X + paddedRect.Width / 2f) / skPattern.Width;
+            float yCenter = (paddedRect.Y + paddedRect.Height / 2f) / skPattern.Height;
+            float w = paddedRect.Width / (float)skPattern.Width;
+            float h = paddedRect.Height / (float)skPattern.Height;
 
             int classId = comboBoxClass.SelectedIndex;
             boxes.Add(new YoloBox { ClassId = classId, X = xCenter, Y = yCenter, W = w, H = h });
-
             skPattern.Invalidate();
         }
 
@@ -260,9 +497,10 @@ namespace NSAA_16Axis
             }
             if (isDrawing)
             {
-                Rectangle rect = new Rectangle(
-                    Math.Min(startX, endX), Math.Min(startY, endY),
-                    Math.Abs(endX - startX), Math.Abs(endY - startY));
+                //Rectangle rect = new Rectangle(
+                //    Math.Min(startX, endX), Math.Min(startY, endY),
+                //    Math.Abs(endX - startX), Math.Abs(endY - startY));
+                Rectangle rect = BuildDrawRectangle(startX, startY, endX, endY);
                 e.Graphics.DrawRectangle(Pens.Lime, rect);
             }
         }
@@ -315,13 +553,14 @@ namespace NSAA_16Axis
                     var labelPath = Path.ChangeExtension(imgPath, ".txt");
 
                     // 儲存標註
+                    //File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
                     File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
-
                     //MessageBox.Show("標註已儲存！", "完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     OrganizeDatasetAndLaunchTraining();
                     Thread.Sleep(500);
                     this.Close();
                 }
+                RefreshLvInfo();
             }
             catch (Exception ex)
             {
@@ -378,19 +617,51 @@ namespace NSAA_16Axis
                 }
                 return;
             }
+
             if (e.Button == MouseButtons.Left)
             {
-
                 isDrawing = false;
-                endX = e.X; endY = e.Y;
-                int minX = Math.Min(startX, endX), minY = Math.Min(startY, endY);
-                int maxX = Math.Max(startX, endX), maxY = Math.Max(startY, endY);
+                endX = e.X;
+                endY = e.Y;
 
-                // 轉 YOLO 格式（歸一化中心、寬高）
-                float xCenter = (minX + maxX) / 2f / skPattern.Width;
-                float yCenter = (minY + maxY) / 2f / skPattern.Height;
-                float w = (maxX - minX) / (float)skPattern.Width;
-                float h = (maxY - minY) / (float)skPattern.Height;
+                if (pictureBox1.Image == null)
+                {
+                    pictureBox1.Invalidate();
+                    return;
+                }
+
+                Rectangle finalImgRect;
+                if (!TryBuildDetectedLabelRect(new System.Drawing.Point(startX, startY), new System.Drawing.Point(endX, endY), out finalImgRect))
+                {
+                    Rectangle dragRect = BuildDrawRectangle(startX, startY, endX, endY);
+                    if (dragRect.Width <= 0 || dragRect.Height <= 0)
+                    {
+                        pictureBox1.Invalidate();
+                        return;
+                    }
+
+                    finalImgRect = PictureBoxRectToImageRect(dragRect);
+                    if (finalImgRect.Width <= 0 || finalImgRect.Height <= 0)
+                    {
+                        pictureBox1.Invalidate();
+                        return;
+                    }
+
+                    finalImgRect = ApplyPaddingToRect(finalImgRect, GetPaddingPixels());
+                    Rectangle imageBounds = new Rectangle(0, 0, pictureBox1.Image.Width, pictureBox1.Image.Height);
+                    finalImgRect = Rectangle.Intersect(finalImgRect, imageBounds);
+
+                    if (finalImgRect.Width <= 0 || finalImgRect.Height <= 0)
+                    {
+                        pictureBox1.Invalidate();
+                        return;
+                    }
+                }
+
+                float xCenter = (finalImgRect.X + finalImgRect.Width / 2f) / pictureBox1.Image.Width;
+                float yCenter = (finalImgRect.Y + finalImgRect.Height / 2f) / pictureBox1.Image.Height;
+                float w = finalImgRect.Width / (float)pictureBox1.Image.Width;
+                float h = finalImgRect.Height / (float)pictureBox1.Image.Height;
 
                 int classId = comboBoxClass.SelectedIndex;
                 string className = comboBoxClass.SelectedIndex >= 0 ? comboBoxClass.SelectedItem.ToString() : "";
@@ -421,6 +692,7 @@ namespace NSAA_16Axis
                 }
 
                 // 儲存標註
+                //File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
                 File.WriteAllLines(labelPath, boxes.Select(b => $"{b.ClassId} {b.X:F6} {b.Y:F6} {b.W:F6} {b.H:F6}"));
             }
             catch
@@ -449,84 +721,256 @@ namespace NSAA_16Axis
             {
                 DrawYoloBoxWithLabel(e.Graphics, box, Color.Red);
             }
-            if (isDrawing)
+
+            if (isDrawing && pictureBox1.Image != null)
             {
-                Rectangle rect = new Rectangle(
-                    Math.Min(startX, endX), Math.Min(startY, endY),
-                    Math.Abs(endX - startX), Math.Abs(endY - startY));
-                e.Graphics.DrawRectangle(Pens.Lime, rect);
+                Rectangle dragRect = BuildDrawRectangle(startX, startY, endX, endY);
+                if (dragRect.Width > 0 && dragRect.Height > 0)
+                {
+                    Rectangle previewImgRect = PictureBoxRectToImageRect(dragRect);
+                    if (previewImgRect.Width > 0 && previewImgRect.Height > 0)
+                    {
+                        Rectangle imageBounds = new Rectangle(0, 0, pictureBox1.Image.Width, pictureBox1.Image.Height);
+                        previewImgRect = ApplyPaddingToRect(previewImgRect, GetPaddingPixels());
+                        previewImgRect = Rectangle.Intersect(previewImgRect, imageBounds);
+
+                        if (previewImgRect.Width > 0 && previewImgRect.Height > 0)
+                        {
+                            Rectangle displayRect = ImageRectToPictureBoxRect(previewImgRect);
+                            e.Graphics.DrawRectangle(Pens.Lime, displayRect);
+                        }
+                    }
+                }
             }
         }
-
         private void DrawYoloBoxWithLabel(Graphics graphics, YoloBox box, Color color)
         {
-            int w = pictureBox1.Width, h = pictureBox1.Height;
-            int boxW = (int)(box.W * w), boxH = (int)(box.H * h);
-            int boxX = (int)(box.X * w - boxW / 2), boxY = (int)(box.Y * h - boxH / 2);
+            Rectangle imgRect = GetImageRectInPictureBox();
+            int w = imgRect.Width, h = imgRect.Height;
 
-            // 繪製邊框
+            int boxW = (int)Math.Round(box.W * w);
+            int boxH = (int)Math.Round(box.H * h);
+            int boxX = imgRect.X + (int)Math.Round(box.X * w - boxW / 2f);
+            int boxY = imgRect.Y + (int)Math.Round(box.Y * h - boxH / 2f);
+
             using (Pen pen = new Pen(color, 2))
             {
                 graphics.DrawRectangle(pen, boxX, boxY, boxW, boxH);
             }
 
-            // 繪製類別標籤
             if (!string.IsNullOrEmpty(box.ClassName))
             {
-                // 準備標籤文字
                 string labelText = box.ClassName;
-
-                // 設定字體和測量文字大小
                 using (Font font = new Font("Arial", 10, FontStyle.Bold))
                 {
                     SizeF textSize = graphics.MeasureString(labelText, font);
+                    int lp = 4;
+                    int labelWidth = (int)textSize.Width + lp * 2;
+                    int labelHeight = (int)textSize.Height + lp;
 
-                    // 計算標籤背景矩形
-                    int padding = 4;
-                    int labelWidth = (int)textSize.Width + padding * 2;
-                    int labelHeight = (int)textSize.Height + padding;
-
-                    // 標籤位置（在框的上方）
                     int labelX = boxX;
                     int labelY = boxY - labelHeight;
+                    if (labelY < 0) labelY = boxY;
+                    if (labelX + labelWidth > pictureBox1.Width) labelX = pictureBox1.Width - labelWidth;
 
-                    // 如果標籤超出上邊界，放在框內
-                    if (labelY < 0)
-                    {
-                        labelY = boxY;
-                    }
-
-                    // 確保標籤不超出右邊界
-                    if (labelX + labelWidth > w)
-                    {
-                        labelX = w - labelWidth;
-                    }
-
-                    // 繪製標籤背景
                     Rectangle labelRect = new Rectangle(labelX, labelY, labelWidth, labelHeight);
                     using (SolidBrush bgBrush = new SolidBrush(Color.FromArgb(200, color)))
-                    {
                         graphics.FillRectangle(bgBrush, labelRect);
-                    }
-
-                    // 繪製標籤邊框
                     using (Pen labelPen = new Pen(color, 1))
-                    {
                         graphics.DrawRectangle(labelPen, labelRect);
-                    }
-
-                    // 繪製文字
                     using (SolidBrush textBrush = new SolidBrush(Color.White))
-                    {
-                        graphics.DrawString(
-                            labelText,
-                            font,
-                            textBrush,
-                            labelX + padding,
-                            labelY + padding / 2);
-                    }
+                        graphics.DrawString(labelText, font, textBrush, labelX + lp, labelY + lp / 2);
                 }
             }
+        }
+
+        //private void DrawYoloBoxWithLabel(Graphics graphics, YoloBox box, Color color)
+        //{
+        //    int w = pictureBox1.Width, h = pictureBox1.Height;
+        //    int boxW = (int)(box.W * w), boxH = (int)(box.H * h);
+        //    int boxX = (int)(box.X * w - boxW / 2), boxY = (int)(box.Y * h - boxH / 2);
+
+        //    Rectangle drawRect=ApplyPaddingToRect(new Rectangle(boxX, boxY, boxW, boxH), GetPaddingPixels());
+        //    // 繪製邊框
+        //    using (Pen pen = new Pen(color, 2))
+        //    {
+        //        graphics.DrawRectangle(pen, drawRect);
+        //    }
+
+        //    if (!string.IsNullOrEmpty(box.ClassName))
+        //    {                
+        //        string labelText = box.ClassName;
+        //        using(Font font=new Font("Arial", 10, FontStyle.Bold))
+        //        {
+        //            SizeF textSize = graphics.MeasureString(labelText, font);
+        //            int padding = 4;
+        //            int labelWidth = (int)textSize.Width + padding * 2;
+        //            int labelHeight = (int)textSize.Height + padding;
+        //            int labelX = drawRect.X;
+        //            int labelY = drawRect.Y - labelHeight;
+        //            if (labelY < 0) labelY = drawRect.Y;
+        //            if (labelX + labelWidth > w) labelX = w - labelWidth;
+        //            Rectangle labelRect = new Rectangle(labelX, labelY, labelWidth, labelHeight);
+        //            using (SolidBrush bgBrush = new SolidBrush(Color.FromArgb(200, color)))
+        //                graphics.FillRectangle(bgBrush, labelRect);
+        //            using (Pen labelPen= new Pen(color,1))
+        //                graphics.DrawRectangle(labelPen, labelRect);
+        //            using (SolidBrush textBrush= new SolidBrush(Color.White))
+        //                graphics.DrawString(labelText, font, textBrush, labelX + padding, labelY + padding / 2);
+        //        }
+
+        //    }
+
+        //    // 繪製類別標籤
+        //    //if (!string.IsNullOrEmpty(box.ClassName))
+        //    //{
+        //    //    // 準備標籤文字
+        //    //    string labelText = box.ClassName;
+
+        //    //    // 設定字體和測量文字大小
+        //    //    using (Font font = new Font("Arial", 10, FontStyle.Bold))
+        //    //    {
+        //    //        SizeF textSize = graphics.MeasureString(labelText, font);
+
+        //    //        // 計算標籤背景矩形
+        //    //        int padding = 4;
+        //    //        int labelWidth = (int)textSize.Width + padding * 2;
+        //    //        int labelHeight = (int)textSize.Height + padding;
+
+        //    //        // 標籤位置（在框的上方）
+        //    //        int labelX = boxX;
+        //    //        int labelY = boxY - labelHeight;
+
+        //    //        // 如果標籤超出上邊界，放在框內
+        //    //        if (labelY < 0)
+        //    //        {
+        //    //            labelY = boxY;
+        //    //        }
+
+        //    //        // 確保標籤不超出右邊界
+        //    //        if (labelX + labelWidth > w)
+        //    //        {
+        //    //            labelX = w - labelWidth;
+        //    //        }
+
+        //    //        // 繪製標籤背景
+        //    //        Rectangle labelRect = new Rectangle(labelX, labelY, labelWidth, labelHeight);
+        //    //        using (SolidBrush bgBrush = new SolidBrush(Color.FromArgb(200, color)))
+        //    //        {
+        //    //            graphics.FillRectangle(bgBrush, labelRect);
+        //    //        }
+
+        //    //        // 繪製標籤邊框
+        //    //        using (Pen labelPen = new Pen(color, 1))
+        //    //        {
+        //    //            graphics.DrawRectangle(labelPen, labelRect);
+        //    //        }
+
+        //    //        // 繪製文字
+        //    //        using (SolidBrush textBrush = new SolidBrush(Color.White))
+        //    //        {
+        //    //            graphics.DrawString(
+        //    //                labelText,
+        //    //                font,
+        //    //                textBrush,
+        //    //                labelX + padding,
+        //    //                labelY + padding / 2);
+        //    //        }
+        //    //    }
+        //    //}
+        //}
+
+        private void RefreshLvInfo()
+        {
+            lvInfo.BeginUpdate();
+            lvInfo.Items.Clear();
+
+            if (lvInfo.View != View.Details)
+                lvInfo.View = View.Details;
+
+            if (lvInfo.Columns.Count == 0)
+            {
+                lvInfo.Columns.Add("項目", 130);
+                lvInfo.Columns.Add("數量", 50);
+            }
+
+            int labeled = 0;
+            int unlabeled = 0;
+            foreach(var imgPath in imageFiles)
+            {
+                string labelPath = Path.ChangeExtension(imgPath, ".txt");
+                if (File.Exists(labelPath))
+                {
+                    var lines = File.ReadAllLines(labelPath).Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
+                    if (lines.Length > 0) 
+                        labeled++;
+                    else 
+                        unlabeled++;
+                }
+                else
+                {
+                    unlabeled++;
+                }
+            }
+            var headerItem = new ListViewItem("__圖片統計__");
+            headerItem.SubItems.Add("");
+            headerItem.BackColor = System.Drawing.Color.LightGray;
+            lvInfo.Items.Add(headerItem);
+
+            AddInfoRow("已標註圖片", labeled.ToString());
+            AddInfoRow("未標記圖片", unlabeled.ToString());
+            AddInfoRow("圖片總數", imageFiles.Count.ToString());
+
+            var classCount = new Dictionary<string, int>();
+            foreach(var imgPath in imageFiles)
+            {
+                string labelPath = Path.ChangeExtension(imgPath, ".txt");
+
+                if (!File.Exists(labelPath)) continue;
+
+                foreach(var line in File.ReadAllLines(labelPath))
+                {
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    var parts = line.Split(' ');
+                    if (parts.Length < 5) continue;
+                    if (int.TryParse(parts[0], out int classId))
+                    {
+                        string className = GetClassNameById(classId);
+                        if (string.IsNullOrEmpty(className))
+                        {
+                            className = $"Class {classId}";
+                        }
+                        if (!classCount.ContainsKey(className))
+                        {
+                            classCount[className] = 0;
+                        }
+                        classCount[className]++;
+                    }
+
+                }
+            }
+            var headerItem2= new ListViewItem("--類別統計---");
+            headerItem2.SubItems.Add("");
+            headerItem2.BackColor= System.Drawing.Color.LightGray;
+            lvInfo.Items.Add(headerItem2);
+            if (classCount.Count == 0)
+            {
+                AddInfoRow("(尚無標註)", "");
+            }
+            else
+            {
+                foreach (var kvp in classCount.OrderBy(k => k.Key))
+                    AddInfoRow(kvp.Key, kvp.Value.ToString());
+            }
+
+            lvInfo.EndUpdate();
+        }
+
+        private void AddInfoRow(string label, string value)
+        {
+            var item = new ListViewItem(label);
+            item.SubItems.Add(value);
+            lvInfo.Items.Add(item);
         }
 
         private void btnPrev_Click(object sender, EventArgs e)

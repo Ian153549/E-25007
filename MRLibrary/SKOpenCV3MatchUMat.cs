@@ -52,6 +52,7 @@ namespace MRLibrary
         public Mat desTemplate;
         public Mat template = null;
 
+        private const string ApiToken = "your-secret-token";
         private static readonly Uri BaseUri = new Uri("http://127.0.0.1:9300");
         private readonly HttpClient _client;
         private readonly bool _enableInferGate;
@@ -1176,7 +1177,7 @@ namespace MRLibrary
             const int maxRetries = 3;
             int retryCount = 0;
             TimeSpan retryDelay = TimeSpan.FromSeconds(1);
-
+            long producedAtMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             while (retryCount < maxRetries)
             {
                 if (AIService.IsRestarting)
@@ -1194,11 +1195,41 @@ namespace MRLibrary
                     {
                         imgContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
                         content.Add(imgContent, "image", "frame.jpg");
-
-                        using (var response = await _client.PostAsync("infer", content, ct).ConfigureAwait(false))
+                        content.Add(new StringContent(producedAtMs.ToString(System.Globalization.CultureInfo.InvariantCulture)), "produced_at_ms");
+                        //using (var response = await _client.PostAsync("infer", content, ct).ConfigureAwait(false))
+                        //{
+                        //    response.EnsureSuccessStatusCode();
+                        //    return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        //}
+                        using (var requestMessage = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, "infer"))
                         {
-                            response.EnsureSuccessStatusCode();
-                            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            requestMessage.Headers.Add("X-Produced-At-Ms", producedAtMs.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                            requestMessage.Headers.Add("X-API-Token", ApiToken);
+                            requestMessage.Content = content;
+
+                            using (var response = await _client.SendAsync(requestMessage, ct).ConfigureAwait(false))
+                            {
+                                response.EnsureSuccessStatusCode();
+
+                                long receivedAtMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                                long clientRoundTripMs = receivedAtMs - producedAtMs;
+
+                                IEnumerable<string> latencyValues;
+                                if (response.Headers.TryGetValues("X-Data-Latency-Ms", out latencyValues))
+                                {
+                                    System.Diagnostics.Debug.WriteLine(
+                                        string.Format("[AI推論] 數據延遲={0} ms, ClientRoundTrip={1} ms",
+                                            latencyValues.FirstOrDefault(),
+                                            clientRoundTripMs));
+                                }
+                                else
+                                {
+                                    System.Diagnostics.Debug.WriteLine(
+                                        string.Format("[AI推論] 數據延遲=未取得, ClientRoundTrip={0} ms", clientRoundTripMs));
+                                }
+
+                                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            }
                         }
                     }
                 }

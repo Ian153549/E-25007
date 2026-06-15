@@ -520,8 +520,20 @@ namespace NSAA_16Axis
             if (IsOpen)
             {
                 lock (_lock)
-                {                    
-                    img = _grabImage.Clone();
+                {
+                    try
+                    {
+                        img = _grabImage.Clone();
+                    }
+                    catch (OpenCvSharp.OpenCVException)
+                    {
+                        // 記憶體不足時，重建 Mat 後再 Clone
+                        _grabImage?.Dispose();
+                        _grabImage = new Mat(HeightMax > 0 ? HeightMax : 3000,
+                                             WidthMax > 0 ? WidthMax : 4000,
+                                             MatType.CV_8UC1);
+                        img = _grabImage.Clone();
+                    }
                 }
             }
             else
@@ -691,23 +703,31 @@ namespace NSAA_16Axis
                                 IStImage stImage = streamBuffer.GetIStImage();
 
                                 Byte[] imageData = stImage.GetByteArray();
-                                
+
                                 // RotateMirror(_grabImageN);
-                                
+
                                 lock (_lock)
                                 {
-                                    _grabImageN.SetArray(imageData);
-                                    _grabImage.SetArray(imageData);                                    
+                                    if (!IsFileImage)
+                                    {
+                                        // ✅ 恢復 FrameCountLimit 的 Mat 重建，避免 native heap 碎片
+                                        if (FrameCount > FrameCountLimit)
+                                        {
+                                            DisposeAndRecreateMat(ref _grabImageN, WidthMax, HeightMax);
+                                            DisposeAndRecreateMat(ref _grabImage, WidthMax, HeightMax);
+                                            FrameCount = 0;
+                                        }
+                                        _grabImageN.SetArray(imageData);
+                                        _grabImage.SetArray(imageData);
+                                    }
                                     _grabEvent.Set();
+                                    FrameCount++;
                                 }
+
                                 if (_window != null && _isLive)
                                     _window.SetImage(_grabImageN);
                                 OnFrameReady(_grabImage);
-                            }
-                            else
-                            {
-
-                            }
+                            }                           
                         }
                     }
                     catch (Exception)

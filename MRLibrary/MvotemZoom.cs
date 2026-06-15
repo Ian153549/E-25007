@@ -39,40 +39,38 @@ namespace MRLibrary
                     Com.Read(dataReceived, newIndex, bytes);
                     newIndex += bytes;
                 }
-            }
-
-            while (newIndex >= 5)
-            // if (newIndex >= 5)
-            {
-                if ((dataReceived[0] == 0xab) && (dataReceived[4] == 0xcd))
+                while (newIndex >= 5)
                 {
-                    if (dataReceived[1] == 0x51)
+                    if ((dataReceived[0] == 0xab) && (dataReceived[4] == 0xcd))
                     {
-                        zPulseCount = dataReceived[3] + dataReceived[2] * 256;
-                        if (zPulseCount < 10) isOK = 1;
+                        if (dataReceived[1] == 0x51)
+                        {
+                            zPulseCount = dataReceived[3] + dataReceived[2] * 256;
+                            if (zPulseCount < 10) isOK = 1;
+                        }
+                        else if (dataReceived[1] == 0x52)
+                        {
+                            PulseCount = dataReceived[3] + dataReceived[2] * 256;
+                            if (PulseCount < 10) isOK = 1;
+                        }
+                        else if (dataReceived[1] == 0x53)
+                        {
+                            iMagni = dataReceived[3] + dataReceived[2] * 256;
+                            NowPosition = iMagni;
+                        }
+                        else if (dataReceived[1] == 0x54)
+                        {
+                            PulseCount4 = dataReceived[3] + dataReceived[2] * 256;
+                            if (PulseCount4 < 10) isOK = 1;
+                        }
+                        newIndex -= 5;
+                        byteMove(5, newIndex);
                     }
-                    else if (dataReceived[1] == 0x52)
+                    else
                     {
-                        PulseCount = dataReceived[3] + dataReceived[2] * 256;
-                        if (PulseCount < 10) isOK = 1;
+                        newIndex -= 1;
+                        byteMove(1, newIndex);
                     }
-                    else if (dataReceived[1] == 0x53)
-                    {
-                        iMagni = dataReceived[3] + dataReceived[2] * 256;
-                        NowPosition = iMagni;
-                    }
-                    else if (dataReceived[1] == 0x54)
-                    {
-                        PulseCount4 = dataReceived[3] + dataReceived[2] * 256;
-                        if (PulseCount4 < 10) isOK = 1;
-                    }
-                    newIndex -= 5;
-                    byteMove(5, newIndex);
-                }
-                else
-                {
-                    newIndex -= 1;
-                    byteMove(1, newIndex);
                 }
             }
         }
@@ -202,10 +200,9 @@ namespace MRLibrary
                 {
                     try
                     {
-                        needConfirm = true;
-
                         if (NowPosition != dstPosition)
                         {
+                            needConfirm = true;
                             isOK = 0;
                             string resultSendMsg = string.Empty;
                             byteSendMsg[3] = Convert.ToByte(dstPosition % 256);
@@ -217,17 +214,18 @@ namespace MRLibrary
                         else
                         {
                             isOK = 1;
+                            return true;
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception(ex.Message);
+                        throw new InvalidOperationException("Zoom move command failed.", ex);
                     }
                 }
 
                 if (needConfirm && !ConfirmMagnification(dstPosition))
                 {
-                    throw new Exception("Magnification confirmation timeout.");
+                    return false;
                 }
 
                 return true;
@@ -239,7 +237,7 @@ namespace MRLibrary
             return true;
         }
 
-        private bool ConfirmMagnification(int dstPosition, int timeoutMilliseconds = 15000, int pollDelayMilliseconds = 100)
+        private bool ConfirmMagnification(int dstPosition, int timeoutMilliseconds = 5000, int pollDelayMilliseconds = 80)
         {
             if (!isOpen)
             {
@@ -254,7 +252,7 @@ namespace MRLibrary
                 GetPositioncmd();
                 Thread.Sleep(pollDelayMilliseconds);
 
-                if (iMagni == expectedMagni)
+                if (Math.Abs(iMagni - expectedMagni) <= 1)
                 {
                     _Magni = expectedMagni;
                     return true;
@@ -300,10 +298,12 @@ namespace MRLibrary
 
             if (isOpen)
             {
-                //dataIndex = 0;
-                newIndex = 0;
                 lock (_locker)
                 {
+                    if (newIndex >= dataReceived.Length - 5)
+                    {
+                        newIndex = 0;
+                    }
 
                     try
                     {

@@ -35,16 +35,6 @@ namespace NSAA_16Axis
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tBLShowImageAlign = new System.Windows.Forms.TrackBar();
-            this.tBRShowImageAlign = new System.Windows.Forms.TrackBar();
-            this.btLShowImagePlus = new System.Windows.Forms.Button();
-            this.btLShowImageMinus = new System.Windows.Forms.Button();
-            this.btRShowImagePlus = new System.Windows.Forms.Button();
-            this.btRShowImageMinus = new System.Windows.Forms.Button();
-            this.btLShowImageSave = new System.Windows.Forms.Button();
-            this.btRShowImageSave = new System.Windows.Forms.Button();
-            this.lbLShowImage = new System.Windows.Forms.Label();
-            this.lbRShowImage = new System.Windows.Forms.Label();
             this.BtGetMask = new System.Windows.Forms.Button();
             this.btCapMask = new System.Windows.Forms.Button();
             this.lbMagnification = new System.Windows.Forms.Label();
@@ -70,12 +60,13 @@ namespace NSAA_16Axis
             this.lbLeftCCD = new System.Windows.Forms.Label();
             this.lbEmulationModeR = new System.Windows.Forms.Label();
             this.lbEmulationModeL = new System.Windows.Forms.Label();
-            this.MaskImage = new System.Windows.Forms.CheckBox();
             this.skRightAlign = new MRLibrary.SKZoomAndPanWindow();
             this.skLeftAlign = new MRLibrary.SKZoomAndPanWindow();
             this.skZoomAndPanWindow1 = new MRLibrary.SKZoomAndPanWindow();
             this.labelCycleTestCycleTestTimes = new System.Windows.Forms.Label();
             this.gbAlignCondition = new System.Windows.Forms.GroupBox();
+            this.cbPixelShift = new System.Windows.Forms.ComboBox();
+            this.chbPixelShift = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.nUDMarkDistance = new System.Windows.Forms.NumericUpDown();
             this.nudMaskScore = new System.Windows.Forms.NumericUpDown();
@@ -100,6 +91,7 @@ namespace NSAA_16Axis
             this.nudYPrecision = new System.Windows.Forms.NumericUpDown();
             this.nudThetaPrecision = new System.Windows.Forms.NumericUpDown();
             this.lbNowRecipeNumber = new System.Windows.Forms.Label();
+            this.MaskImage = new System.Windows.Forms.CheckBox();
             this.lbCompany = new System.Windows.Forms.Label();
             this.lbNowTime = new System.Windows.Forms.Label();
             this.btQuit = new System.Windows.Forms.Button();
@@ -114,9 +106,18 @@ namespace NSAA_16Axis
             this.btSystemSetting = new System.Windows.Forms.Button();
             this.buttonTestMode = new System.Windows.Forms.Button();
             this.buttonCapture = new System.Windows.Forms.Button();
+            this.lbRShowImage = new System.Windows.Forms.Label();
+            this.btRShowImageSave = new System.Windows.Forms.Button();
+            this.btRShowImageMinus = new System.Windows.Forms.Button();
+            this.btRShowImagePlus = new System.Windows.Forms.Button();
+            this.tBRShowImageAlign = new System.Windows.Forms.TrackBar();
+            this.lbLShowImage = new System.Windows.Forms.Label();
+            this.btLShowImageSave = new System.Windows.Forms.Button();
+            this.btLShowImageMinus = new System.Windows.Forms.Button();
+            this.btLShowImagePlus = new System.Windows.Forms.Button();
+            this.tBLShowImageAlign = new System.Windows.Forms.TrackBar();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.cmLearnPatternUp1 = new NSAA_16Axis.CMLearnPatternUp();
-            this.cmLearnPatternBack1= new NSAA_16Axis.CMLearnPatternBack();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.btReadMask = new MRLibrary.UCButton();
             this.ucOpenPad = new MRLibrary.UCButton();
@@ -189,7 +190,8 @@ namespace NSAA_16Axis
             this.btZoomInfoRead = new MRLibrary.UCButton();
             this.skRightParam = new MRLibrary.SKZoomAndPanWindow();
             this.skLeftParam = new MRLibrary.SKZoomAndPanWindow();
-            this.tabPage4 = new System.Windows.Forms.TabPage();            
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.cmLearnPatternBack1 = new NSAA_16Axis.CMLearnPatternBack();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.cmzCalibration1 = new NSAA_16Axis.CMZCalibration();
             this.skZoomAndPanWindow6 = new MRLibrary.SKZoomAndPanWindow();
@@ -198,9 +200,6 @@ namespace NSAA_16Axis
             this.timerNowTime = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tBLShowImageAlign)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tBRShowImageAlign)).BeginInit();
-
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftCoaLight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBRightCoaLight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinAlignTimes)).BeginInit();
@@ -218,6 +217,8 @@ namespace NSAA_16Axis
             ((System.ComponentModel.ISupportInitialize)(this.nudYPrecision)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudThetaPrecision)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tBRShowImageAlign)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tBLShowImageAlign)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
@@ -277,7 +278,6 @@ namespace NSAA_16Axis
             this.tabPage1.Controls.Add(this.lbLeftCCD);
             this.tabPage1.Controls.Add(this.lbEmulationModeR);
             this.tabPage1.Controls.Add(this.lbEmulationModeL);
-            this.tabPage1.Controls.Add(this.MaskImage);
             this.tabPage1.Controls.Add(this.skRightAlign);
             this.tabPage1.Controls.Add(this.skLeftAlign);
             this.tabPage1.Controls.Add(this.skZoomAndPanWindow1);
@@ -297,7 +297,6 @@ namespace NSAA_16Axis
             this.tabPage1.Controls.Add(this.btSystemSetting);
             this.tabPage1.Controls.Add(this.buttonTestMode);
             this.tabPage1.Controls.Add(this.buttonCapture);
-
             this.tabPage1.Controls.Add(this.lbRShowImage);
             this.tabPage1.Controls.Add(this.btRShowImageSave);
             this.tabPage1.Controls.Add(this.btRShowImageMinus);
@@ -308,7 +307,6 @@ namespace NSAA_16Axis
             this.tabPage1.Controls.Add(this.btLShowImageMinus);
             this.tabPage1.Controls.Add(this.btLShowImagePlus);
             this.tabPage1.Controls.Add(this.tBLShowImageAlign);
-
             this.tabPage1.Location = new System.Drawing.Point(4, 38);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -317,143 +315,6 @@ namespace NSAA_16Axis
             this.tabPage1.Tag = "1";
             this.tabPage1.Text = "|  Align  |";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // lbLShowImage
-            // 
-            this.lbLShowImage.AutoSize = true;
-            this.lbLShowImage.Location = new System.Drawing.Point(10, 875);
-            this.lbLShowImage.Name = "lbLShowImage";
-            this.lbLShowImage.Size = new System.Drawing.Size(120, 29);
-            this.lbLShowImage.TabIndex = 95;
-            this.lbLShowImage.Text = "左側透明度:";
-            //this.lbLShowImage.Visible = false;
-
-            // 
-            // tBLShowImage
-            // 
-            this.tBLShowImageAlign.LargeChange = 10;
-            this.tBLShowImageAlign.Location = new System.Drawing.Point(135, 870);
-            this.tBLShowImageAlign.Maximum = 100;
-            this.tBLShowImageAlign.Name = "tBLShowImage";
-            this.tBLShowImageAlign.Size = new System.Drawing.Size(450, 56);
-            this.tBLShowImageAlign.TabIndex = 87;
-            this.tBLShowImageAlign.TickFrequency = 10;
-            this.tBLShowImageAlign.Value = 100;
-            this.tBLShowImageAlign.Enabled = false;
-            this.tBLShowImageAlign.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tBLShowImageAlign_MouseUp);
-            this.tBLShowImageAlign.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tBLShowImageAlign_KeyUp);
-            this.tBLShowImageAlign.Scroll += new System.EventHandler(this.tBLShowImageAlign_Scroll);
-
-
-            // 
-            // btLShowImagePlus
-            // 
-            this.btLShowImagePlus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.btLShowImagePlus.Location = new System.Drawing.Point(590, 870);
-            this.btLShowImagePlus.Name = "btLShowImagePlus";
-            this.btLShowImagePlus.Size = new System.Drawing.Size(38, 30);
-            this.btLShowImagePlus.TabIndex = 89;
-            this.btLShowImagePlus.Text = "+";
-            //this.btLShowImagePlus.Visible = false;
-            this.btLShowImagePlus.UseVisualStyleBackColor = true;
-            this.btLShowImagePlus.Click += new System.EventHandler(this.BtLShowImagePlus_Click);
-
-            // 
-            // btLShowImageMinus
-            // 
-            this.btLShowImageMinus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.btLShowImageMinus.Location = new System.Drawing.Point(590, 905);
-            this.btLShowImageMinus.Name = "btLShowImageMinus";
-            this.btLShowImageMinus.Size = new System.Drawing.Size(38, 30);
-            this.btLShowImageMinus.TabIndex = 90;
-            this.btLShowImageMinus.Text = "-";
-            //this.btLShowImageMinus.Visible = false;
-            this.btLShowImageMinus.UseVisualStyleBackColor = true;
-            this.btLShowImageMinus.Click += new System.EventHandler(this.BtLShowImageMinus_Click);
-
-            // 
-            // btLShowImageSave
-            // 
-            this.btLShowImageSave.BackColor = System.Drawing.Color.LightCoral;
-            this.btLShowImageSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btLShowImageSave.Font = new System.Drawing.Font("Arial", 10F);
-            this.btLShowImageSave.Location = new System.Drawing.Point(635, 870);
-            this.btLShowImageSave.Name = "btLShowImageSave";
-            this.btLShowImageSave.Size = new System.Drawing.Size(60, 65);
-            this.btLShowImageSave.TabIndex = 93;
-            this.btLShowImageSave.Text = "Save";
-            this.btLShowImageSave.Visible = false;
-            this.btLShowImageSave.UseVisualStyleBackColor = false;
-            this.btLShowImageSave.Click += new System.EventHandler(this.BtLShowImageSave_Click);
-
-            // 
-            // lbRShowImage
-            // 
-            this.lbRShowImage.AutoSize = true;
-            this.lbRShowImage.Location = new System.Drawing.Point(955, 875);
-            this.lbRShowImage.Name = "lbRShowImage";
-            this.lbRShowImage.Size = new System.Drawing.Size(120, 29);
-            this.lbRShowImage.TabIndex = 96;
-            this.lbRShowImage.Text = "右側透明度:";
-            //this.lbRShowImage.Visible = false;
-
-            // 
-            // tBRShowImage
-            // 
-            this.tBRShowImageAlign.LargeChange = 10;
-            this.tBRShowImageAlign.Location = new System.Drawing.Point(1080, 870);
-            this.tBRShowImageAlign.Maximum = 100;
-            this.tBRShowImageAlign.Name = "tBRShowImage";
-            this.tBRShowImageAlign.Size = new System.Drawing.Size(450, 56);
-            this.tBRShowImageAlign.TabIndex = 88;
-            this.tBRShowImageAlign.TickFrequency = 10;
-            this.tBRShowImageAlign.Value = 100;
-            this.tBRShowImageAlign.Enabled = false;
-            //this.tBRShowImage.Visible = false;
-            this.tBRShowImageAlign.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tBRShowImageAlign_MouseUp);
-            this.tBRShowImageAlign.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tBRShowImageAlign_KeyUp);
-            this.tBRShowImageAlign.Scroll += new System.EventHandler(this.tBRShowImageAlign_Scroll);
-
-            // 
-            // btRShowImagePlus
-            // 
-            this.btRShowImagePlus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.btRShowImagePlus.Location = new System.Drawing.Point(1535, 870);
-            this.btRShowImagePlus.Name = "btRShowImagePlus";
-            this.btRShowImagePlus.Size = new System.Drawing.Size(38, 30);
-            this.btRShowImagePlus.TabIndex = 91;
-            this.btRShowImagePlus.Text = "+";
-            //this.btRShowImagePlus.Visible = false;
-            this.btRShowImagePlus.UseVisualStyleBackColor = true;
-            this.btRShowImagePlus.Click += new System.EventHandler(this.BtRShowImagePlus_Click);
-
-            // 
-            // btRShowImageMinus
-            // 
-            this.btRShowImageMinus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.btRShowImageMinus.Location = new System.Drawing.Point(1535, 905);
-            this.btRShowImageMinus.Name = "btRShowImageMinus";
-            this.btRShowImageMinus.Size = new System.Drawing.Size(38, 30);
-            this.btRShowImageMinus.TabIndex = 92;
-            this.btRShowImageMinus.Text = "-";
-            //this.btRShowImageMinus.Visible= false;
-            this.btRShowImageMinus.UseVisualStyleBackColor = true;
-            this.btRShowImageMinus.Click += new System.EventHandler(this.BtRShowImageMinus_Click);
-
-            // 
-            // btRShowImageSave
-            // 
-            this.btRShowImageSave.BackColor = System.Drawing.Color.LightCoral;
-            this.btRShowImageSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btRShowImageSave.Font = new System.Drawing.Font("Arial", 10F);
-            this.btRShowImageSave.Location = new System.Drawing.Point(1580, 870);
-            this.btRShowImageSave.Name = "btRShowImageSave";
-            this.btRShowImageSave.Size = new System.Drawing.Size(60, 65);
-            this.btRShowImageSave.TabIndex = 94;
-            this.btRShowImageSave.Text = "Save";
-            this.btRShowImageSave.Visible = false;
-            this.btRShowImageSave.UseVisualStyleBackColor = false;
-            this.btRShowImageSave.Click += new System.EventHandler(this.BtRShowImageSave_Click);
             // 
             // BtGetMask
             // 
@@ -748,17 +609,6 @@ namespace NSAA_16Axis
             this.lbEmulationModeL.TabIndex = 70;
             this.lbEmulationModeL.Text = "Emulation Mode";
             // 
-            // MaskImage
-            // 
-            this.MaskImage.AutoSize = true;
-            this.MaskImage.Location = new System.Drawing.Point(1092, 279);
-            this.MaskImage.Name = "MaskImage";
-            this.MaskImage.Size = new System.Drawing.Size(136, 33);
-            this.MaskImage.TabIndex = 69;
-            this.MaskImage.Text = "MaskImage";
-            this.MaskImage.UseVisualStyleBackColor = true;
-            this.MaskImage.CheckedChanged += new System.EventHandler(this.MaskImage_CheckedChanged);
-            // 
             // skRightAlign
             // 
             this.skRightAlign.BackColor = System.Drawing.SystemColors.AppWorkspace;
@@ -800,15 +650,40 @@ namespace NSAA_16Axis
             // 
             this.gbAlignCondition.BackColor = System.Drawing.SystemColors.Control;
             this.gbAlignCondition.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.gbAlignCondition.Controls.Add(this.cbPixelShift);
+            this.gbAlignCondition.Controls.Add(this.chbPixelShift);
             this.gbAlignCondition.Controls.Add(this.tableLayoutPanel1);
+            this.gbAlignCondition.Controls.Add(this.MaskImage);
             this.gbAlignCondition.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gbAlignCondition.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbAlignCondition.Location = new System.Drawing.Point(309, 19);
+            this.gbAlignCondition.Location = new System.Drawing.Point(309, 10);
             this.gbAlignCondition.Name = "gbAlignCondition";
-            this.gbAlignCondition.Size = new System.Drawing.Size(764, 290);
+            this.gbAlignCondition.Size = new System.Drawing.Size(764, 304);
             this.gbAlignCondition.TabIndex = 27;
             this.gbAlignCondition.TabStop = false;
             this.gbAlignCondition.Text = "Align Condition";
+            // 
+            // cbPixelShift
+            // 
+            this.cbPixelShift.FormattingEnabled = true;
+            this.cbPixelShift.Items.AddRange(new object[] {
+            "4X4",
+            "9X9"});
+            this.cbPixelShift.Location = new System.Drawing.Point(51, 269);
+            this.cbPixelShift.Name = "cbPixelShift";
+            this.cbPixelShift.Size = new System.Drawing.Size(104, 31);
+            this.cbPixelShift.TabIndex = 71;
+            this.cbPixelShift.Visible = false;
+            // 
+            // chbPixelShift
+            // 
+            this.chbPixelShift.AutoSize = true;
+            this.chbPixelShift.Location = new System.Drawing.Point(28, 269);
+            this.chbPixelShift.Name = "chbPixelShift";
+            this.chbPixelShift.Size = new System.Drawing.Size(18, 17);
+            this.chbPixelShift.TabIndex = 70;
+            this.chbPixelShift.UseVisualStyleBackColor = true;
+            this.chbPixelShift.Visible = false;
             // 
             // tableLayoutPanel1
             // 
@@ -1230,6 +1105,17 @@ namespace NSAA_16Axis
             this.lbNowRecipeNumber.TabIndex = 44;
             this.lbNowRecipeNumber.Text = "Recipe Number  : ";
             // 
+            // MaskImage
+            // 
+            this.MaskImage.AutoSize = true;
+            this.MaskImage.Location = new System.Drawing.Point(622, 261);
+            this.MaskImage.Name = "MaskImage";
+            this.MaskImage.Size = new System.Drawing.Size(135, 27);
+            this.MaskImage.TabIndex = 69;
+            this.MaskImage.Text = "MaskImage";
+            this.MaskImage.UseVisualStyleBackColor = true;
+            this.MaskImage.CheckedChanged += new System.EventHandler(this.MaskImage_CheckedChanged);
+            // 
             // lbCompany
             // 
             this.lbCompany.AutoSize = true;
@@ -1417,6 +1303,126 @@ namespace NSAA_16Axis
             this.buttonCapture.UseVisualStyleBackColor = true;
             this.buttonCapture.Visible = false;
             this.buttonCapture.Click += new System.EventHandler(this.ButtonCapture_Click);
+            // 
+            // lbRShowImage
+            // 
+            this.lbRShowImage.AutoSize = true;
+            this.lbRShowImage.Location = new System.Drawing.Point(955, 875);
+            this.lbRShowImage.Name = "lbRShowImage";
+            this.lbRShowImage.Size = new System.Drawing.Size(138, 29);
+            this.lbRShowImage.TabIndex = 96;
+            this.lbRShowImage.Text = "右側透明度:";
+            // 
+            // btRShowImageSave
+            // 
+            this.btRShowImageSave.BackColor = System.Drawing.Color.LightCoral;
+            this.btRShowImageSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btRShowImageSave.Font = new System.Drawing.Font("Arial", 10F);
+            this.btRShowImageSave.Location = new System.Drawing.Point(1580, 870);
+            this.btRShowImageSave.Name = "btRShowImageSave";
+            this.btRShowImageSave.Size = new System.Drawing.Size(60, 65);
+            this.btRShowImageSave.TabIndex = 94;
+            this.btRShowImageSave.Text = "Save";
+            this.btRShowImageSave.UseVisualStyleBackColor = false;
+            this.btRShowImageSave.Visible = false;
+            this.btRShowImageSave.Click += new System.EventHandler(this.BtRShowImageSave_Click);
+            // 
+            // btRShowImageMinus
+            // 
+            this.btRShowImageMinus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.btRShowImageMinus.Location = new System.Drawing.Point(1535, 905);
+            this.btRShowImageMinus.Name = "btRShowImageMinus";
+            this.btRShowImageMinus.Size = new System.Drawing.Size(38, 30);
+            this.btRShowImageMinus.TabIndex = 92;
+            this.btRShowImageMinus.Text = "-";
+            this.btRShowImageMinus.UseVisualStyleBackColor = true;
+            this.btRShowImageMinus.Click += new System.EventHandler(this.BtRShowImageMinus_Click);
+            // 
+            // btRShowImagePlus
+            // 
+            this.btRShowImagePlus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.btRShowImagePlus.Location = new System.Drawing.Point(1535, 870);
+            this.btRShowImagePlus.Name = "btRShowImagePlus";
+            this.btRShowImagePlus.Size = new System.Drawing.Size(38, 30);
+            this.btRShowImagePlus.TabIndex = 91;
+            this.btRShowImagePlus.Text = "+";
+            this.btRShowImagePlus.UseVisualStyleBackColor = true;
+            this.btRShowImagePlus.Click += new System.EventHandler(this.BtRShowImagePlus_Click);
+            // 
+            // tBRShowImageAlign
+            // 
+            this.tBRShowImageAlign.Enabled = false;
+            this.tBRShowImageAlign.LargeChange = 10;
+            this.tBRShowImageAlign.Location = new System.Drawing.Point(1080, 870);
+            this.tBRShowImageAlign.Maximum = 100;
+            this.tBRShowImageAlign.Name = "tBRShowImageAlign";
+            this.tBRShowImageAlign.Size = new System.Drawing.Size(450, 56);
+            this.tBRShowImageAlign.TabIndex = 88;
+            this.tBRShowImageAlign.TickFrequency = 10;
+            this.tBRShowImageAlign.Value = 100;
+            this.tBRShowImageAlign.Scroll += new System.EventHandler(this.tBRShowImageAlign_Scroll);
+            this.tBRShowImageAlign.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tBRShowImageAlign_KeyUp);
+            this.tBRShowImageAlign.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tBRShowImageAlign_MouseUp);
+            // 
+            // lbLShowImage
+            // 
+            this.lbLShowImage.AutoSize = true;
+            this.lbLShowImage.Location = new System.Drawing.Point(10, 875);
+            this.lbLShowImage.Name = "lbLShowImage";
+            this.lbLShowImage.Size = new System.Drawing.Size(138, 29);
+            this.lbLShowImage.TabIndex = 95;
+            this.lbLShowImage.Text = "左側透明度:";
+            // 
+            // btLShowImageSave
+            // 
+            this.btLShowImageSave.BackColor = System.Drawing.Color.LightCoral;
+            this.btLShowImageSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btLShowImageSave.Font = new System.Drawing.Font("Arial", 10F);
+            this.btLShowImageSave.Location = new System.Drawing.Point(635, 870);
+            this.btLShowImageSave.Name = "btLShowImageSave";
+            this.btLShowImageSave.Size = new System.Drawing.Size(60, 65);
+            this.btLShowImageSave.TabIndex = 93;
+            this.btLShowImageSave.Text = "Save";
+            this.btLShowImageSave.UseVisualStyleBackColor = false;
+            this.btLShowImageSave.Visible = false;
+            this.btLShowImageSave.Click += new System.EventHandler(this.BtLShowImageSave_Click);
+            // 
+            // btLShowImageMinus
+            // 
+            this.btLShowImageMinus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.btLShowImageMinus.Location = new System.Drawing.Point(590, 905);
+            this.btLShowImageMinus.Name = "btLShowImageMinus";
+            this.btLShowImageMinus.Size = new System.Drawing.Size(38, 30);
+            this.btLShowImageMinus.TabIndex = 90;
+            this.btLShowImageMinus.Text = "-";
+            this.btLShowImageMinus.UseVisualStyleBackColor = true;
+            this.btLShowImageMinus.Click += new System.EventHandler(this.BtLShowImageMinus_Click);
+            // 
+            // btLShowImagePlus
+            // 
+            this.btLShowImagePlus.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.btLShowImagePlus.Location = new System.Drawing.Point(590, 870);
+            this.btLShowImagePlus.Name = "btLShowImagePlus";
+            this.btLShowImagePlus.Size = new System.Drawing.Size(38, 30);
+            this.btLShowImagePlus.TabIndex = 89;
+            this.btLShowImagePlus.Text = "+";
+            this.btLShowImagePlus.UseVisualStyleBackColor = true;
+            this.btLShowImagePlus.Click += new System.EventHandler(this.BtLShowImagePlus_Click);
+            // 
+            // tBLShowImageAlign
+            // 
+            this.tBLShowImageAlign.Enabled = false;
+            this.tBLShowImageAlign.LargeChange = 10;
+            this.tBLShowImageAlign.Location = new System.Drawing.Point(135, 870);
+            this.tBLShowImageAlign.Maximum = 100;
+            this.tBLShowImageAlign.Name = "tBLShowImageAlign";
+            this.tBLShowImageAlign.Size = new System.Drawing.Size(450, 56);
+            this.tBLShowImageAlign.TabIndex = 87;
+            this.tBLShowImageAlign.TickFrequency = 10;
+            this.tBLShowImageAlign.Value = 100;
+            this.tBLShowImageAlign.Scroll += new System.EventHandler(this.tBLShowImageAlign_Scroll);
+            this.tBLShowImageAlign.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tBLShowImageAlign_KeyUp);
+            this.tBLShowImageAlign.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tBLShowImageAlign_MouseUp);
             // 
             // tabPage2
             // 
@@ -2454,25 +2460,22 @@ namespace NSAA_16Axis
             // FormMain
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(1920, 1080);
+            this.ClientSize = new System.Drawing.Size(1536, 864);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FormMain";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.Shown += new System.EventHandler(this.FormMain_Shown);
-            //this.FormClosing += new System.EventHandler(this.FormMain_FormClosing);
             this.tabControl1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.tBLShowImageAlign)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tBRShowImageAlign)).EndInit();
             this.tabPage1.ResumeLayout(false);
-            
             this.tabPage1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftCoaLight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tBRightCoaLight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinAlignTimes)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxAlignTimes)).EndInit();
             this.gbAlignCondition.ResumeLayout(false);
+            this.gbAlignCondition.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nUDMarkDistance)).EndInit();
@@ -2486,6 +2489,8 @@ namespace NSAA_16Axis
             ((System.ComponentModel.ISupportInitialize)(this.nudYPrecision)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudThetaPrecision)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tBRShowImageAlign)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tBLShowImageAlign)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
@@ -2679,6 +2684,8 @@ namespace NSAA_16Axis
         private System.Windows.Forms.Button btLCoaLightMinus;
         private System.Windows.Forms.Button btRCoaLightPlus;
         private System.Windows.Forms.Button btRCoaLightMinus;
+        private System.Windows.Forms.CheckBox chbPixelShift;
+        private System.Windows.Forms.ComboBox cbPixelShift;
     }
 }
 

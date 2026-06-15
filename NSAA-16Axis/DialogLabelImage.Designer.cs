@@ -46,9 +46,19 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btDeleteImage = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cbLabelType = new System.Windows.Forms.ComboBox();
+            this.lblPadding = new System.Windows.Forms.Label();
+            this.nudPadding = new System.Windows.Forms.NumericUpDown();
+            this.cbPaddingDir = new System.Windows.Forms.ComboBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.lvInfo = new System.Windows.Forms.ListView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPadding)).BeginInit();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // skPattern
@@ -191,7 +201,7 @@
             // 
             // btTrain
             // 
-            this.btTrain.Location = new System.Drawing.Point(1339, 800);
+            this.btTrain.Location = new System.Drawing.Point(1417, 868);
             this.btTrain.Name = "btTrain";
             this.btTrain.Size = new System.Drawing.Size(130, 49);
             this.btTrain.TabIndex = 68;
@@ -203,7 +213,7 @@
             // ucLeftWaferNavigator
             // 
             this.ucLeftWaferNavigator.AutoSize = true;
-            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(1339, 856);
+            this.ucLeftWaferNavigator.Location = new System.Drawing.Point(1339, 876);
             this.ucLeftWaferNavigator.Margin = new System.Windows.Forms.Padding(4);
             this.ucLeftWaferNavigator.Name = "ucLeftWaferNavigator";
             this.ucLeftWaferNavigator.Size = new System.Drawing.Size(143, 50);
@@ -232,7 +242,7 @@
             this.groupBox2.Controls.Add(this.btnClear);
             this.groupBox2.Controls.Add(this.btnSave);
             this.groupBox2.Controls.Add(this.btnOrganizeAndYaml);
-            this.groupBox2.Location = new System.Drawing.Point(1290, 263);
+            this.groupBox2.Location = new System.Drawing.Point(1290, 257);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(248, 245);
             this.groupBox2.TabIndex = 70;
@@ -250,11 +260,84 @@
             this.btDeleteImage.UseVisualStyleBackColor = true;
             this.btDeleteImage.Click += new System.EventHandler(this.btDeleteImage_Click);
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.cbLabelType);
+            this.groupBox3.Controls.Add(this.lblPadding);
+            this.groupBox3.Controls.Add(this.nudPadding);
+            this.groupBox3.Controls.Add(this.cbPaddingDir);
+            this.groupBox3.Location = new System.Drawing.Point(1290, 520);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(247, 135);
+            this.groupBox3.TabIndex = 71;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "LabelType";
+            // 
+            // cbLabelType
+            // 
+            this.cbLabelType.FormattingEnabled = true;
+            this.cbLabelType.Items.AddRange(new object[] {
+            "正方形",
+            "方形"});
+            this.cbLabelType.Location = new System.Drawing.Point(9, 36);
+            this.cbLabelType.Name = "cbLabelType";
+            this.cbLabelType.Size = new System.Drawing.Size(121, 23);
+            this.cbLabelType.TabIndex = 0;
+            // 
+            // lblPadding
+            // 
+            this.lblPadding.AutoSize = true;
+            this.lblPadding.Location = new System.Drawing.Point(9, 62);
+            this.lblPadding.Name = "lblPadding";
+            this.lblPadding.Size = new System.Drawing.Size(57, 15);
+            this.lblPadding.TabIndex = 1;
+            this.lblPadding.Text = "Padding:";
+            // 
+            // nudPadding
+            // 
+            this.nudPadding.Location = new System.Drawing.Point(9, 80);
+            this.nudPadding.Name = "nudPadding";
+            this.nudPadding.Size = new System.Drawing.Size(60, 25);
+            this.nudPadding.TabIndex = 2;
+            // 
+            // cbPaddingDir
+            // 
+            this.cbPaddingDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbPaddingDir.FormattingEnabled = true;
+            this.cbPaddingDir.Items.AddRange(new object[] {
+            "外擴",
+            "內縮"});
+            this.cbPaddingDir.Location = new System.Drawing.Point(78, 80);
+            this.cbPaddingDir.Name = "cbPaddingDir";
+            this.cbPaddingDir.Size = new System.Drawing.Size(60, 23);
+            this.cbPaddingDir.TabIndex = 3;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.lvInfo);
+            this.groupBox4.Location = new System.Drawing.Point(1292, 661);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(254, 201);
+            this.groupBox4.TabIndex = 72;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Info";
+            // 
+            // lvInfo
+            // 
+            this.lvInfo.HideSelection = false;
+            this.lvInfo.Location = new System.Drawing.Point(10, 24);
+            this.lvInfo.Name = "lvInfo";
+            this.lvInfo.Size = new System.Drawing.Size(238, 171);
+            this.lvInfo.TabIndex = 0;
+            this.lvInfo.UseCompatibleStateImageBehavior = false;
+            // 
             // DialogLabelImage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1560, 929);
+            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btTrain);
@@ -270,6 +353,10 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPadding)).EndInit();
+            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -295,5 +382,12 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btDeleteImage;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.ComboBox cbLabelType;
+        private System.Windows.Forms.Label lblPadding;
+        private System.Windows.Forms.NumericUpDown nudPadding;
+        private System.Windows.Forms.ComboBox cbPaddingDir;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ListView lvInfo;
     }
 }
