@@ -34,6 +34,10 @@ namespace NSAA_16Axis
         private bool isTableMode = false;
         private System.Windows.Forms.Timer cameraLocationUpdateTimer;
         private bool isCameraMode = false;
+
+        private int _cameraLocationRefreshBusy= 0;
+        private int _tableLocationRefreshBusy = 0;
+
         public DialogTuneTable()
         {
 
@@ -105,28 +109,53 @@ namespace NSAA_16Axis
             cameraLocationUpdateTimer.Tick += CameraLocationUpdateTimer_Tick;
         }
 
-        private void CameraLocationUpdateTimer_Tick(object sender, EventArgs e)
+        private async void CameraLocationUpdateTimer_Tick(object sender, EventArgs e)
         {
+            //try
+            //{
+            //    if (GV.AppSettingParm.Emulation) return;
+            //    if (!isCameraMode) return;
+
+            //    GV.Plc.GetLocation();
+
+            //    if (InvokeRequired)
+            //    {
+            //        Invoke((MethodInvoker)delegate { UpdateCameraCurrentLocationUI(); });
+            //    }
+            //    else
+            //    {
+            //        UpdateCameraCurrentLocationUI();
+            //    }
+            //}
+            //catch
+            //{
+
+            //}
+            await RefreshCameraLocationAsync();
+        }
+
+        private async Task RefreshCameraLocationAsync()
+        {
+            if (GV.AppSettingParm.Emulation) return;
+            if (!isCameraMode) return;
+            if (Interlocked.Exchange(ref _cameraLocationRefreshBusy, 1) == 1) return;
             try
             {
-                if (GV.AppSettingParm.Emulation) return;
-                if (!isCameraMode) return;
-
-                GV.Plc.GetLocation();
-
-                if (InvokeRequired)
-                {
-                    Invoke((MethodInvoker)delegate { UpdateCameraCurrentLocationUI(); });
-                }
-                else
+                await Task.Run(() => GV.Plc.GetLocation());
+                SafeBeginInvoke(() =>
                 {
                     UpdateCameraCurrentLocationUI();
-                }
+                });
             }
             catch
             {
 
             }
+            finally
+            {
+                Interlocked.Exchange(ref _cameraLocationRefreshBusy, 0);
+            }
+
         }
 
         private void UpdateCameraCurrentLocationUI()
@@ -234,25 +263,48 @@ namespace NSAA_16Axis
             }
         }
 
-        private void TableLocationUpdateTimer_Tick(object sender, EventArgs e)
+        private async void TableLocationUpdateTimer_Tick(object sender, EventArgs e)
         {
+            //try
+            //{
+            //    if (GV.AppSettingParm.Emulation) return;
+            //    if (!isTableMode) return;
+            //    GV.Plc.GetLocation();
+            //    if (InvokeRequired)
+            //    {
+            //        Invoke((MethodInvoker)delegate { UpdateTableCurrentLocationUI(); });
+            //    }
+            //    else
+            //    {
+            //        UpdateTableCurrentLocationUI();
+            //    }
+            //}
+            //catch
+            //{
+
+            //}
+            await RefreshTableLocationAsync();
+        }
+        private async Task RefreshTableLocationAsync()
+        {
+            if (GV.AppSettingParm.Emulation) return;
+            if (!isTableMode) return;
+            if(Interlocked.Exchange(ref _tableLocationRefreshBusy, 1) == 1) return;
             try
             {
-                if (GV.AppSettingParm.Emulation) return;
-                if (!isTableMode) return;
-                GV.Plc.GetLocation();
-                if (InvokeRequired)
-                {
-                    Invoke((MethodInvoker)delegate { UpdateTableCurrentLocationUI(); });
-                }
-                else
+                await Task.Run(() => GV.Plc.GetLocation());
+                SafeBeginInvoke(() =>
                 {
                     UpdateTableCurrentLocationUI();
-                }
+                });
             }
             catch
             {
 
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _tableLocationRefreshBusy, 0);
             }
         }
 
@@ -400,108 +452,245 @@ namespace NSAA_16Axis
             comboBoxZoomLensGoto.Enabled = true;
             this.ControlBox = true;
         }
-
-        private void buttonXYYTableMove_Click(object sender, EventArgs e)
+        private sealed class TableMoveResult
         {
-            try
+            public bool IsTheta;
+            public double LeftStepsPerPixel;
+            public double RightStepsPerPixel;
+            public double StepsPerDegree;
+        }
+
+        private async void buttonXYYTableMove_Click(object sender, EventArgs e)
+        {
+            //try
+            //{
+            //    if (checkBoxTableManual.Checked)
+            //    {
+            //        if (radioButtonTableX.Checked)
+            //            GV.Plc.CorrectionXyyTableMove((int)numericUpDownTableSteps.Value, 0, 0);
+            //        if (radioButtonTableY.Checked)
+            //            GV.Plc.CorrectionXyyTableMove(0, (int)numericUpDownTableSteps.Value, 0);
+            //        if (radioButtonTableTheta.Checked)
+            //            GV.Plc.CorrectionXyyTableMove(0, 0, (int)(numericUpDownTableSteps.Value));
+            //        return;
+            //    }
+
+            //    if (LeftPattern == null || RightPattern == null)
+            //    {
+            //        MessageBox.Show("Learn pattern first.", "XYYTableMove", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //        return;
+            //    }
+
+            //    OpenCV3MatchUMat matcher = new OpenCV3MatchUMat("TableMove");
+            //    if (matcher.Match(GV.LeftUpCam.Grab(), LeftPattern).Score < 0.8F || matcher.Match(GV.RightUpCam.Grab(), RightPattern).Score < 0.8F)
+            //    {
+            //        MessageBox.Show("Can't find pattern.", "XYYTableMove", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //        return;
+            //    }
+
+            //    MatchPosition mp = new MatchPosition();
+            //    mp = matcher.Match(GV.LeftUpCam.Grab(), LeftPattern);
+            //    LeftPatternMoveStart.X = (float)mp.X;
+            //    LeftPatternMoveStart.Y = (float)mp.Y;
+            //    mp = matcher.Match(GV.RightUpCam.Grab(), RightPattern);
+            //    RightPatternMoveStart.X = (float)mp.X;
+            //    RightPatternMoveStart.Y = (float)mp.Y;
+
+            //    if (radioButtonTableX.Checked)
+            //    {
+            //        GV.Plc.CorrectionXyyTableMove((int)numericUpDownTableSteps.Value, 0, 0);
+            //    }
+            //    if (radioButtonTableY.Checked)
+            //    {
+            //        GV.Plc.CorrectionXyyTableMove(0, (int)numericUpDownTableSteps.Value, 0);
+            //    }
+            //    if (radioButtonTableTheta.Checked)
+            //    {
+            //        GV.Plc.CorrectionXyyTableMove(0, 0, (int)(numericUpDownTableSteps.Value));
+            //    }
+
+
+            //    mp = matcher.Match(GV.LeftUpCam.Grab(), LeftPattern);
+            //    LeftPatternMoveEnd.X = (float)mp.X;
+            //    LeftPatternMoveEnd.Y = (float)mp.Y;
+            //    mp = matcher.Match(GV.RightUpCam.Grab(), RightPattern);
+            //    RightPatternMoveEnd.X = (float)mp.X;
+            //    RightPatternMoveEnd.Y = (float)mp.Y;
+
+            //    LeftStepsPerPixel = Math.Abs((double)numericUpDownTableSteps.Value / Math.Sqrt(Math.Pow(LeftPatternMoveEnd.X - LeftPatternMoveStart.X, 2) + Math.Pow(LeftPatternMoveEnd.Y - LeftPatternMoveStart.Y, 2)));
+            //    RightStepsPerPixel = Math.Abs((double)numericUpDownTableSteps.Value / Math.Sqrt(Math.Pow(RightPatternMoveEnd.X - RightPatternMoveStart.X, 2) + Math.Pow(RightPatternMoveEnd.Y - RightPatternMoveStart.Y, 2)));
+
+            //    if (radioButtonTableTheta.Checked)
+            //    {
+            //        if (GV.ZoomLensInfo.LeftUmPerPixelX[comboBoxZoomLensGoto.SelectedIndex] <= 0 || GV.ZoomLensInfo.RightUmPerPixelX[comboBoxZoomLensGoto.SelectedIndex] <= 0)
+            //            throw new MRException("Please tune the lens first");
+            //        if ((int)numericUpDownPatternCenterDistance.Value <= 0)
+            //            throw new MRException("Please type the pattern center distance value");
+
+            //        //double tanA = Math.Sqrt(Math.Pow(LeftPatternMoveEnd.X - LeftPatternMoveStart.X, 2) + Math.Pow(LeftPatternMoveEnd.Y - LeftPatternMoveStart.Y, 2)) * GV.ZoomLensInfo.LeftUmPerPixel[comboBoxZoomLensGoto.SelectedIndex] + 
+            //        //                Math.Sqrt(Math.Pow(RightPatternMoveEnd.X - RightPatternMoveStart.X, 2) + Math.Pow(RightPatternMoveEnd.Y - RightPatternMoveStart.Y, 2)) * GV.ZoomLensInfo.RightUmPerPixel[comboBoxZoomLensGoto.SelectedIndex];
+            //        //double tanB = (double)numericUpDownPatternCenterDistance.Value * 1000;
+            //        //double rotateDegree = Math.Atan(tanA / tanB) * 180 / Math.PI;
+            //        //double rotateDegree = tanA / (2 * Math.PI * tanB) * 360;
+
+            //        //double r = (double)numericUpDownPatternCenterDistance.Value * 1000 / 2;
+            //        //double c = Math.Sqrt(Math.Pow(LeftPatternMoveEnd.X - LeftPatternMoveStart.X, 2) + Math.Pow(LeftPatternMoveEnd.Y - LeftPatternMoveStart.Y, 2)) * GV.ZoomLensInfo.LeftUmPerPixel[comboBoxZoomLensGoto.SelectedIndex];
+            //        //double cosC = (r * r + r * r - c * c) / (2 * r * r);
+
+            //        //double rad = Math.Acos(cosC);
+            //        //double rotateDegree = rad * 180 / Math.PI;
+
+            //        double heronA, heronB, heronC;  //Heron's Foemula
+            //        heronA = heronB = (double)numericUpDownPatternCenterDistance.Value * 1000 / 2;
+            //        heronC = Math.Sqrt(Math.Pow(LeftPatternMoveEnd.X - LeftPatternMoveStart.X, 2) + Math.Pow(LeftPatternMoveEnd.Y - LeftPatternMoveStart.Y, 2)) * GV.ZoomLensInfo.LeftUmPerPixelX[comboBoxZoomLensGoto.SelectedIndex];
+            //        double cosC = (heronA * heronA + heronB * heronB - heronC * heronC) / (2 * heronA * heronB);
+            //        double rotateDegree = Math.Acos(cosC) * 180 / Math.PI;
+
+            //        StepsPerDegree = Math.Abs((double)numericUpDownTableSteps.Value) / rotateDegree;
+            //        labelLeftResult.Text = string.Empty;
+            //        labelRightResult.Text = string.Empty;
+            //        labelLeftResult.Text = "Steps per degree : " + Math.Round(StepsPerDegree);
+
+            //        return;
+            //    }
+
+            //    labelLeftResult.Text = "Left steps per pixel : " + LeftStepsPerPixel.ToString("F2");
+            //    labelRightResult.Text = "Right steps per pixel : " + RightStepsPerPixel.ToString("F2");
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
+             buttonXYYTableMove.Enabled = false;
+
+    try
+    {
+        bool manual = checkBoxTableManual.Checked;
+        bool moveX = radioButtonTableX.Checked;
+        bool moveY = radioButtonTableY.Checked;
+        bool moveTheta = radioButtonTableTheta.Checked;
+        int steps = (int)numericUpDownTableSteps.Value;
+        int patternCenterDistance = (int)numericUpDownPatternCenterDistance.Value;
+        int zoomIndex = comboBoxZoomLensGoto.SelectedIndex;
+
+        Mat leftPattern = LeftPattern;
+        Mat rightPattern = RightPattern;
+
+        if (manual)
+        {
+            await Task.Run(() =>
             {
-                if (checkBoxTableManual.Checked)
-                {
-                    if (radioButtonTableX.Checked)
-                        GV.Plc.CorrectionXyyTableMove((int)numericUpDownTableSteps.Value, 0, 0);
-                    if (radioButtonTableY.Checked)
-                        GV.Plc.CorrectionXyyTableMove(0, (int)numericUpDownTableSteps.Value, 0);
-                    if (radioButtonTableTheta.Checked)
-                        GV.Plc.CorrectionXyyTableMove(0, 0, (int)(numericUpDownTableSteps.Value));
-                    return;
-                }
+                if (moveX)
+                    GV.Plc.CorrectionXyyTableMove(steps, 0, 0);
+                if (moveY)
+                    GV.Plc.CorrectionXyyTableMove(0, steps, 0);
+                if (moveTheta)
+                    GV.Plc.CorrectionXyyTableMove(0, 0, steps);
+            });
 
-                if (LeftPattern == null || RightPattern == null)
-                {
-                    MessageBox.Show("Learn pattern first.", "XYYTableMove", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+            return;
+        }
 
-                OpenCV3MatchUMat matcher = new OpenCV3MatchUMat("TableMove");
-                if (matcher.Match(GV.LeftUpCam.Grab(), LeftPattern).Score < 0.8F || matcher.Match(GV.RightUpCam.Grab(), RightPattern).Score < 0.8F)
-                {
-                    MessageBox.Show("Can't find pattern.", "XYYTableMove", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+        if (leftPattern == null || rightPattern == null)
+        {
+            MessageBox.Show("Learn pattern first.", "XYYTableMove", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
 
-                MatchPosition mp = new MatchPosition();
-                mp = matcher.Match(GV.LeftUpCam.Grab(), LeftPattern);
-                LeftPatternMoveStart.X = (float)mp.X;
-                LeftPatternMoveStart.Y = (float)mp.Y;
-                mp = matcher.Match(GV.RightUpCam.Grab(), RightPattern);
-                RightPatternMoveStart.X = (float)mp.X;
-                RightPatternMoveStart.Y = (float)mp.Y;
+        TableMoveResult result = await Task.Run(() =>
+        {
+            OpenCV3MatchUMat matcher = new OpenCV3MatchUMat("TableMove");
 
-                if (radioButtonTableX.Checked)
-                {
-                    GV.Plc.CorrectionXyyTableMove((int)numericUpDownTableSteps.Value, 0, 0);
-                }
-                if (radioButtonTableY.Checked)
-                {
-                    GV.Plc.CorrectionXyyTableMove(0, (int)numericUpDownTableSteps.Value, 0);
-                }
-                if (radioButtonTableTheta.Checked)
-                {
-                    GV.Plc.CorrectionXyyTableMove(0, 0, (int)(numericUpDownTableSteps.Value));
-                }
+            var leftStartMatchCheck = matcher.Match(GV.LeftUpCam.Grab(), leftPattern);
+            var rightStartMatchCheck = matcher.Match(GV.RightUpCam.Grab(), rightPattern);
 
+            if (leftStartMatchCheck.Score < 0.8F || rightStartMatchCheck.Score < 0.8F)
+                throw new MRException("Can't find pattern.");
 
-                mp = matcher.Match(GV.LeftUpCam.Grab(), LeftPattern);
-                LeftPatternMoveEnd.X = (float)mp.X;
-                LeftPatternMoveEnd.Y = (float)mp.Y;
-                mp = matcher.Match(GV.RightUpCam.Grab(), RightPattern);
-                RightPatternMoveEnd.X = (float)mp.X;
-                RightPatternMoveEnd.Y = (float)mp.Y;
+            MatchPosition leftStart = matcher.Match(GV.LeftUpCam.Grab(), leftPattern);
+            MatchPosition rightStart = matcher.Match(GV.RightUpCam.Grab(), rightPattern);
 
-                LeftStepsPerPixel = Math.Abs((double)numericUpDownTableSteps.Value / Math.Sqrt(Math.Pow(LeftPatternMoveEnd.X - LeftPatternMoveStart.X, 2) + Math.Pow(LeftPatternMoveEnd.Y - LeftPatternMoveStart.Y, 2)));
-                RightStepsPerPixel = Math.Abs((double)numericUpDownTableSteps.Value / Math.Sqrt(Math.Pow(RightPatternMoveEnd.X - RightPatternMoveStart.X, 2) + Math.Pow(RightPatternMoveEnd.Y - RightPatternMoveStart.Y, 2)));
+            if (moveX)
+                GV.Plc.CorrectionXyyTableMove(steps, 0, 0);
+            if (moveY)
+                GV.Plc.CorrectionXyyTableMove(0, steps, 0);
+            if (moveTheta)
+                GV.Plc.CorrectionXyyTableMove(0, 0, steps);
 
-                if (radioButtonTableTheta.Checked)
-                {
-                    if (GV.ZoomLensInfo.LeftUmPerPixelX[comboBoxZoomLensGoto.SelectedIndex] <= 0 || GV.ZoomLensInfo.RightUmPerPixelX[comboBoxZoomLensGoto.SelectedIndex] <= 0)
-                        throw new MRException("Please tune the lens first");
-                    if ((int)numericUpDownPatternCenterDistance.Value <= 0)
-                        throw new MRException("Please type the pattern center distance value");
+            MatchPosition leftEnd = matcher.Match(GV.LeftUpCam.Grab(), leftPattern);
+            MatchPosition rightEnd = matcher.Match(GV.RightUpCam.Grab(), rightPattern);
 
-                    //double tanA = Math.Sqrt(Math.Pow(LeftPatternMoveEnd.X - LeftPatternMoveStart.X, 2) + Math.Pow(LeftPatternMoveEnd.Y - LeftPatternMoveStart.Y, 2)) * GV.ZoomLensInfo.LeftUmPerPixel[comboBoxZoomLensGoto.SelectedIndex] + 
-                    //                Math.Sqrt(Math.Pow(RightPatternMoveEnd.X - RightPatternMoveStart.X, 2) + Math.Pow(RightPatternMoveEnd.Y - RightPatternMoveStart.Y, 2)) * GV.ZoomLensInfo.RightUmPerPixel[comboBoxZoomLensGoto.SelectedIndex];
-                    //double tanB = (double)numericUpDownPatternCenterDistance.Value * 1000;
-                    //double rotateDegree = Math.Atan(tanA / tanB) * 180 / Math.PI;
-                    //double rotateDegree = tanA / (2 * Math.PI * tanB) * 360;
+            double leftStepsPerPixel = Math.Abs(
+                (double)steps /
+                Math.Sqrt(
+                    Math.Pow(leftEnd.X - leftStart.X, 2) +
+                    Math.Pow(leftEnd.Y - leftStart.Y, 2)));
 
-                    //double r = (double)numericUpDownPatternCenterDistance.Value * 1000 / 2;
-                    //double c = Math.Sqrt(Math.Pow(LeftPatternMoveEnd.X - LeftPatternMoveStart.X, 2) + Math.Pow(LeftPatternMoveEnd.Y - LeftPatternMoveStart.Y, 2)) * GV.ZoomLensInfo.LeftUmPerPixel[comboBoxZoomLensGoto.SelectedIndex];
-                    //double cosC = (r * r + r * r - c * c) / (2 * r * r);
+            double rightStepsPerPixel = Math.Abs(
+                (double)steps /
+                Math.Sqrt(
+                    Math.Pow(rightEnd.X - rightStart.X, 2) +
+                    Math.Pow(rightEnd.Y - rightStart.Y, 2)));
 
-                    //double rad = Math.Acos(cosC);
-                    //double rotateDegree = rad * 180 / Math.PI;
-
-                    double heronA, heronB, heronC;  //Heron's Foemula
-                    heronA = heronB = (double)numericUpDownPatternCenterDistance.Value * 1000 / 2;
-                    heronC = Math.Sqrt(Math.Pow(LeftPatternMoveEnd.X - LeftPatternMoveStart.X, 2) + Math.Pow(LeftPatternMoveEnd.Y - LeftPatternMoveStart.Y, 2)) * GV.ZoomLensInfo.LeftUmPerPixelX[comboBoxZoomLensGoto.SelectedIndex];
-                    double cosC = (heronA * heronA + heronB * heronB - heronC * heronC) / (2 * heronA * heronB);
-                    double rotateDegree = Math.Acos(cosC) * 180 / Math.PI;
-
-                    StepsPerDegree = Math.Abs((double)numericUpDownTableSteps.Value) / rotateDegree;
-                    labelLeftResult.Text = string.Empty;
-                    labelRightResult.Text = string.Empty;
-                    labelLeftResult.Text = "Steps per degree : " + Math.Round(StepsPerDegree);
-
-                    return;
-                }
-
-                labelLeftResult.Text = "Left steps per pixel : " + LeftStepsPerPixel.ToString("F2");
-                labelRightResult.Text = "Right steps per pixel : " + RightStepsPerPixel.ToString("F2");
-            }
-            catch (Exception ex)
+            if (moveTheta)
             {
-                MessageBox.Show(ex.Message);
+                if (GV.ZoomLensInfo.LeftUmPerPixelX[zoomIndex] <= 0 ||
+                    GV.ZoomLensInfo.RightUmPerPixelX[zoomIndex] <= 0)
+                    throw new MRException("Please tune the lens first");
+
+                if (patternCenterDistance <= 0)
+                    throw new MRException("Please type the pattern center distance value");
+
+                double heronA = (double)patternCenterDistance * 1000 / 2;
+                double heronB = heronA;
+                double heronC =
+                    Math.Sqrt(
+                        Math.Pow(leftEnd.X - leftStart.X, 2) +
+                        Math.Pow(leftEnd.Y - leftStart.Y, 2)) *
+                    GV.ZoomLensInfo.LeftUmPerPixelX[zoomIndex];
+
+                double cosC = (heronA * heronA + heronB * heronB - heronC * heronC) / (2 * heronA * heronB);
+                double rotateDegree = Math.Acos(cosC) * 180 / Math.PI;
+
+                return new TableMoveResult
+                {
+                    IsTheta = true,
+                    StepsPerDegree = Math.Abs((double)steps) / rotateDegree
+                };
             }
+
+            return new TableMoveResult
+            {
+                IsTheta = false,
+                LeftStepsPerPixel = leftStepsPerPixel,
+                RightStepsPerPixel = rightStepsPerPixel
+            };
+        });
+
+        if (result.IsTheta)
+        {
+            StepsPerDegree = result.StepsPerDegree;
+            labelLeftResult.Text = string.Empty;
+            labelRightResult.Text = string.Empty;
+            labelLeftResult.Text = "Steps per degree : " + Math.Round(StepsPerDegree);
+        }
+        else
+        {
+            LeftStepsPerPixel = result.LeftStepsPerPixel;
+            RightStepsPerPixel = result.RightStepsPerPixel;
+            labelLeftResult.Text = "Left steps per pixel : " + LeftStepsPerPixel.ToString("F2");
+            labelRightResult.Text = "Right steps per pixel : " + RightStepsPerPixel.ToString("F2");
+        }
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show(ex.Message);
+    }
+    finally
+    {
+        buttonXYYTableMove.Enabled = true;
+    }
+
         }
 
         private void DialogTuneTable_FormClosing(object sender, FormClosingEventArgs e)
@@ -667,8 +856,9 @@ namespace NSAA_16Axis
                 {
                     cameraLocationUpdateTimer.Start();
                 }
-                GV.Plc.GetLocation();
-                UpdateCameraCurrentLocationUI();
+                //GV.Plc.GetLocation();
+                //UpdateCameraCurrentLocationUI();
+                _ = RefreshCameraLocationAsync();
             }
             else
             {
@@ -711,8 +901,9 @@ namespace NSAA_16Axis
                 {
                     tableLocationUpdateTimer.Start();
                 }
-                GV.Plc.GetLocation();
-                UpdateTableCurrentLocationUI();
+                //GV.Plc.GetLocation();
+                //UpdateTableCurrentLocationUI();
+                _ = RefreshTableLocationAsync();
             }
             else
             {
@@ -1158,7 +1349,30 @@ namespace NSAA_16Axis
             GM.WriteRecipeXml(GV.NowRecipeNumber);
 
             MessageBox.Show("CCD 位置已更新", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
+        private void SafeBeginInvoke(Action action)
+        {
+            if (IsDisposed || Disposing || !IsHandleCreated) return;
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke((MethodInvoker)(() =>
+                    {
+                        if (!IsDisposed && !Disposing && IsHandleCreated)
+                        {
+                            action();
+                        }
+                    }));
+                }
+                catch(InvalidOperationException)
+                {
+
+                }
+                return;
+            }
+            action();
         }
     }
 }

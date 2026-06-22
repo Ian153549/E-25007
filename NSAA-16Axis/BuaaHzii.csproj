@@ -51,7 +51,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\DebugII\</OutputPath>
+    <OutputPath>bin\x64\DebugVIII\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -464,6 +464,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y /E /I  "$(TargetDir)*.*" "Z:\E-25007\NSAA-16Axis\bin\x64\DebugII"</PostBuildEvent>
+    <PostBuildEvent>xcopy /Y /E /I  "$(TargetDir)*.*" "Z:\E-25007\NSAA-16Axis\bin\x64\DebugVIII"</PostBuildEvent>
   </PropertyGroup>
 </Project>

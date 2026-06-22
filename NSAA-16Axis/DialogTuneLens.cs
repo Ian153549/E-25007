@@ -129,9 +129,9 @@ namespace NSAA_16Axis
                     rbLeftLens.Checked = true;
 
                     // 延遲設定相機，確保 Form 完全顯示後再執行
-                    this.BeginInvoke(new Action(() =>
+                    this.BeginInvoke(new Action(async () =>     
                     {
-                        SetCameraToWindow(true);
+                        await SetCameraToWindowAsync(true);
                     }));
                 }));
                 return;
@@ -153,9 +153,9 @@ namespace NSAA_16Axis
             rbLeftLens.Checked = true;
 
             // 延遲設定相機，確保 Form 完全顯示後再執行
-            this.BeginInvoke(new Action(() =>
+            this.BeginInvoke(new Action(async () =>
             {
-                SetCameraToWindow(true);
+                await SetCameraToWindowAsync(true);
             }));
         }
         private void FreezeAllCameras()
@@ -165,32 +165,110 @@ namespace NSAA_16Axis
             GV.LeftBackCam?.Freeze();
             GV.RightBackCam?.Freeze();
         }
-        private void SetCameraToWindow(bool isLeftLens)
+        //private void SetCameraToWindow(bool isLeftLens)
+        //{
+        //    // 確保在 UI 執行緒上執行
+        //    if (InvokeRequired)
+        //    {
+        //        Invoke(new Action(() => SetCameraToWindow(isLeftLens)));
+        //        return;
+        //    }
+
+        //    // 確保控制項 Handle 已建立
+        //    if (!skZoomAndPanWindowMeasure.IsHandleCreated)
+        //    {
+        //        skZoomAndPanWindowMeasure.CreateControl();
+        //    }
+
+        //    // 先凍結所有相機
+        //    FreezeAllCameras();
+
+        //    // 短暫等待確保相機完全停止
+        //    System.Threading.Thread.Sleep(100);
+
+        //    try
+        //    {
+        //        if (GV.UpBackAlign == 2)
+        //        {
+        //            // Bottom CCD 模式
+        //            if (isLeftLens)
+        //            {
+        //                if (GV.LeftBackCam != null && GV.AppSettingParm.LeftBackCamEnable)
+        //                {
+        //                    GV.LeftBackCam.SetWindow(skZoomAndPanWindowMeasure);
+        //                    GV.LeftBackCam.Live();
+        //                }
+        //                else
+        //                {
+        //                    ShowCameraNotAvailableMessage("Left Back Camera");
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (GV.RightBackCam != null && GV.AppSettingParm.RightBackCamEnable)
+        //                {
+        //                    GV.RightBackCam.SetWindow(skZoomAndPanWindowMeasure);
+        //                    GV.RightBackCam.Live();
+        //                }
+        //                else
+        //                {
+        //                    ShowCameraNotAvailableMessage("Right Back Camera");
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            // Top CCD 模式
+        //            if (isLeftLens)
+        //            {
+        //                if (GV.LeftUpCam != null && GV.AppSettingParm.LeftUpCamEnable)
+        //                {
+        //                    GV.LeftUpCam.SetWindow(skZoomAndPanWindowMeasure);
+        //                    GV.LeftUpCam.Live();
+        //                }
+        //                else
+        //                {
+        //                    ShowCameraNotAvailableMessage("Left Up Camera");
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (GV.RightUpCam != null && GV.AppSettingParm.RightUpCamEnable)
+        //                {
+        //                    GV.RightUpCam.SetWindow(skZoomAndPanWindowMeasure);
+        //                    GV.RightUpCam.Live();
+        //                }
+        //                else
+        //                {
+        //                    ShowCameraNotAvailableMessage("Right Up Camera");
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"設定相機視窗時發生錯誤: {ex.Message}", "Error",
+        //            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //    }
+        //}
+        private async Task SetCameraToWindowAsync(bool isLeftLens)
         {
-            // 確保在 UI 執行緒上執行
             if (InvokeRequired)
             {
-                Invoke(new Action(() => SetCameraToWindow(isLeftLens)));
+                BeginInvoke((MethodInvoker)(async () => await SetCameraToWindowAsync(isLeftLens)));
                 return;
             }
 
-            // 確保控制項 Handle 已建立
             if (!skZoomAndPanWindowMeasure.IsHandleCreated)
-            {
                 skZoomAndPanWindowMeasure.CreateControl();
-            }
-
-            // 先凍結所有相機
-            FreezeAllCameras();
-
-            // 短暫等待確保相機完全停止
-            System.Threading.Thread.Sleep(100);
 
             try
             {
+                FreezeAllCameras();
+                await Task.Delay(100);
+
                 if (GV.UpBackAlign == 2)
                 {
-                    // Bottom CCD 模式
                     if (isLeftLens)
                     {
                         if (GV.LeftBackCam != null && GV.AppSettingParm.LeftBackCamEnable)
@@ -218,7 +296,6 @@ namespace NSAA_16Axis
                 }
                 else
                 {
-                    // Top CCD 模式
                     if (isLeftLens)
                     {
                         if (GV.LeftUpCam != null && GV.AppSettingParm.LeftUpCamEnable)
@@ -255,28 +332,28 @@ namespace NSAA_16Axis
         {
             MessageBox.Show($"{cameraName} is not available.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
-        private void rbLeftLens_CheckedChanged(object sender, EventArgs e)
+        private async void rbLeftLens_CheckedChanged(object sender, EventArgs e)
         {
            if (rbLeftLens.Checked == true)
            {
                 rbRightLens.Checked = false;
                 tableLayoutPanel1.Enabled = false;
                 rbMeasure.Checked = false;
-                SetCameraToWindow(true); // 左鏡頭
+                await SetCameraToWindowAsync(true); // 左鏡頭
                 rbLive.Checked = true;
                 gbParameter.Enabled = true;
                 comboBoxGoto.SelectedIndex = GV.LeftZoomLens.Magnification;
            }
         }
 
-        private void rbRightLens_CheckedChanged(object sender, EventArgs e)
+        private async void rbRightLens_CheckedChanged(object sender, EventArgs e)
         {
             if (rbRightLens.Checked == true)
             {
                 rbLeftLens.Checked = false;
                 rbMeasure.Checked = false;
                 tableLayoutPanel1.Enabled = false;
-                SetCameraToWindow(false);
+                await SetCameraToWindowAsync(false); // 右鏡頭
                 rbLive.Checked = true;
                 gbParameter.Enabled = true;
                 comboBoxGoto.SelectedIndex = GV.RightZoomLens.Magnification;
@@ -326,7 +403,7 @@ namespace NSAA_16Axis
             }
         }
 
-        private void radioButtonLive_CheckedChanged(object sender, EventArgs e)
+        private async void radioButtonLive_CheckedChanged(object sender, EventArgs e)
         {
             if (rbLive.Checked == true)
             {
@@ -337,7 +414,7 @@ namespace NSAA_16Axis
                 skZoomAndPanWindowMeasure.Enabled = true;
                 pictureBoxMeasure.Visible = false;
                 pictureBoxMeasure.BringToFront();
-                SetCameraToWindow(rbLeftLens.Checked);
+                await SetCameraToWindowAsync(rbLeftLens.Checked);
             }
         }
 
