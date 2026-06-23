@@ -720,7 +720,7 @@ namespace NSAA_16Axis
         }
         private void LoadBackMasksIfNeeded()
         {
-            if ((LeftMaskMat == null || LeftMaskMat.Empty()) && File.Exists(GetTemplateFileName("LeftMask")))
+            if ((LeftMaskMat == null || LeftMaskMat.Empty()) && System.IO.File.Exists(GetTemplateFileName("LeftMask")))
             {
                 var lm = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
                 if (lm != null && !lm.Empty())
@@ -730,7 +730,7 @@ namespace NSAA_16Axis
                 }
             }
 
-            if ((RightMaskMat == null || RightMaskMat.Empty()) && File.Exists(GetTemplateFileName("RightMask")))
+            if ((RightMaskMat == null || RightMaskMat.Empty()) && System.IO.File.Exists(GetTemplateFileName("RightMask")))
             {
                 var rm = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
                 if (rm != null && !rm.Empty())

@@ -101,9 +101,21 @@ namespace NSAA_16Axis
             //groupBoxT4.Visible = false;
             //groupBoxT1.Visible = false;
         }
+        private void EnsureLocationUpdateTimer()
+        {
+            if (locationUpdateTimer != null)
+                return;
 
+            locationUpdateTimer = new System.Windows.Forms.Timer();
+            locationUpdateTimer.Interval = 500;
+            locationUpdateTimer.Tick += LocationUpdateTimer_Tick;
+        }
         private void CMLearnPattern_Load(object sender, EventArgs e)
         {
+            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime || DesignMode)
+                return;
+
+            EnsureLocationUpdateTimer();
             if (GV.AppSettingParm.DebugMode)
             {
                 lbDebugMsg.Visible = true;
@@ -211,7 +223,7 @@ namespace NSAA_16Axis
             groupBoxT4.Visible = false;
             groupBoxT1.Visible = false;
             isLocationUpdateEnabled = false;
-            locationUpdateTimer.Stop();
+            locationUpdateTimer?.Stop();
             //locationUpdateTimer = new System.Windows.Forms.Timer();
             //locationUpdateTimer.Interval = 500; // 每 500ms 更新一次
             //locationUpdateTimer.Tick += LocationUpdateTimer_Tick;
@@ -249,9 +261,7 @@ namespace NSAA_16Axis
             skRPattern.CanZoom = true;
             skRPattern.CanCenterLine = true;
 
-            locationUpdateTimer = new System.Windows.Forms.Timer();
-            locationUpdateTimer.Interval = 500;
-            locationUpdateTimer.Tick += LocationUpdateTimer_Tick;
+            EnsureLocationUpdateTimer();
 
             groupBoxT4.Visible = false;
             groupBoxT1.Visible = false;
@@ -282,7 +292,7 @@ namespace NSAA_16Axis
             {
                 SafeBeginInvoke(() =>
                  {
-                     locationUpdateTimer.Stop();
+                     locationUpdateTimer?.Stop();
                      isLocationUpdateEnabled = false;
                      GM.WriteToStatusTextBox($"更新位置失敗: {ex.Message}");
                  });
@@ -1122,6 +1132,7 @@ namespace NSAA_16Axis
             if (groupBoxT4.Visible || groupBoxT1.Visible)
             {
                 isLocationUpdateEnabled = true;
+                EnsureLocationUpdateTimer();
                 if (!locationUpdateTimer.Enabled)
                     locationUpdateTimer.Start();
                 _ = RefreshCurrentLocationAsync();

@@ -3632,29 +3632,24 @@ namespace NSAA_16Axis
             string sTag = tabControl1.SelectedTab.Tag.ToString();
             GV.TickCount = 0;
 
-            CancellationToken token;
-
-            lock (_pageSwitchCtsLock)
-            {
-                _pageSwitchCts.Cancel();
-                _pageSwitchCts = new CancellationTokenSource();
-                token = _pageSwitchCts.Token;
-            }
-
-            AIService.IsRestarting = true;
+            CancellationToken token = CancellationToken.None;
 
             try
             {
+                token = CreateNewPageSwitchToken();
+
+                AIService.IsRestarting = true;
+
                 token.ThrowIfCancellationRequested();
 
                 if (iTabIndex == 3 && sTag != "4")
                 {
-                    cmLearnPatternBack1.OnPageLeave();
+                    cmLearnPatternBack1?.OnPageLeave();
                 }
 
                 if (iTabIndex == 1 && sTag != "2")
                 {
-                    cmLearnPatternUp1.OnPageLeave();
+                    cmLearnPatternUp1?.OnPageLeave();
                 }
 
                 token.ThrowIfCancellationRequested();
@@ -3685,7 +3680,7 @@ namespace NSAA_16Axis
             }
             catch (OperationCanceledException)
             {
-                // 使用者快速切換頁面時，取消前一個頁面初始化屬於正常狀況。
+                // 使用者快速切換頁面時，取消前一個頁面初始化是正常流程。
             }
             catch (Exception ex)
             {
@@ -3699,7 +3694,23 @@ namespace NSAA_16Axis
                 }
             }
         }
+        private CancellationToken CreateNewPageSwitchToken()
+        {
+            lock (_pageSwitchCtsLock)
+            {
+                try
+                {
+                    _pageSwitchCts?.Cancel();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // 已釋放時忽略，重新建立新的 CancellationTokenSource。
+                }
 
+                _pageSwitchCts = new CancellationTokenSource();
+                return _pageSwitchCts.Token;
+            }
+        }
         //  Align Page 初始化（非同步）
         //private async Task InitializeAlignPageAsync()
         //{
@@ -4149,7 +4160,7 @@ namespace NSAA_16Axis
         //  Learn Pattern Up Page 初始化
         private async Task InitializeLearnPatternUpPageAsync(CancellationToken token)
         {
-            await InvokeAsync(() => cmLearnPatternUp1.InitializeRuntime());
+            await InvokeAsync(() => cmLearnPatternUp1.InitializeRuntime(),token);
             var perfSw = Stopwatch.StartNew();
             long lastMs = 0;
             try
@@ -4652,6 +4663,10 @@ namespace NSAA_16Axis
         //        return Task.CompletedTask;
         //    }
         //}
+        private Task InvokeAsync(Action action)
+        {
+            return InvokeAsync(action, CancellationToken.None);
+        }
         private Task InvokeAsync(Action action, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
