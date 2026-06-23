@@ -68,35 +68,38 @@ namespace NSAA_16Axis
         public MatchPosition RWaferMp = new MatchPosition();
 
         private int _locationRefreshBusy = 0;
+        private bool _runtimeInitialized = false;
 
         public CMLearnPatternUp()
         {
             InitializeComponent();
-            GV.LeftUpWindowOnLearnPage = skLPattern;
-            GV.RightUpWindowOnLearnPage = skRPattern;
-            skLPattern.MaskMp = LMaskMp;
-            skLPattern.WaferMp = LWaferMp;
-            skRPattern.MaskMp = RMaskMp;
-            skRPattern.WaferMp = RWaferMp;
-            SetStyle(ControlStyles.UserPaint, true);
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            SetStyle(ControlStyles.DoubleBuffer, true);
-            skLPattern.CanRectMaskAndWafer = true;
-            skLPattern.CanTrackPattern = true;
-            skLPattern.CanZoom = true;
-            skLPattern.CanCenterLine = true;
-            skRPattern.CanRectMaskAndWafer = true;
-            skRPattern.CanTrackPattern = true;
-            skRPattern.CanZoom = true;
-            skRPattern.CanCenterLine = true;
+            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime || DesignMode)
+                return;
+            //GV.LeftUpWindowOnLearnPage = skLPattern;
+            //GV.RightUpWindowOnLearnPage = skRPattern;
+            //skLPattern.MaskMp = LMaskMp;
+            //skLPattern.WaferMp = LWaferMp;
+            //skRPattern.MaskMp = RMaskMp;
+            //skRPattern.WaferMp = RWaferMp;
+            //SetStyle(ControlStyles.UserPaint, true);
+            //SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            //SetStyle(ControlStyles.DoubleBuffer, true);
+            //skLPattern.CanRectMaskAndWafer = true;
+            //skLPattern.CanTrackPattern = true;
+            //skLPattern.CanZoom = true;
+            //skLPattern.CanCenterLine = true;
+            //skRPattern.CanRectMaskAndWafer = true;
+            //skRPattern.CanTrackPattern = true;
+            //skRPattern.CanZoom = true;
+            //skRPattern.CanCenterLine = true;
 
-            locationUpdateTimer = new System.Windows.Forms.Timer();
-            locationUpdateTimer.Interval = 500; // 每 500ms 更新一次
-            locationUpdateTimer.Tick += LocationUpdateTimer_Tick;
+            //locationUpdateTimer = new System.Windows.Forms.Timer();
+            //locationUpdateTimer.Interval = 500; // 每 500ms 更新一次
+            //locationUpdateTimer.Tick += LocationUpdateTimer_Tick;
 
-            // 初始狀態：隱藏 groupBox
-            groupBoxT4.Visible = false;
-            groupBoxT1.Visible = false;
+            //// 初始狀態：隱藏 groupBox
+            //groupBoxT4.Visible = false;
+            //groupBoxT1.Visible = false;
         }
 
         private void CMLearnPattern_Load(object sender, EventArgs e)
@@ -216,13 +219,44 @@ namespace NSAA_16Axis
 
             //UpdateTargetPositionDisplay();
         }
-        //private void LocationUpdateTimer_Tick(object sender, EventArgs e)
-        //{
-        //    if (isLocationUpdateEnabled)
-        //    {
-        //        UpdateCurrentLocationUI();
-        //    }
-        //}
+
+        public void InitializeRuntime()
+        {
+            if (_runtimeInitialized)
+                return;
+
+            _runtimeInitialized = true;
+
+            GV.LeftUpWindowOnLearnPage = skLPattern;
+            GV.RightUpWindowOnLearnPage = skRPattern;
+
+            skLPattern.MaskMp = LMaskMp;
+            skLPattern.WaferMp = LWaferMp;
+            skRPattern.MaskMp = RMaskMp;
+            skRPattern.WaferMp = RWaferMp;
+
+            SetStyle(ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.DoubleBuffer, true);
+
+            skLPattern.CanRectMaskAndWafer = true;
+            skLPattern.CanTrackPattern = true;
+            skLPattern.CanZoom = true;
+            skLPattern.CanCenterLine = true;
+
+            skRPattern.CanRectMaskAndWafer = true;
+            skRPattern.CanTrackPattern = true;
+            skRPattern.CanZoom = true;
+            skRPattern.CanCenterLine = true;
+
+            locationUpdateTimer = new System.Windows.Forms.Timer();
+            locationUpdateTimer.Interval = 500;
+            locationUpdateTimer.Tick += LocationUpdateTimer_Tick;
+
+            groupBoxT4.Visible = false;
+            groupBoxT1.Visible = false;
+        }
+
         private async void LocationUpdateTimer_Tick(object sender, EventArgs e)
         {
             if (!isLocationUpdateEnabled) return;
@@ -540,29 +574,67 @@ namespace NSAA_16Axis
                         }
 
                         //  更新 UI 顯示
-                        Invoke((MethodInvoker)delegate ()
+                        //Invoke((MethodInvoker)delegate ()
+                        //{
+                        //    double dLX = skLPattern.MaskMp.X - skLPattern.WaferMp.X;
+                        //    double dLY = skLPattern.MaskMp.Y - skLPattern.WaferMp.Y;
+                        //    double dRX = skRPattern.MaskMp.X - skRPattern.WaferMp.X;
+                        //    double dRY = skRPattern.MaskMp.Y - skRPattern.WaferMp.Y;
+
+                        //    string msgLM = string.Format("LMX = {0:N3}, LMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
+                        //        skLPattern.MaskMp.X, skLPattern.MaskMp.Y, dLX, dLY, skLPattern.MaskMp.Score);
+                        //    string msgLW = string.Format("LWX = {0:N3}, LWY = {1:N3}, WScore = {2:N2}",
+                        //        skLPattern.WaferMp.X, skLPattern.WaferMp.Y, skLPattern.WaferMp.Score);
+                        //    string msgRM = string.Format("RMX = {0:N3}, RMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
+                        //        skRPattern.MaskMp.X, skRPattern.MaskMp.Y, dRX, dRY, skRPattern.MaskMp.Score);
+                        //    string msgRW = string.Format("RWX = {0:N3}, RWY = {1:N3}, WScore = {2:N2}",
+                        //        skRPattern.WaferMp.X, skRPattern.WaferMp.Y, skRPattern.WaferMp.Score);
+
+                        //    lbLMsgM.Text = msgLM;
+                        //    lbRMsgM.Text = msgRM;
+                        //    lbLMsgW.Text = msgLW;
+                        //    lbRMsgW.Text = msgRW;
+
+                        //    Update();
+                        //});
+                        SafeBeginInvoke(() =>
                         {
                             double dLX = skLPattern.MaskMp.X - skLPattern.WaferMp.X;
                             double dLY = skLPattern.MaskMp.Y - skLPattern.WaferMp.Y;
                             double dRX = skRPattern.MaskMp.X - skRPattern.WaferMp.X;
                             double dRY = skRPattern.MaskMp.Y - skRPattern.WaferMp.Y;
 
-                            string msgLM = string.Format("LMX = {0:N3}, LMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
-                                skLPattern.MaskMp.X, skLPattern.MaskMp.Y, dLX, dLY, skLPattern.MaskMp.Score);
-                            string msgLW = string.Format("LWX = {0:N3}, LWY = {1:N3}, WScore = {2:N2}",
-                                skLPattern.WaferMp.X, skLPattern.WaferMp.Y, skLPattern.WaferMp.Score);
-                            string msgRM = string.Format("RMX = {0:N3}, RMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
-                                skRPattern.MaskMp.X, skRPattern.MaskMp.Y, dRX, dRY, skRPattern.MaskMp.Score);
-                            string msgRW = string.Format("RWX = {0:N3}, RWY = {1:N3}, WScore = {2:N2}",
-                                skRPattern.WaferMp.X, skRPattern.WaferMp.Y, skRPattern.WaferMp.Score);
+                            lbLMsgM.Text = string.Format(
+                                "LMX = {0:N3}, LMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
+                                skLPattern.MaskMp.X,
+                                skLPattern.MaskMp.Y,
+                                dLX,
+                                dLY,
+                                skLPattern.MaskMp.Score);
 
-                            lbLMsgM.Text = msgLM;
-                            lbRMsgM.Text = msgRM;
-                            lbLMsgW.Text = msgLW;
-                            lbRMsgW.Text = msgRW;
+                            lbLMsgW.Text = string.Format(
+                                "LWX = {0:N3}, LWY = {1:N3}, WScore = {2:N2}",
+                                skLPattern.WaferMp.X,
+                                skLPattern.WaferMp.Y,
+                                skLPattern.WaferMp.Score);
 
-                            Update();
+                            lbRMsgM.Text = string.Format(
+                                "RMX = {0:N3}, RMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
+                                skRPattern.MaskMp.X,
+                                skRPattern.MaskMp.Y,
+                                dRX,
+                                dRY,
+                                skRPattern.MaskMp.Score);
+
+                            lbRMsgW.Text = string.Format(
+                                "RWX = {0:N3}, RWY = {1:N3}, WScore = {2:N2}",
+                                skRPattern.WaferMp.X,
+                                skRPattern.WaferMp.Y,
+                                skRPattern.WaferMp.Score);
+
+                            Invalidate();
                         });
+
                     }
                     catch (Exception ex)
                     {
@@ -1066,7 +1138,7 @@ namespace NSAA_16Axis
 
             bool rightCoa = RCoaLight.Enabled && RCoaLight.Checked;
             btRCoaLightMinus.Enabled = rightCoa;
-            btLCoaLightPlus.Enabled = rightCoa;
+            btRCoaLightPlus.Enabled = rightCoa;
             tBRightCoaLight.Enabled = rightCoa;
 
             bool leftRing = LRingLight.Enabled && LRingLight.Checked;
