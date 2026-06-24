@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using static MRLibrary.OpenCV3MatchUMat;
 using static System.Net.WebRequestMethods;
 
@@ -91,7 +92,8 @@ namespace NSAA_16Axis
         private int _leftShowImageBusy = 0;
         private int _rightShowImageBusy = 0;
         private bool _runtimeInitialized = false;
-
+        private int _checkLevelBusy = 0;
+        private int _postInitializeBusy = 0;
         public CMLearnPatternBack()
         {
             InitializeComponent();
@@ -209,7 +211,7 @@ namespace NSAA_16Axis
                         skRight.SetImage(currentImage);
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"RightShowImageTimer_Tick error :{ex.Message}");
             }
@@ -2124,12 +2126,18 @@ namespace NSAA_16Axis
                             //UpdateLightBrightness();
 
                             //   最後更新
-                            Update();
+
                         }
                         catch (Exception ex)
                         {
                             Debug.WriteLine($"UpdateUI BeginInvoke error: {ex.Message}");
                         }
+                        finally
+                        {
+                            this.ResumeLayout(false);
+
+                        }
+                        this.Invalidate();
                     }));
                 }
                 catch (Exception ex)
@@ -3310,25 +3318,49 @@ namespace NSAA_16Axis
         private void ExecuteBackMaskChangedAsync()
         {
             //   使用 Task.Run 在背景執行緒執行
-            _ = Task.Run(async () =>
+            //_ = Task.Run(async () =>
+            //{
+            //    try
+            //    {
+            //        // 並行執行兩個方法
+            //        await Task.WhenAll(
+            //            Task.Run(() => rbLBackMaskChangedCore()),
+            //            Task.Run(() => rbRBackMaskChangedCore())
+            //        );
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        // 在 UI 執行緒顯示錯誤
+            //        this.BeginInvoke(new Action(() =>
+            //        {
+            //            GM.WriteToStatusTextBox($"BackMaskChanged 錯誤: {ex.Message}");
+            //        }));
+            //    }
+            //});
+            _ = Task.Run(() =>
             {
-                try
-                {
-                    // 並行執行兩個方法
-                    await Task.WhenAll(
-                        Task.Run(() => rbLBackMaskChangedCore()),
-                        Task.Run(() => rbRBackMaskChangedCore())
-                    );
-                }
-                catch (Exception ex)
-                {
-                    // 在 UI 執行緒顯示錯誤
-                    this.BeginInvoke(new Action(() =>
-                    {
-                        GM.WriteToStatusTextBox($"BackMaskChanged 錯誤: {ex.Message}");
-                    }));
-                }
+                RunBackMaskChangedCoreNoWait(rbLBackMaskChangedCore, "Left BackMaskChanged");
             });
+
+            _ = Task.Run(() =>
+            {
+                RunBackMaskChangedCoreNoWait(rbRBackMaskChangedCore, "Right BackMaskChanged");
+            });
+        }
+
+        private void RunBackMaskChangedCoreNoWait(Action action, string name)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                SafeBeginInvoke(() =>
+                {
+                    GM.WriteToStatusTextBox($"{name} 錯誤: {ex.Message}");
+                });
+            }
         }
 
         private void rbLBackMaskChanged()
@@ -3426,7 +3458,7 @@ namespace NSAA_16Axis
             GV.skView = 1;
 
             //   UI 操作需要回到 UI 執行緒
-            this.Invoke(new Action(() =>
+            SafeBeginInvoke(() =>
             {
                 tBLeftBackMaskLight.Value = _AlignC.LBMaskBright;
                 btLTopMaskSave.Enabled = false;
@@ -3485,19 +3517,15 @@ namespace NSAA_16Axis
                     btFindLBMaskCenter.Enabled = true;
                 }
                 tBLShowImage.Enabled = true;
-            }));
+                GV.RightBackCam.SetWindow(skRight);
+                skRight.SetShowMask(true, _dRalpha, RightMaskMat);
 
-            //   非 UI 操作
-            GV.Light.ChangeBrightness("leftback", _AlignC.LBMaskBright);
-            GV.LeftBackCam.SetWindow(skLeft);
-
-            //   UI 操作
-            this.Invoke(new Action(() =>
-            {
-                skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
-            }));
-
-            GV.LeftBackCam.Live();
+                _ = Task.Run(() =>
+                {
+                    GV.Light.ChangeBrightness("rightback", _AlignC.RBMaskBright);
+                    GV.RightBackCam.Live();
+                });
+            });
         }
 
         private void rbRWafer_CheckedChanged(object sender, EventArgs e)
@@ -4720,56 +4748,57 @@ namespace NSAA_16Axis
         //}
         public void PostInitialize()
         {
-            if (InvokeRequired)
-            {
-                BeginInvoke((MethodInvoker)PostInitialize);
-                return;
-            }
+            //if (InvokeRequired)
+            //{
+            //    BeginInvoke((MethodInvoker)PostInitialize);
+            //    return;
+            //}
 
-            try
-            {
-                if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0) SetComboBoxByClassId(cbLBackMaskClassList, _AlignC.LLMaskAIClassId);
-                if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0) SetComboBoxByClassId(cbRBackMaskClassList, _AlignC.RLMaskAIClassId);
-                if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0) SetComboBoxByClassId(cbLBackWaferClassList, _AlignC.LHWaferAIClassId);
-                if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId >= 0) SetComboBoxByClassId(cbRBackWaferClassList, _AlignC.RHWaferAIClassId);
+            //try
+            //{
+            //    if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0) SetComboBoxByClassId(cbLBackMaskClassList, _AlignC.LLMaskAIClassId);
+            //    if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0) SetComboBoxByClassId(cbRBackMaskClassList, _AlignC.RLMaskAIClassId);
+            //    if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0) SetComboBoxByClassId(cbLBackWaferClassList, _AlignC.LHWaferAIClassId);
+            //    if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId >= 0) SetComboBoxByClassId(cbRBackWaferClassList, _AlignC.RHWaferAIClassId);
 
-                // 僅 recipe 改變才重訓 matcher
-                if (GV.AppSettingParm.Emulation != true && _lastPostInitRecipe != EditRecipe)
-                {
-                    _lastPostInitRecipe = EditRecipe;
-                    _ = Task.Run(() =>
-                    {
-                        try
-                        {
-                            if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() && GV.matcherLLM != null)
-                                GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm);
+            //    // 僅 recipe 改變才重訓 matcher
+            //    if (GV.AppSettingParm.Emulation != true && _lastPostInitRecipe != EditRecipe)
+            //    {
+            //        _lastPostInitRecipe = EditRecipe;
+            //        _ = Task.Run(() =>
+            //        {
+            //            try
+            //            {
+            //                if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() && GV.matcherLLM != null)
+            //                    GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm);
 
-                            if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() && GV.matcherRLM != null)
-                                GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm);
+            //                if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() && GV.matcherRLM != null)
+            //                    GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm);
 
-                            if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() && GV.matcherLHW != null)
-                                GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm);
+            //                if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() && GV.matcherLHW != null)
+            //                    GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm);
 
-                            if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() && GV.matcherRHW != null)
-                                GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm);
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine("Back.PostInitialize learn error: " + ex.Message);
-                        }
-                    });
-                }
+            //                if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() && GV.matcherRHW != null)
+            //                    GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm);
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                Debug.WriteLine("Back.PostInitialize learn error: " + ex.Message);
+            //            }
+            //        });
+            //    }
 
-                if (DrawMatchThread == null)
-                {
-                    DrawMatchThread = new Thread(DrawMatchPosition) { IsBackground = true };
-                    DrawMatchThread.Start();
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Back.PostInitialize error: " + ex.Message);
-            }
+            //    if (DrawMatchThread == null)
+            //    {
+            //        DrawMatchThread = new Thread(DrawMatchPosition) { IsBackground = true };
+            //        DrawMatchThread.Start();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine("Back.PostInitialize error: " + ex.Message);
+            //}
+            BeginPostInitializeNoWait();
         }
 
         private void rBLowMagnification_CheckedChanged(object sender, EventArgs e)
@@ -8975,7 +9004,7 @@ namespace NSAA_16Axis
         {
             return new BackLightState
             {
-                LTopMask=rbLTopMask.Checked,
+                LTopMask = rbLTopMask.Checked,
                 LBackMask = rbLBackMask.Checked,
                 LWafer = rbLWafer.Checked,
                 RTopMask = rbRTopMask.Checked,
@@ -8990,5 +9019,66 @@ namespace NSAA_16Axis
                 RWaferValue = tBRightBackWaferLight.Value
             };
         }
+        public async Task BeginCheckLevelNoWait()
+        {
+            if (IsDisposed || Disposing || !IsHandleCreated) return;
+            if (Interlocked.Exchange(ref _checkLevelBusy, 1) == 1)
+                return;
+
+            try
+            {
+                await Task.Delay(50);
+                BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        if (IsDisposed || Disposing)
+                            return;
+
+                        CheckLevel();
+                    }
+                    catch (Exception ex)
+                    {
+                        GM.WriteToStatusTextBox($"Back CheckLevel 錯誤: {ex.Message}");
+                    }
+                    finally
+                    {
+                        Interlocked.Exchange(ref _checkLevelBusy, 0);
+                    }
+                }));
+            }
+            catch
+            {
+                Interlocked.Exchange(ref _checkLevelBusy, 0);
+            }
+        }
+        public void BeginPostInitializeNoWait()
+        {
+            if (IsDisposed || Disposing)
+                return;
+
+            if (Interlocked.Exchange(ref _postInitializeBusy, 1) == 1)
+                return;
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await InitializeBackLearnHeavyAsync();
+                }
+                catch (Exception ex)
+                {
+                    SafeBeginInvoke(() =>
+                    {
+                        GM.WriteToStatusTextBox($"Back PostInitialize 錯誤: {ex.Message}");
+                    });
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref _postInitializeBusy, 0);
+                }
+            });
+        }
+
     }
 }

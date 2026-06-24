@@ -598,6 +598,7 @@ namespace NSAA_16Axis
             this.lbEmulationModeR.Size = new System.Drawing.Size(327, 44);
             this.lbEmulationModeR.TabIndex = 71;
             this.lbEmulationModeR.Text = "Emulation Mode";
+            this.lbEmulationModeR.Visible = false;
             // 
             // lbEmulationModeL
             // 
@@ -608,6 +609,7 @@ namespace NSAA_16Axis
             this.lbEmulationModeL.Size = new System.Drawing.Size(327, 44);
             this.lbEmulationModeL.TabIndex = 70;
             this.lbEmulationModeL.Text = "Emulation Mode";
+            this.lbEmulationModeL.Visible = false;
             // 
             // skRightAlign
             // 
