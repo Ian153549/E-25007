@@ -41,7 +41,6 @@ namespace NSAA_16Axis
             this.cbLMaskAlgorithm = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.gbLWafer = new System.Windows.Forms.GroupBox();
-            this.btLabelPatternL = new System.Windows.Forms.Button();
             this.cbLWaferClassList = new System.Windows.Forms.ComboBox();
             this.btFindLWaferCenter = new System.Windows.Forms.Button();
             this.ucLeftWaferNavigator = new NSAA_16Axis.UCNavigator();
@@ -50,6 +49,7 @@ namespace NSAA_16Axis
             this.btLWaferLoactionSave = new System.Windows.Forms.Button();
             this.cbLWaferAlgorithm = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.btLabelPatternL = new System.Windows.Forms.Button();
             this.gbRWafer = new System.Windows.Forms.GroupBox();
             this.btLabelPatternR = new System.Windows.Forms.Button();
             this.cbRWaferClassList = new System.Windows.Forms.ComboBox();
@@ -361,20 +361,6 @@ namespace NSAA_16Axis
             this.gbLWafer.TabStop = false;
             this.gbLWafer.Text = "Wafer";
             // 
-            // btLabelPatternL
-            // 
-            this.btLabelPatternL.AutoSize = true;
-            this.btLabelPatternL.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.btLabelPatternL.Font = new System.Drawing.Font("Arial", 12F);
-            this.btLabelPatternL.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btLabelPatternL.Location = new System.Drawing.Point(808, 283);
-            this.btLabelPatternL.Name = "btLabelPatternL";
-            this.btLabelPatternL.Size = new System.Drawing.Size(129, 33);
-            this.btLabelPatternL.TabIndex = 76;
-            this.btLabelPatternL.Text = "Label Image";
-            this.btLabelPatternL.UseVisualStyleBackColor = false;
-            this.btLabelPatternL.Click += new System.EventHandler(this.btLabelPatternL_Click);
-            // 
             // cbLWaferClassList
             // 
             this.cbLWaferClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -484,6 +470,20 @@ namespace NSAA_16Axis
             this.label1.Size = new System.Drawing.Size(72, 23);
             this.label1.TabIndex = 0;
             this.label1.Text = "ALGO.";
+            // 
+            // btLabelPatternL
+            // 
+            this.btLabelPatternL.AutoSize = true;
+            this.btLabelPatternL.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.btLabelPatternL.Font = new System.Drawing.Font("Arial", 12F);
+            this.btLabelPatternL.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btLabelPatternL.Location = new System.Drawing.Point(808, 283);
+            this.btLabelPatternL.Name = "btLabelPatternL";
+            this.btLabelPatternL.Size = new System.Drawing.Size(129, 33);
+            this.btLabelPatternL.TabIndex = 76;
+            this.btLabelPatternL.Text = "Label Image";
+            this.btLabelPatternL.UseVisualStyleBackColor = false;
+            this.btLabelPatternL.Click += new System.EventHandler(this.btLabelPatternL_Click);
             // 
             // gbRWafer
             // 
@@ -1160,6 +1160,7 @@ namespace NSAA_16Axis
             this.lbEmulationModeL.Size = new System.Drawing.Size(327, 44);
             this.lbEmulationModeL.TabIndex = 71;
             this.lbEmulationModeL.Text = "Emulation Mode";
+            this.lbEmulationModeL.Visible = false;
             // 
             // lbEmulationModeR
             // 
@@ -1170,6 +1171,7 @@ namespace NSAA_16Axis
             this.lbEmulationModeR.Size = new System.Drawing.Size(327, 44);
             this.lbEmulationModeR.TabIndex = 72;
             this.lbEmulationModeR.Text = "Emulation Mode";
+            this.lbEmulationModeR.Visible = false;
             // 
             // btRRingSave
             // 

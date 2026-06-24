@@ -2411,7 +2411,7 @@ namespace NSAA_16Axis
             this.tabPage4.Controls.Add(this.cmLearnPatternBack1);
             this.tabPage4.Location = new System.Drawing.Point(4, 38);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(192, 58);
+            this.tabPage4.Size = new System.Drawing.Size(1912, 1038);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Tag = "4";
             this.tabPage4.Text = "|  Pattern Edit Bottom  |";

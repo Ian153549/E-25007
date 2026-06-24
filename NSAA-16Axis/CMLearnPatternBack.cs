@@ -94,6 +94,13 @@ namespace NSAA_16Axis
         private bool _runtimeInitialized = false;
         private int _checkLevelBusy = 0;
         private int _postInitializeBusy = 0;
+
+        private CancellationTokenSource _backLearnHeavyCts = new CancellationTokenSource();
+        private readonly object _backLearnHeavyCtsLock = new object();
+        private int _backLearnHeavyBusy = 0;
+
+        private bool isLocationUpdateEnabled = false;
+
         public CMLearnPatternBack()
         {
             InitializeComponent();
@@ -380,7 +387,9 @@ namespace NSAA_16Axis
             groupBoxB1.Visible = false;
             groupBoxB2.Visible = false;
 
-            _ = InitializeBackLearnHeavyAsync();
+            CancellationToken token = RestartBackLearnHeavyToken();
+
+            _ = InitializeBackLearnHeavyAsync(token);
             //if (IsDesignModeSafe)
             //    return;
             //if (GV.AppSettingParm.DebugMode)
@@ -676,49 +685,137 @@ namespace NSAA_16Axis
             //groupBoxB1.Visible = false;
             //groupBoxB2.Visible = false;
         }
-        private async Task InitializeBackLearnHeavyAsync()
+        //private async Task InitializeBackLearnHeavyAsync()
+        //{
+        //    try
+        //    {
+        //        await Task.Run(() =>
+        //        {
+        //            LoadBackMasksIfNeeded();
+        //            LearnBackMatchersIfNeeded();
+        //        });
+
+        //        var classList = await Task.Run(() =>
+        //        {
+        //            return GV.AIClassList?.GetClassList();
+        //        });
+
+        //        if (classList != null)
+        //        {
+        //            SafeBeginInvoke(() => UpdateClassList(classList));
+        //        }
+
+        //        SafeBeginInvoke(() =>
+        //        {
+        //            if (_recipe != null)
+        //                _AlignC = _recipe.AlignC;
+
+        //            ApplyBackLearnUiFinalization();
+
+        //            if (DrawMatchThread == null)
+        //            {
+        //                DrawMatchThread = new Thread(DrawMatchPosition)
+        //                {
+        //                    IsBackground = true
+        //                };
+        //                DrawMatchThread.Start();
+        //            }
+
+        //            UpdateTargetPositionDisplay();
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine("InitializeBackLearnHeavyAsync failed: " + ex.Message);
+        //    }
+        //}
+        private Task InitializeBackLearnHeavyAsync(CancellationToken token)
         {
-            try
+            if (token.IsCancellationRequested)
+                return Task.FromResult(0);
+
+            if (Interlocked.Exchange(ref _backLearnHeavyBusy, 1) == 1)
+                return Task.FromResult(0);
+
+            _ = Task.Run(() =>
             {
-                await Task.Run(() =>
+                try
                 {
+                    token.ThrowIfCancellationRequested();
+
                     LoadBackMasksIfNeeded();
+
+                    token.ThrowIfCancellationRequested();
+
                     LearnBackMatchersIfNeeded();
-                });
 
-                var classList = await Task.Run(() =>
-                {
-                    return GV.AIClassList?.GetClassList();
-                });
+                    token.ThrowIfCancellationRequested();
 
-                if (classList != null)
-                {
-                    SafeBeginInvoke(() => UpdateClassList(classList));
-                }
+                    Dictionary<string, Int16> classList = null;
 
-                SafeBeginInvoke(() =>
-                {
-                    if (_recipe != null)
-                        _AlignC = _recipe.AlignC;
-
-                    ApplyBackLearnUiFinalization();
-
-                    if (DrawMatchThread == null)
+                    try
                     {
-                        DrawMatchThread = new Thread(DrawMatchPosition)
-                        {
-                            IsBackground = true
-                        };
-                        DrawMatchThread.Start();
+                        classList = GV.AIClassList?.GetClassList();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("GetClassList failed: " + ex.Message);
                     }
 
-                    UpdateTargetPositionDisplay();
-                });
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("InitializeBackLearnHeavyAsync failed: " + ex.Message);
-            }
+                    token.ThrowIfCancellationRequested();
+
+                    if (classList != null)
+                    {
+                        Dictionary<string, Int16> capturedClassList = classList;
+
+                        SafeBeginInvoke(() =>
+                        {
+                            if (token.IsCancellationRequested)
+                                return;
+
+                            UpdateClassList(capturedClassList);
+                        });
+                    }
+
+                    token.ThrowIfCancellationRequested();
+
+                    SafeBeginInvoke(() =>
+                    {
+                        if (token.IsCancellationRequested)
+                            return;
+
+                        if (_recipe != null)
+                            _AlignC = _recipe.AlignC;
+
+                        ApplyBackLearnUiFinalization();
+
+                        if (DrawMatchThread == null)
+                        {
+                            DrawMatchThread = new Thread(DrawMatchPosition)
+                            {
+                                IsBackground = true
+                            };
+                            DrawMatchThread.Start();
+                        }
+
+                        UpdateTargetPositionDisplay();
+                    });
+                }
+                catch (OperationCanceledException)
+                {
+                    // 快速切頁取消，正常流程。
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("InitializeBackLearnHeavyAsync failed: " + ex.Message);
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref _backLearnHeavyBusy, 0);
+                }
+            }, token);
+
+            return Task.FromResult(0);
         }
         private void LoadBackMasksIfNeeded()
         {
@@ -788,6 +885,8 @@ namespace NSAA_16Axis
         }
         private void LocationUpdateTimer_Tick(object sender, EventArgs e)
         {
+            if (!isLocationUpdateEnabled)
+                return;
             UpdateCurrentLocationUI();
         }
         private void UpdateCurrentLocationUI()
@@ -8823,6 +8922,14 @@ namespace NSAA_16Axis
         {
             try
             {
+                CancelBackLearnHeavyWork();
+
+                isLocationUpdateEnabled = false;
+
+                if (locationUpdateTimer != null && locationUpdateTimer.Enabled)
+                {
+                    locationUpdateTimer.Stop();
+                }
                 //  1. 儲存亮度設定
                 if (rbLTopMask.Checked)
                 {
@@ -8946,10 +9053,10 @@ namespace NSAA_16Axis
                 //停止執行緒和計時器
                 isLive = false;
 
-                if (locationUpdateTimer != null && locationUpdateTimer.Enabled)
-                {
-                    locationUpdateTimer.Stop();
-                }
+                //if (locationUpdateTimer != null && locationUpdateTimer.Enabled)
+                //{
+                //    locationUpdateTimer.Stop();
+                //}
 
                 //  11. 儲存 Recipe 到 XML
                 _AlignC.LastModifyTime = DateTime.Now;
@@ -9019,19 +9126,26 @@ namespace NSAA_16Axis
                 RWaferValue = tBRightBackWaferLight.Value
             };
         }
-        public async Task BeginCheckLevelNoWait()
+        public void BeginCheckLevelNoWait(CancellationToken token)
         {
-            if (IsDisposed || Disposing || !IsHandleCreated) return;
+            if (token.IsCancellationRequested)
+                return;
+
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
             if (Interlocked.Exchange(ref _checkLevelBusy, 1) == 1)
                 return;
 
             try
             {
-                await Task.Delay(50);
                 BeginInvoke(new Action(() =>
                 {
                     try
                     {
+                        if (token.IsCancellationRequested)
+                            return;
+
                         if (IsDisposed || Disposing)
                             return;
 
@@ -9052,32 +9166,94 @@ namespace NSAA_16Axis
                 Interlocked.Exchange(ref _checkLevelBusy, 0);
             }
         }
+        public void BeginCheckLevelNoWait()
+        {
+            BeginCheckLevelNoWait(CancellationToken.None);
+        }
+        //public void BeginPostInitializeNoWait()
+        //{
+        //    BeginPostInitializeNoWait(CancellationToken.None);
+        //}
         public void BeginPostInitializeNoWait()
         {
+            CancellationToken token = RestartBackLearnHeavyToken();
+            BeginPostInitializeNoWait(token);
+        }
+        //public void BeginPostInitializeNoWait(CancellationToken token)
+        //{
+        //    if (token.IsCancellationRequested)
+        //        return;
+
+        //    if (IsDisposed || Disposing)
+        //        return;
+
+        //    if (Interlocked.Exchange(ref _postInitializeBusy, 1) == 1)
+        //        return;
+
+        //    try
+        //    {
+        //        _ = InitializeBackLearnHeavyAsync(token);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        SafeBeginInvoke(() =>
+        //        {
+        //            GM.WriteToStatusTextBox($"Back PostInitialize 錯誤: {ex.Message}");
+        //        });
+
+        //        Interlocked.Exchange(ref _postInitializeBusy, 0);
+        //        return;
+        //    }
+
+        //    _ = Task.Run(() =>
+        //    {
+        //        while (!token.IsCancellationRequested && Interlocked.CompareExchange(ref _backLearnHeavyBusy, 0, 0) == 1)
+        //        {
+        //            Thread.Sleep(50);
+        //        }
+
+        //        Interlocked.Exchange(ref _postInitializeBusy, 0);
+        //    });
+        //}
+        public void BeginPostInitializeNoWait(CancellationToken token)
+        {
+            if (token.IsCancellationRequested)
+                return;
+
             if (IsDisposed || Disposing)
                 return;
 
-            if (Interlocked.Exchange(ref _postInitializeBusy, 1) == 1)
-                return;
-
-            _ = Task.Run(async () =>
+            _ = InitializeBackLearnHeavyAsync(token);
+        }
+        private CancellationToken RestartBackLearnHeavyToken()
+        {
+            lock (_backLearnHeavyCtsLock)
             {
                 try
                 {
-                    await InitializeBackLearnHeavyAsync();
+                    _backLearnHeavyCts?.Cancel();
                 }
-                catch (Exception ex)
+                catch (ObjectDisposedException)
                 {
-                    SafeBeginInvoke(() =>
-                    {
-                        GM.WriteToStatusTextBox($"Back PostInitialize 錯誤: {ex.Message}");
-                    });
                 }
-                finally
+
+                _backLearnHeavyCts = new CancellationTokenSource();
+                return _backLearnHeavyCts.Token;
+            }
+        }
+
+        private void CancelBackLearnHeavyWork()
+        {
+            lock (_backLearnHeavyCtsLock)
+            {
+                try
                 {
-                    Interlocked.Exchange(ref _postInitializeBusy, 0);
+                    _backLearnHeavyCts?.Cancel();
                 }
-            });
+                catch (ObjectDisposedException)
+                {
+                }
+            }
         }
 
     }

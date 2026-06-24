@@ -4796,16 +4796,7 @@ namespace NSAA_16Axis
                 StartUiFireAndForget(() =>
                 {
                     cmLearnPatternBack1.InitializeRuntime();
-                }, token, "LearnPatternBack InitializeRuntime 錯誤");
 
-                StartHardwareFireAndForget(() =>
-                {
-                    GV.LeftUpCam?.Freeze();
-                    GV.RightUpCam?.Freeze();
-                }, token, "LearnPatternBack Freeze Top Camera 錯誤");
-
-                StartUiFireAndForget(() =>
-                {
                     cmLearnPatternBack1.SuspendLayout();
 
                     try
@@ -4818,22 +4809,28 @@ namespace NSAA_16Axis
                     }
 
                     cmLearnPatternBack1.Invalidate();
-                }, token, "LearnPatternBack ShowMe 錯誤");
+                }, token, "LearnPatternBack InitializeRuntime + ShowMe 錯誤");
+
+                StartHardwareFireAndForget(() =>
+                {
+                    GV.LeftUpCam?.Freeze();
+                    GV.RightUpCam?.Freeze();
+                }, token, "LearnPatternBack Freeze Top Camera 錯誤");
 
                 StartUiFireAndForget(() =>
                 {
                     EnsureLearnPatternBackDoubleBuffering();
                 }, token, "LearnPatternBack DoubleBuffering 錯誤");
 
-                StartUiFireAndForget(() =>
+                if (!token.IsCancellationRequested)
                 {
-                    cmLearnPatternBack1.BeginCheckLevelNoWait();
-                }, token, "LearnPatternBack CheckLevel 錯誤");
+                    cmLearnPatternBack1.BeginCheckLevelNoWait(token);
+                }
 
-                StartUiFireAndForget(() =>
+                if (!token.IsCancellationRequested)
                 {
-                    cmLearnPatternBack1.BeginPostInitializeNoWait();
-                }, token, "LearnPatternBack PostInitialize 錯誤");
+                    cmLearnPatternBack1.BeginPostInitializeNoWait(token);
+                }
 
                 GM.WriteToStatusTextBox1(iAdmin, "Change to Pattern Edit Bottom");
 
@@ -4848,7 +4845,7 @@ namespace NSAA_16Axis
                 GM.WriteToStatusTextBox($"InitializeLearnPatternBackPageAsync 錯誤: {ex.Message}");
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult(0);
         }
 
         private void LogPerfStep(string scope, string step, Stopwatch sw, ref long lastMs, bool isTotal = false)
