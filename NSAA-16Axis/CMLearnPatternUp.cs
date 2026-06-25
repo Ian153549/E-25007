@@ -174,7 +174,7 @@ namespace NSAA_16Axis
                 cbRMaskAlgorithm.Items.Add(GV.Dlang.strTemplate);
                 cbRMaskAlgorithm.Items.Add(GV.Dlang.strEdge);
                 cbRMaskAlgorithm.Items.Add(GV.Dlang.strAI);
-                
+
             }
 
             NowMageni = 1;
@@ -1090,27 +1090,27 @@ namespace NSAA_16Axis
             {
 
                 groupBoxT4.Text = GV.Dlang.gbWECLocation;
-                label6.Text = GV.Dlang.lbTargetPosition;  
-                label5.Text = GV.Dlang.lbCurrentPosition;    
-                label8.Text = GV.Dlang.lbChuckZ;            
-                label15.Text = GV.Dlang.lbChuckX;           
-                label17.Text = GV.Dlang.lbChuckY1;          
-                label16.Text = GV.Dlang.lbChuckY2;          
-                btChuckUpdate.Caption = GV.Dlang.btChuckUpdate;  
-                btChuckGo.Caption = GV.Dlang.btChuckGo;          
+                label6.Text = GV.Dlang.lbTargetPosition;
+                label5.Text = GV.Dlang.lbCurrentPosition;
+                label8.Text = GV.Dlang.lbChuckZ;
+                label15.Text = GV.Dlang.lbChuckX;
+                label17.Text = GV.Dlang.lbChuckY1;
+                label16.Text = GV.Dlang.lbChuckY2;
+                btChuckUpdate.Caption = GV.Dlang.btChuckUpdate;
+                btChuckGo.Caption = GV.Dlang.btChuckGo;
 
                 groupBoxT1.Text = GV.Dlang.gbCCDLocation;
-                label10.Text = GV.Dlang.lbTargetPosition;  
-                label11.Text = GV.Dlang.lbCurrentPosition;   
-                label12.Text = GV.Dlang.lbBigY;             
-                label13.Text = GV.Dlang.lbLeftX;            
-                label7.Text = GV.Dlang.lbLeftY;             
-                label9.Text = GV.Dlang.lbLeftZ;            
-                label14.Text = GV.Dlang.lbRightX;           
-                label18.Text = GV.Dlang.lbRightY;           
-                label19.Text = GV.Dlang.lbRightZ;           
-                btUpCCDUpdate.Caption = GV.Dlang.btCCDUpdate;    
-                btUpCCDGo.Caption = GV.Dlang.btCCDGo;            
+                label10.Text = GV.Dlang.lbTargetPosition;
+                label11.Text = GV.Dlang.lbCurrentPosition;
+                label12.Text = GV.Dlang.lbBigY;
+                label13.Text = GV.Dlang.lbLeftX;
+                label7.Text = GV.Dlang.lbLeftY;
+                label9.Text = GV.Dlang.lbLeftZ;
+                label14.Text = GV.Dlang.lbRightX;
+                label18.Text = GV.Dlang.lbRightY;
+                label19.Text = GV.Dlang.lbRightZ;
+                btUpCCDUpdate.Caption = GV.Dlang.btCCDUpdate;
+                btUpCCDGo.Caption = GV.Dlang.btCCDGo;
             }
         }
 
@@ -1177,17 +1177,7 @@ namespace NSAA_16Axis
         //}
         public void CheckLevel()
         {
-            if (InvokeRequired)
-            {
-                Invoke((MethodInvoker)delegate ()
-                {
-                    CheckLevelInternal();
-                });
-            }
-            else
-            {
-                CheckLevelInternal();
-            }
+            CheckLevelInternal();
         }
 
         private void CheckLevelInternal()
@@ -2628,7 +2618,7 @@ namespace NSAA_16Axis
                     {
                         GV.matcherLHM.LearnWithAlgo(_recipe.LeftHighMaskMat, _recipe.LeftHighMaskMask, _AlignC.LHMaskAlgorithm);
                     }
-                    
+
                 }
             }
             if (cbLMaskAlgorithm.SelectedIndex == 2)
@@ -3573,7 +3563,7 @@ namespace NSAA_16Axis
                     cbHighMagnification.Enabled = false;
                     cbPatterhShift.Enabled = false;
                 }
-                
+
                 Application.DoEvents();
 
                 rBLowMagnification.Enabled = true;
@@ -3583,7 +3573,7 @@ namespace NSAA_16Axis
                 CheckParam();
             }
         }
-        
+
         private void BtChuckUpdate_Click(object sender, EventArgs e)
         {
             if (_recipe == null) return;
@@ -3778,7 +3768,7 @@ namespace NSAA_16Axis
                     {
                         GV.matcherRHM.LearnWithAlgo(_recipe.RightHighMaskMat, _recipe.RightHighMaskMask, _AlignC.RHMaskAlgorithm);
                     }
-                        
+
                 }
             }
             if (cbRMaskAlgorithm.SelectedIndex == 2)
