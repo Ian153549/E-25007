@@ -163,6 +163,10 @@ namespace NSAA_16Axis
         private bool _isLearnPatternUpDoubleBufferingInitialized = false;
         private bool _isLearnPatternBackDoubleBufferingInitialized = false;
         private volatile bool _isAlignMatcherIdle = true;
+
+        private CancellationTokenSource _backPageInitCts;
+
+
         public FormMain()
         {
             InitializeComponent();
@@ -3210,7 +3214,7 @@ namespace NSAA_16Axis
                         await InitializeParameterSettingPageAsync();
                         break;
                     case "4": // Learn Pattern Back
-                        await InitializeLearnPatternBackPageAsync();
+                        InitializeLearnPatternBackPageAsync();
                         break;
                     case "5": // Z Calibration
                         iTabIndex = 4;
@@ -3239,7 +3243,8 @@ namespace NSAA_16Axis
                 GV.TabOption = GV.Tab.Align;
 
                 // 在 UI 執行緒更新權限檢查
-                await InvokeAsync(() => CMAlignCheckLevel());
+                //await InvokeAsync(() => CMAlignCheckLevel());
+                BeginInvokeAsync(() => CMAlignCheckLevel());
 
                 //  啟動對齊匹配執行緒（如果尚未啟動）
                 if (iAlignMatcherRun == 0)
@@ -3265,7 +3270,24 @@ namespace NSAA_16Axis
                 }
 
                 //  更新 Emulation Mode 標籤
-                await InvokeAsync(() =>
+                //await InvokeAsync(() =>
+                //{
+                //    if (GV.skView == 0) // Top CCD - 使用 Align 頁面標籤
+                //    {
+                //        lbEmulationModeL.Visible = !(GV.AppSettingParm.LeftUpCamEnable && GV.LeftUpCam.IsLive);
+                //        lbEmulationModeR.Visible = !(GV.AppSettingParm.RightUpCamEnable && GV.RightUpCam.IsLive);
+                //    }
+                //    else if (GV.skView == 1) // Bottom CCD - 使用 Align 頁面標籤
+                //    {
+                //        lbEmulationModeL.Visible = !(GV.AppSettingParm.LeftBackCamEnable && GV.LeftBackCam.IsLive);
+                //        lbEmulationModeR.Visible = !(GV.AppSettingParm.RightBackCamEnable && GV.RightBackCam.IsLive);
+                //    }
+
+                //    //  確保參數頁面的 Emulation Mode 標籤不會顯示在 Align 頁面
+                //    lbEmulationModePL.Visible = false;
+                //    lbEmulationModePR.Visible = false;
+                //});
+                BeginInvokeAsync(() =>
                 {
                     if (GV.skView == 0) // Top CCD - 使用 Align 頁面標籤
                     {
@@ -3283,7 +3305,8 @@ namespace NSAA_16Axis
                     lbEmulationModePR.Visible = false;
                 });
 
-                await InvokeAsync(() => NValueChanged());
+                //await InvokeAsync(() => NValueChanged());
+                BeginInvokeAsync(() => NValueChanged());
                 GM.WriteToStatusTextBox1(iAdmin, "Change to Align");
             }
             catch (Exception ex)
@@ -3304,7 +3327,16 @@ namespace NSAA_16Axis
                 GV.RightBackCam?.Freeze();
 
                 // 2. 在 UI 執行緒更新標籤與 Mask 設定
-                await InvokeAsync(() =>
+                //await InvokeAsync(() =>
+                //{
+                //    iShowMask = MaskImage.Checked ? 1 : 0;
+                //    lbLeftCCD.Text = GV.Dlang.strTopCCD;
+                //    lbRightCCD.Text = GV.Dlang.strTopCCD;
+
+                //    skLeftAlign.SetShowMask(false, 0, LeftMask);
+                //    skRightAlign.SetShowMask(false, 0, RightMask);
+                //});
+                BeginInvokeAsync(() =>
                 {
                     iShowMask = MaskImage.Checked ? 1 : 0;
                     lbLeftCCD.Text = GV.Dlang.strTopCCD;
@@ -3312,13 +3344,24 @@ namespace NSAA_16Axis
 
                     skLeftAlign.SetShowMask(false, 0, LeftMask);
                     skRightAlign.SetShowMask(false, 0, RightMask);
+
                 });
 
                 //  減少等待時間（從 250ms 降到 100ms）
-                await Task.Delay(100);
+                //await Task.Delay(50);
 
                 // 3. 設定相機視窗（確保在 UI 執行緒）
-                await InvokeAsync(() =>
+                //await InvokeAsync(() =>
+                //{
+                //    GV.LeftUpCam.SetWindow(skLeftAlign);
+                //    GV.RightUpCam.SetWindow(skRightAlign);
+
+                //    skLeftAlign.MaskMp = lMaskMp;
+                //    skLeftAlign.WaferMp = lWaferMp;
+                //    skRightAlign.MaskMp = rMaskMp;
+                //    skRightAlign.WaferMp = rWaferMp;
+                //});
+                BeginInvokeAsync(() =>
                 {
                     GV.LeftUpCam.SetWindow(skLeftAlign);
                     GV.RightUpCam.SetWindow(skRightAlign);
@@ -3327,6 +3370,7 @@ namespace NSAA_16Axis
                     skLeftAlign.WaferMp = lWaferMp;
                     skRightAlign.MaskMp = rMaskMp;
                     skRightAlign.WaferMp = rWaferMp;
+
                 });
 
                 // 4. 開啟光源與相機（併行執行）
@@ -3357,10 +3401,23 @@ namespace NSAA_16Axis
                 GV.RightBackCam?.Freeze();
 
                 //  減少等待時間
-                await Task.Delay(100);
+                //await Task.Delay(100);
 
                 // 2. 在 UI 執行緒設定視窗
-                await InvokeAsync(() =>
+                //await InvokeAsync(() =>
+                //{
+                //    GV.LeftBackCam.SetWindow(skLeftAlign);
+                //    GV.RightBackCam.SetWindow(skRightAlign);
+
+                //    skLeftAlign.MaskMp = lMaskMp;
+                //    skLeftAlign.WaferMp = lWaferMp;
+                //    skRightAlign.MaskMp = rMaskMp;
+                //    skRightAlign.WaferMp = rWaferMp;
+
+                //    lbLeftCCD.Text = GV.Dlang.strBottomCCD;
+                //    lbRightCCD.Text = GV.Dlang.strBottomCCD;
+                //});
+                BeginInvokeAsync(() =>
                 {
                     GV.LeftBackCam.SetWindow(skLeftAlign);
                     GV.RightBackCam.SetWindow(skRightAlign);
@@ -3372,6 +3429,7 @@ namespace NSAA_16Axis
 
                     lbLeftCCD.Text = GV.Dlang.strBottomCCD;
                     lbRightCCD.Text = GV.Dlang.strBottomCCD;
+
                 });
 
                 // 3. 設定 Mask 顯示
@@ -3387,7 +3445,12 @@ namespace NSAA_16Axis
                         }
                     });
 
-                    await InvokeAsync(() =>
+                    //await InvokeAsync(() =>
+                    //{
+                    //    skLeftAlign.SetShowMask(true, AlignC.dLalpha, LeftMask);
+                    //    skRightAlign.SetShowMask(true, AlignC.dRalpha, RightMask);
+                    //});
+                    BeginInvokeAsync(() =>
                     {
                         skLeftAlign.SetShowMask(true, AlignC.dLalpha, LeftMask);
                         skRightAlign.SetShowMask(true, AlignC.dRalpha, RightMask);
@@ -3450,7 +3513,36 @@ namespace NSAA_16Axis
                 LogPerfStep("LearnPatternUp", "set tab flags", perfSw, ref lastMs);
 
                 GV.skView = 0;
-                await InvokeAsync(() =>
+                //await InvokeAsync(() =>
+                //{
+                //    try
+                //    {
+                //        if (!_isLearnPatternUpDoubleBufferingInitialized)
+                //        {
+                //            DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternUp1);
+                //            int pbCount = DoubleBufferHelper.EnableDoubleBufferingForType<PictureBox>
+                //            (
+                //                cmLearnPatternUp1,
+                //                enable: true,
+                //                recursive: true
+                //            );
+                //            if (cmLearnPatternUp1.Controls.ContainsKey("skLeft"))
+                //                DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternUp1.Controls["skLeft"]);
+                //            if (cmLearnPatternUp1.Controls.ContainsKey("skRight"))
+                //                DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternUp1.Controls["skRight"]);
+                //            string message = $"[InitializeLearnPatternUpPageAsync] 成功為 {pbCount} 個 PictureBox 啟用 double buffering";
+                //            LogActivities.GenerateLog(message);
+                //            Debug.WriteLine($"[InitializeLearnPatternUpPageAsync] 成功為 {pbCount} 個 PictureBox 啟用 double buffering");
+                //            _isLearnPatternUpDoubleBufferingInitialized = true;
+                //        }
+
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        Debug.WriteLine($"[InitializeLearnPatternUpPageAsync] 啟用 double buffering 失敗: {ex.Message}");
+                //    }
+                //});
+                BeginInvokeAsync(() =>
                 {
                     try
                     {
@@ -3480,7 +3572,12 @@ namespace NSAA_16Axis
                     }
                 });
                 LogPerfStep("LearnPatternUp", "enable double buffering", perfSw, ref lastMs);
-                await InvokeAsync(() =>
+                //await InvokeAsync(() =>
+                //{
+                //    GV.LeftUpCam.SetWindow(GV.LeftUpWindowOnLearnPage);
+                //    GV.RightUpCam.SetWindow(GV.RightUpWindowOnLearnPage);
+                //});
+                BeginInvokeAsync(() =>
                 {
                     GV.LeftUpCam.SetWindow(GV.LeftUpWindowOnLearnPage);
                     GV.RightUpCam.SetWindow(GV.RightUpWindowOnLearnPage);
@@ -3494,7 +3591,21 @@ namespace NSAA_16Axis
                 });
                 LogPerfStep("LearnPatternUp", "start camera live", perfSw, ref lastMs);
 
-                await InvokeAsync(() =>
+                //await InvokeAsync(() =>
+                //{
+                //    cmLearnPatternUp1.SuspendLayout();
+                //    try
+                //    {
+                //        cmLearnPatternUp1.CheckLevel();
+                //        cmLearnPatternUp1.ShowMe();
+                //    }
+                //    finally
+                //    {
+                //        cmLearnPatternUp1.ResumeLayout(true);
+
+                //    }
+                //});
+                BeginInvokeAsync(() =>
                 {
                     cmLearnPatternUp1.SuspendLayout();
                     try
@@ -3536,18 +3647,27 @@ namespace NSAA_16Axis
 
                 GV.TabOption = GV.Tab.Setting;
 
-                await InvokeAsync(() =>
+                //await InvokeAsync(() =>
+                //{
+                //    ParameterCheckLevel();
+                //    Update();
+                //});
+                BeginInvokeAsync(() =>
                 {
                     ParameterCheckLevel();
                     Update();
                 });
-
-                await Task.Delay(100);
+                //await Task.Delay(100);
 
                 //  根據 GV.skView 或 AlignC.UpBackAlign 判斷使用哪組相機
                 if (GV.skView == 0 || AlignC.UpBackAlign == 1)
                 {
-                    await InvokeAsync(() =>
+                    //await InvokeAsync(() =>
+                    //{
+                    //    GV.LeftUpCam.SetWindow(GV.LeftUpWindowOnParameterSettingPage);
+                    //    GV.RightUpCam.SetWindow(GV.RightUpWindowOnParameterSettingPage);
+                    //});
+                    BeginInvokeAsync(() =>
                     {
                         GV.LeftUpCam.SetWindow(GV.LeftUpWindowOnParameterSettingPage);
                         GV.RightUpCam.SetWindow(GV.RightUpWindowOnParameterSettingPage);
@@ -3561,7 +3681,12 @@ namespace NSAA_16Axis
                         GV.RightUpCam?.Live();
                     });
 
-                    await InvokeAsync(() =>
+                    //await InvokeAsync(() =>
+                    //{
+                    //    lbEmulationModePL.Visible = !GV.AppSettingParm.LeftUpCamEnable;
+                    //    lbEmulationModePR.Visible = !GV.AppSettingParm.RightUpCamEnable;
+                    //});
+                    BeginInvokeAsync(() =>
                     {
                         lbEmulationModePL.Visible = !GV.AppSettingParm.LeftUpCamEnable;
                         lbEmulationModePR.Visible = !GV.AppSettingParm.RightUpCamEnable;
@@ -3569,13 +3694,18 @@ namespace NSAA_16Axis
                 }
                 else
                 {
-                    await InvokeAsync(() =>
+                    //await InvokeAsync(() =>
+                    //{
+                    //    GV.LeftBackCam.SetWindow(GV.LeftUpWindowOnParameterSettingPage);
+                    //    GV.RightBackCam.SetWindow(GV.RightUpWindowOnParameterSettingPage);
+                    //});
+                    BeginInvokeAsync(() =>
                     {
                         GV.LeftBackCam.SetWindow(GV.LeftUpWindowOnParameterSettingPage);
                         GV.RightBackCam.SetWindow(GV.RightUpWindowOnParameterSettingPage);
                     });
 
-                    await Task.Delay(100);
+                    //await Task.Delay(100);
 
                     await Task.Run(() =>
                     {
@@ -3583,7 +3713,12 @@ namespace NSAA_16Axis
                         GV.RightBackCam?.Live();
                     });
 
-                    await InvokeAsync(() =>
+                    //await InvokeAsync(() =>
+                    //{
+                    //    lbEmulationModePL.Visible = !GV.AppSettingParm.LeftBackCamEnable;
+                    //    lbEmulationModePR.Visible = !GV.AppSettingParm.RightBackCamEnable;
+                    //});
+                    BeginInvokeAsync(() =>
                     {
                         lbEmulationModePL.Visible = !GV.AppSettingParm.LeftBackCamEnable;
                         lbEmulationModePR.Visible = !GV.AppSettingParm.RightBackCamEnable;
@@ -3598,23 +3733,50 @@ namespace NSAA_16Axis
             }
         }
 
-        //  Learn Pattern Back Page 初始化
-        private async Task InitializeLearnPatternBackPageAsync()
+        private void InitializeLearnPatternBackPageAsync()
         {
-            var perfSw = Stopwatch.StartNew();
-            long lastMs = 0;
             try
             {
+                // 取消舊的初始化操作
+                _backPageInitCts?.Cancel();
+                _backPageInitCts = new CancellationTokenSource();
+                CancellationToken cancellationToken = _backPageInitCts.Token;
+
                 iTabIndex = 3;
                 GV.TabOption = GV.Tab.BackLearn;
                 GV.LeftUpCam?.Freeze();
                 GV.RightUpCam?.Freeze();
-                LogPerfStep("LearnPatternBack", "set tab flags + freeze top cam", perfSw, ref lastMs);
-                //GV.LeftBackCam?.Freeze();
-                //GV.RightBackCam?.Freeze();
 
-                //await Task.Delay(100);
-                await InvokeAsync(() =>
+                // 立即在 UI 執行緒顯示頁面
+                //InvokeAsync(() =>
+                //{
+                //    try
+                //    {
+                //        if (!_isLearnPatternBackDoubleBufferingInitialized)
+                //        {
+                //            DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternBack1);
+                //            int pbCount = DoubleBufferHelper.EnableDoubleBufferingForType<PictureBox>
+                //            (
+                //                cmLearnPatternBack1,
+                //                enable: true,
+                //                recursive: true
+                //            );
+                //            if (cmLearnPatternBack1.Controls.ContainsKey("skLeft"))
+                //                DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternBack1.Controls["skLeft"]);
+                //            if (cmLearnPatternBack1.Controls.ContainsKey("skRight"))
+                //                DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternBack1.Controls["skRight"]);
+                //            string message = $"[InitializeLearnPatternBackPageAsync] 成功為 {pbCount} 個 PictureBox 啟用 double buffering";
+                //            LogActivities.GenerateLog(message);
+                //            Debug.WriteLine($"[InitializeLearnPatternBackPageAsync] 成功為 {pbCount} 個 PictureBox 啟用 double buffering");
+                //            _isLearnPatternBackDoubleBufferingInitialized = true;
+                //        }
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        Debug.WriteLine($"[InitializeLearnPatternBackPageAsync] 啟用 double buffering 失敗: {ex.Message}");
+                //    }
+                //}).Wait();
+                BeginInvokeAsync(() =>
                 {
                     try
                     {
@@ -3642,21 +3804,32 @@ namespace NSAA_16Axis
                         Debug.WriteLine($"[InitializeLearnPatternBackPageAsync] 啟用 double buffering 失敗: {ex.Message}");
                     }
                 });
-                LogPerfStep("LearnPatternBack", "enable double buffering", perfSw, ref lastMs);
 
-                await InvokeAsync(() => cmLearnPatternBack1.CheckLevel());
-                LogPerfStep("LearnPatternBack", "CheckLevel", perfSw, ref lastMs);
+                cmLearnPatternBack1.CheckLevel();
 
-                //await Task.Delay(100);
-
-                //await Task.Run(() =>
+                // 在 UI 執行緒顯示 ShowMe + Update
+                //InvokeAsync(() =>
                 //{
-                //    GV.LeftBackCam?.Live();
-                //    Thread.Sleep(100);
-                //    GV.RightBackCam?.Live();
-                //});
-
-                await InvokeAsync(() =>
+                //    cmLearnPatternBack1.SuspendLayout();
+                //    try
+                //    {
+                //        cmLearnPatternBack1.ShowMe();
+                //    }
+                //    finally
+                //    {
+                //        cmLearnPatternBack1.ResumeLayout(true);
+                //    }
+                //    this.SuspendLayout();
+                //    try
+                //    {
+                //        Update();
+                //    }
+                //    finally
+                //    {
+                //        this.ResumeLayout(false);
+                //    }
+                //}).Wait();
+                BeginInvokeAsync(() =>
                 {
                     cmLearnPatternBack1.SuspendLayout();
                     try
@@ -3676,22 +3849,49 @@ namespace NSAA_16Axis
                     {
                         this.ResumeLayout(false);
                     }
-
                 });
-                LogPerfStep("LearnPatternBack", "ShowMe + Update", perfSw, ref lastMs);
-                cmLearnPatternBack1.PostInitialize();
-                LogPerfStep("LearnPatternBack", "PostInitialize", perfSw, ref lastMs);
 
                 GM.WriteToStatusTextBox1(iAdmin, "Change to Pattern Edit Bottom");
+              
+                _ = Task.Run(() =>
+                {
+                    if (cancellationToken.IsCancellationRequested) return;
+
+                    try
+                    {
+                        // PostInitialize 操作在背景執行
+                        //InvokeAsync(() =>
+                        //{
+                        //    cmLearnPatternBack1.PostInitialize();
+                        //}).Wait();
+                        BeginInvokeAsync(() =>
+                        {
+                            cmLearnPatternBack1.PostInitialize();
+                        });
+
+                        if (cancellationToken.IsCancellationRequested) return;
+
+                        LogActivities.GenerateLog("[InitializeLearnPatternBackPageAsync] 背景初始化完成");
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        Debug.WriteLine("[InitializeLearnPatternBackPageAsync] 初始化被取消");
+                    }
+                    catch (Exception ex)
+                    {
+                        GM.WriteToStatusTextBox($"InitializeLearnPatternBackPageAsync 背景操作錯誤: {ex.Message}");
+                    }
+                }, cancellationToken);
             }
             catch (Exception ex)
             {
                 GM.WriteToStatusTextBox($"InitializeLearnPatternBackPageAsync 錯誤: {ex.Message}");
             }
-            finally
-            {
-                LogPerfStep("LearnPatternBack", "total", perfSw, ref lastMs, true);
-            }
+        }
+        private void CancelBackPageInitialization()
+        {
+            _backPageInitCts?.Cancel();
+            _backPageInitCts = null;
         }
 
         private void LogPerfStep(string scope, string step, Stopwatch sw, ref long lastMs, bool isTotal = false)
@@ -3719,6 +3919,18 @@ namespace NSAA_16Axis
             {
                 action();
                 return Task.CompletedTask;
+            }
+            //return Task.FromResult(BeginInvoke(action));
+        }
+        private void BeginInvokeAsync(Action action)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(action);
+            }
+            else
+            {
+                action();
             }
         }
         //public void DrawAlignMatchPosition()

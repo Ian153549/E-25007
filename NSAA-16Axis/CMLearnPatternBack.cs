@@ -87,6 +87,13 @@ namespace NSAA_16Axis
 
         private bool _isProcessingLeftShowImage;
         private bool _isProcessingRightShowImage;
+
+        private CancellationTokenSource _backMaskChangedCts;
+        private CancellationTokenSource _checkLevelCts;
+        private CancellationTokenSource _updateUICts;
+
+        private int _completedImageProcessCount = 0;
+        private readonly object _processingLock = new object();
         public CMLearnPatternBack()
         {
             InitializeComponent();
@@ -119,12 +126,17 @@ namespace NSAA_16Axis
             //GV.BackLearnLeft = skLeft;
             //GV.BackLearnRight = skRight;
             _leftShowImageTimer = new System.Windows.Forms.Timer();
-            _leftShowImageTimer.Interval = 20; // 設定適當的間隔時間（毫秒）
+            _leftShowImageTimer.Interval = 200; // 設定適當的間隔時間（毫秒）
             _leftShowImageTimer.Tick += LeftShowImageTimer_Tick;
 
             _rightShowImageTimer = new System.Windows.Forms.Timer();
-            _rightShowImageTimer.Interval = 20; // 設定適當的間隔時間（毫秒）
+            _rightShowImageTimer.Interval = 200; // 設定適當的間隔時間（毫秒）
             _rightShowImageTimer.Tick += RightShowImageTimer_Tick;
+
+            _updateUICts=new CancellationTokenSource();
+            _backMaskChangedCts = new CancellationTokenSource();
+            _checkLevelCts = new CancellationTokenSource();
+
         }
         private bool IsDesignModeSafe
         {
@@ -137,18 +149,89 @@ namespace NSAA_16Axis
         }
         private void RightShowImageTimer_Tick(object sender, EventArgs e)
         {
+            //_rightShowImageTimer.Stop();
+            //if (_isProcessingRightShowImage) return;
+            //_isProcessingRightShowImage = true;
+
+            //_ = Task.Run(() =>
+            //{
+            //    try
+            //    {
+            //        Mat currentImage = null;
+            //        try
+            //        {
+            //            currentImage = GV.RightBackCam?.Grab();
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            Debug.WriteLine($"[RightShowImageTimer] Grab failed: {ex.Message}");
+            //            return;
+            //        }
+
+            //        if (IsHandleCreated && !IsDisposed)
+            //        {
+            //            this.BeginInvoke(new Action(() =>
+            //            {
+            //                try
+            //                {
+            //                    _dRalpha = (double)_pendingRightShowImageValue / 100.0;
+            //                    _AlignC.dRalpha = _dRalpha;
+
+            //                    // ✅ 先設定影像
+            //                    if (currentImage != null && !currentImage.Empty())
+            //                    {
+            //                        skRight.SetImage(currentImage);
+            //                    }
+
+            //                    // ✅ 再套用 Mask（覆蓋 SetImage 可能造成的影響）
+            //                    bool canShowMask = !rbRTopMask.Checked && RightMaskMat != null && !RightMaskMat.Empty();
+            //                    if (canShowMask)
+            //                    {
+            //                        skRight.SetShowMask(true, _dRalpha, RightMaskMat);
+            //                    }
+            //                    else
+            //                    {
+            //                        skRight.SetShowMask(false, 0, RightMaskMat);
+            //                    }
+            //                }
+            //                catch (Exception ex)
+            //                {
+            //                    Debug.WriteLine($"[RightShowImageTimer UI] Error: {ex.Message}");
+            //                }
+            //            }));
+            //        }
+            //    }
+            //    finally
+            //    {
+            //        _isProcessingRightShowImage = false;
+            //    }
+            //});
             _rightShowImageTimer.Stop();
             if (_isProcessingRightShowImage) return;
             _isProcessingRightShowImage = true;
+
             try
             {
+                Mat currentImage = null;
+                try
+                {
+                    currentImage = GV.RightBackCam?.Grab();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[RightShowImageTimer] Grab failed: {ex.Message}");
+                    return;
+                }
+
                 _dRalpha = (double)_pendingRightShowImageValue / 100.0;
                 _AlignC.dRalpha = _dRalpha;
 
-                bool canShowMask = !rbRTopMask.Checked &&
-                    RightMaskMat != null &&
-                    !RightMaskMat.Empty();
+                if (currentImage != null && !currentImage.Empty())
+                {
+                    skRight.SetImage(currentImage);
+                }
 
+                bool canShowMask = !rbRTopMask.Checked && RightMaskMat != null && !RightMaskMat.Empty();
                 if (canShowMask)
                 {
                     skRight.SetShowMask(true, _dRalpha, RightMaskMat);
@@ -157,58 +240,101 @@ namespace NSAA_16Axis
                 {
                     skRight.SetShowMask(false, 0, RightMaskMat);
                 }
-                Mat currentImage= GV.RightBackCam?.Grab();
-                if (currentImage != null && !currentImage.Empty())
-                {
-                    skRight.SetImage(currentImage);
-                }
-
             }
-            finally 
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[RightShowImageTimer UI] Error: {ex.Message}");
+            }
+            finally
             {
                 _isProcessingRightShowImage = false;
             }
-            //try
-            //{
-            //    int value = _pendingRightShowImageValue;
-            //    double alpha = value / 100.0;
-            //    _AlignC.dRalpha = alpha;
-
-            //    if (!rbRTopMask.Checked && RightMask != null)
-            //        skRight.SetShowMask(true, alpha, RightMaskMat);
-            //    else
-            //        skRight.SetShowMask(false, 0, RightMaskMat);
-            //}
-            //finally
-            //{
-            //    _isProcessingRightShowImage = false;
-            //}
         }
 
         private void LeftShowImageTimer_Tick(object sender, EventArgs e)
         {
+            //_leftShowImageTimer.Stop();
+            //if (_isProcessingLeftShowImage) return;
+            //_isProcessingLeftShowImage = true;
+
+            //_ = Task.Run(() =>
+            //{
+            //    try
+            //    {
+            //        Mat currentImage = null;
+            //        try
+            //        {
+            //            currentImage = GV.LeftBackCam?.Grab();
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            Debug.WriteLine($"[LeftShowImageTimer] Grab failed: {ex.Message}");
+            //            return;
+            //        }
+
+            //        if (IsHandleCreated && !IsDisposed)
+            //        {
+            //            this.BeginInvoke(new Action(() =>
+            //            {
+            //                try
+            //                {
+            //                    _dLalpha = (double)_pendingLeftShowImageValue / 100.0;
+            //                    _AlignC.dLalpha = _dLalpha;
+
+            //                    // ✅ 先設定影像
+            //                    if (currentImage != null && !currentImage.Empty())
+            //                    {
+            //                        skLeft.SetImage(currentImage);
+            //                    }
+
+            //                    // ✅ 再套用 Mask（覆蓋 SetImage 可能造成的影響）
+            //                    bool canShowMask = !rbLTopMask.Checked && LeftMaskMat != null && !LeftMaskMat.Empty();
+            //                    if (canShowMask)
+            //                    {
+            //                        skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
+            //                    }
+            //                    else
+            //                    {
+            //                        skLeft.SetShowMask(false, 0, LeftMaskMat);
+            //                    }
+            //                }
+            //                catch (Exception ex)
+            //                {
+            //                    Debug.WriteLine($"[LeftShowImageTimer UI] Error: {ex.Message}");
+            //                }
+            //            }));
+            //        }
+            //    }
+            //    finally
+            //    {
+            //        _isProcessingLeftShowImage = false;
+            //    }
+            //});
             _leftShowImageTimer.Stop();
             if (_isProcessingLeftShowImage) return;
             _isProcessingLeftShowImage = true;
-            //try
-            //{
-            //    int value = _pendingLeftShowImageValue;
-            //    double alpha = value / 100.0;
-            //    _AlignC.dLalpha = alpha;
 
-            //    if (!rbLTopMask.Checked && LeftMask != null)
-            //        skLeft.SetShowMask(true, alpha, LeftMaskMat);
-            //    else
-            //        skLeft.SetShowMask(false, 0, LeftMaskMat);
-            //}
-            //finally
-            //{
-            //    _isProcessingLeftShowImage = false;
-            //}
             try
             {
+                Mat currentImage = null;
+                try
+                {
+                    currentImage = GV.LeftBackCam?.Grab();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[LeftShowImageTimer] Grab failed: {ex.Message}");
+                    return;
+                }
+
                 _dLalpha = (double)_pendingLeftShowImageValue / 100.0;
                 _AlignC.dLalpha = _dLalpha;
+
+                if (currentImage != null && !currentImage.Empty())
+                {
+                    skLeft.SetImage(currentImage);
+                }
+
                 bool canShowMask = !rbLTopMask.Checked && LeftMaskMat != null && !LeftMaskMat.Empty();
                 if (canShowMask)
                 {
@@ -218,11 +344,10 @@ namespace NSAA_16Axis
                 {
                     skLeft.SetShowMask(false, 0, LeftMaskMat);
                 }
-                Mat currentImage = GV.LeftBackCam?.Grab();
-                if (currentImage != null && !currentImage.Empty())
-                {
-                    skLeft.SetImage(currentImage);
-                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LeftShowImageTimer UI] Error: {ex.Message}");
             }
             finally
             {
@@ -230,8 +355,306 @@ namespace NSAA_16Axis
             }
         }
 
-        private async void CMLearnPattern_Load(object sender, EventArgs e)
+        //private async void CMLearnPattern_Load(object sender, EventArgs e)
+        //{
+        //    if (IsDesignModeSafe)
+        //        return;
+        //    if (GV.AppSettingParm.DebugMode)
+        //    {
+        //        lbDebugMsg.Visible = true;
+        //    }
+
+        //    EditRecipe = GV.NowRecipeNumber;
+        //    _recipe = GV._recipe;
+        //    _AlignC = _recipe.AlignC;
+        //    cbLWaferAlgo.SelectedIndex = 0;
+        //    cbRWaferAlgo.SelectedIndex = 0;
+        //    cbLBackMaskAlgo.SelectedIndex = 0;
+        //    cbRBackMaskAlgo.SelectedIndex = 0;
+        //    if (GV.AppSettingParm.Language != "default")
+        //    {
+        //        btLTopMaskSave.Text = GV.Dlang.strSave;
+        //        btRTopMaskSave.Text = GV.Dlang.strSave;
+        //        btLBackMaskSave.Text = GV.Dlang.strSave;
+        //        btRBackMaskSave.Text = GV.Dlang.strSave;
+        //        btLWaferSave.Text = GV.Dlang.strSave;
+        //        btRWaferSave.Text = GV.Dlang.strSave;
+        //        btMagSave.Text = GV.Dlang.strSave;
+        //        btDelete.Text = GV.Dlang.strDelete;
+        //        btDefault.Text = GV.Dlang.strDefault;
+        //        gbLWafer.Text = GV.Dlang.strWafer;
+        //        gbRWafer.Text = GV.Dlang.strWafer;
+        //        gbLTopMask.Text = GV.Dlang.strTop + GV.Dlang.strMask;
+        //        gbRTopMask.Text = GV.Dlang.strTop + GV.Dlang.strMask;
+        //        gbLBackMask.Text = GV.Dlang.strBack + GV.Dlang.strMask;
+        //        gbRBackMask.Text = GV.Dlang.strBack + GV.Dlang.strMask;
+        //        gBMag.Text = GV.Dlang.groupBoxMagnification;
+        //        rBHighMagnification.Text = GV.Dlang.radioButtonHighMagnification;
+        //        rBLowMagnification.Text = GV.Dlang.radioButtonLowMagnification;
+        //        rbLTopMask.Text = GV.Dlang.strLight;
+        //        rbRTopMask.Text = GV.Dlang.strLight;
+        //        rbLBackMask.Text = GV.Dlang.strLight;
+        //        rbRBackMask.Text = GV.Dlang.strLight;
+        //        rbLWafer.Text = GV.Dlang.strLight;
+        //        rbRWafer.Text = GV.Dlang.strLight;
+        //        label1.Text = GV.Dlang.strAlgo;
+        //        label2.Text = GV.Dlang.strAlgo;
+        //        label3.Text = GV.Dlang.strAlgo;
+        //        label4.Text = GV.Dlang.strAlgo;
+        //        label5.Text = GV.Dlang.strAlgo;
+        //        label6.Text = GV.Dlang.strAlgo;
+        //        lbLLive.Text = GV.Dlang.strLive;
+        //        lbRLive.Text = GV.Dlang.strLive;
+        //        lbLRecord.Text = GV.Dlang.strRecord;
+        //        lbRRecord.Text = GV.Dlang.strRecord;
+        //        cBTopMask.Text = GV.Dlang.strTopMask;
+        //        cBBottomMask.Text = GV.Dlang.strBottomMask;
+        //        btCapMask.Caption = GV.Dlang.strCapMask;
+        //        btAlignTest.Caption = GV.Dlang.strAlignTest;
+        //        BtMaskCenter.Caption = GV.Dlang.strMaskCenter;
+        //        btCaptureN.Caption = GV.Dlang.strCapture;
+        //        btFindLBMaskCenter.Text = GV.Dlang.strFindCenter;
+        //        btFindLWaferCenter.Text = GV.Dlang.strFindCenter;
+        //        btFindRWaferCenter.Text = GV.Dlang.strFindCenter;
+        //        btFindRBMaskCenter.Text = GV.Dlang.strFindCenter;
+        //        btLBackMask.Text = GV.Dlang.strCreateMark;
+        //        btLWaferMask.Text = GV.Dlang.strCreateMark;
+        //        btRWaferMask.Text = GV.Dlang.strCreateMark;
+        //        btRBackMask.Text = GV.Dlang.strCreateMark;
+        //        btBackLabelPatternL.Text = GV.Dlang.strImageLabel;
+        //        btBackLabelPatternR.Text = GV.Dlang.strImageLabel;
+        //        cbLWaferAlgo.Items.Clear();
+        //        cbRWaferAlgo.Items.Clear();
+        //        cbLBackMaskAlgo.Items.Clear();
+        //        cbRBackMaskAlgo.Items.Clear();
+        //        cbLWaferAlgo.Items.Add(GV.Dlang.strTemplate);
+        //        cbLWaferAlgo.Items.Add(GV.Dlang.strEdge);
+        //        cbLWaferAlgo.Items.Add(GV.Dlang.strAI);
+        //        cbRWaferAlgo.Items.Add(GV.Dlang.strTemplate);
+        //        cbRWaferAlgo.Items.Add(GV.Dlang.strEdge);
+        //        cbRWaferAlgo.Items.Add(GV.Dlang.strAI);
+        //        cbLBackMaskAlgo.Items.Add(GV.Dlang.strTemplate);
+        //        cbLBackMaskAlgo.Items.Add(GV.Dlang.strEdge);
+        //        cbLBackMaskAlgo.Items.Add(GV.Dlang.strAI);
+        //        cbRBackMaskAlgo.Items.Add(GV.Dlang.strTemplate);
+        //        cbRBackMaskAlgo.Items.Add(GV.Dlang.strEdge);
+        //        cbRBackMaskAlgo.Items.Add(GV.Dlang.strAI);
+        //    }
+
+        //    LeftMaskMat = GV.LeftMaskMat;
+        //    RightMaskMat = GV.RightMaskMat;
+        //    tBLShowImage.Enabled = false;
+        //    tBRShowImage.Enabled = false;
+
+
+        //    if (GV.AppSettingParm.LeftUpCamEnable == true)
+        //    {
+        //        lbEmulationModeL.Visible = false;
+        //    }
+        //    else
+        //    {
+        //        skLeft.CanRectMaskAndWafer = false;
+        //    }
+        //    if (GV.AppSettingParm.RightUpCamEnable == true)
+        //    {
+        //        lbEmulationModeR.Visible = false;
+        //    }
+        //    else
+        //    {
+        //        skRight.CanRectMaskAndWafer = false;
+        //    }
+
+        //    if (GV.AppSettingParm.DebugMode == true)
+        //    {
+        //        btOpen.Visible = true;
+        //    }
+
+        //    //NUDLMaskX.Visible = false;
+        //    //NUDLMaskY.Visible = false;
+        //    //NUDRMaskX.Visible = false;
+        //    //NUDRMaskY.Visible = false;
+        //    //BtLMaskAdjSave.Visible = false;
+        //    //BtRMaskAdjSave.Visible = false;
+        //    //lblLMaskX.Visible = false;
+        //    //lblLMaskY.Visible = false;
+        //    //lblRMaskX.Visible = false;
+        //    //lblRMaskY.Visible = false;
+        //    //skLeft.MaskMp = lMaskMp;
+        //    //skLeft.WaferMp = lWaferMp;
+        //    //skRight.MaskMp = rMaskMp;
+        //    //skRight.WaferMp = rWaferMp;
+        //    locationUpdateTimer = new System.Windows.Forms.Timer();
+        //    locationUpdateTimer.Interval = 500; // 200ms 更新一次
+        //    locationUpdateTimer.Tick += LocationUpdateTimer_Tick;
+        //    try
+        //    {
+        //        await Task.Run(() =>
+        //        {
+        //            try
+        //            {
+        //                // 1) 取回或載入 Mask（若尚未存在）
+        //                if ((LeftMaskMat == null || LeftMaskMat.Empty()) && System.IO.File.Exists(GetTemplateFileName("LeftMask")))
+        //                {
+        //                    try
+        //                    {
+        //                        var lm = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
+        //                        if (lm != null && !lm.Empty())
+        //                        {
+        //                            LeftMaskMat = lm;
+        //                            GV.LeftMaskMat = LeftMaskMat;
+        //                        }
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        Debug.WriteLine("Load LeftMask failed: " + ex.Message);
+        //                    }
+        //                }
+
+        //                if ((RightMaskMat == null || RightMaskMat.Empty()) && System.IO.File.Exists(GetTemplateFileName("RightMask")))
+        //                {
+        //                    try
+        //                    {
+        //                        var rm = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
+        //                        if (rm != null && !rm.Empty())
+        //                        {
+        //                            RightMaskMat = rm;
+        //                            GV.RightMaskMat = RightMaskMat;
+        //                        }
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        Debug.WriteLine("Load RightMask failed: " + ex.Message);
+        //                    }
+        //                }
+
+        //                // 2) 並行讓 matcher 做學習（若非 Emulation）
+        //                if (GV.AppSettingParm.Emulation != true)
+        //                {
+        //                    var learnTasks = new List<Task>();
+
+        //                    if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() && GV.matcherLLM != null)
+        //                    {
+        //                        learnTasks.Add(Task.Run(() => GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm)));
+        //                    }
+        //                    if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() && GV.matcherRLM != null)
+        //                    {
+        //                        learnTasks.Add(Task.Run(() => GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm)));
+        //                    }
+        //                    if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() && GV.matcherLHW != null)
+        //                    {
+        //                        learnTasks.Add(Task.Run(() => GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm)));
+        //                    }
+        //                    if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() && GV.matcherRHW != null)
+        //                    {
+        //                        learnTasks.Add(Task.Run(() => GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm)));
+        //                    }
+
+        //                    try
+        //                    {
+        //                        Task.WaitAll(learnTasks.ToArray(), 1000); // 等待，但避免無限等待（可調 timeout）
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        Debug.WriteLine("Matcher learn tasks error: " + ex.Message);
+        //                    }
+        //                }
+
+        //                // 3) 取得 ClassList（如果需要）
+        //                try
+        //                {
+        //                    var classList = GV.AIClassList?.GetClassList();
+        //                    if (classList != null)
+        //                    {
+        //                        // 回到 UI 執行緒更新 ComboBox
+        //                        this.BeginInvoke(new Action(() => UpdateClassList(classList)));
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    Debug.WriteLine("GetClassList failed: " + ex.Message);
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Debug.WriteLine("Background init failed: " + ex.Message);
+        //            }
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine("CMLearnPattern_Load Task.Run failed: " + ex.Message);
+        //    }
+
+        //    // 回到 UI 執行緒：完成 UI 綁定、啟動 camera 與 timer
+        //    try
+        //    {
+        //        // 設定顯示相關參數與控制元件
+        //        if (_recipe != null)
+        //        {
+        //            _AlignC = _recipe.AlignC;
+        //        }
+
+        //        int iL = (int)(_AlignC.dLalpha * 100);
+        //        if (iL > 100) iL = 100;
+        //        if (iL < 0) iL = 0;
+        //        int iR = (int)(_AlignC.dRalpha * 100);
+        //        if (iR > 100) iR = 100;
+        //        if (iR < 0) iR = 0;
+
+        //        iLalpha = iL;
+        //        iRalpha = iR;
+
+        //        tBLShowImage.Value = iLalpha;
+        //        tBRShowImage.Value = iRalpha;
+
+        //        _dLalpha = (double)tBLShowImage.Value / 100;
+        //        _dRalpha = (double)tBRShowImage.Value / 100;
+
+        //        if (rbLTopMask.Checked == false)
+        //        {
+        //            skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
+        //            skRight.SetShowMask(true, _dRalpha, RightMaskMat);
+        //        }
+        //        else
+        //        {
+        //            skLeft.SetShowMask(false, 0, LeftMaskMat);
+        //            skRight.SetShowMask(false, 0, RightMaskMat);
+        //        }
+
+        //        // 設定 camera window 並啟動 Live（在 UI 執行緒）
+        //        GV.LeftBackCam.SetWindow(skLeft);
+        //        GV.RightBackCam.SetWindow(skRight);
+
+        //        if (GV.AppSettingParm.LeftBackCamEnable)
+        //            GV.LeftBackCam?.Live();
+
+        //        if (GV.AppSettingParm.RightBackCamEnable)
+        //            GV.RightBackCam?.Live();
+
+        //        // 啟動 location timer（延後到重型作業完成）
+        //        //locationUpdateTimer.Start();
+
+        //        // 啟動 DrawMatchPosition 執行緒（標示為背景執行緒）
+        //        if (DrawMatchThread == null)
+        //        {
+        //            DrawMatchThread = new Thread(DrawMatchPosition) { IsBackground = true };
+        //            DrawMatchThread.Start();
+        //        }
+
+        //        UpdateTargetPositionDisplay();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine("UI finalization failed: " + ex.Message);
+        //    }
+        //    //locationUpdateTimer.Start();
+        //    //UpdateTargetPositionDisplay();
+        //    groupBoxB1.Visible = false;
+        //    groupBoxB2.Visible = false;
+        //}
+        private void CMLearnPattern_Load(object sender, EventArgs e)
         {
+            // ✅ 移除 async void——改為同步 private void
             if (IsDesignModeSafe)
                 return;
             if (GV.AppSettingParm.DebugMode)
@@ -321,7 +744,6 @@ namespace NSAA_16Axis
             tBLShowImage.Enabled = false;
             tBRShowImage.Enabled = false;
 
-
             if (GV.AppSettingParm.LeftUpCamEnable == true)
             {
                 lbEmulationModeL.Visible = false;
@@ -344,126 +766,13 @@ namespace NSAA_16Axis
                 btOpen.Visible = true;
             }
 
-            //NUDLMaskX.Visible = false;
-            //NUDLMaskY.Visible = false;
-            //NUDRMaskX.Visible = false;
-            //NUDRMaskY.Visible = false;
-            //BtLMaskAdjSave.Visible = false;
-            //BtRMaskAdjSave.Visible = false;
-            //lblLMaskX.Visible = false;
-            //lblLMaskY.Visible = false;
-            //lblRMaskX.Visible = false;
-            //lblRMaskY.Visible = false;
-            //skLeft.MaskMp = lMaskMp;
-            //skLeft.WaferMp = lWaferMp;
-            //skRight.MaskMp = rMaskMp;
-            //skRight.WaferMp = rWaferMp;
             locationUpdateTimer = new System.Windows.Forms.Timer();
-            locationUpdateTimer.Interval = 500; // 200ms 更新一次
+            locationUpdateTimer.Interval = 500;
             locationUpdateTimer.Tick += LocationUpdateTimer_Tick;
+
+            // ✅ 設定顯示相關參數與控制元件（同步立即執行）
             try
             {
-                await Task.Run(() =>
-                {
-                    try
-                    {
-                        // 1) 取回或載入 Mask（若尚未存在）
-                        if ((LeftMaskMat == null || LeftMaskMat.Empty()) && System.IO.File.Exists(GetTemplateFileName("LeftMask")))
-                        {
-                            try
-                            {
-                                var lm = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
-                                if (lm != null && !lm.Empty())
-                                {
-                                    LeftMaskMat = lm;
-                                    GV.LeftMaskMat = LeftMaskMat;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Debug.WriteLine("Load LeftMask failed: " + ex.Message);
-                            }
-                        }
-
-                        if ((RightMaskMat == null || RightMaskMat.Empty()) && System.IO.File.Exists(GetTemplateFileName("RightMask")))
-                        {
-                            try
-                            {
-                                var rm = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
-                                if (rm != null && !rm.Empty())
-                                {
-                                    RightMaskMat = rm;
-                                    GV.RightMaskMat = RightMaskMat;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Debug.WriteLine("Load RightMask failed: " + ex.Message);
-                            }
-                        }
-
-                        // 2) 並行讓 matcher 做學習（若非 Emulation）
-                        if (GV.AppSettingParm.Emulation != true)
-                        {
-                            var learnTasks = new List<Task>();
-
-                            if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() && GV.matcherLLM != null)
-                            {
-                                learnTasks.Add(Task.Run(() => GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm)));
-                            }
-                            if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() && GV.matcherRLM != null)
-                            {
-                                learnTasks.Add(Task.Run(() => GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm)));
-                            }
-                            if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() && GV.matcherLHW != null)
-                            {
-                                learnTasks.Add(Task.Run(() => GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm)));
-                            }
-                            if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() && GV.matcherRHW != null)
-                            {
-                                learnTasks.Add(Task.Run(() => GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm)));
-                            }
-
-                            try
-                            {
-                                Task.WaitAll(learnTasks.ToArray(), 1000); // 等待，但避免無限等待（可調 timeout）
-                            }
-                            catch (Exception ex)
-                            {
-                                Debug.WriteLine("Matcher learn tasks error: " + ex.Message);
-                            }
-                        }
-
-                        // 3) 取得 ClassList（如果需要）
-                        try
-                        {
-                            var classList = GV.AIClassList?.GetClassList();
-                            if (classList != null)
-                            {
-                                // 回到 UI 執行緒更新 ComboBox
-                                this.BeginInvoke(new Action(() => UpdateClassList(classList)));
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine("GetClassList failed: " + ex.Message);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine("Background init failed: " + ex.Message);
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("CMLearnPattern_Load Task.Run failed: " + ex.Message);
-            }
-
-            // 回到 UI 執行緒：完成 UI 綁定、啟動 camera 與 timer
-            try
-            {
-                // 設定顯示相關參數與控制元件
                 if (_recipe != null)
                 {
                     _AlignC = _recipe.AlignC;
@@ -496,7 +805,7 @@ namespace NSAA_16Axis
                     skRight.SetShowMask(false, 0, RightMaskMat);
                 }
 
-                // 設定 camera window 並啟動 Live（在 UI 執行緒）
+                // ✅ 設定 camera window 並啟動 Live（UI 執行緒）
                 GV.LeftBackCam.SetWindow(skLeft);
                 GV.RightBackCam.SetWindow(skRight);
 
@@ -506,10 +815,7 @@ namespace NSAA_16Axis
                 if (GV.AppSettingParm.RightBackCamEnable)
                     GV.RightBackCam?.Live();
 
-                // 啟動 location timer（延後到重型作業完成）
-                //locationUpdateTimer.Start();
-
-                // 啟動 DrawMatchPosition 執行緒（標示為背景執行緒）
+                // ✅ 啟動 DrawMatchPosition 執行緒（背景執行緒）
                 if (DrawMatchThread == null)
                 {
                     DrawMatchThread = new Thread(DrawMatchPosition) { IsBackground = true };
@@ -517,15 +823,103 @@ namespace NSAA_16Axis
                 }
 
                 UpdateTargetPositionDisplay();
+
+                groupBoxB1.Visible = false;
+                groupBoxB2.Visible = false;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("UI finalization failed: " + ex.Message);
+                Debug.WriteLine("CMLearnPattern_Load UI finalization failed: " + ex.Message);
             }
-            //locationUpdateTimer.Start();
-            //UpdateTargetPositionDisplay();
-            groupBoxB1.Visible = false;
-            groupBoxB2.Visible = false;
+
+            // ✅ **重型工作非同步執行（不阻塞 UI）**
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    // 1) 載入 Mask（若尚未存在）
+                    if ((LeftMaskMat == null || LeftMaskMat.Empty()) && System.IO.File.Exists(GetTemplateFileName("LeftMask")))
+                    {
+                        try
+                        {
+                            var lm = Cv2.ImRead(GetTemplateFileName("LeftMask"), ImreadModes.Grayscale);
+                            if (lm != null && !lm.Empty())
+                            {
+                                LeftMaskMat = lm;
+                                GV.LeftMaskMat = LeftMaskMat;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Load LeftMask failed: " + ex.Message);
+                        }
+                    }
+
+                    if ((RightMaskMat == null || RightMaskMat.Empty()) && System.IO.File.Exists(GetTemplateFileName("RightMask")))
+                    {
+                        try
+                        {
+                            var rm = Cv2.ImRead(GetTemplateFileName("RightMask"), ImreadModes.Grayscale);
+                            if (rm != null && !rm.Empty())
+                            {
+                                RightMaskMat = rm;
+                                GV.RightMaskMat = RightMaskMat;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Load RightMask failed: " + ex.Message);
+                        }
+                    }
+
+                    // 2) 並行讓 matcher 做學習（若非 Emulation）
+                    if (GV.AppSettingParm.Emulation != true)
+                    {
+                        var learnTasks = new List<Task>();
+
+                        if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() && GV.matcherLLM != null)
+                            learnTasks.Add(Task.Run(() => GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm)));
+
+                        if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() && GV.matcherRLM != null)
+                            learnTasks.Add(Task.Run(() => GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm)));
+
+                        if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() && GV.matcherLHW != null)
+                            learnTasks.Add(Task.Run(() => GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm)));
+
+                        if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() && GV.matcherRHW != null)
+                            learnTasks.Add(Task.Run(() => GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm)));
+
+                        try
+                        {
+                            await Task.WhenAll(learnTasks.ToArray());
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Matcher learn tasks error: " + ex.Message);
+                        }
+                    }
+
+                    // 3) 取得 ClassList 並更新 UI
+                    try
+                    {
+                        var classList = GV.AIClassList?.GetClassList();
+                        if (classList != null && IsHandleCreated && !IsDisposed)
+                        {
+                            this.BeginInvoke(new Action(() => UpdateClassList(classList)));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("GetClassList failed: " + ex.Message);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Background init failed: " + ex.Message);
+                }
+            });
+
+            Debug.WriteLine("CMLearnPatternBack.CMLearnPattern_Load completed (UI ready, bg work started)");
         }
         private void LocationUpdateTimer_Tick(object sender, EventArgs e)
         {
@@ -537,10 +931,19 @@ namespace NSAA_16Axis
             {
                 if (this.InvokeRequired)
                 {
-                    this.Invoke(new Action(UpdateCurrentLocationUI));
+                    //this.Invoke(new Action(UpdateCurrentLocationUI));
+                    //return;
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        // 檢查是否已取消或控制項已釋放
+                        if (_updateUICts?.Token.IsCancellationRequested ?? true)
+                            return;
+
+                        UpdateCurrentLocationUI();
+                    }));
                     return;
                 }
-
+                if (_updateUICts?.Token.IsCancellationRequested ?? false) return;
                 int[] nowLocation = GV.NowLocation;
 
                 //  將 PLC 數值除以 10 後顯示 - WEC Location 現在位置
@@ -570,26 +973,56 @@ namespace NSAA_16Axis
             {
                 if (this.InvokeRequired)
                 {
-                    this.Invoke(new Action(UpdateTargetPositionDisplay));
+                    //this.Invoke(new Action(UpdateTargetPositionDisplay));
+                    //return;
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        // 檢查是否已取消或控制項已釋放
+                        if (_updateUICts?.Token.IsCancellationRequested ?? true)
+                            return;
+
+                        UpdateTargetPositionDisplay();
+                    }));
                     return;
                 }
-
+                if (_updateUICts?.Token.IsCancellationRequested ?? false) return;
                 if (_recipe == null) return;
 
-                // 顯示 WEC Location 目標位置 (從 LowerWECPos)
-                nudWriteChuckX.Text = _recipe.LowerWECPos.X.ToString("F0");
-                nudWriteChuckY1.Text = _recipe.LowerWECPos.Y.ToString("F0");
-                nudWriteChuckY2.Text = _recipe.LowerWECPos.A.ToString("F0");
-                nudWriteChuckZ.Text = _recipe.LowerWECPos.Z.ToString("F0"); // 如果有對應欄位請調整
+                //// 顯示 WEC Location 目標位置 (從 LowerWECPos)
+                //nudWriteChuckX.Text = _recipe.LowerWECPos.X.ToString("F0");
+                //nudWriteChuckY1.Text = _recipe.LowerWECPos.Y.ToString("F0");
+                //nudWriteChuckY2.Text = _recipe.LowerWECPos.A.ToString("F0");
+                //nudWriteChuckZ.Text = _recipe.LowerWECPos.Z.ToString("F0"); // 如果有對應欄位請調整
 
-                // 顯示 CCD Location 目標位置 (從 LowerMPosition)
-                nudWriteBackLeftX.Text = _recipe.LowerMPosition.XL.ToString("F0");
-                nudWriteBackLeftY.Text = _recipe.LowerMPosition.YL.ToString("F0");
-                nudWriteBackLeftZ.Text = _recipe.LowerMPosition.ZL.ToString("F0");
-                nudWriteBackRightX.Text = _recipe.LowerMPosition.XR.ToString("F0");
-                nudWriteBackRightY.Text = _recipe.LowerMPosition.YR.ToString("F0");
-                nudWriteBackRightZ.Text = _recipe.LowerMPosition.ZR.ToString("F0");
-                nudWriteUpBigY.Text = "0"; // 如果有對應欄位請調整
+                //// 顯示 CCD Location 目標位置 (從 LowerMPosition)
+                //nudWriteBackLeftX.Text = _recipe.LowerMPosition.XL.ToString("F0");
+                //nudWriteBackLeftY.Text = _recipe.LowerMPosition.YL.ToString("F0");
+                //nudWriteBackLeftZ.Text = _recipe.LowerMPosition.ZL.ToString("F0");
+                //nudWriteBackRightX.Text = _recipe.LowerMPosition.XR.ToString("F0");
+                //nudWriteBackRightY.Text = _recipe.LowerMPosition.YR.ToString("F0");
+                //nudWriteBackRightZ.Text = _recipe.LowerMPosition.ZR.ToString("F0");
+                //nudWriteUpBigY.Text = "0"; // 如果有對應欄位請調整
+                try
+                {
+                    // 顯示 WEC Location 目標位置 (從 LowerWECPos)
+                    nudWriteChuckX.Text = _recipe.LowerWECPos.X.ToString("F0");
+                    nudWriteChuckY1.Text = _recipe.LowerWECPos.Y.ToString("F0");
+                    nudWriteChuckY2.Text = _recipe.LowerWECPos.A.ToString("F0");
+                    nudWriteChuckZ.Text = _recipe.LowerWECPos.Z.ToString("F0");
+
+                    // 顯示 CCD Location 目標位置 (從 LowerMPosition)
+                    nudWriteBackLeftX.Text = _recipe.LowerMPosition.XL.ToString("F0");
+                    nudWriteBackLeftY.Text = _recipe.LowerMPosition.YL.ToString("F0");
+                    nudWriteBackLeftZ.Text = _recipe.LowerMPosition.ZL.ToString("F0");
+                    nudWriteBackRightX.Text = _recipe.LowerMPosition.XR.ToString("F0");
+                    nudWriteBackRightY.Text = _recipe.LowerMPosition.YR.ToString("F0");
+                    nudWriteBackRightZ.Text = _recipe.LowerMPosition.ZR.ToString("F0");
+                    nudWriteUpBigY.Text = "0";
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"UpdateTargetPositionDisplay inner error: {ex.Message}");
+                }
             }
             catch (Exception ex)
             {
@@ -631,331 +1064,7 @@ namespace NSAA_16Axis
                 MessageBox.Show($"更新失敗: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        //public void DrawMatchPosition()
-        //{
-
-        //    while (!GV.AppEnding)
-        //    {
-        //        while (GV.TabOption == GV.Tab.BackLearn)
-        //        {
-        //            if (GV.AppSettingParm.Emulation == true || GV.matcherLLM == null)
-        //            {
-        //                Thread.Sleep(2000);
-        //                continue;
-        //            }   
-        //            Mat leftImageSrc = GV.LeftBackCam.IsFileImage ? LViewMat : GV.LeftBackCam.Grab();
-        //            Mat rightImageSrc = GV.RightBackCam.IsFileImage ? RViewMat : GV.RightBackCam.Grab();
-        //            using (Mat leftImage = leftImageSrc?.Clone())
-        //            using (Mat rightImage = rightImageSrc?.Clone())
-        //            {
-        //                int lWaferClassId = _AlignC.LHWaferAIClassId;
-        //                int rWaferClassId = _AlignC.RHWaferAIClassId;
-        //                int lMaskClassId = _AlignC.LLMaskAIClassId;
-        //                int rMaskClassId = _AlignC.RLMaskAIClassId;
-        //                //if (rbLBackMask.Checked)
-        //                //{
-
-        //                //    Invoke((MethodInvoker)delegate ()
-        //                //    {
-        //                //        if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLBackWaferClassList.SelectedIndex >= 0)
-        //                //        {
-        //                //            lWaferClassId = cbLBackWaferClassList.SelectedIndex;
-        //                //        }
-        //                //        if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRBackWaferClassList.SelectedIndex >= 0)
-        //                //        {
-        //                //            rWaferClassId = cbRBackWaferClassList.SelectedIndex;
-        //                //        }
-        //                //        if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLBackMaskClassList.SelectedIndex >= 0)
-        //                //        {
-        //                //            lMaskClassId = cbLBackMaskClassList.SelectedIndex;
-        //                //        }
-        //                //        if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRBackMaskClassList.SelectedIndex >= 0)
-        //                //        {
-        //                //            rMaskClassId = cbRBackMaskClassList.SelectedIndex;
-        //                //        }
-        //                //    });
-        //                //    //GV.matcherLLW.MatMatchWithAlgo(0, leftImage, ref lMaskMp, _AlignC.LLWaferAlgorithm);
-        //                //    //GV.matcherRLW.MatMatchWithAlgo(0, rightImage, ref rMaskMp, _AlignC.RLWaferAlgorithm);
-        //                //    if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                //    {
-        //                //        GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm, lMaskClassId);
-        //                //    }
-        //                //    else
-        //                //    {
-        //                //        GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm);
-        //                //    }
-
-        //                //    if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                //    {
-        //                //        GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm, rMaskClassId);
-        //                //    }
-        //                //    else
-        //                //    {
-        //                //        GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm);
-        //                //    }
-
-        //                //    if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                //    {
-        //                //        GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm, lWaferClassId);
-        //                //    }
-        //                //    else
-        //                //    {
-        //                //        GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm);
-        //                //    }
-
-        //                //    if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                //    {
-        //                //        GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm, rWaferClassId);
-        //                //    }
-        //                //    else
-        //                //    {
-        //                //        GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm);
-        //                //    }
-        //                //}
-        //                //else if(rbLWafer.Checked)
-        //                //{
-        //                //    Invoke((MethodInvoker)delegate ()
-        //                //    {
-        //                //        if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLBackWaferClassList.SelectedIndex >= 0)
-        //                //        {
-        //                //            lWaferClassId = cbLBackWaferClassList.SelectedIndex;
-        //                //        }
-        //                //        if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRBackWaferClassList.SelectedIndex >= 0)
-        //                //        {
-        //                //            rWaferClassId = cbRBackWaferClassList.SelectedIndex;
-        //                //        }
-        //                //        if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLBackMaskClassList.SelectedIndex >= 0)
-        //                //        {
-        //                //            lMaskClassId = cbLBackMaskClassList.SelectedIndex;
-        //                //        }
-        //                //        if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRBackMaskClassList.SelectedIndex >= 0)
-        //                //        {
-        //                //            rMaskClassId = cbRBackMaskClassList.SelectedIndex;
-        //                //        }
-        //                //    });
-        //                //    if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                //    {
-        //                //        GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm,lMaskClassId);
-        //                //    }
-        //                //    else
-        //                //    {
-        //                //        GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm);
-        //                //    }
-        //                //    if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                //    {
-        //                //        GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm,rMaskClassId);
-        //                //    }
-        //                //    else
-        //                //    {
-        //                //        GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm);
-        //                //    }
-        //                //    if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                //    {
-        //                //        GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm,lWaferClassId);
-        //                //    }
-        //                //    else
-        //                //    {
-        //                //        GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm);
-        //                //    }
-        //                //    if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                //    {
-        //                //        GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm,rWaferClassId);
-        //                //    }
-        //                //    else
-        //                //    {
-        //                //        GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm);
-        //                //    }
-        //                //}
-        //                if (rbLBackMask.Checked || rbLWafer.Checked)
-        //                {
-        //                    Invoke((MethodInvoker)delegate ()
-        //                    {
-        //                        if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLBackWaferClassList.SelectedIndex >= 0)
-        //                        {
-        //                            lWaferClassId = cbLBackWaferClassList.SelectedIndex;
-        //                        }
-        //                        if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRBackWaferClassList.SelectedIndex >= 0)
-        //                        {
-        //                            rWaferClassId = cbRBackWaferClassList.SelectedIndex;
-        //                        }
-        //                        if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLBackMaskClassList.SelectedIndex >= 0)
-        //                        {
-        //                            lMaskClassId = cbLBackMaskClassList.SelectedIndex;
-        //                        }
-        //                        if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRBackMaskClassList.SelectedIndex >= 0)
-        //                        {
-        //                            rMaskClassId = cbRBackMaskClassList.SelectedIndex;
-        //                        }
-        //                    });
-
-        //                    //  左下光罩搜尋（支援多十字 ROI）
-        //                    if (_AlignC.LLMaskROI.Width > 0 && _AlignC.LLMaskROI.Height > 0)
-        //                    {
-        //                        // 多十字模式：只在指定 ROI 區域搜尋
-        //                        Mat leftMaskROI = new Mat(LeftMaskMat, _AlignC.LLMaskROI);
-        //                        MatchPosition tempMp = new MatchPosition();
-
-        //                        if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                        {
-        //                            GV.matcherLLM.MatMatchWithAlgo(0, leftMaskROI, ref tempMp, _AlignC.LLMaskAlgorithm, lMaskClassId);
-        //                        }
-        //                        else
-        //                        {
-        //                            GV.matcherLLM.MatMatchWithAlgo(0, leftMaskROI, ref tempMp, _AlignC.LLMaskAlgorithm);
-        //                        }
-
-        //                        // 將 ROI 相對座標轉換回完整影像座標
-        //                        lMaskMp.X = tempMp.X + _AlignC.LLMaskROI.X;
-        //                        lMaskMp.Y = tempMp.Y + _AlignC.LLMaskROI.Y;
-        //                        lMaskMp.Score = tempMp.Score;
-        //                    }
-        //                    else
-        //                    {
-        //                        // 單十字模式：全影像搜尋
-        //                        if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                        {
-        //                            GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm, lMaskClassId);
-        //                        }
-        //                        else
-        //                        {
-        //                            GV.matcherLLM.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLMaskAlgorithm);
-        //                        }
-        //                    }
-
-        //                    //  右下光罩搜尋（支援多十字 ROI）
-        //                    if (_AlignC.RLMaskROI.Width > 0 && _AlignC.RLMaskROI.Height > 0)
-        //                    {
-        //                        Mat rightMaskROI = new Mat(RightMaskMat, _AlignC.RLMaskROI);
-        //                        MatchPosition tempMp = new MatchPosition();
-
-        //                        if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                        {
-        //                            GV.matcherRLM.MatMatchWithAlgo(0, rightMaskROI, ref tempMp, _AlignC.RLMaskAlgorithm, rMaskClassId);
-        //                        }
-        //                        else
-        //                        {
-        //                            GV.matcherRLM.MatMatchWithAlgo(0, rightMaskROI, ref tempMp, _AlignC.RLMaskAlgorithm);
-        //                        }
-
-        //                        rMaskMp.X = tempMp.X + _AlignC.RLMaskROI.X;
-        //                        rMaskMp.Y = tempMp.Y + _AlignC.RLMaskROI.Y;
-        //                        rMaskMp.Score = tempMp.Score;
-        //                    }
-        //                    else
-        //                    {
-        //                        if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                        {
-        //                            GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm, rMaskClassId);
-        //                        }
-        //                        else
-        //                        {
-        //                            GV.matcherRLM.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLMaskAlgorithm);
-        //                        }
-        //                    }
-
-        //                    //  左下晶圓搜尋（支援多十字 ROI）
-        //                    if (_AlignC.LHWaferROI.Width > 0 && _AlignC.LHWaferROI.Height > 0)
-        //                    {
-        //                        Mat leftWaferROI = new Mat(leftImage, _AlignC.LHWaferROI);
-        //                        MatchPosition tempMp = new MatchPosition();
-
-        //                        if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                        {
-        //                            GV.matcherLHW.MatMatchWithAlgo(0, leftWaferROI, ref tempMp, _AlignC.LHWaferAlgorithm, lWaferClassId);
-        //                        }
-        //                        else
-        //                        {
-        //                            GV.matcherLHW.MatMatchWithAlgo(0, leftWaferROI, ref tempMp, _AlignC.LHWaferAlgorithm);
-        //                        }
-
-        //                        lWaferMp.X = tempMp.X + _AlignC.LHWaferROI.X;
-        //                        lWaferMp.Y = tempMp.Y + _AlignC.LHWaferROI.Y;
-        //                        lWaferMp.Score = tempMp.Score;
-        //                    }
-        //                    else
-        //                    {
-        //                        if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                        {
-        //                            GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm, lWaferClassId);
-        //                        }
-        //                        else
-        //                        {
-        //                            GV.matcherLHW.MatMatchWithAlgo(0, leftImage, ref lWaferMp, _AlignC.LHWaferAlgorithm);
-        //                        }
-        //                    }
-
-        //                    //  右下晶圓搜尋（支援多十字 ROI）
-        //                    if (_AlignC.RHWaferROI.Width > 0 && _AlignC.RHWaferROI.Height > 0)
-        //                    {
-        //                        Mat rightWaferROI = new Mat(rightImage, _AlignC.RHWaferROI);
-        //                        MatchPosition tempMp = new MatchPosition();
-
-        //                        if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                        {
-        //                            GV.matcherRHW.MatMatchWithAlgo(0, rightWaferROI, ref tempMp, _AlignC.RHWaferAlgorithm, rWaferClassId);
-        //                        }
-        //                        else
-        //                        {
-        //                            GV.matcherRHW.MatMatchWithAlgo(0, rightWaferROI, ref tempMp, _AlignC.RHWaferAlgorithm);
-        //                        }
-
-        //                        rWaferMp.X = tempMp.X + _AlignC.RHWaferROI.X;
-        //                        rWaferMp.Y = tempMp.Y + _AlignC.RHWaferROI.Y;
-        //                        rWaferMp.Score = tempMp.Score;
-        //                    }
-        //                    else
-        //                    {
-        //                        if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-        //                        {
-        //                            GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm, rWaferClassId);
-        //                        }
-        //                        else
-        //                        {
-        //                            GV.matcherRHW.MatMatchWithAlgo(0, rightImage, ref rWaferMp, _AlignC.RHWaferAlgorithm);
-        //                        }
-        //                    }
-        //                }
-        //                BLivePmps.LMaskMp = lMaskMp;
-        //                BLivePmps.LWaferMp = lWaferMp;
-        //                BLivePmps.RMaskMp = rMaskMp;
-        //                BLivePmps.RWaferMp = rWaferMp;
-        //                Invoke((MethodInvoker)delegate ()
-        //                {
-        //                    skLeft.MaskMp = lMaskMp;
-        //                    skLeft.WaferMp = lWaferMp;
-        //                    skRight.MaskMp = rMaskMp;
-        //                    skRight.WaferMp = rWaferMp;
-        //                    //skLeft.MaskMp = new MatchPosition { X = lMaskMp.X, Y = lMaskMp.Y, Score = lMaskMp.Score };
-        //                    //skLeft.WaferMp = new MatchPosition { X = lWaferMp.X, Y = lWaferMp.Y, Score = lWaferMp.Score };
-        //                    //skRight.MaskMp = new MatchPosition { X = rMaskMp.X, Y = rMaskMp.Y, Score = rMaskMp.Score };
-        //                    //skRight.WaferMp = new MatchPosition { X = rWaferMp.X, Y = rWaferMp.Y, Score = rWaferMp.Score };
-        //                    double dLX = lMaskMp.X - lWaferMp.X;
-        //                    double dLY = lMaskMp.Y - lWaferMp.Y;
-        //                    double dRX = rMaskMp.X - rWaferMp.X;
-        //                    double dRY = rMaskMp.Y - rWaferMp.Y;
-
-        //                    string msgLM = string.Format("LMX = {0:N3}, LMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
-        //                        lMaskMp.X, lMaskMp.Y, dLX, dLY, lMaskMp.Score);
-        //                    string msgLW = string.Format("LWX = {0:N3}, LWY = {1:N3}, WScore = {2:N2}",
-        //                        lWaferMp.X, lWaferMp.Y, lWaferMp.Score);
-        //                    string msgRM = string.Format("RMX = {0:N3}, RMY = {1:N3}, dX = {2:N3}, dY = {3:N3}, MScore = {4:N2}",
-        //                        rMaskMp.X, rMaskMp.Y, dRX, dRY, rMaskMp.Score);
-        //                    string msgRW = string.Format("RWX = {0:N3}, RWY = {1:N3}, WScore = {2:N2}",
-        //                        rWaferMp.X, rWaferMp.Y, rWaferMp.Score);
-
-        //                    lbLeftXYM.Text = msgLM;
-        //                    lbRightXYM.Text = msgRM;
-        //                    lbLeftXYW.Text = msgLW;
-        //                    lbRightXYW.Text = msgRW;
-
-        //                    Update();
-        //                });
-        //            }
-        //            Thread.Sleep(250);
-        //        }
-        //        Thread.Sleep(1000);
-        //    }
-        //}
+        
         public void DrawMatchPosition()
         {
             while (!GV.AppEnding)
@@ -1074,20 +1183,22 @@ namespace NSAA_16Axis
                 Thread.Sleep(1000);
             }
         }
+
         //public void UpdateUI()
         //{
+        //    //   同步執行快速的初始化操作
         //    if ((GV.NowRecipeNumber < 1) || (GV.NowRecipeNumber > 100))
         //    {
         //        GV.NowRecipeNumber = 1;
-
         //    }
 
         //    EditRecipe = GV.NowRecipeNumber;
-
         //    ChangeRecipe();
 
+        //    //   更新標籤（UI 操作，必須在 UI 執行緒）
         //    lbRecipeNumber.Text = GV.Dlang.strRecipeNumber + EditRecipe.ToString();
-        //    //GV.HwndFormMain.writeStatus(lbRecipeNumber.Text + "  " + GV.NowRecipeNumber + "  " + EditRecipe.ToString());
+
+        //    //   清空舊影像
         //    pbLTopMask.Image = null;
         //    pbLBackMask.Image = null;
         //    pbLWafer.Image = null;
@@ -1095,523 +1206,592 @@ namespace NSAA_16Axis
         //    pbRBackMask.Image = null;
         //    pbRWafer.Image = null;
 
-        //    //    if (rBLowMagnification.Checked)
-        //    //    {
-        //    //        if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() &&
-        //    //    _recipe.LeftLowMaskMat.Width > 0 && _recipe.LeftLowMaskMat.Height > 0)
-        //    //        {
-        //    //            try
-        //    //            {
-        //    //                pbLBackMask.Image = _recipe.LeftLowMaskMat.ToBitmap();
-        //    //            }
-        //    //            catch 
-        //    //            {
-
-        //    //            }
-        //    //        }
-
-        //    //        if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() &&
-        //    //            _recipe.RightLowMaskMat.Width > 0 && _recipe.RightLowMaskMat.Height > 0)
-        //    //        {
-        //    //            try
-        //    //            {
-        //    //                pbRBackMask.Image = _recipe.RightLowMaskMat.ToBitmap();
-        //    //            }
-        //    //            catch 
-        //    //            {
-
-        //    //            }
-        //    //        }
-        //    //        cbLTopMaskAlgo.SelectedIndex = (int)_AlignC.LLMaskAlgorithm;
-        //    //        cbRTopMaskAlgo.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        if (_recipe.LeftHighMaskMat != null && !_recipe.LeftHighMaskMat.Empty() &&
-        //    //    _recipe.LeftHighMaskMat.Width > 0 && _recipe.LeftHighMaskMat.Height > 0)
-        //    //        {
-        //    //            try
-        //    //            {
-        //    //                pbLTopMask.Image = _recipe.LeftHighMaskMat.ToBitmap();
-        //    //            }
-        //    //            catch 
-        //    //            {
-        //    //            }
-        //    //        }
-
-        //    //        if (_recipe.RightHighMaskMat != null && !_recipe.RightHighMaskMat.Empty() &&
-        //    //            _recipe.RightHighMaskMat.Width > 0 && _recipe.RightHighMaskMat.Height > 0)
-        //    //        {
-        //    //            try
-        //    //            {
-        //    //                pbRTopMask.Image = _recipe.RightHighMaskMat.ToBitmap();
-        //    //            }
-        //    //            catch 
-        //    //            {
-        //    //            }
-        //    //        }
-
-        //    //        cbLTopMaskAlgo.SelectedIndex = (int)_AlignC.LHMaskAlgorithm;
-        //    //        cbRTopMaskAlgo.SelectedIndex = (int)_AlignC.RHMaskAlgorithm;
-        //    //    }
-
-        //    //    if (_recipe.LeftLowWaferMat != null && !_recipe.LeftLowWaferMat.Empty() &&
-        //    //_recipe.LeftLowWaferMat.Width > 0 && _recipe.LeftLowWaferMat.Height > 0)
-        //    //    {
-        //    //        try
-        //    //        {
-        //    //            pbLBackMask.Image = _recipe.LeftLowMaskMat.ToBitmap();
-        //    //        }
-        //    //        catch 
-        //    //        { 
-        //    //        }
-        //    //        //using(var bitmap=_recipe.LeftLowMaskMat.ToBitmap())
-        //    //        //{
-        //    //        //    pbLBackMask.Image?.Dispose();
-        //    //        //    pbLBackMask.Image =(Bitmap)bitmap.Clone();
-        //    //        //}
-        //    //    }
-
-        //    //    if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() &&
-        //    //        _recipe.LeftHighWaferMat.Width > 0 && _recipe.LeftHighWaferMat.Height > 0)
-        //    //    {
-        //    //        try
-        //    //        {
-        //    //            pbLWafer.Image = _recipe.LeftHighWaferMat.ToBitmap();
-        //    //        }
-        //    //        catch 
-        //    //        {
-        //    //        }
-        //    //        //using (var bitmap = _recipe.LeftHighWaferMat.ToBitmap())
-        //    //        //{
-        //    //        //    pbLWafer.Image?.Dispose();
-        //    //        //    pbLWafer.Image = (Bitmap)bitmap.Clone();
-        //    //        //}
-        //    //    }
-
-        //    //    if (_recipe.RightLowWaferMat != null && !_recipe.RightLowWaferMat.Empty() &&
-        //    //        _recipe.RightLowWaferMat.Width > 0 && _recipe.RightLowWaferMat.Height > 0)
-        //    //    {
-        //    //        try
-        //    //        {
-        //    //            pbRBackMask.Image = _recipe.RightLowMaskMat.ToBitmap();
-        //    //        }
-        //    //        catch 
-        //    //        {
-        //    //        }
-        //    //        //using (var bitmap = _recipe.RightLowMaskMat.ToBitmap())
-        //    //        //{
-        //    //        //    pbRBackMask.Image?.Dispose();
-        //    //        //    pbRBackMask.Image = (Bitmap)bitmap.Clone();
-        //    //        //}
-        //    //    }
-
-        //    //    if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() &&
-        //    //        _recipe.RightHighWaferMat.Width > 0 && _recipe.RightHighWaferMat.Height > 0)
-        //    //    {
-        //    //        try
-        //    //        {
-        //    //            pbRWafer.Image = _recipe.RightHighWaferMat.ToBitmap();
-        //    //        }
-        //    //        catch 
-        //    //        {
-        //    //        }
-        //    //        //using (var bitmap = _recipe.RightHighWaferMat.ToBitmap())
-        //    //        //{
-        //    //        //    pbRWafer.Image?.Dispose();
-        //    //        //    pbRWafer.Image = (Bitmap)bitmap.Clone();
-        //    //        //}
-        //    //    }
-
+        //    //   背景執行耗時操作
         //    _ = Task.Run(() =>
         //    {
-        //    try
-        //    {
-        //        Bitmap leftBackMask = null;
-        //        Bitmap leftWafer = null;
-        //        Bitmap rightBackMask = null;
-        //        Bitmap rightWafer = null;
+        //        try
+        //        {
+        //            // ============================================
+        //            // 階段 1: 並行處理影像轉換（耗時操作）
+        //            // ============================================
+        //            Bitmap leftBackMask = null;
+        //            Bitmap leftWafer = null;
+        //            Bitmap rightBackMask = null;
+        //            Bitmap rightWafer = null;
 
-        //        Parallel.Invoke
-        //            (
-        //            () =>
-        //            {
-        //                if (rBLowMagnification.Checked)
+        //            //   使用 Parallel.Invoke 並行執行影像處理
+        //            Parallel.Invoke(
+        //                // 任務 1: 處理左下光罩影像
+        //                () =>
         //                {
-        //                    //  左下光罩 - 顯示帶綠點的預覽影像
         //                    if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() &&
         //                        _recipe.LeftLowMaskMat.Width > 0 && _recipe.LeftLowMaskMat.Height > 0)
         //                    {
         //                        try
         //                        {
-        //                            pbLBackMask.Image?.Dispose();
-
-        //                            //  檢查是否為多十字模式（偏移量不為 0）
         //                            if (_AlignC.LLMaskOffsetX != 0 || _AlignC.LLMaskOffsetY != 0)
         //                            {
-        //                                //  多十字模式：產生帶綠點的預覽影像
-        //                                pbLBackMask.Image = CreatePreviewWithGreenDot(
+        //                                leftBackMask = CreatePreviewWithGreenDot(
         //                                    _recipe.LeftLowMaskMat,
         //                                    _AlignC.LLMaskOffsetX,
-        //                                    _AlignC.LLMaskOffsetY
-        //                                );
+        //                                    _AlignC.LLMaskOffsetY);
         //                            }
         //                            else
         //                            {
-        //                                //  單十字模式：顯示原始灰階影像
-        //                                pbLBackMask.Image = _recipe.LeftLowMaskMat.ToBitmap();
+        //                                leftBackMask = _recipe.LeftLowMaskMat.ToBitmap();
         //                            }
         //                        }
-        //                        catch
+        //                        catch (Exception ex)
         //                        {
+        //                            Debug.WriteLine($"LeftLowMaskMat processing error: {ex.Message}");
         //                        }
         //                    }
+        //                },
 
-        //                    //  右下光罩 - 顯示帶綠點的預覽影像
+        //                // 任務 2: 處理左下晶圓影像
+        //                () =>
+        //                {
+        //                    if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() &&
+        //                        _recipe.LeftHighWaferMat.Width > 0 && _recipe.LeftHighWaferMat.Height > 0)
+        //                    {
+        //                        try
+        //                        {
+        //                            if (_AlignC.LHWaferOffsetX != 0 || _AlignC.LHWaferOffsetY != 0)
+        //                            {
+        //                                leftWafer = CreatePreviewWithGreenDot(
+        //                                    _recipe.LeftHighWaferMat,
+        //                                    _AlignC.LHWaferOffsetX,
+        //                                    _AlignC.LHWaferOffsetY);
+        //                            }
+        //                            else
+        //                            {
+        //                                leftWafer = _recipe.LeftHighWaferMat.ToBitmap();
+        //                            }
+        //                        }
+        //                        catch (Exception ex)
+        //                        {
+        //                            Debug.WriteLine($"LeftHighWaferMat processing error: {ex.Message}");
+        //                        }
+        //                    }
+        //                },
+
+        //                // 任務 3: 處理右下光罩影像
+        //                () =>
+        //                {
         //                    if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() &&
         //                        _recipe.RightLowMaskMat.Width > 0 && _recipe.RightLowMaskMat.Height > 0)
         //                    {
         //                        try
         //                        {
-        //                            pbRBackMask.Image?.Dispose();
-
         //                            if (_AlignC.RLMaskOffsetX != 0 || _AlignC.RLMaskOffsetY != 0)
         //                            {
-        //                                pbRBackMask.Image = CreatePreviewWithGreenDot(
+        //                                rightBackMask = CreatePreviewWithGreenDot(
         //                                    _recipe.RightLowMaskMat,
         //                                    _AlignC.RLMaskOffsetX,
-        //                                    _AlignC.RLMaskOffsetY
-        //                                );
+        //                                    _AlignC.RLMaskOffsetY);
         //                            }
         //                            else
         //                            {
-        //                                pbRBackMask.Image = _recipe.RightLowMaskMat.ToBitmap();
+        //                                rightBackMask = _recipe.RightLowMaskMat.ToBitmap();
         //                            }
         //                        }
-        //                        catch
+        //                        catch (Exception ex)
         //                        {
+        //                            Debug.WriteLine($"RightLowMaskMat processing error: {ex.Message}");
         //                        }
         //                    }
-        //                    cbLTopMaskAlgo.SelectedIndex = (int)_AlignC.LLMaskAlgorithm;
-        //                    cbRTopMaskAlgo.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
-        //                }
-        //                else
+        //                },
+
+        //                // 任務 4: 處理右下晶圓影像
+        //                () =>
         //                {
-        //                    if (_recipe.LeftHighMaskMat != null && !_recipe.LeftHighMaskMat.Empty() &&
-        //                        _recipe.LeftHighMaskMat.Width > 0 && _recipe.LeftHighMaskMat.Height > 0)
+        //                    if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() &&
+        //                        _recipe.RightHighWaferMat.Width > 0 && _recipe.RightHighWaferMat.Height > 0)
         //                    {
         //                        try
         //                        {
-        //                            pbLTopMask.Image = _recipe.LeftHighMaskMat.ToBitmap();
+        //                            if (_AlignC.RHWaferOffsetX != 0 || _AlignC.RHWaferOffsetY != 0)
+        //                            {
+        //                                rightWafer = CreatePreviewWithGreenDot(
+        //                                    _recipe.RightHighWaferMat,
+        //                                    _AlignC.RHWaferOffsetX,
+        //                                    _AlignC.RHWaferOffsetY);
+        //                            }
+        //                            else
+        //                            {
+        //                                rightWafer = _recipe.RightHighWaferMat.ToBitmap();
+        //                            }
         //                        }
-        //                        catch
+        //                        catch (Exception ex)
         //                        {
+        //                            Debug.WriteLine($"RightHighWaferMat processing error: {ex.Message}");
         //                        }
         //                    }
-
-        //                    if (_recipe.RightHighMaskMat != null && !_recipe.RightHighMaskMat.Empty() &&
-        //                        _recipe.RightHighMaskMat.Width > 0 && _recipe.RightHighMaskMat.Height > 0)
-        //                    {
-        //                        try
-        //                        {
-        //                            pbRTopMask.Image = _recipe.RightHighMaskMat.ToBitmap();
-        //                        }
-        //                        catch
-        //                        {
-        //                        }
-        //                    }
-
-        //                    cbLTopMaskAlgo.SelectedIndex = (int)_AlignC.LHMaskAlgorithm;
-        //                    cbRTopMaskAlgo.SelectedIndex = (int)_AlignC.RHMaskAlgorithm;
         //                }
+        //            );
 
-        //                //  左下晶圓 - 顯示帶綠點的預覽影像
+        //            // ============================================
+        //            // 階段 2: 回到 UI 執行緒更新控件
+        //            // ============================================
+        //            this.BeginInvoke(new Action(() =>
+        //            {
+        //                try
+        //                {
+        //                    //   更新 PictureBox 影像
+        //                    if (leftBackMask != null)
+        //                    {
+        //                        pbLBackMask.Image?.Dispose();
+        //                        pbLBackMask.Image = leftBackMask;
+        //                    }
+
+        //                    if (leftWafer != null)
+        //                    {
+        //                        pbLWafer.Image?.Dispose();
+        //                        pbLWafer.Image = leftWafer;
+        //                    }
+
+        //                    if (rightBackMask != null)
+        //                    {
+        //                        pbRBackMask.Image?.Dispose();
+        //                        pbRBackMask.Image = rightBackMask;
+        //                    }
+
+        //                    if (rightWafer != null)
+        //                    {
+        //                        pbRWafer.Image?.Dispose();
+        //                        pbRWafer.Image = rightWafer;
+        //                    }
+
+        //                    //   更新 ComboBox
+        //                    cbLBackMaskAlgo.SelectedIndex = (int)_AlignC.LLMaskAlgorithm;
+        //                    cbLWaferAlgo.SelectedIndex = (int)_AlignC.LHWaferAlgorithm;
+        //                    cbRBackMaskAlgo.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
+        //                    cbRWaferAlgo.SelectedIndex = (int)_AlignC.RHWaferAlgorithm;
+
+        //                    //   設定 AI ClassId
+        //                    if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
+        //                    {
+        //                        SetComboBoxByClassId(cbLBackMaskClassList, _AlignC.LLMaskAIClassId);
+        //                    }
+        //                    else
+        //                    {
+        //                        cbLBackMaskClassList.SelectedIndex = -1;
+        //                    }
+
+        //                    if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0)
+        //                    {
+        //                        SetComboBoxByClassId(cbRBackMaskClassList, _AlignC.RLMaskAIClassId);
+        //                    }
+        //                    else
+        //                    {
+        //                        cbRBackMaskClassList.SelectedIndex = -1;
+        //                    }
+
+        //                    if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0)
+        //                    {
+        //                        SetComboBoxByClassId(cbLBackWaferClassList, _AlignC.LHWaferAIClassId);
+        //                    }
+        //                    else
+        //                    {
+        //                        cbLBackWaferClassList.SelectedIndex = -1;
+        //                    }
+
+        //                    if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId >= 0)
+        //                    {
+        //                        SetComboBoxByClassId(cbRBackWaferClassList, _AlignC.RHWaferAIClassId);
+        //                    }
+        //                    else
+        //                    {
+        //                        cbRBackWaferClassList.SelectedIndex = -1;
+        //                    }
+
+        //                    //   更新 TrackBar 和 Alpha 值
+        //                    int iL = (int)(_AlignC.dLalpha * 100);
+        //                    if (iL > 100) iL = 100;
+        //                    if (iL < 0) iL = 0;
+        //                    int iR = (int)(_AlignC.dRalpha * 100);
+        //                    if (iR > 100) iR = 100;
+        //                    if (iR < 0) iR = 0;
+
+        //                    iLalpha = iL;
+        //                    iRalpha = iR;
+
+        //                    tBLShowImage.Value = iLalpha;
+        //                    tBRShowImage.Value = iRalpha;
+
+        //                    _dLalpha = (double)tBLShowImage.Value / 100;
+        //                    _dRalpha = (double)tBRShowImage.Value / 100;
+
+        //                    //   設定 ShowMask
+        //                    if (rbLTopMask.Checked == false)
+        //                    {
+        //                        skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
+        //                        skRight.SetShowMask(true, _dRalpha, RightMaskMat);
+        //                    }
+        //                    else
+        //                    {
+        //                        skLeft.SetShowMask(false, 0, LeftMaskMat);
+        //                        skRight.SetShowMask(false, 0, RightMaskMat);
+        //                    }
+
+        //                    //   更新按鈕 Enabled 狀態
+        //                    UpdateButtonStates();
+
+        //                    //   更新光源亮度（非 UI 操作，可以直接執行）
+        //                    UpdateLightBrightness();
+
+        //                    //   最後更新
+        //                    Update();
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    Debug.WriteLine($"UpdateUI BeginInvoke error: {ex.Message}");
+        //                }
+        //            }));
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Debug.WriteLine($"UpdateUI Task.Run error: {ex.Message}");
+        //        }
+        //    });
+        //}
+        //public void UpdateUI()
+        //{
+        //    //   同步執行快速的初始化操作
+        //    if ((GV.NowRecipeNumber < 1) || (GV.NowRecipeNumber > 100))
+        //    {
+        //        GV.NowRecipeNumber = 1;
+        //    }
+
+        //    EditRecipe = GV.NowRecipeNumber;
+        //    ChangeRecipe();
+
+        //    //   更新標籤（UI 操作，必須在 UI 執行緒）
+        //    lbRecipeNumber.Text = GV.Dlang.strRecipeNumber + EditRecipe.ToString();
+
+        //    //   清空舊影像
+        //    pbLTopMask.Image = null;
+        //    pbLBackMask.Image = null;
+        //    pbLWafer.Image = null;
+        //    pbRTopMask.Image = null;
+        //    pbRBackMask.Image = null;
+        //    pbRWafer.Image = null;
+
+        //    //   取消之前的 UpdateUI 工作（如果還在執行）
+        //    _updateUICts?.Cancel();
+        //    _updateUICts = new CancellationTokenSource();
+        //    CancellationToken updateToken = _updateUICts.Token;
+
+        //    //   背景執行耗時操作
+        //    _ = Task.Run(() =>
+        //    {
+        //        try
+        //        {
+        //            //   檢查是否已被取消
+        //            if (updateToken.IsCancellationRequested)
+        //                return;
+
+        //            // ============================================
+        //            // 階段 1: 並行處理影像轉換（耗時操作）
+        //            // ============================================
+        //            Bitmap leftBackMask = null;
+        //            Bitmap leftWafer = null;
+        //            Bitmap rightBackMask = null;
+        //            Bitmap rightWafer = null;
+
+        //            //   使用 Task.WhenAll 替代 Parallel.Invoke，以支持取消機制
+        //            Task task1 = Task.Run(() =>
+        //            {
+        //                //   檢查取消狀態
+        //                if (updateToken.IsCancellationRequested)
+        //                    return;
+
+        //                // 任務 1: 處理左下光罩影像
+        //                if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() &&
+        //                    _recipe.LeftLowMaskMat.Width > 0 && _recipe.LeftLowMaskMat.Height > 0)
+        //                {
+        //                    try
+        //                    {
+        //                        if (_AlignC.LLMaskOffsetX != 0 || _AlignC.LLMaskOffsetY != 0)
+        //                        {
+        //                            leftBackMask = CreatePreviewWithGreenDot(
+        //                                _recipe.LeftLowMaskMat,
+        //                                _AlignC.LLMaskOffsetX,
+        //                                _AlignC.LLMaskOffsetY);
+        //                        }
+        //                        else
+        //                        {
+        //                            leftBackMask = _recipe.LeftLowMaskMat.ToBitmap();
+        //                        }
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        Debug.WriteLine($"LeftLowMaskMat processing error: {ex.Message}");
+        //                    }
+        //                }
+        //            }, updateToken);
+
+        //            Task task2 = Task.Run(() =>
+        //            {
+        //                //   檢查取消狀態
+        //                if (updateToken.IsCancellationRequested)
+        //                    return;
+
+        //                // 任務 2: 處理左下晶圓影像
         //                if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() &&
         //                    _recipe.LeftHighWaferMat.Width > 0 && _recipe.LeftHighWaferMat.Height > 0)
         //                {
         //                    try
         //                    {
-        //                        pbLWafer.Image?.Dispose();
-
         //                        if (_AlignC.LHWaferOffsetX != 0 || _AlignC.LHWaferOffsetY != 0)
         //                        {
-        //                            pbLWafer.Image = CreatePreviewWithGreenDot(
+        //                            leftWafer = CreatePreviewWithGreenDot(
         //                                _recipe.LeftHighWaferMat,
         //                                _AlignC.LHWaferOffsetX,
-        //                                _AlignC.LHWaferOffsetY
-        //                            );
+        //                                _AlignC.LHWaferOffsetY);
         //                        }
         //                        else
         //                        {
-        //                            pbLWafer.Image = _recipe.LeftHighWaferMat.ToBitmap();
+        //                            leftWafer = _recipe.LeftHighWaferMat.ToBitmap();
         //                        }
         //                    }
-        //                    catch
+        //                    catch (Exception ex)
         //                    {
+        //                        Debug.WriteLine($"LeftHighWaferMat processing error: {ex.Message}");
         //                    }
         //                }
+        //            }, updateToken);
 
-        //                //  右下晶圓 - 顯示帶綠點的預覽影像
+        //            Task task3 = Task.Run(() =>
+        //            {
+        //                //   檢查取消狀態
+        //                if (updateToken.IsCancellationRequested)
+        //                    return;
+
+        //                // 任務 3: 處理右下光罩影像
+        //                if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() &&
+        //                    _recipe.RightLowMaskMat.Width > 0 && _recipe.RightLowMaskMat.Height > 0)
+        //                {
+        //                    try
+        //                    {
+        //                        if (_AlignC.RLMaskOffsetX != 0 || _AlignC.RLMaskOffsetY != 0)
+        //                        {
+        //                            rightBackMask = CreatePreviewWithGreenDot(
+        //                                _recipe.RightLowMaskMat,
+        //                                _AlignC.RLMaskOffsetX,
+        //                                _AlignC.RLMaskOffsetY);
+        //                        }
+        //                        else
+        //                        {
+        //                            rightBackMask = _recipe.RightLowMaskMat.ToBitmap();
+        //                        }
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        Debug.WriteLine($"RightLowMaskMat processing error: {ex.Message}");
+        //                    }
+        //                }
+        //            }, updateToken);
+
+        //            Task task4 = Task.Run(() =>
+        //            {
+        //                //   檢查取消狀態
+        //                if (updateToken.IsCancellationRequested)
+        //                    return;
+
+        //                // 任務 4: 處理右下晶圓影像
         //                if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() &&
         //                    _recipe.RightHighWaferMat.Width > 0 && _recipe.RightHighWaferMat.Height > 0)
         //                {
         //                    try
         //                    {
-        //                        pbRWafer.Image?.Dispose();
-
         //                        if (_AlignC.RHWaferOffsetX != 0 || _AlignC.RHWaferOffsetY != 0)
         //                        {
-        //                            pbRWafer.Image = CreatePreviewWithGreenDot(
+        //                            rightWafer = CreatePreviewWithGreenDot(
         //                                _recipe.RightHighWaferMat,
         //                                _AlignC.RHWaferOffsetX,
-        //                                _AlignC.RHWaferOffsetY
-        //                            );
+        //                                _AlignC.RHWaferOffsetY);
         //                        }
         //                        else
         //                        {
-        //                            pbRWafer.Image = _recipe.RightHighWaferMat.ToBitmap();
+        //                            rightWafer = _recipe.RightHighWaferMat.ToBitmap();
         //                        }
         //                    }
-        //                    catch
+        //                    catch (Exception ex)
         //                    {
+        //                        Debug.WriteLine($"RightHighWaferMat processing error: {ex.Message}");
         //                    }
         //                }
-        //            }
-        //            );
+        //            }, updateToken);
 
-
-
-
-        //        _ = Task.Run(async () =>
-        //        {
-
-        //        });
-
-
-        //        cbLBackMaskAlgo.SelectedIndex = (int)_AlignC.LLMaskAlgorithm;
-        //        cbLWaferAlgo.SelectedIndex = (int)_AlignC.LHWaferAlgorithm;
-        //        cbRBackMaskAlgo.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
-        //        cbRWaferAlgo.SelectedIndex = (int)_AlignC.RHWaferAlgorithm;
-        //        _ = Task.Run(async () =>
-        //        {
-        //            if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
+        //            //   等待所有任務完成（非同步）
+        //            try
         //            {
-        //                SetComboBoxByClassId(cbLBackMaskClassList, _AlignC.LLMaskAIClassId);
-        //            }
-        //            else
-        //            {
-        //                cbLBackMaskClassList.SelectedIndex = -1;
-        //            }
-        //            if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0)
-        //            {
-        //                SetComboBoxByClassId(cbRBackMaskClassList, _AlignC.RLMaskAIClassId);
-        //            }
-        //            else
-        //            {
-        //                cbRBackMaskClassList.SelectedIndex = -1;
-        //            }
-        //            if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0)
-        //            {
-        //                SetComboBoxByClassId(cbLBackWaferClassList, _AlignC.LHWaferAIClassId);
-        //            }
-        //            else
-        //            {
-        //                cbLBackWaferClassList.SelectedIndex = -1;
-        //            }
-        //            if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId >= 0)
-        //            {
-        //                SetComboBoxByClassId(cbRBackWaferClassList, _AlignC.RHWaferAIClassId);
-        //            }
-        //            else
-        //            {
-        //                cbRBackWaferClassList.SelectedIndex = -1;
-        //            }
-        //        });
+        //                //Task.WaitAll(new[] { task1, task2, task3, task4 }, updateToken);
+        //                // 改用 Task.WhenAny 或完全非同步回調
+        //                _ = Task.WhenAll(task1, task2, task3, task4)
+        //                    .ContinueWith(t =>
+        //                    {
+        //                        if (t.IsFaulted)
+        //                        {
+        //                            Debug.WriteLine($"[UpdateUI] Error: {t.Exception?.Message}");
+        //                            return;
+        //                        }
 
-        //        int iL = (int)(_AlignC.dLalpha * 100);
-        //        if (iL > 100) iL = 100;
-        //        if (iL < 0) iL = 0;
-        //        int iR = (int)(_AlignC.dRalpha * 100);
-        //        if (iR > 100) iR = 100;
-        //        if (iR < 0) iR = 0;
+        //                        // ✅ 任務完成後才投遞 UI 更新（不阻塞任何執行緒）
+        //                        if (IsHandleCreated && !IsDisposed)
+        //                        {
+        //                            BeginInvoke((MethodInvoker)delegate
+        //                            {
+        //                                if (updateToken.IsCancellationRequested) return;
+        //                                // UI 更新邏輯
+        //                            });
+        //                        }
+        //                    }, TaskScheduler.Default);
+        //            }
+        //            catch (OperationCanceledException)
+        //            {
+        //                Debug.WriteLine("[UpdateUI] 影像處理已被取消");
+        //                return;
+        //            }
 
-        //        iLalpha = iL;
-        //        iRalpha = iR;
+        //            //   檢查是否已被取消（任務完成前被取消）
+        //            if (updateToken.IsCancellationRequested)
+        //                return;
 
-        //        tBLShowImage.Value = iLalpha;
-        //        tBRShowImage.Value = iRalpha;
+        //            // ============================================
+        //            // 階段 2: 回到 UI 執行緒更新控件
+        //            // ============================================
+        //            //   使用 BeginInvoke 非同步更新 UI（不阻塞）
+        //            BeginInvoke((MethodInvoker)delegate ()
+        //            {
+        //                //   再次檢查取消狀態
+        //                if (updateToken.IsCancellationRequested)
+        //                    return;
 
-        //        _dLalpha = (double)tBLShowImage.Value / 100;
-        //        _dRalpha = (double)tBRShowImage.Value / 100;
+        //                try
+        //                {
+        //                    //   更新 PictureBox 影像
+        //                    if (leftBackMask != null)
+        //                    {
+        //                        pbLBackMask.Image?.Dispose();
+        //                        pbLBackMask.Image = leftBackMask;
+        //                    }
 
-        //        if (rbLTopMask.Checked == false)
-        //        {
-        //            skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
-        //            skRight.SetShowMask(true, _dRalpha, RightMaskMat);
+        //                    if (leftWafer != null)
+        //                    {
+        //                        pbLWafer.Image?.Dispose();
+        //                        pbLWafer.Image = leftWafer;
+        //                    }
+
+        //                    if (rightBackMask != null)
+        //                    {
+        //                        pbRBackMask.Image?.Dispose();
+        //                        pbRBackMask.Image = rightBackMask;
+        //                    }
+
+        //                    if (rightWafer != null)
+        //                    {
+        //                        pbRWafer.Image?.Dispose();
+        //                        pbRWafer.Image = rightWafer;
+        //                    }
+
+        //                    //   更新 ComboBox
+        //                    cbLBackMaskAlgo.SelectedIndex = (int)_AlignC.LLMaskAlgorithm;
+        //                    cbLWaferAlgo.SelectedIndex = (int)_AlignC.LHWaferAlgorithm;
+        //                    cbRBackMaskAlgo.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
+        //                    cbRWaferAlgo.SelectedIndex = (int)_AlignC.RHWaferAlgorithm;
+
+        //                    //   設定 AI ClassId
+        //                    if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
+        //                    {
+        //                        SetComboBoxByClassId(cbLBackMaskClassList, _AlignC.LLMaskAIClassId);
+        //                    }
+        //                    else
+        //                    {
+        //                        cbLBackMaskClassList.SelectedIndex = -1;
+        //                    }
+
+        //                    if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0)
+        //                    {
+        //                        SetComboBoxByClassId(cbRBackMaskClassList, _AlignC.RLMaskAIClassId);
+        //                    }
+        //                    else
+        //                    {
+        //                        cbRBackMaskClassList.SelectedIndex = -1;
+        //                    }
+
+        //                    if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0)
+        //                    {
+        //                        SetComboBoxByClassId(cbLBackWaferClassList, _AlignC.LHWaferAIClassId);
+        //                    }
+        //                    else
+        //                    {
+        //                        cbLBackWaferClassList.SelectedIndex = -1;
+        //                    }
+
+        //                    if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId >= 0)
+        //                    {
+        //                        SetComboBoxByClassId(cbRBackWaferClassList, _AlignC.RHWaferAIClassId);
+        //                    }
+        //                    else
+        //                    {
+        //                        cbRBackWaferClassList.SelectedIndex = -1;
+        //                    }
+
+        //                    //   更新 TrackBar 和 Alpha 值
+        //                    int iL = (int)(_AlignC.dLalpha * 100);
+        //                    if (iL > 100) iL = 100;
+        //                    if (iL < 0) iL = 0;
+        //                    int iR = (int)(_AlignC.dRalpha * 100);
+        //                    if (iR > 100) iR = 100;
+        //                    if (iR < 0) iR = 0;
+
+        //                    iLalpha = iL;
+        //                    iRalpha = iR;
+
+        //                    tBLShowImage.Value = iLalpha;
+        //                    tBRShowImage.Value = iRalpha;
+
+        //                    _dLalpha = (double)tBLShowImage.Value / 100;
+        //                    _dRalpha = (double)tBRShowImage.Value / 100;
+
+        //                    //   設定 ShowMask
+        //                    if (rbLTopMask.Checked == false)
+        //                    {
+        //                        skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
+        //                        skRight.SetShowMask(true, _dRalpha, RightMaskMat);
+        //                    }
+        //                    else
+        //                    {
+        //                        skLeft.SetShowMask(false, 0, LeftMaskMat);
+        //                        skRight.SetShowMask(false, 0, RightMaskMat);
+        //                    }
+
+        //                    //   更新按鈕 Enabled 狀態
+        //                    UpdateButtonStates();
+
+        //                    //   更新光源亮度（非 UI 操作，可以直接執行）
+        //                    UpdateLightBrightness();
+
+        //                    //   最後更新
+        //                    Update();
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    Debug.WriteLine($"UpdateUI BeginInvoke error: {ex.Message}");
+        //                }
+        //            });
         //        }
-        //        else
+        //        catch (Exception ex)
         //        {
-        //            skLeft.SetShowMask(false, 0, LeftMaskMat);
-        //            skRight.SetShowMask(false, 0, RightMaskMat);
+        //            Debug.WriteLine($"UpdateUI Task.Run error: {ex.Message}");
         //        }
-
-        //        _ = Task.Run(async () =>
-        //        {
-        //            if ((rbLTopMask.Enabled) && (rbLTopMask.Checked) && (GV.UserLevel != GV.User.Operator))
-        //            {
-        //                btLTopMaskLightPlus.Enabled = true;
-        //                btLTopMaskLightMinus.Enabled = true;
-        //                tBLeftTopMaskLight.Enabled = true;
-        //                btLTopMaskLSave.Enabled = true;
-        //            }
-        //            else
-        //            {
-        //                btLTopMaskLightPlus.Enabled = false;
-        //                btLTopMaskLightMinus.Enabled = false;
-        //                tBLeftTopMaskLight.Enabled = false;
-        //                btLTopMaskLSave.Enabled = false;
-        //            }
-        //        });
-
-        //        _ = Task.Run(async () =>
-        //        {
-        //            if ((rbLBackMask.Enabled) && (rbLBackMask.Checked) && (GV.UserLevel != GV.User.Operator))
-        //            {
-        //                btLBackMaskLightPlus.Enabled = true;
-        //                btLBackMaskLightMinus.Enabled = true;
-        //                tBLeftBackMaskLight.Enabled = true;
-        //                btLBackMaskLSave.Enabled = true;
-        //            }
-        //            else
-        //            {
-        //                btLBackMaskLightPlus.Enabled = false;
-        //                btLBackMaskLightMinus.Enabled = false;
-        //                tBLeftBackMaskLight.Enabled = false;
-        //                btLBackMaskLSave.Enabled = false;
-        //            }
-        //        });
-
-        //        _ = Task.Run(async () =>
-        //        {
-        //            if ((rbLWafer.Enabled) && (rbLWafer.Checked) && (GV.UserLevel != GV.User.Operator))
-        //            {
-        //                btLWaferLightPlus.Enabled = true;
-        //                btLWaferLightMinus.Enabled = true;
-        //                tBLeftBackWaferLight.Enabled = true;
-        //                btLWaferLSave.Enabled = true;
-        //            }
-        //            else
-        //            {
-        //                btLWaferLightPlus.Enabled = false;
-        //                btLWaferLightMinus.Enabled = false;
-        //                tBLeftBackWaferLight.Enabled = false;
-        //                btLWaferLSave.Enabled = false;
-        //            }
-        //        });
-
-        //        _ = Task.Run(async () =>
-        //        {
-        //            if ((rbRTopMask.Enabled) && (rbRTopMask.Checked) && (GV.UserLevel != GV.User.Operator))
-        //            {
-        //                btRTopMaskLightPlus.Enabled = true;
-        //                btRTopMaskLightMinus.Enabled = true;
-        //                tBRightTopMaskLight.Enabled = true;
-        //                btRTopMaskLSave.Enabled = true;
-        //            }
-        //            else
-        //            {
-        //                btRTopMaskLightPlus.Enabled = false;
-        //                btRTopMaskLightMinus.Enabled = false;
-        //                tBRightTopMaskLight.Enabled = false;
-        //                btRTopMaskLSave.Enabled = false;
-        //            }
-        //        });
-
-        //        _ = Task.Run(async () =>
-        //        {
-        //            if ((rbRBackMask.Enabled) && (rbRBackMask.Checked) && (GV.UserLevel != GV.User.Operator))
-        //            {
-        //                btRBackMaskLightPlus.Enabled = true;
-        //                btRBackMaskLightMinus.Enabled = true;
-        //                tBRightBackMaskLight.Enabled = true;
-        //                btRBackMaskLSave.Enabled = true;
-        //            }
-        //            else
-        //            {
-        //                btRBackMaskLightPlus.Enabled = false;
-        //                btRBackMaskLightMinus.Enabled = false;
-        //                tBRightBackMaskLight.Enabled = false;
-        //                btRBackMaskLSave.Enabled = false;
-        //            }
-
-        //        });
-
-        //        _ = Task.Run(async () =>
-        //        {
-        //            if ((rbRWafer.Enabled) && (rbRWafer.Checked) && (GV.UserLevel != GV.User.Operator))
-        //            {
-        //                btRWaferLightMinus.Enabled = true;
-        //                tBRightBackWaferLight.Enabled = true;
-        //                btRWaferLSave.Enabled = true;
-        //            }
-        //            else
-        //            {
-        //                btRWaferLightPlus.Enabled = false;
-        //                btRWaferLightMinus.Enabled = false;
-        //                tBRightBackWaferLight.Enabled = false;
-        //                btRWaferLSave.Enabled = false;
-        //            }
-        //        });
-
-
-        //        if (rbLTopMask.Checked)
-        //        {
-        //            GV.Light.ChangeBrightness("left", tBLeftTopMaskLight.Value);
-        //        }
-        //        else
-        //        {
-        //            GV.Light.ChangeBrightness("left", 0);
-        //        }
-
-        //        if (rbLBackMask.Checked)
-        //        {
-        //            GV.Light.ChangeBrightness("leftback", tBLeftBackMaskLight.Value);
-        //        }
-        //        else if (rbLWafer.Checked)
-        //        {
-        //            GV.Light.ChangeBrightness("leftback", tBLeftBackWaferLight.Value);
-        //        }
-        //        else
-        //        {
-        //            GV.Light.ChangeBrightness("leftback", 0);
-        //        }
-
-        //        if (rbRTopMask.Checked)
-        //        {
-        //            GV.Light.ChangeBrightness("right", tBRightTopMaskLight.Value);
-        //        }
-        //        else
-        //        {
-        //            GV.Light.ChangeBrightness("right", 0);
-        //        }
-
-        //        if (rbRBackMask.Checked)
-        //        {
-        //            GV.Light.ChangeBrightness("rightback", tBRightBackMaskLight.Value);
-        //        }
-        //        else if (rbRWafer.Checked)
-        //        {
-        //            GV.Light.ChangeBrightness("rightback", tBRightBackWaferLight.Value);
-        //        }
-        //        else
-        //        {
-        //            GV.Light.ChangeBrightness("rightback", 0);
-        //        }
-        //        Update();
-        //    }
+        //    }, updateToken);
+        //}
         public void UpdateUI()
         {
-            //   同步執行快速的初始化操作
+   
             if ((GV.NowRecipeNumber < 1) || (GV.NowRecipeNumber > 100))
             {
                 GV.NowRecipeNumber = 1;
@@ -1620,10 +1800,9 @@ namespace NSAA_16Axis
             EditRecipe = GV.NowRecipeNumber;
             ChangeRecipe();
 
-            //   更新標籤（UI 操作，必須在 UI 執行緒）
             lbRecipeNumber.Text = GV.Dlang.strRecipeNumber + EditRecipe.ToString();
 
-            //   清空舊影像
+  
             pbLTopMask.Image = null;
             pbLBackMask.Image = null;
             pbLWafer.Image = null;
@@ -1631,254 +1810,278 @@ namespace NSAA_16Axis
             pbRBackMask.Image = null;
             pbRWafer.Image = null;
 
-            //   背景執行耗時操作
-            _ = Task.Run(() =>
+       
+            _updateUICts?.Cancel();
+            _updateUICts = new CancellationTokenSource();
+            CancellationToken updateToken = _updateUICts.Token;
+            lock (_processingLock)
+            {
+                _completedImageProcessCount = 0; 
+            }
+       
+            ProcessImage(updateToken, task1Type.LeftBackMask);
+            ProcessImage(updateToken, task1Type.LeftWafer);
+            ProcessImage(updateToken, task1Type.RightBackMask);
+            ProcessImage(updateToken, task1Type.RightWafer);
+        }
+        private enum task1Type
+        {
+            LeftBackMask,
+            LeftWafer,
+            RightBackMask,
+            RightWafer
+        }
+        private void ProcessImage(CancellationToken cancellationToken, task1Type imageType)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                return;
+
+            Bitmap resultImage = null;
+
+            switch (imageType)
+            {
+                case task1Type.LeftBackMask:
+                    resultImage = ProcessLeftBackMask(cancellationToken);
+                    break;
+                case task1Type.LeftWafer:
+                    resultImage = ProcessLeftWafer(cancellationToken);
+                    break;
+                case task1Type.RightBackMask:
+                    resultImage = ProcessRightBackMask(cancellationToken);
+                    break;
+                case task1Type.RightWafer:
+                    resultImage = ProcessRightWafer(cancellationToken);
+                    break;
+            }
+
+            if (resultImage != null)
+            {
+                UpdateImageControl(imageType, resultImage);
+            }
+        }
+        private Bitmap ProcessLeftBackMask(CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                return null;
+
+            if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() &&
+                _recipe.LeftLowMaskMat.Width > 0 && _recipe.LeftLowMaskMat.Height > 0)
             {
                 try
                 {
-                    // ============================================
-                    // 階段 1: 並行處理影像轉換（耗時操作）
-                    // ============================================
-                    Bitmap leftBackMask = null;
-                    Bitmap leftWafer = null;
-                    Bitmap rightBackMask = null;
-                    Bitmap rightWafer = null;
-
-                    //   使用 Parallel.Invoke 並行執行影像處理
-                    Parallel.Invoke(
-                        // 任務 1: 處理左下光罩影像
-                        () =>
-                        {
-                            if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() &&
-                                _recipe.LeftLowMaskMat.Width > 0 && _recipe.LeftLowMaskMat.Height > 0)
-                            {
-                                try
-                                {
-                                    if (_AlignC.LLMaskOffsetX != 0 || _AlignC.LLMaskOffsetY != 0)
-                                    {
-                                        leftBackMask = CreatePreviewWithGreenDot(
-                                            _recipe.LeftLowMaskMat,
-                                            _AlignC.LLMaskOffsetX,
-                                            _AlignC.LLMaskOffsetY);
-                                    }
-                                    else
-                                    {
-                                        leftBackMask = _recipe.LeftLowMaskMat.ToBitmap();
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Debug.WriteLine($"LeftLowMaskMat processing error: {ex.Message}");
-                                }
-                            }
-                        },
-
-                        // 任務 2: 處理左下晶圓影像
-                        () =>
-                        {
-                            if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() &&
-                                _recipe.LeftHighWaferMat.Width > 0 && _recipe.LeftHighWaferMat.Height > 0)
-                            {
-                                try
-                                {
-                                    if (_AlignC.LHWaferOffsetX != 0 || _AlignC.LHWaferOffsetY != 0)
-                                    {
-                                        leftWafer = CreatePreviewWithGreenDot(
-                                            _recipe.LeftHighWaferMat,
-                                            _AlignC.LHWaferOffsetX,
-                                            _AlignC.LHWaferOffsetY);
-                                    }
-                                    else
-                                    {
-                                        leftWafer = _recipe.LeftHighWaferMat.ToBitmap();
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Debug.WriteLine($"LeftHighWaferMat processing error: {ex.Message}");
-                                }
-                            }
-                        },
-
-                        // 任務 3: 處理右下光罩影像
-                        () =>
-                        {
-                            if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() &&
-                                _recipe.RightLowMaskMat.Width > 0 && _recipe.RightLowMaskMat.Height > 0)
-                            {
-                                try
-                                {
-                                    if (_AlignC.RLMaskOffsetX != 0 || _AlignC.RLMaskOffsetY != 0)
-                                    {
-                                        rightBackMask = CreatePreviewWithGreenDot(
-                                            _recipe.RightLowMaskMat,
-                                            _AlignC.RLMaskOffsetX,
-                                            _AlignC.RLMaskOffsetY);
-                                    }
-                                    else
-                                    {
-                                        rightBackMask = _recipe.RightLowMaskMat.ToBitmap();
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Debug.WriteLine($"RightLowMaskMat processing error: {ex.Message}");
-                                }
-                            }
-                        },
-
-                        // 任務 4: 處理右下晶圓影像
-                        () =>
-                        {
-                            if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() &&
-                                _recipe.RightHighWaferMat.Width > 0 && _recipe.RightHighWaferMat.Height > 0)
-                            {
-                                try
-                                {
-                                    if (_AlignC.RHWaferOffsetX != 0 || _AlignC.RHWaferOffsetY != 0)
-                                    {
-                                        rightWafer = CreatePreviewWithGreenDot(
-                                            _recipe.RightHighWaferMat,
-                                            _AlignC.RHWaferOffsetX,
-                                            _AlignC.RHWaferOffsetY);
-                                    }
-                                    else
-                                    {
-                                        rightWafer = _recipe.RightHighWaferMat.ToBitmap();
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Debug.WriteLine($"RightHighWaferMat processing error: {ex.Message}");
-                                }
-                            }
-                        }
-                    );
-
-                    // ============================================
-                    // 階段 2: 回到 UI 執行緒更新控件
-                    // ============================================
-                    this.BeginInvoke(new Action(() =>
+                    if (_AlignC.LLMaskOffsetX != 0 || _AlignC.LLMaskOffsetY != 0)
                     {
-                        try
-                        {
-                            //   更新 PictureBox 影像
-                            if (leftBackMask != null)
-                            {
-                                pbLBackMask.Image?.Dispose();
-                                pbLBackMask.Image = leftBackMask;
-                            }
-
-                            if (leftWafer != null)
-                            {
-                                pbLWafer.Image?.Dispose();
-                                pbLWafer.Image = leftWafer;
-                            }
-
-                            if (rightBackMask != null)
-                            {
-                                pbRBackMask.Image?.Dispose();
-                                pbRBackMask.Image = rightBackMask;
-                            }
-
-                            if (rightWafer != null)
-                            {
-                                pbRWafer.Image?.Dispose();
-                                pbRWafer.Image = rightWafer;
-                            }
-
-                            //   更新 ComboBox
-                            cbLBackMaskAlgo.SelectedIndex = (int)_AlignC.LLMaskAlgorithm;
-                            cbLWaferAlgo.SelectedIndex = (int)_AlignC.LHWaferAlgorithm;
-                            cbRBackMaskAlgo.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
-                            cbRWaferAlgo.SelectedIndex = (int)_AlignC.RHWaferAlgorithm;
-
-                            //   設定 AI ClassId
-                            if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
-                            {
-                                SetComboBoxByClassId(cbLBackMaskClassList, _AlignC.LLMaskAIClassId);
-                            }
-                            else
-                            {
-                                cbLBackMaskClassList.SelectedIndex = -1;
-                            }
-
-                            if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0)
-                            {
-                                SetComboBoxByClassId(cbRBackMaskClassList, _AlignC.RLMaskAIClassId);
-                            }
-                            else
-                            {
-                                cbRBackMaskClassList.SelectedIndex = -1;
-                            }
-
-                            if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0)
-                            {
-                                SetComboBoxByClassId(cbLBackWaferClassList, _AlignC.LHWaferAIClassId);
-                            }
-                            else
-                            {
-                                cbLBackWaferClassList.SelectedIndex = -1;
-                            }
-
-                            if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId >= 0)
-                            {
-                                SetComboBoxByClassId(cbRBackWaferClassList, _AlignC.RHWaferAIClassId);
-                            }
-                            else
-                            {
-                                cbRBackWaferClassList.SelectedIndex = -1;
-                            }
-
-                            //   更新 TrackBar 和 Alpha 值
-                            int iL = (int)(_AlignC.dLalpha * 100);
-                            if (iL > 100) iL = 100;
-                            if (iL < 0) iL = 0;
-                            int iR = (int)(_AlignC.dRalpha * 100);
-                            if (iR > 100) iR = 100;
-                            if (iR < 0) iR = 0;
-
-                            iLalpha = iL;
-                            iRalpha = iR;
-
-                            tBLShowImage.Value = iLalpha;
-                            tBRShowImage.Value = iRalpha;
-
-                            _dLalpha = (double)tBLShowImage.Value / 100;
-                            _dRalpha = (double)tBRShowImage.Value / 100;
-
-                            //   設定 ShowMask
-                            if (rbLTopMask.Checked == false)
-                            {
-                                skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
-                                skRight.SetShowMask(true, _dRalpha, RightMaskMat);
-                            }
-                            else
-                            {
-                                skLeft.SetShowMask(false, 0, LeftMaskMat);
-                                skRight.SetShowMask(false, 0, RightMaskMat);
-                            }
-
-                            //   更新按鈕 Enabled 狀態
-                            UpdateButtonStates();
-
-                            //   更新光源亮度（非 UI 操作，可以直接執行）
-                            UpdateLightBrightness();
-
-                            //   最後更新
-                            Update();
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine($"UpdateUI BeginInvoke error: {ex.Message}");
-                        }
-                    }));
+                        return CreatePreviewWithGreenDot(
+                            _recipe.LeftLowMaskMat,
+                            _AlignC.LLMaskOffsetX,
+                            _AlignC.LLMaskOffsetY);
+                    }
+                    else
+                    {
+                        return _recipe.LeftLowMaskMat.ToBitmap();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"UpdateUI Task.Run error: {ex.Message}");
+                    Debug.WriteLine($"LeftLowMaskMat processing error: {ex.Message}");
                 }
-            });
+            }
+            return null;
+        }
+        private Bitmap ProcessLeftWafer(CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                return null;
+
+            if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() &&
+                _recipe.LeftHighWaferMat.Width > 0 && _recipe.LeftHighWaferMat.Height > 0)
+            {
+                try
+                {
+                    if (_AlignC.LHWaferOffsetX != 0 || _AlignC.LHWaferOffsetY != 0)
+                    {
+                        return CreatePreviewWithGreenDot(
+                            _recipe.LeftHighWaferMat,
+                            _AlignC.LHWaferOffsetX,
+                            _AlignC.LHWaferOffsetY);
+                    }
+                    else
+                    {
+                        return _recipe.LeftHighWaferMat.ToBitmap();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"LeftHighWaferMat processing error: {ex.Message}");
+                }
+            }
+            return null;
+        }
+        private Bitmap ProcessRightBackMask(CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                return null;
+
+            if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() &&
+                _recipe.RightLowMaskMat.Width > 0 && _recipe.RightLowMaskMat.Height > 0)
+            {
+                try
+                {
+                    if (_AlignC.RLMaskOffsetX != 0 || _AlignC.RLMaskOffsetY != 0)
+                    {
+                        return CreatePreviewWithGreenDot(
+                            _recipe.RightLowMaskMat,
+                            _AlignC.RLMaskOffsetX,
+                            _AlignC.RLMaskOffsetY);
+                    }
+                    else
+                    {
+                        return _recipe.RightLowMaskMat.ToBitmap();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"RightLowMaskMat processing error: {ex.Message}");
+                }
+            }
+            return null;
+        }
+        private Bitmap ProcessRightWafer(CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                return null;
+
+            if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() &&
+                _recipe.RightHighWaferMat.Width > 0 && _recipe.RightHighWaferMat.Height > 0)
+            {
+                try
+                {
+                    if (_AlignC.RHWaferOffsetX != 0 || _AlignC.RHWaferOffsetY != 0)
+                    {
+                        return CreatePreviewWithGreenDot(
+                            _recipe.RightHighWaferMat,
+                            _AlignC.RHWaferOffsetX,
+                            _AlignC.RHWaferOffsetY);
+                    }
+                    else
+                    {
+                        return _recipe.RightHighWaferMat.ToBitmap();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"RightHighWaferMat processing error: {ex.Message}");
+                }
+            }
+            return null;
+        }
+        private void UpdateImageControl(task1Type imageType, Bitmap bitmap)
+        {
+            switch (imageType)
+            {
+                case task1Type.LeftBackMask:
+                    pbLBackMask.Image?.Dispose();
+                    pbLBackMask.Image = bitmap;
+                    break;
+                case task1Type.LeftWafer:
+                    pbLWafer.Image?.Dispose();
+                    pbLWafer.Image = bitmap;
+                    break;
+                case task1Type.RightBackMask:
+                    pbRBackMask.Image?.Dispose();
+                    pbRBackMask.Image = bitmap;
+                    break;
+                case task1Type.RightWafer:
+                    pbRWafer.Image?.Dispose();
+                    pbRWafer.Image = bitmap;
+                    break;
+            }
+        }
+        private void FinalizeUpdateUI(CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                return;
+
+            if (IsHandleCreated && !IsDisposed)
+            {
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    try
+                    {
+                        // 更新 ComboBox
+                        cbLBackMaskAlgo.SelectedIndex = (int)_AlignC.LLMaskAlgorithm;
+                        cbLWaferAlgo.SelectedIndex = (int)_AlignC.LHWaferAlgorithm;
+                        cbRBackMaskAlgo.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
+                        cbRWaferAlgo.SelectedIndex = (int)_AlignC.RHWaferAlgorithm;
+
+                        // 設定 AI ClassId
+                        if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
+                            SetComboBoxByClassId(cbLBackMaskClassList, _AlignC.LLMaskAIClassId);
+                        else
+                            cbLBackMaskClassList.SelectedIndex = -1;
+
+                        if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0)
+                            SetComboBoxByClassId(cbRBackMaskClassList, _AlignC.RLMaskAIClassId);
+                        else
+                            cbRBackMaskClassList.SelectedIndex = -1;
+
+                        if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0)
+                            SetComboBoxByClassId(cbLBackWaferClassList, _AlignC.LHWaferAIClassId);
+                        else
+                            cbLBackWaferClassList.SelectedIndex = -1;
+
+                        if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId >= 0)
+                            SetComboBoxByClassId(cbRBackWaferClassList, _AlignC.RHWaferAIClassId);
+                        else
+                            cbRBackWaferClassList.SelectedIndex = -1;
+
+                        // 更新 TrackBar 和 Alpha 值
+                        int iL = (int)(_AlignC.dLalpha * 100);
+                        if (iL > 100) iL = 100;
+                        if (iL < 0) iL = 0;
+                        int iR = (int)(_AlignC.dRalpha * 100);
+                        if (iR > 100) iR = 100;
+                        if (iR < 0) iR = 0;
+
+                        iLalpha = iL;
+                        iRalpha = iR;
+
+                        tBLShowImage.Value = iLalpha;
+                        tBRShowImage.Value = iRalpha;
+
+                        _dLalpha = (double)tBLShowImage.Value / 100;
+                        _dRalpha = (double)tBRShowImage.Value / 100;
+
+                        // 設定 ShowMask
+                        if (rbLTopMask.Checked == false)
+                        {
+                            skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
+                            skRight.SetShowMask(true, _dRalpha, RightMaskMat);
+                        }
+                        else
+                        {
+                            skLeft.SetShowMask(false, 0, LeftMaskMat);
+                            skRight.SetShowMask(false, 0, RightMaskMat);
+                        }
+
+                        // 更新按鈕 Enabled 狀態
+                        UpdateButtonStates();
+
+                        // 更新光源亮度
+                        UpdateLightBrightness();
+
+                        // 最後更新
+                        //Invalidate();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"FinalizeUpdateUI error: {ex.Message}");
+                    }
+                });
+            }
         }
         private void UpdateButtonStates()
         {
@@ -1979,9 +2182,7 @@ namespace NSAA_16Axis
             }
         }
 
-        /// <summary>
-        /// 更新光源亮度（輔助方法）
-        /// </summary>
+        
         private void UpdateLightBrightness()
         {
             //   左上光源
@@ -2110,6 +2311,149 @@ namespace NSAA_16Axis
             btUpCCDGo.Caption = GV.Dlang.btCCDGo;                // UCButton 使用 Caption
         }
 
+        //public void CheckLevel()
+        //{
+        //    if (LeftWaferMp == null)
+        //    {
+        //        LeftWaferMp = new MatchPosition();
+        //        LeftMaskMp = new MatchPosition();
+        //        RightWaferMp = new MatchPosition();
+        //        RightMaskMp = new MatchPosition();
+        //    }
+
+        //    int nLevel = (int)GV.UserLevel;
+        //    if (NowLevel != nLevel)
+        //    {
+        //        NowLevel = nLevel;
+        //        Invoke((MethodInvoker)delegate ()
+        //        {
+        //            GV.RingLight.ChangeBrightness("left", 0);
+        //            GV.RingLight.ChangeBrightness("right", 0);
+        //            // tBLShowImage.Enabled = true;
+        //            // tBRShowImage.Enabled = true;
+
+        //            if (GV.UserLevel == GV.User.Operator)
+        //            {
+        //                // rbLTopMask.Enabled = true;
+        //                // rbRTopMask.Enabled = true;
+        //                // rbLBackMask.Enabled = true;
+        //                // rbRBackMask.Enabled = true;
+        //                // rbLWafer.Enabled = true;
+        //                btSave.Enabled = false;
+        //                cbLowMagnification.Enabled = false;
+        //                cbHighMagnification.Enabled = false;
+        //                cbLBackMaskAlgo.Enabled = false;
+        //                cbRBackMaskAlgo.Enabled = false;
+        //                cbLWaferAlgo.Enabled = false;
+        //                cbRWaferAlgo.Enabled = false;
+        //                btMagSave.Enabled = false;
+        //                btLShowImageSave.Enabled = false;
+        //                btRShowImageSave.Enabled = false;
+        //                btLTopMaskLSave.Enabled = false;
+        //                btLBackMaskLSave.Enabled = false;
+        //                btLWaferLSave.Enabled = false;
+        //                btRTopMaskLSave.Enabled = false;
+        //                btRBackMaskLSave.Enabled = false;
+        //                btRWaferLSave.Enabled = false;
+        //                btDelete.Enabled = false;
+        //                btDefault.Enabled = false;
+        //                groupBox4.Visible = false;
+        //                btLWaferMask.Enabled = false;
+        //                btRWaferMask.Enabled = false;
+        //                btLBackMask.Enabled = false;
+        //                btRBackMask.Enabled = false;
+        //                btFindLBMaskCenter.Visible = false;
+        //                btFindRBMaskCenter.Visible = false;
+        //                btFindLWaferCenter.Visible = false;
+        //                btFindRWaferCenter.Visible = false;
+        //            }
+        //            else
+        //            {
+        //                gbLWafer.Enabled = true;
+        //                gbLBackMask.Enabled = true;
+        //                gbRWafer.Enabled = true;
+        //                gbRBackMask.Enabled = true;
+        //                gbLTopMask.Enabled = true;
+        //                gbRTopMask.Enabled = true;
+        //                cbLowMagnification.Enabled = true;
+        //                cbHighMagnification.Enabled = true;
+        //                btMagSave.Enabled = true;
+        //                btLShowImageSave.Enabled = true;
+        //                btRShowImageSave.Enabled = true;
+        //                btDelete.Enabled = true;
+        //                btDefault.Enabled = true;
+        //                groupBox4.Visible = false;
+        //                btLWaferMask.Enabled = true;
+        //                btRWaferMask.Enabled = true;
+        //                btLBackMask.Enabled = true;
+        //                btRBackMask.Enabled = true;
+        //                btSave.Enabled = true;
+        //                btFindLBMaskCenter.Visible = true;
+        //                btFindLWaferCenter.Visible = true;
+        //                btFindRBMaskCenter.Visible = true;
+        //                btFindRWaferCenter.Visible = true;
+        //            }
+
+        //            if (GV.UserLevel == GV.User.Administrator)
+        //            {
+        //                btFindLMaskCenter.Visible = true;
+        //                btFindLWaferCenter.Visible = true;
+        //                btFindRMaskCenter.Visible = true;
+        //                lbLeftXYM.Visible = true;
+        //                lbRightXYM.Visible = true;
+        //                btReportLocation.Visible = true;
+        //                btLMaskSave.Visible = true;
+        //                btRMaskSave.Visible = true;
+        //                bBTtMaskAlign.Visible = true;
+        //                btBTAlignWafer.Visible = true;
+        //                btBTAlignWaferRotate.Visible = true;
+        //                btSave.Enabled = true;
+        //                btReadMaskMat.Visible = true;
+        //                btNG.Visible = true;
+        //                NUDLMaskX.Visible = false;
+        //                NUDLMaskY.Visible = false;
+        //                NUDRMaskX.Visible = false;
+        //                NUDRMaskY.Visible = false;
+        //                BtLMaskAdjSave.Visible = false;
+        //                BtRMaskAdjSave.Visible = false;
+        //                lblLMaskX.Visible = false;
+        //                lblLMaskY.Visible = false;
+        //                lblRMaskX.Visible = false;
+        //                lblRMaskY.Visible = false;
+        //            }
+        //            else
+        //            {
+        //                btFindLMaskCenter.Visible = false;
+        //                btFindRMaskCenter.Visible = false;
+        //                // lbLeftXYM.Visible = false;
+        //                // lbRightXYM.Visible = false;
+        //                btReportLocation.Visible = false;
+        //                btLMaskSave.Visible = false;
+        //                btRMaskSave.Visible = false;
+        //                bBTtMaskAlign.Visible = false;
+        //                btBTAlignWafer.Visible = false;
+        //                btBTAlignWaferRotate.Visible = false;
+        //                // groupBox4.Visible = false;
+        //                btReadMaskMat.Visible = false;
+        //                btNG.Visible = false;
+        //                NUDLMaskX.Visible = false;
+        //                NUDLMaskY.Visible = false;
+        //                NUDRMaskX.Visible = false;
+        //                NUDRMaskY.Visible = false;
+        //                BtLMaskAdjSave.Visible = false;
+        //                BtRMaskAdjSave.Visible = false;
+        //                lblLMaskX.Visible = false;
+        //                lblLMaskY.Visible = false;
+        //                lblRMaskX.Visible = false;
+        //                lblRMaskY.Visible = false;
+        //            }
+        //        });
+
+        //        rBLowMagnification.Enabled = true;
+        //        rBHighMagnification.Enabled = true;
+        //    }
+        //    UpdateUI();
+        //}
         public void CheckLevel()
         {
             if (LeftWaferMp == null)
@@ -2124,133 +2468,152 @@ namespace NSAA_16Axis
             if (NowLevel != nLevel)
             {
                 NowLevel = nLevel;
-                Invoke((MethodInvoker)delegate ()
+
+                //  取消舊的 CheckLevel UI 更新操作
+                _checkLevelCts?.Cancel();
+                _checkLevelCts = new CancellationTokenSource();
+                CancellationToken ct = _checkLevelCts.Token;
+
+                //  使用 BeginInvoke 投遞 UI 更新工作到 UI 執行緒（非同步、非阻塞）
+                BeginInvoke((MethodInvoker)delegate ()
                 {
-                    GV.RingLight.ChangeBrightness("left", 0);
-                    GV.RingLight.ChangeBrightness("right", 0);
-                    // tBLShowImage.Enabled = true;
-                    // tBRShowImage.Enabled = true;
+                    //  檢查是否已被取消
+                    if (ct.IsCancellationRequested)
+                        return;
 
-                    if (GV.UserLevel == GV.User.Operator)
+                    try
                     {
-                        // rbLTopMask.Enabled = true;
-                        // rbRTopMask.Enabled = true;
-                        // rbLBackMask.Enabled = true;
-                        // rbRBackMask.Enabled = true;
-                        // rbLWafer.Enabled = true;
-                        btSave.Enabled = false;
-                        cbLowMagnification.Enabled = false;
-                        cbHighMagnification.Enabled = false;
-                        cbLBackMaskAlgo.Enabled = false;
-                        cbRBackMaskAlgo.Enabled = false;
-                        cbLWaferAlgo.Enabled = false;
-                        cbRWaferAlgo.Enabled = false;
-                        btMagSave.Enabled = false;
-                        btLShowImageSave.Enabled = false;
-                        btRShowImageSave.Enabled = false;
-                        btLTopMaskLSave.Enabled = false;
-                        btLBackMaskLSave.Enabled = false;
-                        btLWaferLSave.Enabled = false;
-                        btRTopMaskLSave.Enabled = false;
-                        btRBackMaskLSave.Enabled = false;
-                        btRWaferLSave.Enabled = false;
-                        btDelete.Enabled = false;
-                        btDefault.Enabled = false;
-                        groupBox4.Visible = false;
-                        btLWaferMask.Enabled = false;
-                        btRWaferMask.Enabled = false;
-                        btLBackMask.Enabled = false;
-                        btRBackMask.Enabled = false;
-                        btFindLBMaskCenter.Visible = false;
-                        btFindRBMaskCenter.Visible = false;
-                        btFindLWaferCenter.Visible = false;
-                        btFindRWaferCenter.Visible = false;
-                    }
-                    else
-                    {
-                        gbLWafer.Enabled = true;
-                        gbLBackMask.Enabled = true;
-                        gbRWafer.Enabled = true;
-                        gbRBackMask.Enabled = true;
-                        gbLTopMask.Enabled = true;
-                        gbRTopMask.Enabled = true;
-                        cbLowMagnification.Enabled = true;
-                        cbHighMagnification.Enabled = true;
-                        btMagSave.Enabled = true;
-                        btLShowImageSave.Enabled = true;
-                        btRShowImageSave.Enabled = true;
-                        btDelete.Enabled = true;
-                        btDefault.Enabled = true;
-                        groupBox4.Visible = false;
-                        btLWaferMask.Enabled = true;
-                        btRWaferMask.Enabled = true;
-                        btLBackMask.Enabled = true;
-                        btRBackMask.Enabled = true;
-                        btSave.Enabled = true;
-                        btFindLBMaskCenter.Visible = true;
-                        btFindLWaferCenter.Visible = true;
-                        btFindRBMaskCenter.Visible = true;
-                        btFindRWaferCenter.Visible = true;
-                    }
+                        GV.RingLight.ChangeBrightness("left", 0);
+                        GV.RingLight.ChangeBrightness("right", 0);
+                        // tBLShowImage.Enabled = true;
+                        // tBRShowImage.Enabled = true;
 
-                    if (GV.UserLevel == GV.User.Administrator)
-                    {
-                        btFindLMaskCenter.Visible = true;
-                        btFindLWaferCenter.Visible = true;
-                        btFindRMaskCenter.Visible = true;
-                        lbLeftXYM.Visible = true;
-                        lbRightXYM.Visible = true;
-                        btReportLocation.Visible = true;
-                        btLMaskSave.Visible = true;
-                        btRMaskSave.Visible = true;
-                        bBTtMaskAlign.Visible = true;
-                        btBTAlignWafer.Visible = true;
-                        btBTAlignWaferRotate.Visible = true;
-                        btSave.Enabled = true;
-                        btReadMaskMat.Visible = true;
-                        btNG.Visible = true;
-                        NUDLMaskX.Visible = false;
-                        NUDLMaskY.Visible = false;
-                        NUDRMaskX.Visible = false;
-                        NUDRMaskY.Visible = false;
-                        BtLMaskAdjSave.Visible = false;
-                        BtRMaskAdjSave.Visible = false;
-                        lblLMaskX.Visible = false;
-                        lblLMaskY.Visible = false;
-                        lblRMaskX.Visible = false;
-                        lblRMaskY.Visible = false;
+                        if (GV.UserLevel == GV.User.Operator)
+                        {
+                            // rbLTopMask.Enabled = true;
+                            // rbRTopMask.Enabled = true;
+                            // rbLBackMask.Enabled = true;
+                            // rbRBackMask.Enabled = true;
+                            // rbLWafer.Enabled = true;
+                            btSave.Enabled = false;
+                            cbLowMagnification.Enabled = false;
+                            cbHighMagnification.Enabled = false;
+                            cbLBackMaskAlgo.Enabled = false;
+                            cbRBackMaskAlgo.Enabled = false;
+                            cbLWaferAlgo.Enabled = false;
+                            cbRWaferAlgo.Enabled = false;
+                            btMagSave.Enabled = false;
+                            btLShowImageSave.Enabled = false;
+                            btRShowImageSave.Enabled = false;
+                            btLTopMaskLSave.Enabled = false;
+                            btLBackMaskLSave.Enabled = false;
+                            btLWaferLSave.Enabled = false;
+                            btRTopMaskLSave.Enabled = false;
+                            btRBackMaskLSave.Enabled = false;
+                            btRWaferLSave.Enabled = false;
+                            btDelete.Enabled = false;
+                            btDefault.Enabled = false;
+                            groupBox4.Visible = false;
+                            btLWaferMask.Enabled = false;
+                            btRWaferMask.Enabled = false;
+                            btLBackMask.Enabled = false;
+                            btRBackMask.Enabled = false;
+                            btFindLBMaskCenter.Visible = false;
+                            btFindRBMaskCenter.Visible = false;
+                            btFindLWaferCenter.Visible = false;
+                            btFindRWaferCenter.Visible = false;
+                        }
+                        else
+                        {
+                            gbLWafer.Enabled = true;
+                            gbLBackMask.Enabled = true;
+                            gbRWafer.Enabled = true;
+                            gbRBackMask.Enabled = true;
+                            gbLTopMask.Enabled = true;
+                            gbRTopMask.Enabled = true;
+                            cbLowMagnification.Enabled = true;
+                            cbHighMagnification.Enabled = true;
+                            btMagSave.Enabled = true;
+                            btLShowImageSave.Enabled = true;
+                            btRShowImageSave.Enabled = true;
+                            btDelete.Enabled = true;
+                            btDefault.Enabled = true;
+                            groupBox4.Visible = false;
+                            btLWaferMask.Enabled = true;
+                            btRWaferMask.Enabled = true;
+                            btLBackMask.Enabled = true;
+                            btRBackMask.Enabled = true;
+                            btSave.Enabled = true;
+                            btFindLBMaskCenter.Visible = true;
+                            btFindLWaferCenter.Visible = true;
+                            btFindRBMaskCenter.Visible = true;
+                            btFindRWaferCenter.Visible = true;
+                        }
+
+                        if (GV.UserLevel == GV.User.Administrator)
+                        {
+                            btFindLMaskCenter.Visible = true;
+                            btFindLWaferCenter.Visible = true;
+                            btFindRMaskCenter.Visible = true;
+                            lbLeftXYM.Visible = true;
+                            lbRightXYM.Visible = true;
+                            btReportLocation.Visible = true;
+                            btLMaskSave.Visible = true;
+                            btRMaskSave.Visible = true;
+                            bBTtMaskAlign.Visible = true;
+                            btBTAlignWafer.Visible = true;
+                            btBTAlignWaferRotate.Visible = true;
+                            btSave.Enabled = true;
+                            btReadMaskMat.Visible = true;
+                            btNG.Visible = true;
+                            NUDLMaskX.Visible = false;
+                            NUDLMaskY.Visible = false;
+                            NUDRMaskX.Visible = false;
+                            NUDRMaskY.Visible = false;
+                            BtLMaskAdjSave.Visible = false;
+                            BtRMaskAdjSave.Visible = false;
+                            lblLMaskX.Visible = false;
+                            lblLMaskY.Visible = false;
+                            lblRMaskX.Visible = false;
+                            lblRMaskY.Visible = false;
+                        }
+                        else
+                        {
+                            btFindLMaskCenter.Visible = false;
+                            btFindRMaskCenter.Visible = false;
+                            // lbLeftXYM.Visible = false;
+                            // lbRightXYM.Visible = false;
+                            btReportLocation.Visible = false;
+                            btLMaskSave.Visible = false;
+                            btRMaskSave.Visible = false;
+                            bBTtMaskAlign.Visible = false;
+                            btBTAlignWafer.Visible = false;
+                            btBTAlignWaferRotate.Visible = false;
+                            // groupBox4.Visible = false;
+                            btReadMaskMat.Visible = false;
+                            btNG.Visible = false;
+                            NUDLMaskX.Visible = false;
+                            NUDLMaskY.Visible = false;
+                            NUDRMaskX.Visible = false;
+                            NUDRMaskY.Visible = false;
+                            BtLMaskAdjSave.Visible = false;
+                            BtRMaskAdjSave.Visible = false;
+                            lblLMaskX.Visible = false;
+                            lblLMaskY.Visible = false;
+                            lblRMaskX.Visible = false;
+                            lblRMaskY.Visible = false;
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        btFindLMaskCenter.Visible = false;
-                        btFindRMaskCenter.Visible = false;
-                        // lbLeftXYM.Visible = false;
-                        // lbRightXYM.Visible = false;
-                        btReportLocation.Visible = false;
-                        btLMaskSave.Visible = false;
-                        btRMaskSave.Visible = false;
-                        bBTtMaskAlign.Visible = false;
-                        btBTAlignWafer.Visible = false;
-                        btBTAlignWaferRotate.Visible = false;
-                        // groupBox4.Visible = false;
-                        btReadMaskMat.Visible = false;
-                        btNG.Visible = false;
-                        NUDLMaskX.Visible = false;
-                        NUDLMaskY.Visible = false;
-                        NUDRMaskX.Visible = false;
-                        NUDRMaskY.Visible = false;
-                        BtLMaskAdjSave.Visible = false;
-                        BtRMaskAdjSave.Visible = false;
-                        lblLMaskX.Visible = false;
-                        lblLMaskY.Visible = false;
-                        lblRMaskX.Visible = false;
-                        lblRMaskY.Visible = false;
+                        Debug.WriteLine($"[CheckLevel] UI 更新失敗: {ex.Message}");
                     }
                 });
 
                 rBLowMagnification.Enabled = true;
                 rBHighMagnification.Enabled = true;
             }
+
             UpdateUI();
         }
 
@@ -2741,7 +3104,7 @@ namespace NSAA_16Axis
                     rbRTopMask.Checked = true;
                 }
 
-                Update();
+                //Update();
             }
         }
 
@@ -2809,7 +3172,7 @@ namespace NSAA_16Axis
                     rbRBackMask.Checked = true;
                 }
 
-                Update();
+                //Update();
             }
         }
 
@@ -2889,7 +3252,7 @@ namespace NSAA_16Axis
                     rbRWafer.Checked = true;
                 }
 
-                Update();
+                //Update();
             }
         }
 
@@ -3025,28 +3388,161 @@ namespace NSAA_16Axis
             rbLBackMaskChanged();
             rbRBackMaskChanged();
         }
+        //private void ExecuteBackMaskChangedAsync()
+        //{
+        //    //   使用 Task.Run 在背景執行緒執行
+        //    //_ = Task.Run(async () =>
+        //    //{
+        //    //    try
+        //    //    {
+        //    //        // 並行執行兩個方法
+        //    //        await Task.WhenAll(
+        //    //            Task.Run(() => rbLBackMaskChangedCore()),
+        //    //            Task.Run(() => rbRBackMaskChangedCore())
+        //    //        );
+        //    //    }
+        //    //    catch (Exception ex)
+        //    //    {
+        //    //        // 在 UI 執行緒顯示錯誤
+        //    //        this.BeginInvoke(new Action(() =>
+        //    //        {
+        //    //            GM.WriteToStatusTextBox($"BackMaskChanged 錯誤: {ex.Message}");
+        //    //        }));
+        //    //    }
+        //    //});
+        //    _backMaskChangedCts?.Cancel();
+        //    _backMaskChangedCts = new CancellationTokenSource();
+        //    CancellationToken cancellationToken = _backMaskChangedCts.Token;
+
+        //    // 在背景執行緒執行，不使用 await（無阻塞）
+        //    _ = Task.Run(() =>
+        //    {
+        //        try
+        //        {
+        //            // 檢查是否已被取消
+        //            if (cancellationToken.IsCancellationRequested)
+        //                return;
+
+        //            // 並行執行兩個方法
+        //            Task leftTask = Task.Run(() =>
+        //            {
+        //                if (!cancellationToken.IsCancellationRequested)
+        //                {
+        //                    rbLBackMaskChangedCore();
+        //                }
+        //            }, cancellationToken);
+
+        //            Task rightTask = Task.Run(() =>
+        //            {
+        //                if (!cancellationToken.IsCancellationRequested)
+        //                {
+        //                    rbRBackMaskChangedCore();
+        //                }
+        //            }, cancellationToken);
+
+        //            // 等待兩個任務完成（不使用 await）
+        //            Task.WaitAll(new[] { leftTask, rightTask }, cancellationToken);
+
+        //            if (!cancellationToken.IsCancellationRequested)
+        //            {
+        //                // 操作完成，可選的成功處理
+        //                Debug.WriteLine("[ExecuteBackMaskChangedAsync] BackMask 變更操作完成");
+        //            }
+        //        }
+        //        catch (OperationCanceledException)
+        //        {
+        //            // 操作被取消，正常流程
+        //            Debug.WriteLine("[ExecuteBackMaskChangedAsync] BackMask 變更操作已取消");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            // 在 UI 執行緒顯示錯誤
+        //            if (!cancellationToken.IsCancellationRequested)
+        //            {
+        //                this.BeginInvoke(new Action(() =>
+        //                {
+        //                    GM.WriteToStatusTextBox($"BackMaskChanged 錯誤: {ex.Message}");
+        //                }));
+        //            }
+        //        }
+        //    }, cancellationToken);
+        //}
         private void ExecuteBackMaskChangedAsync()
         {
-            //   使用 Task.Run 在背景執行緒執行
-            _ = Task.Run(async () =>
+            // 取消舊的背景操作
+            _backMaskChangedCts?.Cancel();
+            _backMaskChangedCts = new CancellationTokenSource();
+            CancellationToken cancellationToken = _backMaskChangedCts.Token;
+
+            // ✅ 方案：直接投遞兩個獨立的背景任務，不等待
+            //   每個任務完成後自行透過 BeginInvoke 回報（如需要）
+            //   避免 Task.WaitAll 的阻塞
+
+            // 背景任務 1：左側後掩模切換（非阻塞）
+            _ = Task.Run(() =>
             {
                 try
                 {
-                    // 並行執行兩個方法
-                    await Task.WhenAll(
-                        Task.Run(() => rbLBackMaskChangedCore()),
-                        Task.Run(() => rbRBackMaskChangedCore())
-                    );
+                    // 檢查是否已被取消
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    rbLBackMaskChangedCore();
+
+                    // ✅ 可選：操作完成後在 UI 執行緒記錄
+                    if (!cancellationToken.IsCancellationRequested)
+                    {
+                        this.BeginInvoke(new Action(() =>
+                        {
+                            Debug.WriteLine("[ExecuteBackMaskChangedAsync] 左側背景操作完成");
+                        }));
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    Debug.WriteLine("[ExecuteBackMaskChangedAsync] 左側操作已被取消");
                 }
                 catch (Exception ex)
                 {
-                    // 在 UI 執行緒顯示錯誤
                     this.BeginInvoke(new Action(() =>
                     {
-                        GM.WriteToStatusTextBox($"BackMaskChanged 錯誤: {ex.Message}");
+                        GM.WriteToStatusTextBox($"左側背景操作錯誤: {ex.Message}");
                     }));
                 }
-            });
+            }, cancellationToken);
+
+            // 背景任務 2：右側後掩模切換（非阻塞）
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    // 檢查是否已被取消
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    rbRBackMaskChangedCore();
+
+                    // ✅ 可選：操作完成後在 UI 執行緒記錄
+                    if (!cancellationToken.IsCancellationRequested)
+                    {
+                        this.BeginInvoke(new Action(() =>
+                        {
+                            Debug.WriteLine("[ExecuteBackMaskChangedAsync] 右側背景操作完成");
+                        }));
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    Debug.WriteLine("[ExecuteBackMaskChangedAsync] 右側操作已被取消");
+                }
+                catch (Exception ex)
+                {
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        GM.WriteToStatusTextBox($"右側背景操作錯誤: {ex.Message}");
+                    }));
+                }
+            }, cancellationToken);
         }
 
         private void rbLBackMaskChanged()
@@ -3058,15 +3554,97 @@ namespace NSAA_16Axis
         {
             rbRBackMaskChangedCore();
         }
+        //private void rbRBackMaskChangedCore()
+        //{
+        //    //   非 UI 操作可直接執行
+        //    GV.RightUpCam.Freeze();
+        //    GV.RightBackCam.Freeze();
+
+        //    //   UI 操作需要回到 UI 執行緒
+        //    this.Invoke(new Action(() =>
+        //    {
+        //        tBRightBackMaskLight.Value = _AlignC.RBMaskBright;
+        //        btRTopMaskSave.Enabled = false;
+        //        btRWaferSave.Enabled = false;
+        //        btRWaferMask.Enabled = false;
+        //        btFindRWaferCenter.Enabled = false;
+        //        btRTopPhotoMask.Enabled = false;
+        //        btRWaferLSave.Enabled = false;
+        //        btRTopMaskLSave.Enabled = false;
+        //        btRTopMaskLightPlus.Enabled = false;
+        //        btRTopMaskLightMinus.Enabled = false;
+        //        btRWaferLightPlus.Enabled = false;
+        //        btRWaferLightMinus.Enabled = false;
+        //        rbRTopMask.Checked = false;
+        //        rbRWafer.Checked = false;
+        //        tBRightTopMaskLight.Value = 0;
+        //        tBRightTopMaskLight.Enabled = false;
+        //        tBRightBackWaferLight.Enabled = false;
+        //        ucNavigatorTopMaskR.Enabled = false;
+        //        ucNavigatorWaferR.Enabled = false;
+        //        cbRTopMaskAlgo.Enabled = false;
+        //        cbRWaferAlgo.Enabled = false;
+        //        rBHighMagnification.Enabled = false;
+        //        rBLowMagnification.Enabled = false;
+        //        cbHighMagnification.Enabled = false;
+        //        cbLowMagnification.Enabled = false;
+
+        //        if (GV.UserLevel == GV.User.Operator)
+        //        {
+        //            ucNavigatorBackMaskR.Enabled = false;
+        //            btRBackMaskSave.Enabled = false;
+        //            cbRBackMaskAlgo.Enabled = false;
+        //            btRBackMaskLSave.Enabled = false;
+        //            btRBackMaskLightMinus.Enabled = false;
+        //            btRBackMaskLightPlus.Enabled = false;
+        //            tBRightBackMaskLight.Enabled = false;
+        //            btRBackMaskLSave.Enabled = false;
+        //            btMagSave.Enabled = false;
+        //            btRBackMask.Enabled = false;
+        //            btFindRBMaskCenter.Enabled = false;
+        //        }
+        //        else
+        //        {
+        //            ucNavigatorBackMaskR.Enabled = true;
+        //            btRBackMaskSave.Enabled = true;
+        //            cbRBackMaskAlgo.Enabled = true;
+        //            btRBackMaskLSave.Enabled = true;
+        //            btRBackMaskLightMinus.Enabled = true;
+        //            btRBackMaskLightPlus.Enabled = true;
+        //            tBRightBackMaskLight.Enabled = true;
+        //            btRBackMaskLSave.Enabled = true;
+        //            btMagSave.Enabled = true;
+        //            btRBackMask.Enabled = true;
+        //            btFindRBMaskCenter.Enabled = true;
+        //        }
+        //        tBRShowImage.Enabled = true;
+        //    }));
+
+        //    //   非 UI 操作
+        //    GV.Light.ChangeBrightness("rightback", _AlignC.RBMaskBright);
+        //    GV.RightBackCam.SetWindow(skRight);
+
+        //    //   UI 操作
+        //    this.Invoke(new Action(() =>
+        //    {
+        //        skRight.SetShowMask(true, _dRalpha, RightMaskMat);
+        //    }));
+
+        //    GV.RightBackCam.Live();
+        //}
         private void rbRBackMaskChangedCore()
         {
-            //   非 UI 操作可直接執行
+            // 非 UI 操作可直接執行
             GV.RightUpCam.Freeze();
             GV.RightBackCam.Freeze();
 
-            //   UI 操作需要回到 UI 執行緒
-            this.Invoke(new Action(() =>
+            // UI 操作需要回到 UI 執行緒 - 改用 BeginInvoke
+            this.BeginInvoke(new Action(() =>
             {
+                // 檢查是否已取消
+                if (_backMaskChangedCts?.Token.IsCancellationRequested ?? false)
+                    return;
+
                 tBRightBackMaskLight.Value = _AlignC.RBMaskBright;
                 btRTopMaskSave.Enabled = false;
                 btRWaferSave.Enabled = false;
@@ -3124,28 +3702,116 @@ namespace NSAA_16Axis
                 tBRShowImage.Enabled = true;
             }));
 
-            //   非 UI 操作
+            // 非 UI 操作
             GV.Light.ChangeBrightness("rightback", _AlignC.RBMaskBright);
             GV.RightBackCam.SetWindow(skRight);
 
-            //   UI 操作
-            this.Invoke(new Action(() =>
+            // 第二個 UI 操作 - 也改用 BeginInvoke
+            this.BeginInvoke(new Action(() =>
             {
+                if (_backMaskChangedCts?.Token.IsCancellationRequested ?? false)
+                    return;
+
                 skRight.SetShowMask(true, _dRalpha, RightMaskMat);
             }));
 
             GV.RightBackCam.Live();
         }
+        //private void rbLBackMaskChangedCore()
+        //{
+        //    //   非 UI 操作可直接執行
+        //    GV.LeftUpCam.Freeze();
+        //    GV.LeftBackCam.Freeze();
+        //    GV.skView = 1;
+
+        //    //   UI 操作需要回到 UI 執行緒
+        //    this.Invoke(new Action(() =>
+        //    {
+        //        tBLeftBackMaskLight.Value = _AlignC.LBMaskBright;
+        //        btLTopMaskSave.Enabled = false;
+        //        btLTopMaskLSave.Enabled = false;
+        //        btLWaferSave.Enabled = false;
+        //        btLWaferMask.Enabled = false;
+        //        btFindLWaferCenter.Enabled = false;
+        //        btLWaferLSave.Enabled = false;
+        //        btLTopPhotoMask.Enabled = false;
+        //        btLTopMaskLightPlus.Enabled = false;
+        //        btLTopMaskLightMinus.Enabled = false;
+        //        btLWaferLightPlus.Enabled = false;
+        //        btLWaferLightMinus.Enabled = false;
+        //        rbLTopMask.Checked = false;
+        //        rbLWafer.Checked = false;
+        //        tBLeftTopMaskLight.Value = 0;
+        //        tBLeftTopMaskLight.Enabled = false;
+        //        tBLeftBackWaferLight.Enabled = false;
+        //        ucNavigatorTopMaskL.Enabled = false;
+        //        ucNavigatorWaferL.Enabled = false;
+        //        rBHighMagnification.Enabled = false;
+        //        rBLowMagnification.Enabled = false;
+        //        cbHighMagnification.Enabled = false;
+        //        cbLowMagnification.Enabled = false;
+        //        cbLTopMaskAlgo.Enabled = false;
+        //        cbLWaferAlgo.Enabled = false;
+
+        //        if (GV.UserLevel == GV.User.Operator)
+        //        {
+        //            ucNavigatorBackMaskL.Enabled = false;
+        //            btLBackMaskSave.Enabled = false;
+        //            cbLBackMaskAlgo.Enabled = false;
+        //            btLBackMaskLSave.Enabled = false;
+        //            btLBackMaskLightMinus.Enabled = false;
+        //            btLBackMaskLightPlus.Enabled = false;
+        //            tBLeftBackMaskLight.Enabled = false;
+        //            btLBackMaskLSave.Enabled = false;
+        //            btMagSave.Enabled = false;
+        //            btLBackMask.Enabled = false;
+        //            btFindLBMaskCenter.Enabled = false;
+        //            btSave.Enabled = false;
+        //        }
+        //        else
+        //        {
+        //            btSave.Enabled = true;
+        //            ucNavigatorBackMaskL.Enabled = true;
+        //            btLBackMaskSave.Enabled = true;
+        //            cbLBackMaskAlgo.Enabled = true;
+        //            btLBackMaskLSave.Enabled = true;
+        //            btLBackMaskLightMinus.Enabled = true;
+        //            btLBackMaskLightPlus.Enabled = true;
+        //            tBLeftBackMaskLight.Enabled = true;
+        //            btLBackMaskLSave.Enabled = true;
+        //            btMagSave.Enabled = true;
+        //            btLBackMask.Enabled = true;
+        //            btFindLBMaskCenter.Enabled = true;
+        //        }
+        //        tBLShowImage.Enabled = true;
+        //    }));
+
+        //    //   非 UI 操作
+        //    GV.Light.ChangeBrightness("leftback", _AlignC.LBMaskBright);
+        //    GV.LeftBackCam.SetWindow(skLeft);
+
+        //    //   UI 操作
+        //    this.Invoke(new Action(() =>
+        //    {
+        //        skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
+        //    }));
+
+        //    GV.LeftBackCam.Live();
+        //}
         private void rbLBackMaskChangedCore()
         {
-            //   非 UI 操作可直接執行
+            // 非 UI 操作可直接執行
             GV.LeftUpCam.Freeze();
             GV.LeftBackCam.Freeze();
             GV.skView = 1;
 
-            //   UI 操作需要回到 UI 執行緒
-            this.Invoke(new Action(() =>
+            // UI 操作需要回到 UI 執行緒 - 改用 BeginInvoke
+            this.BeginInvoke(new Action(() =>
             {
+                // 檢查是否已取消
+                if (_backMaskChangedCts?.Token.IsCancellationRequested ?? false)
+                    return;
+
                 tBLeftBackMaskLight.Value = _AlignC.LBMaskBright;
                 btLTopMaskSave.Enabled = false;
                 btLTopMaskLSave.Enabled = false;
@@ -3205,13 +3871,16 @@ namespace NSAA_16Axis
                 tBLShowImage.Enabled = true;
             }));
 
-            //   非 UI 操作
+            // 非 UI 操作
             GV.Light.ChangeBrightness("leftback", _AlignC.LBMaskBright);
             GV.LeftBackCam.SetWindow(skLeft);
 
-            //   UI 操作
-            this.Invoke(new Action(() =>
+            // 第二個 UI 操作 - 也改用 BeginInvoke
+            this.BeginInvoke(new Action(() =>
             {
+                if (_backMaskChangedCts?.Token.IsCancellationRequested ?? false)
+                    return;
+
                 skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
             }));
 
@@ -3279,7 +3948,7 @@ namespace NSAA_16Axis
                     rbLWafer.Checked = true;
                 }
 
-                Update();
+                //Update();
             }
         }
 
@@ -3343,7 +4012,7 @@ namespace NSAA_16Axis
                     rbLBackMask.Checked = true;
                 }
 
-                Update();
+                //Update();
             }
         }
 
@@ -3416,7 +4085,7 @@ namespace NSAA_16Axis
                     rbLTopMask.Checked = true;
                 }
 
-                Update();
+                //Update();
             }
         }
 
@@ -3743,500 +4412,6 @@ namespace NSAA_16Axis
             GM.WriteRecipeXml(EditRecipe);
         }
 
-        //public void ShowMe()
-        //{
-        //    if (GV.AppSettingParm.Author == 0)
-        //    {
-        //        buttonF.Visible = false;
-        //        buttonL.Visible = false;
-        //        buttonR.Visible = false;
-        //    }
-        //    else
-        //    {
-        //        buttonF.Visible = true;
-        //        buttonL.Visible = true;
-        //        buttonR.Visible = true;
-        //        groupBox4.Visible = true;
-        //        btCaptureN.Visible = true;
-        //    }
-
-        //    if (GMPBackLeft == null)
-        //    {
-        //        GMPBackLeft = new Mat();
-        //        GMPBackRight = new Mat();
-
-        //        Dictionary<string, Int16> ClassList = GV.AIClassList.GetClassList();
-        //        UpdateClassList(ClassList);
-        //    }
-        //    if(_AlignC.LLMaskAlgorithm==OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
-        //    {
-        //        SetComboBoxByClassId(cbLBackMaskClassList, _AlignC.LLMaskAIClassId);
-        //    }
-        //    if(_AlignC.RLMaskAlgorithm==OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0)
-        //    {
-        //        SetComboBoxByClassId(cbRBackMaskClassList, _AlignC.RLMaskAIClassId);
-        //    }
-        //    if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0)
-        //    {
-        //        SetComboBoxByClassId(cbLBackWaferClassList, _AlignC.LHWaferAIClassId);
-        //    }
-        //    if(_AlignC.RHWaferAlgorithm== OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId>=0)
-        //    {
-        //        SetComboBoxByClassId(cbRBackWaferClassList, _AlignC.RHWaferAIClassId);
-        //    }
-
-        //    if (GV.AppSettingParm.Emulation != true)
-        //    {
-        //        if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty())
-        //        {
-        //            GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm);
-        //        }
-
-        //        if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty())
-        //        {
-        //            //  關鍵:確保右邊 Mask matcher 學習模板
-        //            GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm);
-        //        }
-
-        //        if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty())
-        //        {
-        //            GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm);
-        //        }
-
-        //        if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty())
-        //        {
-        //            //  關鍵:確保右邊 Wafer matcher 學習模板
-        //            GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm);
-        //        }
-        //    }
-        //    skLeft.CanCenterLine = true;
-        //    skLeft.CanRectMaskAndWafer = true;
-        //    skLeft.CanTrackPattern = true;
-        //    skLeft.CanZoom = true;
-
-        //    skRight.CanCenterLine = true;
-        //    skRight.CanRectMaskAndWafer = true;
-        //    skRight.CanTrackPattern = true;
-        //    skRight.CanZoom = true;
-
-        //    LeftMaskMat = GV.LeftMaskMat.Clone();
-        //    RightMaskMat = GV.RightMaskMat.Clone();
-        //    GV.LeftUpCam?.Freeze();
-        //    GV.RightUpCam?.Freeze();
-        //    GV.RingLight.ChangeBrightness("left", 0);
-        //    GV.RingLight.ChangeBrightness("right", 0);
-        //    iAdmin = GV.HwndFormMain.iAdmin;
-        //    GV.LeftBackCam.SetWindow(skLeft);
-        //    GV.RightBackCam.SetWindow(skRight);
-        //    tBLeftTopMaskLight.Value = _AlignC.LeftBrightness[NowMagni];
-        //    tBRightTopMaskLight.Value = _AlignC.RightBrightness[NowMagni];
-        //    tBLeftBackMaskLight.Value = _AlignC.LBMaskBright;
-        //    tBRightBackMaskLight.Value = _AlignC.RBMaskBright;
-        //    tBLeftBackWaferLight.Value = _AlignC.LBWaferBright;
-        //    tBRightBackWaferLight.Value = _AlignC.RBWaferBright;
-        //    if (rbLTopMask.Checked)
-        //    {
-        //        GV.Light.ChangeBrightness("left", tBLeftTopMaskLight.Value);
-        //    }
-        //    else if (rbLBackMask.Checked)
-        //    {
-        //        GV.Light.ChangeBrightness("leftback", tBLeftBackMaskLight.Value);
-        //    }
-        //    else if (rbLWafer.Checked)
-        //    {
-        //        GV.Light.ChangeBrightness("leftback", tBLeftBackWaferLight.Value);
-        //    }
-
-        //    if (rbRTopMask.Checked)
-        //    {
-        //        GV.Light.ChangeBrightness("right", tBRightTopMaskLight.Value);
-        //    }
-        //    else if (rbRBackMask.Checked)
-        //    {
-        //        GV.Light.ChangeBrightness("rightback", tBRightBackMaskLight.Value);
-        //    }
-        //    else if (rbRWafer.Checked)
-        //    {
-        //        GV.Light.ChangeBrightness("rightback", tBRightBackWaferLight.Value);
-        //    }
-
-        //    if (GV.AppSettingParm.LeftBackCamEnable)
-        //    {
-        //        lbEmulationModeL.Visible = false;
-        //    }
-
-        //    if (GV.AppSettingParm.RightBackCamEnable)
-        //    {
-        //        lbEmulationModeR.Visible = false;
-        //    }
-
-        //    GV.LeftBackCam.Live();
-
-        //    GV.RightBackCam.Live();
-        //    if (DrawMatchThread == null)
-        //    {
-        //        DrawMatchThread = new Thread(DrawMatchPosition);
-
-        //        DrawMatchThread.Start();
-        //    }
-        //    if (GV.skView == 0)
-        //    {
-        //        rbLBackMask.Checked = true;
-        //        rbRBackMask.Checked = true;
-        //        rbLBackMaskChanged();
-        //        rbRBackMaskChanged();
-        //        GV.NowWaferMask = 1;
-        //    }
-        //    else if (GV.skView == 1)
-        //    {
-        //        if (GV.NowWaferMask == 1)
-        //        {
-        //            rbLBackMask.Checked = true;
-        //            rbRBackMask.Checked = true;
-        //            rbLBackMaskChanged();
-        //            rbRBackMaskChanged();
-        //        }
-        //        else if (GV.NowWaferMask == 2)
-        //        {
-        //            rbLWafer.Checked = true;
-        //            rbRWafer.Checked = true;
-        //            rbLWaferChanged();
-        //            rbRWaferChanged();
-        //        }
-        //    }
-
-        //    if (_AlignC.UpBotMask == 1)
-        //    {
-        //        cBBottomMask.Checked = false;
-        //        cBTopMask.Checked = true;
-        //    }
-        //    else
-        //    {
-        //        cBBottomMask.Checked = true;
-        //        cBTopMask.Checked = false;
-        //    }
-
-        //    if (_AlignC.AdjuestZ == 1)
-        //    {
-        //        cBAdjZ.Checked = true;
-        //    }
-        //    else
-        //    {
-        //        cBAdjZ.Checked = false;
-        //    }
-        //    NUDLMaskX.Value = _AlignC.LMaskAdjX;
-        //    NUDLMaskY.Value = _AlignC.LMaskAdjY;
-        //    NUDRMaskX.Value = _AlignC.RMaskAdjX;
-        //    NUDRMaskY.Value = _AlignC.RMaskAdjY;
-        //    groupBox4.Location = new System.Drawing.Point(560, 15);
-        //    ApplyLanguage();
-        //    CheckParam();
-        //}
-        //public void ShowMe()
-        //{
-        //    try
-        //    {
-
-        //        //  初始化基本可見性設定
-        //        if (GV.AppSettingParm.Author == 0)
-        //        {
-        //            buttonF.Visible = false;
-        //            buttonL.Visible = false;
-        //            buttonR.Visible = false;
-        //        }
-        //        else
-        //        {
-        //            buttonF.Visible = true;
-        //            buttonL.Visible = true;
-        //            buttonR.Visible = true;
-
-        //        }
-
-        //        //  初始化 Mat 物件
-        //        if (GMPBackLeft == null)
-        //        {
-        //            GMPBackLeft = new Mat();
-        //            GMPBackRight = new Mat();
-        //        }
-
-        //        //  非同步更新 AI ClassList（不阻塞 UI）
-        //        _ = Task.Run(async () =>
-        //        {
-        //            try
-        //            {
-        //                var classNames = await GV.AIClassList.GetClassNamesAsync();
-        //                var classList = new Dictionary<string, Int16>();
-        //                for (int i = 0; i < classNames.Count; i++)
-        //                {
-        //                    classList.Add(classNames[i], (Int16)i);
-        //                }
-
-        //                // 回到 UI 執行緒更新 ComboBox
-        //                if (!IsDisposed && IsHandleCreated)
-        //                {
-        //                    BeginInvoke(new Action(() =>
-        //                    {
-        //                        try
-        //                        {
-        //                            UpdateClassList(classList);
-        //                        }
-        //                        catch (Exception ex)
-        //                        {
-        //                            Debug.WriteLine($"UpdateClassList in UI thread failed: {ex.Message}");
-        //                        }
-        //                    }));
-        //                }
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                Debug.WriteLine($"更新 AI 類別列表失敗: {ex.Message}");
-        //                GM.WriteToStatusTextBox($"更新 AI 類別列表失敗: {ex.Message}");
-        //            }
-        //        });
-
-        //        //  設定 SKWindow 功能
-        //        skLeft.CanCenterLine = true;
-        //        skLeft.CanRectMaskAndWafer = true;
-        //        skLeft.CanTrackPattern = true;
-        //        skLeft.CanZoom = true;
-
-        //        skRight.CanCenterLine = true;
-        //        skRight.CanRectMaskAndWafer = true;
-        //        skRight.CanTrackPattern = true;
-        //        skRight.CanZoom = true;
-        //        btBackLabelPatternL.Visible = true;
-
-        //        //  設定 Mask Mat
-        //        if (GV.LeftMaskMat != null && !GV.LeftMaskMat.Empty())
-        //        {
-        //            LeftMaskMat = GV.LeftMaskMat.Clone();
-        //        }
-        //        if (GV.RightMaskMat != null && !GV.RightMaskMat.Empty())
-        //        {
-        //            RightMaskMat = GV.RightMaskMat.Clone();
-        //        }
-
-        //        //  停止上層相機
-        //        //GV.LeftUpCam?.Freeze();
-        //        //GV.RightUpCam?.Freeze();
-        //        GV.RingLight.ChangeBrightness("left", 0);
-        //        GV.RingLight.ChangeBrightness("right", 0);
-
-        //        //  設定相機視窗
-        //        iAdmin = GV.HwndFormMain.iAdmin;
-        //        GV.LeftBackCam.SetWindow(skLeft);
-        //        GV.RightBackCam.SetWindow(skRight);
-
-        //        //  設定亮度
-        //        _ = Task.Run(async () =>
-        //        {
-        //            try
-        //            {
-        //                //  1. 在背景執行緒讀取所有亮度值
-        //                var brightnessValues = new
-        //                {
-        //                    LeftTop = _AlignC.LeftBrightness[NowMagni],
-        //                    RightTop = _AlignC.RightBrightness[NowMagni],
-        //                    LeftBackMask = _AlignC.LBMaskBright,
-        //                    RightBackMask = _AlignC.RBMaskBright,
-        //                    LeftBackWafer = _AlignC.LBWaferBright,
-        //                    RightBackWafer = _AlignC.RBWaferBright
-        //                };
-
-        //                //  2. 使用短暫延遲確保 UI 準備就緒
-        //                await Task.Delay(50);
-
-        //                //  3. 回到 UI 執行緒設定 TrackBar 控制項
-        //                if (!IsDisposed && IsHandleCreated)
-        //                {
-        //                    this.BeginInvoke(new Action(() =>
-        //                    {
-        //                        try
-        //                        {
-        //                            tBLeftTopMaskLight.Value = brightnessValues.LeftTop;
-        //                            tBRightTopMaskLight.Value = brightnessValues.RightTop;
-        //                            tBLeftBackMaskLight.Value = brightnessValues.LeftBackMask;
-        //                            tBRightBackMaskLight.Value = brightnessValues.RightBackMask;
-        //                            tBLeftBackWaferLight.Value = brightnessValues.LeftBackWafer;
-        //                            tBRightBackWaferLight.Value = brightnessValues.RightBackWafer;
-
-        //                            Debug.WriteLine("Brightness values set successfully");
-        //                        }
-        //                        catch
-        //                        {
-
-        //                        }
-        //                    }));
-        //                }
-        //            }
-        //            catch
-        //            {
-
-        //            }
-        //        });
-
-        //        //  根據當前選擇的 RadioButton 設定光源
-        //        _ = Task.Run(async () =>
-        //        {
-        //            try
-        //            {
-        //                // 左側光源
-        //                string leftSide = null;
-        //                int leftValue = 0;
-
-        //                this.Invoke(new Action(() =>
-        //                {
-        //                    if (rbLTopMask.Checked)
-        //                    {
-        //                        leftSide = "left";
-        //                        leftValue = tBLeftTopMaskLight.Value;
-        //                    }
-        //                    else if (rbLBackMask.Checked)
-        //                    {
-        //                        leftSide = "leftback";
-        //                        leftValue = tBLeftBackMaskLight.Value;
-        //                    }
-        //                    else if (rbLWafer.Checked)
-        //                    {
-        //                        leftSide = "leftback";
-        //                        leftValue = tBLeftBackWaferLight.Value;
-        //                    }
-        //                }));
-
-        //                if (leftSide != null)
-        //                {
-        //                    GV.Light.ChangeBrightness(leftSide, leftValue);
-        //                }
-
-        //                // 右側光源
-        //                string rightSide = null;
-        //                int rightValue = 0;
-
-        //                this.Invoke(new Action(() =>
-        //                {
-        //                    if (rbRTopMask.Checked)
-        //                    {
-        //                        rightSide = "right";
-        //                        rightValue = tBRightTopMaskLight.Value;
-        //                    }
-        //                    else if (rbRBackMask.Checked)
-        //                    {
-        //                        rightSide = "rightback";
-        //                        rightValue = tBRightBackMaskLight.Value;
-        //                    }
-        //                    else if (rbRWafer.Checked)
-        //                    {
-        //                        rightSide = "rightback";
-        //                        rightValue = tBRightBackWaferLight.Value;
-        //                    }
-        //                }));
-
-        //                if (rightSide != null)
-        //                {
-        //                    GV.Light.ChangeBrightness(rightSide, rightValue);
-        //                }
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                Debug.WriteLine($"Light ChangeBrightness Error: {ex.Message}");
-        //            }
-        //        });
-
-        //        //  相機模擬模式檢查
-        //        if (GV.AppSettingParm.LeftBackCamEnable)
-        //        {
-        //            lbEmulationModeL.Visible = false;
-        //        }
-
-        //        if (GV.AppSettingParm.RightBackCamEnable)
-        //        {
-        //            lbEmulationModeR.Visible = false;
-        //        }
-
-        //        //  啟動相機 Live
-        //        //GV.LeftBackCam.Live();
-        //        //GV.RightBackCam.Live();
-
-        //        //  啟動 DrawMatchPosition 執行緒
-        //        //if (DrawMatchThread == null)
-        //        //{
-        //        //    DrawMatchThread = new Thread(DrawMatchPosition) { IsBackground = true };
-        //        //    DrawMatchThread.Start();
-        //        //}
-
-        //        //  根據 skView 設定初始顯示模式
-        //        if (GV.skView == 0)
-        //        {
-        //            rbLBackMask.Checked = true;
-        //            rbRBackMask.Checked = true;
-        //            ExecuteBackMaskChangedAsync();
-        //            GV.NowWaferMask = 1;
-        //        }
-        //        else if (GV.skView == 1)
-        //        {
-        //            if (GV.NowWaferMask == 1)
-        //            {
-        //                rbLBackMask.Checked = true;
-        //                rbRBackMask.Checked = true;
-        //                ExecuteBackMaskChangedAsync();
-        //            }
-        //            else if (GV.NowWaferMask == 2)
-        //            {
-        //                rbLWafer.Checked = true;
-        //                rbRWafer.Checked = true;
-        //                ExecuteBackMaskChangedAsync();
-        //            }
-        //        }
-
-        //        //  設定 Mask 類型選項
-        //        if (_AlignC.UpBotMask == 1)
-        //        {
-        //            cBBottomMask.Checked = false;
-        //            cBTopMask.Checked = true;
-        //        }
-        //        else
-        //        {
-        //            cBBottomMask.Checked = true;
-        //            cBTopMask.Checked = false;
-        //        }
-
-        //        //  設定 Z 軸調整選項
-        //        if (_AlignC.AdjuestZ == 1)
-        //        {
-        //            cBAdjZ.Checked = true;
-        //        }
-        //        else
-        //        {
-        //            cBAdjZ.Checked = false;
-        //        }
-
-        //        //  設定 Mask 調整參數
-        //        NUDLMaskX.Value = _AlignC.LMaskAdjX;
-        //        NUDLMaskY.Value = _AlignC.LMaskAdjY;
-        //        NUDRMaskX.Value = _AlignC.RMaskAdjX;
-        //        NUDRMaskY.Value = _AlignC.RMaskAdjY;
-
-        //        //  設定 groupBox4 位置
-        //        groupBox4.Location = new System.Drawing.Point(560, 15);
-
-        //        //  套用語言設定
-        //        //ApplyLanguage();
-
-        //        //  檢查參數
-        //        _ = Task.Run(async () =>
-        //        {
-        //            CheckParam();
-
-        //        });
-
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine($"ShowMe failed: {ex.Message}");
-        //        GM.WriteToStatusTextBox($"ShowMe 初始化失敗: {ex.Message}");
-        //    }
-        //}
         public void ShowMe()
         {
             if (Interlocked.Exchange(ref _showMeBusy, 1) == 1) return;
@@ -4361,81 +4536,6 @@ namespace NSAA_16Axis
             }
         }
 
-        //public void PostInitialize()
-        //{
-        //    this.BeginInvoke(new Action(() =>
-        //    {
-        //        try
-        //        {
-        //            //   1. 根據已儲存的 AI ClassId 設定 ComboBox 選項
-        //            if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LLMaskAIClassId >= 0)
-        //            {
-        //                SetComboBoxByClassId(cbLBackMaskClassList, _AlignC.LLMaskAIClassId);
-        //            }
-        //            if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RLMaskAIClassId >= 0)
-        //            {
-        //                SetComboBoxByClassId(cbRBackMaskClassList, _AlignC.RLMaskAIClassId);
-        //            }
-        //            if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.LHWaferAIClassId >= 0)
-        //            {
-        //                SetComboBoxByClassId(cbLBackWaferClassList, _AlignC.LHWaferAIClassId);
-        //            }
-        //            if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && _AlignC.RHWaferAIClassId >= 0)
-        //            {
-        //                SetComboBoxByClassId(cbRBackWaferClassList, _AlignC.RHWaferAIClassId);
-        //            }
-
-        //            //   2. 使用 Task.Run 在背景執行 LearnWithAlgo
-        //            _ = Task.Run(() =>
-        //            {
-        //                try
-        //                {
-        //                    if (GV.AppSettingParm.Emulation != true)
-        //                    {
-        //                        if (_recipe.LeftLowMaskMat != null && !_recipe.LeftLowMaskMat.Empty() && GV.matcherLLM != null)
-        //                        {
-        //                            GV.matcherLLM.LearnWithAlgo(_recipe.LeftLowMaskMat, _recipe.LeftLowMaskMask, _AlignC.LLMaskAlgorithm);
-        //                            Debug.WriteLine("LeftLowMask LearnWithAlgo completed");
-        //                        }
-
-        //                        if (_recipe.RightLowMaskMat != null && !_recipe.RightLowMaskMat.Empty() && GV.matcherRLM != null)
-        //                        {
-        //                            GV.matcherRLM.LearnWithAlgo(_recipe.RightLowMaskMat, _recipe.RightLowMaskMask, _AlignC.RLMaskAlgorithm);
-        //                            Debug.WriteLine("RightLowMask LearnWithAlgo completed");
-        //                        }
-
-        //                        if (_recipe.LeftHighWaferMat != null && !_recipe.LeftHighWaferMat.Empty() && GV.matcherLHW != null)
-        //                        {
-        //                            GV.matcherLHW.LearnWithAlgo(_recipe.LeftHighWaferMat, _recipe.LeftHighWaferMask, _AlignC.LHWaferAlgorithm);
-        //                            Debug.WriteLine("LeftHighWafer LearnWithAlgo completed");
-        //                        }
-
-        //                        if (_recipe.RightHighWaferMat != null && !_recipe.RightHighWaferMat.Empty() && GV.matcherRHW != null)
-        //                        {
-        //                            GV.matcherRHW.LearnWithAlgo(_recipe.RightHighWaferMat, _recipe.RightHighWaferMask, _AlignC.RHWaferAlgorithm);
-        //                            Debug.WriteLine("RightHighWafer LearnWithAlgo completed");
-        //                        }
-        //                    }
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    Debug.WriteLine($"LearnWithAlgo Error: {ex.Message}");
-        //                    GM.WriteToStatusTextBox($"模板學習失敗: {ex.Message}");
-        //                }
-        //            });
-
-        //            if (DrawMatchThread == null)
-        //            {
-        //                DrawMatchThread = new Thread(DrawMatchPosition) { IsBackground = true };
-        //                DrawMatchThread.Start();
-        //            }
-        //        }
-        //        catch
-        //        {
-
-        //        }
-        //    }));
-        //}
         public void PostInitialize()
         {
             if (InvokeRequired)
@@ -4619,21 +4719,32 @@ namespace NSAA_16Axis
 
         private void tBLShowImage_ValueChanged(object sender, EventArgs e)
         {
-            // iLalpha = tBLShowImage.Value;
-            //_dLalpha = (double)tBLShowImage.Value / 100;
-            //_AlignC.dLalpha = _dLalpha;
-            //if (rbLTopMask.Checked == false)
+            //if (_leftShowImageTimer == null) return;
+
+            // ✅ 立即更新 alpha 值和 Mask 顯示（無延遲）
+            _dLalpha = (double)tBLShowImage.Value / 100.0;
+            _AlignC.dLalpha = _dLalpha;
+
+            bool canShowMask = !rbLTopMask.Checked && LeftMaskMat != null && !LeftMaskMat.Empty();
+            if (canShowMask)
+            {
+                skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
+            }
+            else
+            {
+                skLeft.SetShowMask(false, 0, LeftMaskMat);
+            }
+
+            // ✅ 重新啟動計時器以更新影像
+            //if (_leftShowImageTimer.Enabled)
             //{
-            //    skLeft.SetShowMask(true, _dLalpha, LeftMaskMat);
+            //    _leftShowImageTimer.Stop();
             //}
-            //else
-            //{
-            //    skLeft.SetShowMask(false, 0, LeftMaskMat);
-            //}
-            if (_leftShowImageTimer == null) return;
-            _pendingLeftShowImageValue = tBLShowImage.Value;
-            _leftShowImageTimer.Stop();
-            _leftShowImageTimer.Start();
+            //_pendingLeftShowImageValue = tBLShowImage.Value;
+            //_leftShowImageTimer.Interval = 200;
+            //_leftShowImageTimer.Start();
+
+            //CheckParam();
         }
 
         private void ucNavigatorTopMaskL_CommandPressed(int dir)
@@ -4959,7 +5070,7 @@ namespace NSAA_16Axis
             if (Ncolor != Ocolor)
             {
                 btSave.BackColor = Ncolor;
-                Update();
+                //Update();
             }
         }
         private void btLShowImageSave_Click(object sender, EventArgs e)
@@ -4983,21 +5094,32 @@ namespace NSAA_16Axis
         }
         private void tBRShowImage_ValueChanged(object sender, EventArgs e)
         {
-            // iRalpha = tBRShowImage.Value;
-            //_dRalpha = (double)tBRShowImage.Value / 100;
-            //_AlignC.dRalpha = _dRalpha;
-            //if (rbRTopMask.Checked == false)
+            //if (_rightShowImageTimer == null) return;
+
+            // ✅ 立即更新 alpha 值和 Mask 顯示（無延遲）
+            _dRalpha = (double)tBRShowImage.Value / 100.0;
+            _AlignC.dRalpha = _dRalpha;
+
+            bool canShowMask = !rbRTopMask.Checked && RightMaskMat != null && !RightMaskMat.Empty();
+            if (canShowMask)
+            {
+                skRight.SetShowMask(true, _dRalpha, RightMaskMat);
+            }
+            else
+            {
+                skRight.SetShowMask(false, 0, RightMaskMat);
+            }
+
+            // ✅ 重新啟動計時器以更新影像
+            //if (_rightShowImageTimer.Enabled)
             //{
-            //    skRight.SetShowMask(true, _dRalpha, RightMaskMat);
+            //    _rightShowImageTimer.Stop();
             //}
-            //else
-            //{
-            //    skRight.SetShowMask(false, 0, RightMaskMat);
-            //}
-            if (_rightShowImageTimer == null) return;
-             _pendingRightShowImageValue = tBRShowImage.Value;
-            _rightShowImageTimer.Stop();
-            _rightShowImageTimer.Start();
+            //_pendingRightShowImageValue = tBRShowImage.Value;
+            //_rightShowImageTimer.Interval = 200;
+            //_rightShowImageTimer.Start();
+
+            //CheckParam();
         }
         private void btDelete_Click(object sender, EventArgs e)
         {
@@ -5359,8 +5481,8 @@ namespace NSAA_16Axis
                 cbLTopMaskAlgo.SelectedIndex = (int)_AlignC.LHMaskAlgorithm;
                 cbRTopMaskAlgo.SelectedIndex = (int)_AlignC.RHMaskAlgorithm;
 
-                Thread.Sleep(250);
-                Update();
+                //Thread.Sleep(250);
+                //Update();
 
                 if (GV.UserLevel != GV.User.Operator)
                     cbHighMagnification.Enabled = true;
@@ -5400,8 +5522,8 @@ namespace NSAA_16Axis
                 cbLTopMaskAlgo.SelectedIndex = (int)_AlignC.LLMaskAlgorithm;
                 cbRTopMaskAlgo.SelectedIndex = (int)_AlignC.RLMaskAlgorithm;
 
-                Update();
-                Thread.Sleep(250);
+                //Update();
+                //Thread.Sleep(250);
                 // gBMag.Enabled = true;
                 if (GV.UserLevel != GV.User.Operator)
                     cbLowMagnification.Enabled = true;
@@ -6473,82 +6595,6 @@ namespace NSAA_16Axis
 
         }
 
-        //private async Task<ProductMatchPositions> GetAllMatchPositionAsync(Mat lSrc, Mat rSrc, string alignMagnification, CancellationToken ct = default)
-        //{
-
-        //    int i = 0;
-        //    double patternCenterDistance = _AlignC.PatternCenterDistanceUm;
-        //    while (i < 3)
-        //    {
-        //        lSrc.CopyTo(GMPBackLeft);
-        //        lSrc.CopyTo(GMPBackRight);
-        //        if (GV.AppSettingParm.Emulation != true)
-        //        {
-        //            if (alignMagnification == "low")
-        //            {
-        //                var t1 = GV.matcherLLM.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklMaskMp, _AlignC.LLMaskAlgorithm, ct);
-        //                var t2 = GV.matcherRLM.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrMaskMp, _AlignC.RLMaskAlgorithm, ct);
-        //                var t3 = GV.matcherLLW.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklWaferMp, _AlignC.LLWaferAlgorithm, ct);
-        //                var t4 = GV.matcherRLW.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrWaferMp, _AlignC.RLWaferAlgorithm, ct);
-        //                await Task.WhenAll(t1, t2, t3, t4).ConfigureAwait(false);
-        //                GMPBacklWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.LeftUmPerPixelX[_AlignC.AlignLowMagnification]);
-        //                GMPBackrWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.RightUmPerPixelX[_AlignC.AlignLowMagnification]);
-        //                GMPBacklWaferMp.Y -= (float)(_AlignC.YLOffset / GV.ZoomLensInfo.LeftUmPerPixelY[_AlignC.AlignLowMagnification]);
-        //                GMPBackrWaferMp.Y -= (float)(_AlignC.YROffset / GV.ZoomLensInfo.RightUmPerPixelY[_AlignC.AlignLowMagnification]);
-        //            }
-        //            else if (alignMagnification == "high")
-        //            {
-        //                var t1 = GV.matcherLHM.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklMaskMp, _AlignC.LHMaskAlgorithm, ct);
-        //                var t2 = GV.matcherRHM.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrMaskMp, _AlignC.RHMaskAlgorithm, ct);
-        //                var t3 = GV.matcherLHW.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklWaferMp, _AlignC.LHWaferAlgorithm, ct);
-        //                var t4 = GV.matcherRHW.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrWaferMp, _AlignC.RHWaferAlgorithm, ct);
-        //                await Task.WhenAll(t1, t2, t3, t4).ConfigureAwait(false);
-        //                GMPBacklWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.LeftUmPerPixelX[_AlignC.AlignHighMagnification]);
-        //                GMPBackrWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.RightUmPerPixelX[_AlignC.AlignHighMagnification]);
-        //                GMPBacklWaferMp.Y -= (float)(_AlignC.YLOffset / GV.ZoomLensInfo.LeftUmPerPixelY[_AlignC.AlignHighMagnification]);
-        //                GMPBackrWaferMp.Y -= (float)(_AlignC.YROffset / GV.ZoomLensInfo.RightUmPerPixelY[_AlignC.AlignHighMagnification]);
-        //            }
-        //            else if (alignMagnification == "back")
-        //            {
-        //                var t1 = GV.matcherLLW.MatMatchWithAlgoAsync(0, LeftMaskMat, GMPBacklMaskMp, _AlignC.LLWaferAlgorithm);
-        //                var t2 = GV.matcherRLW.MatMatchWithAlgoAsync(0, RightMaskMat, GMPBackrMaskMp, _AlignC.RLWaferAlgorithm);
-        //                var t3 = GV.matcherLHW.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklWaferMp, _AlignC.LHWaferAlgorithm);
-        //                var t4 = GV.matcherRHW.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrWaferMp, _AlignC.RHWaferAlgorithm);
-        //                await Task.WhenAll(t1, t2, t3, t4).ConfigureAwait(false);
-        //                GMPBacklWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.LeftDownUmPerPixelX);
-        //                GMPBackrWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.RightDownUmPerPixelX);
-        //                GMPBacklWaferMp.Y -= (float)(_AlignC.YLOffset / GV.ZoomLensInfo.LeftDownUmPerPixelY);
-        //                GMPBackrWaferMp.Y -= (float)(_AlignC.YROffset / GV.ZoomLensInfo.RightDownUmPerPixelY);
-        //                // patternCenterDistancePixel = _AlignC.PatternCenterDistanceUm / ((GV.ZoomLensInfo.LeftDownUmPerPixelX + GV.ZoomLensInfo.RightDownUmPerPixelX) / 2);
-        //            }
-        //            else if (alignMagnification == "backmask")
-        //            {
-        //                var t1 = GV.matcherLLW.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklMaskMp, _AlignC.LLWaferAlgorithm);
-        //                var t2 = GV.matcherRLW.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrMaskMp, _AlignC.RLWaferAlgorithm);
-        //                await Task.WhenAll(t1, t2).ConfigureAwait(false);
-        //            }
-        //            else if (alignMagnification == "checkmask")
-        //            {
-        //                var t1 = GV.matcherLHM.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklMaskMp, _AlignC.LHMaskAlgorithm);
-        //                var t2 = GV.matcherRHM.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrMaskMp, _AlignC.RHMaskAlgorithm);
-        //                await Task.WhenAll(t1, t2).ConfigureAwait(false);
-        //            }
-        //            //else if (alignMagnification == "backcheck")
-        //            //{
-        //            //   var t1= GV.matcherLLW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, _AlignC.LLWaferAlgorithm);
-        //            //    GV.matcherRLW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, _AlignC.RLWaferAlgorithm);
-        //            //    GV.matcherLHW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, _AlignC.LHWaferAlgorithm);
-        //            //    GV.matcherRHW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, _AlignC.RHWaferAlgorithm);
-        //            //}
-        //            skLeft.MaskMp = GMPBacklMaskMp;
-        //            skLeft.WaferMp = GMPBacklWaferMp;
-        //            skRight.MaskMp = GMPBackrMaskMp;
-        //            skRight.WaferMp = GMPBackrWaferMp;
-        //        }
-
-        //    }
-        //    return new ProductMatchPositions(GMPBacklMaskMp, GMPBacklWaferMp, GMPBackrMaskMp, GMPBackrWaferMp, patternCenterDistance);
-        //}
         private async Task<ProductMatchPositions> GetAllMatchPositionAsync(Mat lSrc, Mat rSrc, string alignMagnification, CancellationToken ct = default)
         {
             int i = 0;
@@ -6852,209 +6898,7 @@ namespace NSAA_16Axis
 
             return new ProductMatchPositions(GMPBacklMaskMp, GMPBacklWaferMp, GMPBackrMaskMp, GMPBackrWaferMp, patternCenterDistance);
         }
-        //private async Task<ProductMatchPositions> GetAllMatchPositionAsync(Mat lSrc, Mat rSrc, string alignMagnification, CancellationToken ct = default)
-        //{
-        //    int i = 0;
-        //    double patternCenterDistance = _AlignC.PatternCenterDistanceUm;
-
-        //    while (i < 3)
-        //    {
-        //        lSrc.CopyTo(GMPBackLeft);
-        //        rSrc.CopyTo(GMPBackRight);
-
-        //        if (GV.AppSettingParm.Emulation != true)
-        //        {
-        //            if (alignMagnification == "low")
-        //            {
-        //                var t1 = GV.matcherLLM.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklMaskMp, _AlignC.LLMaskAlgorithm, ct);
-        //                var t2 = GV.matcherRLM.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrMaskMp, _AlignC.RLMaskAlgorithm, ct);
-        //                var t3 = GV.matcherLLW.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklWaferMp, _AlignC.LLWaferAlgorithm, ct);
-        //                var t4 = GV.matcherRLW.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrWaferMp, _AlignC.RLWaferAlgorithm, ct);
-        //                await Task.WhenAll(t1, t2, t3, t4).ConfigureAwait(false);
-
-        //                //   套用偏移量校正座標
-        //                GMPBacklMaskMp.X += _AlignC.LLMaskOffsetX;
-        //                GMPBacklMaskMp.Y += _AlignC.LLMaskOffsetY;
-
-        //                GMPBacklWaferMp.X += _AlignC.LLWaferOffsetX;
-        //                GMPBacklWaferMp.Y += _AlignC.LLWaferOffsetY;
-
-        //                GMPBackrMaskMp.X += _AlignC.RLMaskOffsetX;
-        //                GMPBackrMaskMp.Y += _AlignC.RLMaskOffsetY;
-
-        //                GMPBackrWaferMp.X += _AlignC.RLWaferOffsetX;
-        //                GMPBackrWaferMp.Y += _AlignC.RLWaferOffsetY;
-
-        //                // 套用原有的 Offset 補償
-        //                GMPBacklWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.LeftUmPerPixelX[_AlignC.AlignLowMagnification]);
-        //                GMPBackrWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.RightUmPerPixelX[_AlignC.AlignLowMagnification]);
-        //                GMPBacklWaferMp.Y -= (float)(_AlignC.YLOffset / GV.ZoomLensInfo.LeftUmPerPixelY[_AlignC.AlignLowMagnification]);
-        //                GMPBackrWaferMp.Y -= (float)(_AlignC.YROffset / GV.ZoomLensInfo.RightUmPerPixelY[_AlignC.AlignLowMagnification]);
-        //            }
-        //            else if (alignMagnification == "high")
-        //            {
-        //                var t1 = GV.matcherLHM.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklMaskMp, _AlignC.LHMaskAlgorithm, ct);
-        //                var t2 = GV.matcherRHM.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrMaskMp, _AlignC.RHMaskAlgorithm, ct);
-        //                var t3 = GV.matcherLHW.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklWaferMp, _AlignC.LHWaferAlgorithm, ct);
-        //                var t4 = GV.matcherRHW.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrWaferMp, _AlignC.RHWaferAlgorithm, ct);
-        //                await Task.WhenAll(t1, t2, t3, t4).ConfigureAwait(false);
-
-        //                //   套用偏移量校正座標
-        //                GMPBacklMaskMp.X += _AlignC.LHMaskOffsetX;
-        //                GMPBacklMaskMp.Y += _AlignC.LHMaskOffsetY;
-
-        //                GMPBacklWaferMp.X += _AlignC.LHWaferOffsetX;
-        //                GMPBacklWaferMp.Y += _AlignC.LHWaferOffsetY;
-
-        //                GMPBackrMaskMp.X += _AlignC.RHMaskOffsetX;
-        //                GMPBackrMaskMp.Y += _AlignC.RHMaskOffsetY;
-
-        //                GMPBackrWaferMp.X += _AlignC.RHWaferOffsetX;
-        //                GMPBackrWaferMp.Y += _AlignC.RHWaferOffsetY;
-
-        //                // 套用原有的 Offset 補償
-        //                GMPBacklWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.LeftUmPerPixelX[_AlignC.AlignHighMagnification]);
-        //                GMPBackrWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.RightUmPerPixelX[_AlignC.AlignHighMagnification]);
-        //                GMPBacklWaferMp.Y -= (float)(_AlignC.YLOffset / GV.ZoomLensInfo.LeftUmPerPixelY[_AlignC.AlignHighMagnification]);
-        //                GMPBackrWaferMp.Y -= (float)(_AlignC.YROffset / GV.ZoomLensInfo.RightUmPerPixelY[_AlignC.AlignHighMagnification]);
-        //            }
-        //            else if (alignMagnification == "back")
-        //            {
-        //                //   底部對齊模式:使用完整影像搜尋
-        //                var t1 = GV.matcherLLM.MatMatchWithAlgoAsync(0, LeftMaskMat, GMPBacklMaskMp, _AlignC.LLMaskAlgorithm);
-        //                var t2 = GV.matcherRLM.MatMatchWithAlgoAsync(0, RightMaskMat, GMPBackrMaskMp, _AlignC.RLMaskAlgorithm);
-        //                var t3 = GV.matcherLHW.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklWaferMp, _AlignC.LHWaferAlgorithm);
-        //                var t4 = GV.matcherRHW.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrWaferMp, _AlignC.RHWaferAlgorithm);
-        //                await Task.WhenAll(t1, t2, t3, t4).ConfigureAwait(false);
-
-        //                //   套用偏移量校正座標
-        //                GMPBacklMaskMp.X += _AlignC.LLMaskOffsetX;
-        //                GMPBacklMaskMp.Y += _AlignC.LLMaskOffsetY;
-
-        //                GMPBacklWaferMp.X += _AlignC.LHWaferOffsetX;
-        //                GMPBacklWaferMp.Y += _AlignC.LHWaferOffsetY;
-
-        //                GMPBackrMaskMp.X += _AlignC.RLMaskOffsetX;
-        //                GMPBackrMaskMp.Y += _AlignC.RLMaskOffsetY;
-
-        //                GMPBackrWaferMp.X += _AlignC.RHWaferOffsetX;
-        //                GMPBackrWaferMp.Y += _AlignC.RHWaferOffsetY;
-
-        //                // 套用原有的 Offset 補償
-        //                GMPBacklWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.LeftDownUmPerPixelX);
-        //                GMPBackrWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.RightDownUmPerPixelX);
-        //                GMPBacklWaferMp.Y -= (float)(_AlignC.YLOffset / GV.ZoomLensInfo.LeftDownUmPerPixelY);
-        //                GMPBackrWaferMp.Y -= (float)(_AlignC.YROffset / GV.ZoomLensInfo.RightDownUmPerPixelY);
-        //            }
-        //            else if (alignMagnification == "backmask")
-        //            {
-        //                //   只搜尋光罩:使用完整影像搜尋
-        //                var t1 = GV.matcherLLM.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklMaskMp, _AlignC.LLMaskAlgorithm);
-        //                var t2 = GV.matcherRLM.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrMaskMp, _AlignC.RLMaskAlgorithm);
-        //                await Task.WhenAll(t1, t2).ConfigureAwait(false);
-
-        //                //   套用偏移量校正座標
-        //                GMPBacklMaskMp.X += _AlignC.LLMaskOffsetX;
-        //                GMPBacklMaskMp.Y += _AlignC.LLMaskOffsetY;
-
-        //                GMPBackrMaskMp.X += _AlignC.RLMaskOffsetX;
-        //                GMPBackrMaskMp.Y += _AlignC.RLMaskOffsetY;
-        //            }
-        //            else if (alignMagnification == "checkmask")
-        //            {
-        //                var t1 = GV.matcherLHM.MatMatchWithAlgoAsync(0, GMPBackLeft, GMPBacklMaskMp, _AlignC.LHMaskAlgorithm, ct);
-        //                var t2 = GV.matcherRHM.MatMatchWithAlgoAsync(0, GMPBackRight, GMPBackrMaskMp, _AlignC.RHMaskAlgorithm, ct);
-        //                await Task.WhenAll(t1, t2).ConfigureAwait(false);
-
-        //                //   套用偏移量校正座標
-        //                GMPBacklMaskMp.X += _AlignC.LHMaskOffsetX;
-        //                GMPBacklMaskMp.Y += _AlignC.LHMaskOffsetY;
-
-        //                GMPBackrMaskMp.X += _AlignC.RHMaskOffsetX;
-        //                GMPBackrMaskMp.Y += _AlignC.RHMaskOffsetY;
-        //            }
-
-        //            skLeft.MaskMp = GMPBacklMaskMp;
-        //            skLeft.WaferMp = GMPBacklWaferMp;
-        //            skRight.MaskMp = GMPBackrMaskMp;
-        //            skRight.WaferMp = GMPBackrWaferMp;
-        //        }
-        //        break; // 跳出 while 迴圈
-        //    }
-
-        //    return new ProductMatchPositions(GMPBacklMaskMp, GMPBacklWaferMp, GMPBackrMaskMp, GMPBackrWaferMp, patternCenterDistance);
-        //}
-        //private ProductMatchPositions GetAllMatchPostion(Mat lSrc, Mat rSrc, string alignMmagnification)
-        //{
-
-        //    MatchPosition lMaskMp = new MatchPosition();
-        //    MatchPosition rMaskMp = new MatchPosition();
-        //    MatchPosition lWaferMp = new MatchPosition();
-        //    MatchPosition rWaferMp = new MatchPosition();
-        //    double patternCenterDistance = _AlignC.PatternCenterDistanceUm;
-
-        //    if (GV.AppSettingParm.Emulation != true)
-        //    {
-        //        if (alignMmagnification == "low")
-        //        {
-        //            GV.matcherLLM.MatMatchWithAlgo(0, lSrc.Clone(), ref lMaskMp, _AlignC.LLMaskAlgorithm);
-        //            GV.matcherRLM.MatMatchWithAlgo(0, rSrc.Clone(), ref rMaskMp, _AlignC.RLMaskAlgorithm);
-        //            GV.matcherLLW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, _AlignC.LLWaferAlgorithm);
-        //            GV.matcherRLW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, _AlignC.RLWaferAlgorithm);
-
-        //            lWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.LeftUmPerPixelX[_AlignC.AlignLowMagnification]);
-        //            rWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.RightUmPerPixelX[_AlignC.AlignLowMagnification]);
-        //            lWaferMp.Y -= (float)(_AlignC.YLOffset / GV.ZoomLensInfo.LeftUmPerPixelY[_AlignC.AlignLowMagnification]);
-        //            rWaferMp.Y -= (float)(_AlignC.YROffset / GV.ZoomLensInfo.RightUmPerPixelY[_AlignC.AlignLowMagnification]);
-        //        }
-        //        else if (alignMmagnification == "high")
-        //        {
-        //            GV.matcherLHM.MatMatchWithAlgo(0, lSrc.Clone(), ref lMaskMp, _AlignC.LHMaskAlgorithm);
-        //            GV.matcherRHM.MatMatchWithAlgo(0, rSrc.Clone(), ref rMaskMp, _AlignC.RHMaskAlgorithm);
-        //            GV.matcherLHW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, _AlignC.LHWaferAlgorithm);
-        //            GV.matcherRHW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, _AlignC.RHWaferAlgorithm);
-        //            lWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.LeftUmPerPixelX[_AlignC.AlignHighMagnification]);
-        //            rWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.RightUmPerPixelX[_AlignC.AlignHighMagnification]);
-        //            lWaferMp.Y -= (float)(_AlignC.YLOffset / GV.ZoomLensInfo.LeftUmPerPixelY[_AlignC.AlignHighMagnification]);
-        //            rWaferMp.Y -= (float)(_AlignC.YROffset / GV.ZoomLensInfo.RightUmPerPixelY[_AlignC.AlignHighMagnification]);
-        //        }
-        //        else if (alignMmagnification == "back")
-        //        {
-        //            GV.matcherLLW.MatMatchWithAlgo(0, LeftMaskMat, ref lMaskMp, _AlignC.LLWaferAlgorithm);
-        //            GV.matcherRLW.MatMatchWithAlgo(0, RightMaskMat, ref rMaskMp, _AlignC.RLWaferAlgorithm);
-        //            GV.matcherLHW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, _AlignC.LHWaferAlgorithm);
-        //            GV.matcherRHW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, _AlignC.RHWaferAlgorithm);
-        //            lWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.LeftDownUmPerPixelX);
-        //            rWaferMp.X -= (float)(_AlignC.XOffset / GV.ZoomLensInfo.RightDownUmPerPixelX);
-        //            lWaferMp.Y -= (float)(_AlignC.YLOffset / GV.ZoomLensInfo.LeftDownUmPerPixelY);
-        //            rWaferMp.Y -= (float)(_AlignC.YROffset / GV.ZoomLensInfo.RightDownUmPerPixelY);
-        //            // patternCenterDistancePixel = _AlignC.PatternCenterDistanceUm / ((GV.ZoomLensInfo.LeftDownUmPerPixelX + GV.ZoomLensInfo.RightDownUmPerPixelX) / 2);
-        //        }
-        //        else if (alignMmagnification == "backmask")
-        //        {
-        //            GV.matcherLLW.MatMatchWithAlgo(0, lSrc.Clone(), ref lMaskMp, _AlignC.LLWaferAlgorithm);
-        //            GV.matcherRLW.MatMatchWithAlgo(0, rSrc.Clone(), ref rMaskMp, _AlignC.RLWaferAlgorithm);
-        //        }
-        //        else if (alignMmagnification == "checkmask")
-        //        {
-        //            GV.matcherLHM.MatMatchWithAlgo(0, lSrc.Clone(), ref lMaskMp, _AlignC.LHMaskAlgorithm);
-        //            GV.matcherRHM.MatMatchWithAlgo(0, rSrc.Clone(), ref rMaskMp, _AlignC.RHMaskAlgorithm);
-        //        }
-        //        else if (alignMmagnification == "backcheck")
-        //        {
-        //            GV.matcherLLW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, _AlignC.LLWaferAlgorithm);
-        //            GV.matcherRLW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, _AlignC.RLWaferAlgorithm);
-        //            GV.matcherLHW.MatMatchWithAlgo(0, lSrc.Clone(), ref lWaferMp, _AlignC.LHWaferAlgorithm);
-        //            GV.matcherRHW.MatMatchWithAlgo(0, rSrc.Clone(), ref rWaferMp, _AlignC.RHWaferAlgorithm);
-        //        }
-
-        //        skLeft.MaskMp = lMaskMp;
-        //        skLeft.WaferMp = lWaferMp;
-        //        skRight.MaskMp = rMaskMp;
-        //        skRight.WaferMp = rWaferMp;
-        //    }
-        //    return new ProductMatchPositions(lMaskMp, lWaferMp, rMaskMp, rWaferMp, patternCenterDistance);
-        //}
+        
         private ProductMatchPositions GetAllMatchPostion(Mat lSrc, Mat rSrc, string alignMagnification)
         {
             MatchPosition lMaskMp = new MatchPosition();
@@ -7869,12 +7713,23 @@ namespace NSAA_16Axis
         {
             if (InvokeRequired)
             {
-                Invoke(new Action<Dictionary<string, Int16>>(UpdateClassList), classList);
+                //Invoke(new Action<Dictionary<string, Int16>>(UpdateClassList), classList);
+                //return;
+                this.BeginInvoke(new Action(() =>
+                {
+                    // 檢查是否已取消
+                    if (_updateUICts?.Token.IsCancellationRequested ?? false)
+                        return;
+
+                    UpdateClassList(classList);
+                }));
                 return;
             }
 
             try
             {
+                if (_updateUICts?.Token.IsCancellationRequested ?? false) return;
+
                 cbLBackMaskClassList.Items.Clear();
                 cbLBackWaferClassList.Items.Clear();
                 cbRBackWaferClassList.Items.Clear();
@@ -7992,40 +7847,6 @@ namespace NSAA_16Axis
 
             //_zController.MoveTo(bestPosition); // 移到最佳焦距
         }
-
-        //private double CalculateFocusLaplacian(Mat image)
-        //{
-        //    var laplacian = new Mat();
-        //    Cv2.Laplacian(image, laplacian, MatType.CV_8UC1);
-        //    var stdDev = new Scalar();
-        //    var mean = new Scalar();
-        //    Cv2.MeanStdDev(laplacian, ref mean, ref stdDev);
-        //    return stdDev.V0 * stdDev.V0;
-        //}
-
-        //private double CalculateFocus(Mat image)
-        //{
-        //    Mat gray = new Mat();
-        //    if (image.NumberOfChannels == 3)
-        //    {
-        //        CvInvoke.CvtColor(image, gray, Emgu.CV.CvEnum.ColorConversion.Bgr2Gray);
-        //    }
-        //    else
-        //    {
-        //        gray = image;
-        //    }
-
-        //    Mat sobelX = new Mat();
-        //    Mat sobelY = new Mat();
-        //    CvInvoke.Sobel(gray, sobelX, Emgu.CV.CvEnum.DepthType.Cv16S, 1, 0);
-        //    CvInvoke.Sobel(gray, sobelY, Emgu.CV.CvEnum.DepthType.Cv16S, 0, 1);
-
-        //    Mat sobel = new Mat();
-        //    CvInvoke.Magnitude(sobelX, sobelY, sobel);
-
-        //    double focusValue = CvInvoke.Mean(sobel).V0;
-        //    return focusValue;
-        //}
 
         private double CalculateFocus(Mat image)
         {
@@ -8512,6 +8333,13 @@ namespace NSAA_16Axis
         {
             try
             {
+                _backMaskChangedCts?.Cancel();
+                _backMaskChangedCts = null;
+                _checkLevelCts?.Cancel(); 
+                _checkLevelCts = null;
+                _updateUICts?.Cancel();
+                _updateUICts = null;
+
                 //  1. 儲存亮度設定
                 if (rbLTopMask.Checked)
                 {
