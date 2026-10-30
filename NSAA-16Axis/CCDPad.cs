@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -89,7 +90,8 @@ namespace NSAA_16Axis
             {
                 iAdd = GV.Plc.iUpCCDAlignStart;
                 iRAdd = GV.Plc.iUpCCDEnd;
-            } else if (GV.Plc.ReadMemory(GV.Plc.iChuckStart))
+            }
+            else if (GV.Plc.ReadMemory(GV.Plc.iChuckStart))
             {
                 iAdd = GV.Plc.iBackCCDAlignStart;
                 iRAdd = GV.Plc.iChuckEnd;
@@ -98,7 +100,8 @@ namespace NSAA_16Axis
             {
                 iAdd = GV.Plc.iBackMaskStart;
                 iRAdd = GV.Plc.iDownCCDEnd;
-            } else if (GV.Plc.ReadMemory(GV.Plc.iCCDAdjust))
+            }
+            else if (GV.Plc.ReadMemory(GV.Plc.iCCDAdjust))
             {
                 iAdd = GV.Plc.iCCDAdjMoveStart;
                 iRAdd = GV.Plc.iCCDAdjOk;
@@ -127,8 +130,9 @@ namespace NSAA_16Axis
             try
             {
                 Invoke(new Action(() => AllEnable()));
-            } catch(Exception) 
-            { 
+            }
+            catch (Exception)
+            {
             }
         }
 
@@ -306,7 +310,7 @@ namespace NSAA_16Axis
                                 labelChuckZ.Text = "Chuck Z: " + iChuckZ.ToString();
                             });
                         }
-                        
+
                     }
                     Thread.Sleep(250);
                 }
@@ -315,26 +319,33 @@ namespace NSAA_16Axis
             {
 
             }
-        } 
+        }
 
         private void BigYSmallDown_Click(object sender, EventArgs e)
         {
+            //Moving();
+
+            //int iRet = iWMemory[GV.Plc.iiDSBigY];
+
+            //Int32.TryParse(comboBoxBigYS.SelectedItem.ToString(), out int iMoving);
+
+            //iWMemory[GV.Plc.iiDSBigY] += iMoving;
+
+            //thWaitRun = new Thread(WaitRun);
+            //thWaitRun.Start();
             Moving();
 
-            int iRet = iWMemory[GV.Plc.iiDSBigY];
-
             Int32.TryParse(comboBoxBigYS.SelectedItem.ToString(), out int iMoving);
-
             iWMemory[GV.Plc.iiDSBigY] += iMoving;
 
-            thWaitRun = new Thread(WaitRun);
+            thWaitRun = new Thread(() => WaitRunByCommandBit(GV.Plc.iBigYDownCmd, GV.Plc.iBigYDownAck, GV.PLCTimeOut));
             thWaitRun.Start();
         }
 
         public void Moving()
         {
             // int[] TempArray = GV.Plc.ReadData32(GV.Plc.iRMemoryAddress, GV.Plc.iRCount);
-            
+
             Array.Copy(iRMemory, iWMemory, iRCount);
 
             ReLoad.Enabled = false;
@@ -416,14 +427,13 @@ namespace NSAA_16Axis
         {
             Moving();
 
-
-            int iRet = iWMemory[GV.Plc.iiDSBigY];
+            //int iRet = iWMemory[GV.Plc.iiDSBigY];
 
             Int32.TryParse(comboBoxBigYS.SelectedItem.ToString(), out int iMoving);
 
             iWMemory[GV.Plc.iiDSBigY] -= iMoving;
 
-            thWaitRun = new Thread(WaitRun);
+            thWaitRun = new Thread(() => WaitRunByCommandBit(GV.Plc.iBigYUpCmd, GV.Plc.iBigYUpAck, GV.PLCTimeOut));
             thWaitRun.Start();
         }
 
@@ -431,13 +441,13 @@ namespace NSAA_16Axis
         {
             Moving();
 
-            int iRet = iWMemory[GV.Plc.iiDSBigY];
+            //int iRet = iWMemory[GV.Plc.iiDSBigY];
 
             Int32.TryParse(comboBoxBigYB.SelectedItem.ToString(), out int iMoving);
 
             iWMemory[GV.Plc.iiDSBigY] += iMoving;
 
-            thWaitRun = new Thread(WaitRun);
+            thWaitRun = new Thread(() => WaitRunByCommandBit(GV.Plc.iBigYDownCmd, GV.Plc.iBigYDownAck, GV.PLCTimeOut));
             thWaitRun.Start();
         }
 
@@ -445,13 +455,13 @@ namespace NSAA_16Axis
         {
             Moving();
 
-            int iRet = iWMemory[GV.Plc.iiDSBigY];
+            //int iRet = iWMemory[GV.Plc.iiDSBigY];
 
             Int32.TryParse(comboBoxBigYB.SelectedItem.ToString(), out int iMoving);
 
             iWMemory[GV.Plc.iiDSBigY] -= iMoving;
 
-            thWaitRun = new Thread(WaitRun);
+            thWaitRun = new Thread(() => WaitRunByCommandBit(GV.Plc.iBigYUpCmd, GV.Plc.iBigYUpAck, GV.PLCTimeOut));
             thWaitRun.Start();
         }
 
@@ -520,7 +530,7 @@ namespace NSAA_16Axis
             else if (iUpDown == 2)
             {
                 iWMemory[GV.Plc.iiDSDownLeftY] -= iMoving;
-            }  
+            }
 
             thWaitRun = new Thread(WaitRun);
             thWaitRun.Start();
@@ -542,7 +552,7 @@ namespace NSAA_16Axis
             {
                 iWMemory[GV.Plc.iiDSDownLeftY] += iMoving;
             }
-            
+
             thWaitRun = new Thread(WaitRun);
             thWaitRun.Start();
         }
@@ -580,11 +590,12 @@ namespace NSAA_16Axis
             if (iUpDown == 1)
             {
                 iWMemory[GV.Plc.iiDSUpLeftX] -= iMoving;
-            } else if (iUpDown == 2)
+            }
+            else if (iUpDown == 2)
             {
                 iWMemory[GV.Plc.iiDSDownLeftX] -= iMoving;
             }
-            
+
             thWaitRun = new Thread(WaitRun);
             thWaitRun.Start();
         }
@@ -605,7 +616,7 @@ namespace NSAA_16Axis
             {
                 iWMemory[GV.Plc.iiDSDownLeftX] -= iMoving;
             }
-            
+
             thWaitRun = new Thread(WaitRun);
             thWaitRun.Start();
 
@@ -626,7 +637,7 @@ namespace NSAA_16Axis
             else if (iUpDown == 2)
             {
                 iWMemory[GV.Plc.iiDSDownLeftX] += iMoving;
-            }    
+            }
 
             thWaitRun = new Thread(WaitRun);
             thWaitRun.Start();
@@ -714,7 +725,7 @@ namespace NSAA_16Axis
             else if (iUpDown == 2)
             {
                 iWMemory[GV.Plc.iiDSDownRightY] -= iMoving;
-            }        
+            }
 
             thWaitRun = new Thread(WaitRun);
             thWaitRun.Start();
@@ -799,7 +810,7 @@ namespace NSAA_16Axis
             {
                 iWMemory[GV.Plc.iiDSDownRightX] += iMoving;
             }
-           
+
             thWaitRun = new Thread(WaitRun);
             thWaitRun.Start();
         }
@@ -840,7 +851,7 @@ namespace NSAA_16Axis
             else if (iUpDown == 2)
             {
                 iWMemory[GV.Plc.iiDSDownRightX] += iMoving;
-            }  
+            }
 
             thWaitRun = new Thread(WaitRun);
             thWaitRun.Start();
@@ -1024,7 +1035,8 @@ namespace NSAA_16Axis
             if (iOk == 1)
             {
                 GV.Plc.SendM(GV.Plc.iPadWork, 1);
-            } else
+            }
+            else
             {
                 GV.Plc.SendM(GV.Plc.iPadWork, 0);
             }
@@ -1196,7 +1208,8 @@ namespace NSAA_16Axis
                 GV.Light.ChangeBrightness(0, iRb, iLb);
                 GV.Light.ChangeBrightness(1, 0, 0);
                 bUp = true;
-            } else if (iUpDown == 2)
+            }
+            else if (iUpDown == 2)
             {
                 GV.skView = 1;
                 GV.LeftUpCam.Freeze();
@@ -1209,7 +1222,8 @@ namespace NSAA_16Axis
                 {
                     iLb = GV.NowAlignCondition.LBMaskBright;
                     iRb = GV.NowAlignCondition.RBMaskBright;
-                } else if (iMaskWafer == 2)
+                }
+                else if (iMaskWafer == 2)
                 {
                     iLb = GV.NowAlignCondition.LBWaferBright;
                     iRb = GV.NowAlignCondition.RBWaferBright;
@@ -1219,7 +1233,7 @@ namespace NSAA_16Axis
                 bDown = true;
             }
 
-             UpCCD.Visible = bDown;
+            UpCCD.Visible = bDown;
             lbLeftZ.Visible = bDown;
             lbRightZ.Visible = bDown;
             labelLeftZ.Visible = bDown;
@@ -1315,7 +1329,9 @@ namespace NSAA_16Axis
             // GV.HwndFormMain.StopCheckPLc = false;
             // Thread scanPlcThread = new Thread(GV.HwndFormMain.CheckPlcDram);
             // scanPlcThread.Start();
+            GV.CCDPadForm = null;
             GV.thCCDPad = null;
+            System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);
         }
 
         private void CCDPad_Shown(object sender, EventArgs e)
@@ -1644,7 +1660,7 @@ namespace NSAA_16Axis
             if (iMaskWafer == 1)
             {
                 iMaskWafer = 2;
- 
+
                 int iLb = GV.NowAlignCondition.LBWaferBright;
                 int iRb = GV.NowAlignCondition.RBWaferBright;
                 GV.Light.ChangeBrightness(1, iRb, iLb);
@@ -1659,6 +1675,34 @@ namespace NSAA_16Axis
                 int iLb = GV.NowAlignCondition.LBMaskBright;
                 int iRb = GV.NowAlignCondition.RBMaskBright;
                 GV.Light.ChangeBrightness(1, iRb, iLb);
+            }
+        }
+
+        private void WaitRunByCommandBit(int cmdAddress, int ackAddress, int timeoutMs = 10000)
+        {
+            GV.Plc.WriteData32(GV.Plc.iWMemoryAddress, iWMemory);
+            GV.Plc.SendM(cmdAddress, 1);
+            Stopwatch sw = Stopwatch.StartNew();
+            try
+            {
+                while (true)
+                {
+                    if (GV.Plc.ReciveM(ackAddress) == 1) break;
+                    if (sw.ElapsedMilliseconds > timeoutMs) throw new MRException($"CCDPad command timeout. Cmd=M{cmdAddress}, Ack=M{ackAddress}");
+                    Thread.Sleep(50);
+                }
+            }
+            finally
+            {
+                GV.Plc.SendM(cmdAddress, 0);
+                try
+                {
+                    Invoke(new Action(() => AllEnable()));
+                }
+                catch
+                {
+
+                }
             }
         }
     }

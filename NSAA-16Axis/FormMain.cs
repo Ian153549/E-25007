@@ -222,10 +222,10 @@ namespace NSAA_16Axis
             timerNowTime.Interval = 1000;
             timerNowTime.Start();
 
-            this.tabPage3.Parent = null;
+            //this.tabPage3.Parent = null;
             this.tabPage4.Parent = null;
-            this.tabPage5.Parent = null;
-
+            //this.tabPage5.Parent = null;
+            ApplyAuthorParameterAccess();
             btZoomInfoRead.Visible = false;
             groupBoxMeasurePatternDistance.Visible = false;
             gbCameraParm.Visible = false;
@@ -481,6 +481,7 @@ namespace NSAA_16Axis
                 // tabPage5.Parent = tabControl1;
                 ucOpenPad.Visible = false;
                 btSystemSetting.Visible = false;
+                btSetting.Visible = true;
                 UserName = GV.Dlang.strEngineer;
                 iAdmin = 0;
             }
@@ -493,7 +494,7 @@ namespace NSAA_16Axis
                 tabPage5.Parent = null;
                 tabPage2.Parent = tabControl1;
                 tabPage4.Parent = tabControl1;
-                tabPage3.Parent = tabControl1;
+                tabPage3.Parent = null;
                 gbAlignCondition.Enabled = true;
                 lbMax.Enabled = true;
                 lbMin.Enabled = true;
@@ -503,9 +504,11 @@ namespace NSAA_16Axis
                 iAdmin = 1;
                 ucOpenPad.Visible = false;
                 btZoomInfoRead.Visible = true;
+                btSetting.Visible = true;
                 cmLearnPatternBack1.groupBox4.Visible = true;
                 cmLearnPatternUp1.groupBoxT4.Visible = true;
                 UserName = GV.Dlang.strAdmin;
+                ApplyAuthorParameterAccess();
             }
             else
             {
@@ -544,7 +547,7 @@ namespace NSAA_16Axis
                 nudMaxAlignTimes.Enabled = false;
                 nudMinAlignTimes.Enabled = false;
                 ucOpenPad.Visible = false;
-                btSystemSetting.Visible = false;
+                btSetting.Visible = false;
                 UserName = GV.Dlang.strOperator;
                 iAdmin = 0;
             }
@@ -623,7 +626,14 @@ namespace NSAA_16Axis
                     nudMinAlignTimes.Enabled = true;
                     // buttonTestMode.Visible = true;
                     buttonCapture.Visible = true;
+                    tabPage3.Parent = null;
                 }
+                //else
+                //{
+                //    if (tabPage3.Parent == null)
+                //        tabPage3.Parent = tabControl1;
+                //}
+                ApplyAuthorParameterAccess();
                 //tbStatus.ScrollToCaret();
                 //tbStatus.Refresh();
                 DisplayAlignCondition();
@@ -663,6 +673,11 @@ namespace NSAA_16Axis
 
         public void ParameterCheckLevel()
         {
+            if (!GV.AppSettingParm.IsAuthorMode)
+            {
+                ApplyAuthorParameterAccess();
+                return;
+            }
             Invoke((MethodInvoker)delegate ()
             {
                 foreach (Button ctl in gbLeftZoomLens.Controls)
@@ -1366,6 +1381,7 @@ namespace NSAA_16Axis
 
                 // UI 初始化
                 InitializeUI();
+                ApplyAuthorParameterAccess();
 
                 // 設備初始化（可能耗時）
                 if (InitialDevice())
@@ -3183,6 +3199,14 @@ namespace NSAA_16Axis
         //}
         private async void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (!GV.AppSettingParm.IsAuthorMode)
+            {
+                if (tabControl1.SelectedTab == tabPage3 || tabControl1.SelectedTab == tabPage5)
+                {
+                    tabControl1.SelectedTab = tabPage1;
+                    return;
+                }
+            }
             string sTag = tabControl1.SelectedTab.Tag.ToString();
             GV.TickCount = 0;
 
@@ -3502,52 +3526,32 @@ namespace NSAA_16Axis
             try
             {
                 iTabIndex = 1;
+                LogPerfStep("LearnPatternUp", "start", perfSw, ref lastMs);
                 //GV.LeftUpCam?.Freeze();
                 //GV.RightUpCam?.Freeze();
                 GV.LeftBackCam?.Freeze();
                 GV.RightBackCam?.Freeze();
+                LogPerfStep("LearnPatternUp", "freeze back cameras", perfSw, ref lastMs);
+
+                GV.Light.ChangeBrightness("leftback", 0);
+                GV.Light.ChangeBrightness("rightback", 0);
+                LogPerfStep("LearnPatternUp", "change light brightness", perfSw, ref lastMs);
+
 
                 GV.TabOption = GV.Tab.Learn;
                 GV.OnAlign = false;
                 GV.OnLearnPattern = true;
-                LogPerfStep("LearnPatternUp", "set tab flags", perfSw, ref lastMs);
 
                 GV.skView = 0;
-                //await InvokeAsync(() =>
-                //{
-                //    try
-                //    {
-                //        if (!_isLearnPatternUpDoubleBufferingInitialized)
-                //        {
-                //            DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternUp1);
-                //            int pbCount = DoubleBufferHelper.EnableDoubleBufferingForType<PictureBox>
-                //            (
-                //                cmLearnPatternUp1,
-                //                enable: true,
-                //                recursive: true
-                //            );
-                //            if (cmLearnPatternUp1.Controls.ContainsKey("skLeft"))
-                //                DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternUp1.Controls["skLeft"]);
-                //            if (cmLearnPatternUp1.Controls.ContainsKey("skRight"))
-                //                DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternUp1.Controls["skRight"]);
-                //            string message = $"[InitializeLearnPatternUpPageAsync] 成功為 {pbCount} 個 PictureBox 啟用 double buffering";
-                //            LogActivities.GenerateLog(message);
-                //            Debug.WriteLine($"[InitializeLearnPatternUpPageAsync] 成功為 {pbCount} 個 PictureBox 啟用 double buffering");
-                //            _isLearnPatternUpDoubleBufferingInitialized = true;
-                //        }
+                LogPerfStep("LearnPatternUp", "change light brightness", perfSw, ref lastMs);
 
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        Debug.WriteLine($"[InitializeLearnPatternUpPageAsync] 啟用 double buffering 失敗: {ex.Message}");
-                //    }
-                //});
                 BeginInvokeAsync(() =>
                 {
                     try
                     {
                         if (!_isLearnPatternUpDoubleBufferingInitialized)
                         {
+                            var dbSw = Stopwatch.StartNew();
                             DoubleBufferHelper.EnableOptimizedDoubleBuffering(cmLearnPatternUp1);
                             int pbCount = DoubleBufferHelper.EnableDoubleBufferingForType<PictureBox>
                             (
@@ -3572,54 +3576,33 @@ namespace NSAA_16Axis
                     }
                 });
                 LogPerfStep("LearnPatternUp", "enable double buffering", perfSw, ref lastMs);
-                //await InvokeAsync(() =>
-                //{
-                //    GV.LeftUpCam.SetWindow(GV.LeftUpWindowOnLearnPage);
-                //    GV.RightUpCam.SetWindow(GV.RightUpWindowOnLearnPage);
-                //});
+
                 BeginInvokeAsync(() =>
                 {
                     GV.LeftUpCam.SetWindow(GV.LeftUpWindowOnLearnPage);
                     GV.RightUpCam.SetWindow(GV.RightUpWindowOnLearnPage);
                 });
-                LogPerfStep("LearnPatternUp", "set camera window", perfSw, ref lastMs);
+                LogPerfStep("LearnPatternUp", "set camera windows", perfSw, ref lastMs);
+                GV.LeftUpCam?.Live();
+                GV.RightUpCam?.Live();
+                LogPerfStep("LearnPatternUp", "start cameras live", perfSw, ref lastMs);
 
-                _ = Task.Run(() =>
-                {
-                    GV.LeftUpCam?.Live();
-                    GV.RightUpCam?.Live();
-                });
-                LogPerfStep("LearnPatternUp", "start camera live", perfSw, ref lastMs);
-
-                //await InvokeAsync(() =>
-                //{
-                //    cmLearnPatternUp1.SuspendLayout();
-                //    try
-                //    {
-                //        cmLearnPatternUp1.CheckLevel();
-                //        cmLearnPatternUp1.ShowMe();
-                //    }
-                //    finally
-                //    {
-                //        cmLearnPatternUp1.ResumeLayout(true);
-
-                //    }
-                //});
                 BeginInvokeAsync(() =>
                 {
+                    var uiSw = Stopwatch.StartNew();
                     cmLearnPatternUp1.SuspendLayout();
                     try
                     {
-                        cmLearnPatternUp1.CheckLevel();
+                        cmLearnPatternUp1.CheckLevel(false);
                         cmLearnPatternUp1.ShowMe();
+                        cmLearnPatternUp1.RestoreMagnificationControlState();
                     }
                     finally
                     {
                         cmLearnPatternUp1.ResumeLayout(true);
-
                     }
                 });
-                LogPerfStep("LearnPatternUp", "CheckLevel + ShowMe", perfSw, ref lastMs);
+                LogPerfStep("LearnPatternUp", "UI CheckLevel + ShowMe", perfSw, ref lastMs);
 
                 GM.WriteToStatusTextBox1(iAdmin, "Change to Pattern Edit Top");
             }
@@ -3852,7 +3835,7 @@ namespace NSAA_16Axis
                 });
 
                 GM.WriteToStatusTextBox1(iAdmin, "Change to Pattern Edit Bottom");
-              
+
                 _ = Task.Run(() =>
                 {
                     if (cancellationToken.IsCancellationRequested) return;
@@ -5175,7 +5158,7 @@ namespace NSAA_16Axis
                                 iExposure = 0;
                                 GV.OnAlign = true;
                                 WaitForMatcherIdle();
-                                Thread.Sleep(1000);
+                                Thread.Sleep(1500);
                                 await DAlignWafer();
                                 GV.OnAlign = false;
                                 if ((iAlignOK == 1) && !(GV.Plc.ReadMemory(490)))
@@ -5305,7 +5288,7 @@ namespace NSAA_16Axis
                 {
                     return;
                 }
-                Thread.Sleep(500);
+                Thread.Sleep(1500);
                 iAlignCode = GV.Plc.ReadData16(GV.Plc.iAlign, 4);
                 if (iAlignCode[1] == 0)
                 {
@@ -5321,7 +5304,7 @@ namespace NSAA_16Axis
                     return;
                 }
                 await Task.Run(() => MoveTableToMatchPatternAtSpecificMagnification("low"));
-                Thread.Sleep(200);
+                Thread.Sleep(1500);
                 iAlignCode = GV.Plc.ReadData16(GV.Plc.iAlign, 4);
                 if (iAlignCode[1] == 0)
                 {
@@ -5335,9 +5318,9 @@ namespace NSAA_16Axis
                 Task t3 = Task.Run(() =>
                 {
                     ChangeLensMagnification(AlignC.AlignHighMagnification);
-                    Thread.Sleep(500);
+                    Thread.Sleep(1500);
                     MoveCamera(AlignC.AlignHighMagnification);
-                    Thread.Sleep(500);
+                    Thread.Sleep(1500);
                 });
                 await t3;
                 iZoomAdj = 0;
@@ -5348,7 +5331,7 @@ namespace NSAA_16Axis
                     return;
                 }
                 await Task.Run(() => MoveTableToMatchPatternAtSpecificMagnification("high"));
-                Thread.Sleep(500);
+                Thread.Sleep(1500);
                 iAlignCode = GV.Plc.ReadData16(GV.Plc.iAlign, 4);
                 if (iAlignCode[1] == 0 || (iStartAlign == 0))
                 {
@@ -5358,7 +5341,7 @@ namespace NSAA_16Axis
 
                 writeStatus(GV.Dlang.strMessageAlign);
                 await Task.Run(() => MoveTableToMatchPattern());
-                Thread.Sleep(500);
+                Thread.Sleep(1500);
                 iAlignCode = GV.Plc.ReadData16(GV.Plc.iAlign, 4);
                 if (iAlignCode[1] == 0 || (iStartAlign == 0))
                 {
@@ -5366,11 +5349,18 @@ namespace NSAA_16Axis
                     return;
                 }
                 await Task.Run(() => MoveTableToMatchPatternAfterContactShift());
-                Thread.Sleep(500);
+                Thread.Sleep(1500);
                 writeStatus(string.Format(GV.Dlang.strMessageElaspedTime, sw.ElapsedMilliseconds));
 
                 if (iExposure == 1)
-                    GM.SaveImageBeforeExposure(GV.LeftUpCam.Grab(), GV.RightUpCam.Grab());
+                {
+                    await Task.Delay(150);                     
+                    var leftGrabTask = Task.Run(() => GV.LeftUpCam.Grab());
+                    var rightGrabTask = Task.Run(() => GV.RightUpCam.Grab());
+                    await Task.WhenAll(leftGrabTask, rightGrabTask);
+
+                    GM.SaveImageBeforeExposure(leftGrabTask.Result, rightGrabTask.Result);
+                }
 
                 if (_isTestMode)
                 {
@@ -5509,6 +5499,7 @@ namespace NSAA_16Axis
             try
             {
                 writeStatus(GV.Dlang.strMessageCheckMaskAlign);
+                LogDownCcdSearchZ("下CCD 晶圆对位");
                 if ((_recipe.LeftHighWaferMat == null) || (_recipe.RightHighWaferMat == null))
                 {
                     return;
@@ -5577,6 +5568,7 @@ namespace NSAA_16Axis
                 }
                 if ((iWaferSearchOK == 0) || (iStartAlign == 0)) return;
                 writeStatus(GV.Dlang.strMessageBottomWaferAlign);
+                LogDownCcdSearchZ("下CCD 晶圆对位(Contact 2)");
                 await Task.Run(() => MoveTableToMatchPatternBack());
                 Thread.Sleep(500);
                 if ((iStartAlign == 0) || (iAlignOK == 0)) return;
@@ -5718,7 +5710,7 @@ namespace NSAA_16Axis
             writeStatus(GV.Dlang.strMessagePrecisionX + precisionX.ToString("F2"));
             writeStatus(GV.Dlang.strMessagePrecisionY + precisionY.ToString("F2"));
             writeStatus(GV.Dlang.strMessageRotation + Math.Abs(degree).ToString("F8"));
-            writeStatus(GV.Dlang.strMessageRotation + " um " + degreeL.ToString("F2"));
+            writeStatus(GV.Dlang.strMessageRotation + degreeL.ToString("F2") + " um ");
             writeStatus(GV.Dlang.strMessageExpansion + expansion.ToString("F2"));
 
             float lxum = (float)GV.ZoomLensInfo.LeftUmPerPixelX[AlignC.AlignHighMagnification];
@@ -5791,7 +5783,7 @@ namespace NSAA_16Axis
             writeStatus(GV.Dlang.strMessagePrecisionX + precisionX.ToString("F2"));
             writeStatus(GV.Dlang.strMessagePrecisionY + precisionY.ToString("F2"));
             writeStatus(GV.Dlang.strMessageRotation + Math.Abs(degree).ToString("F8"));
-            writeStatus(GV.Dlang.strMessageRotation + " um " + degreeL.ToString("F2"));
+            writeStatus(GV.Dlang.strMessageRotation + degreeL.ToString("F2") + " um ");
             writeStatus(GV.Dlang.strMessageExpansion + expansion.ToString("F2"));
 
             alignResultData = new AlignResultData((pmps.LWaferMp.X - pmps.LMaskMp.X) * lxum, (pmps.LWaferMp.Y - pmps.LMaskMp.Y) * lyum, (pmps.RWaferMp.X - pmps.RMaskMp.X) * rxum, (pmps.RWaferMp.Y - pmps.RMaskMp.Y) * ryum
@@ -6149,7 +6141,7 @@ namespace NSAA_16Axis
                 iExposure = 1;
                 return 0;
             }
-            
+
             var swAlign = Stopwatch.StartNew();
 
             for (int times = 1; times < AlignC.MaxAlignTimes + 1; times++)
@@ -6196,7 +6188,7 @@ namespace NSAA_16Axis
                     {
                         GM.ModelToCSV("result.csv", alignResultData);
                         writeStatus(string.Format(GV.Dlang.strMessageElaspedTime, swAlign.ElapsedMilliseconds.ToString("F0")));
-                        writeStatus(GV.Dlang.strMessageStage2done);                        
+                        writeStatus(GV.Dlang.strMessageStage2done);
                         GV.Plc.Exposure(1);
                         iExposure = 1;
                         return 0;
@@ -6412,7 +6404,7 @@ namespace NSAA_16Axis
                     iHeight = (_recipe.LeftHighMaskMat.Height + _recipe.LeftHighWaferMat.Height) / 2;
                     iHeight = (int)(iHeight * GV.ZoomLensInfo.LeftMotorStepsPerPixelY[GV.LeftZoomLens.Magnification]);
                     GV.Plc.AlignXyyTableMove(ack, 0, -iHeight, 0);
-                    Thread.Sleep(200);
+                    Thread.Sleep(1000);
                 }
                 else if (AlignC.PatternShift == 1)
                 {
@@ -6447,13 +6439,13 @@ namespace NSAA_16Axis
                     }
                     iWidth = (int)(iWidth * GV.ZoomLensInfo.LeftMotorStepsPerPixelX[GV.LeftZoomLens.Magnification]);
                     GV.Plc.AlignXyyTableMove(ack, iWidth, 0, 0);
-                    Thread.Sleep(200);
+                    Thread.Sleep(1000);
                 }
                 else
                 {
 
                 }
-                //Thread.Sleep(500);
+                //Thread.Sleep(1500);
                 iAlignCode = GV.Plc.ReadData16(GV.Plc.iAlign, 4);
                 if (iAlignCode[1] == 0)
                 {
@@ -6462,7 +6454,7 @@ namespace NSAA_16Axis
                 }
 
                 pmps = GetAllMatchPostion(GV.LeftUpCam.Grab(), GV.RightUpCam.Grab(), alignMagnification);
-                //Thread.Sleep(500);
+                //Thread.Sleep(1000);
                 if (pmps.LMaskMp.Score < AlignC.MaskSocre || pmps.RMaskMp.Score < AlignC.MaskSocre)
                 {
                     GV.Plc.SendAlignNG();
@@ -6481,7 +6473,7 @@ namespace NSAA_16Axis
             {
 
                 pmps = GetAllMatchPostion(GV.LeftUpCam.Grab(), GV.RightUpCam.Grab(), alignMagnification);
-                //Thread.Sleep(500);
+                //Thread.Sleep(1000);
             }
 
             writeStatus(string.Format(GV.Dlang.strMessageLeftMaskWaferScore, pmps.LMaskMp.Score.ToString("F2"), pmps.LWaferMp.Score.ToString("F2")));
@@ -6504,7 +6496,7 @@ namespace NSAA_16Axis
             writeStatus(string.Format(GV.Dlang.strMessageRShiftum, beforeMoveRShiftXum.ToString("F2"), beforeMoveRShiftYum.ToString("F2")));
 
             int[] motorSteps = CalcuteMaskWaferShiftAndReturnMotorSteps(pmps.LMaskMp, pmps.LWaferMp, pmps.RMaskMp, pmps.RWaferMp, pmps.PatternCenterDistance);
-            //Thread.Sleep(500);
+            Thread.Sleep(1000);
             iAlignCode = GV.Plc.ReadData16(GV.Plc.iAlign, 4);
             if (iAlignCode[1] == 0)
             {
@@ -6512,7 +6504,7 @@ namespace NSAA_16Axis
                 return;
             }
             GV.Plc.AlignXyyTableMove(motorSteps[0], motorSteps[1], motorSteps[2]);
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
             writeStatus(GV.Dlang.strMessageTableStep + " : " + motorSteps[0].ToString() + " , " + motorSteps[1].ToString() + " , " + motorSteps[2].ToString());
         }
 
@@ -6905,8 +6897,8 @@ namespace NSAA_16Axis
 
             //double lz = (lwz - lmz) / 3;
             //double rz = (rwz - rmz) / 3;
-            double lz = (lwz - lmz) / 2;
-            double rz = (rwz - rmz) / 2;
+            double lz = (lwz + lmz) / 2;
+            double rz = (rwz + rmz) / 2;
 
             if (AlignC.AdjuestZ == 1)
             {
@@ -6914,7 +6906,7 @@ namespace NSAA_16Axis
             }
             else
             {
-                bRet = GV.Plc.AlignDownCameraMoveZ(0, -lOffsetXSteps, rOffsetXSteps, -lOffsetYSteps, -rOffsetYSteps, lz, rz);
+                bRet = GV.Plc.AlignDownCameraMoveZAbsW(0, -lOffsetXSteps, rOffsetXSteps, -lOffsetYSteps, -rOffsetYSteps, lz, rz);
                 Thread.Sleep(1000);
                 //bRet = GV.Plc.AlignDownCameraMove(0, -lOffsetXSteps, rOffsetXSteps, -lOffsetYSteps, -rOffsetYSteps);
             }
@@ -6972,7 +6964,7 @@ namespace NSAA_16Axis
             // if ((precisionX < AlignC.XPrecision ) && (precisionY < AlignC.YPrecision) && (expansion < AlignC.MaxExpansion))
             if (!((pmps.LMaskMp.Score < AlignC.MaskSocre) || (pmps.RMaskMp.Score < AlignC.MaskSocre)))
             {
-                Thread.Sleep(250);
+                Thread.Sleep(500);
                 LeftMask = GV.LeftBackCam.Grab();
                 RightMask = GV.RightBackCam.Grab();
                 //GV.LeftMaskMat = LeftMask.Clone();
@@ -9397,23 +9389,57 @@ namespace NSAA_16Axis
 
         private void UcOpenPad_Click(object sender, EventArgs e)
         {
-            if (GV.thCCDPad == null)
-            {
-                GV.thCCDPad = new Thread(delegate ()
-                {
-                    GV.CCDPadForm = new CCDPad();
-                    GV.CCDPadForm.Show();
-                    System.Windows.Threading.Dispatcher.Run();
-                });
+            //if (GV.thCCDPad == null)
+            //{
+            //    GV.thCCDPad = new Thread(delegate ()
+            //    {
+            //        GV.CCDPadForm = new CCDPad();
+            //        GV.CCDPadForm.Show();
+            //        System.Windows.Threading.Dispatcher.Run();
+            //    });
 
-                StopCheckPLc = true;
-                GV.thCCDPad.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
-                GV.thCCDPad.Start();
-            }
-            else
+            //    StopCheckPLc = true;
+            //    GV.thCCDPad.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
+            //    GV.thCCDPad.Start();
+            //}
+            //else
+            //{
+            //    Invoke(new Action(() => GV.CCDPadForm.BringToFront()));
+            //}
+            if (GV.CCDPadForm != null && !GV.CCDPadForm.IsDisposed)
             {
-                Invoke(new Action(() => GV.CCDPadForm.BringToFront()));
+                try
+                {
+                    GV.CCDPadForm.BeginInvoke(new Action(() =>
+                    {
+                        GV.CCDPadForm.TopMost = true;
+                        GV.CCDPadForm.TopMost = false;
+                        GV.CCDPadForm.Activate();
+                    }));
+                }
+                catch
+                {
+                }
+                return;
             }
+
+            GV.thCCDPad = new Thread(delegate ()
+            {
+                GV.CCDPadForm = new CCDPad
+                {
+                    StartPosition = FormStartPosition.Manual,
+                    TopMost = false,
+                    ShowInTaskbar = true
+                };
+
+                GV.CCDPadForm.Show(); // modeless，可自由拖移，不綁定主畫面
+                System.Windows.Threading.Dispatcher.Run();
+            });
+
+            StopCheckPLc = true;
+            GV.thCCDPad.IsBackground = true;
+            GV.thCCDPad.SetApartmentState(ApartmentState.STA);
+            GV.thCCDPad.Start();
         }
 
         public void UcOpenPlcTest()
@@ -10257,6 +10283,78 @@ namespace NSAA_16Axis
                 Debug.WriteLine($"StopAIService 錯誤: {ex.Message}");
             }
         }
+
+        private void btSetting_Click(object sender, EventArgs e)
+        {
+            DialogAppSetting setting = new DialogAppSetting
+            {
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            setting.ShowDialog();
+        }
+        private void LogDownCcdSearchZ(string stage)
+        {
+            GV.Plc.GetRecipe();
+
+            int lmz = GV.Plc.RecipeData[43];
+            int rmz = GV.Plc.RecipeData[44];
+            int lwz = GV.Plc.RecipeData[45];
+            int rwz = GV.Plc.RecipeData[46];
+
+            // 保持 double 型別，不變更 lz / rz 的宣告型別。
+            double lz = (lwz + lmz) / 2;
+            double rz = (rwz + rmz) / 2;
+
+            string message = string.Format(
+                "[{0}] Down CCD Search Z - " +
+                "L: MaskZ={1}, WaferZ={2}, MidZ={3:F3}; " +
+                "R: MaskZ={4}, WaferZ={5}, MidZ={6:F3}; " +
+                "AdjuestZ={7}",
+                stage,
+                lmz,
+                lwz,
+                lz,
+                rmz,
+                rwz,
+                rz,
+                AlignC.AdjuestZ);
+
+            writeStatus(message);
+            DebugMessage(message);
+            int[] currentPosition = GV.Plc.ReadData32(GV.Plc.iRMemoryAddress, GV.Plc.iRCount);
+
+            if (currentPosition.Length > GV.Plc.iiDSDownRightZ)
+            {
+                string currentZMessage = string.Format(
+                    "[{0}] Down CCD Current Z - L={1}, R={2}; Expected MidZ - L={3:F3}, R={4:F3}",
+                    stage,
+                    currentPosition[GV.Plc.iiDSDownLeftZ],
+                    currentPosition[GV.Plc.iiDSDownRightZ],
+                    lz,
+                    rz);
+
+                writeStatus(currentZMessage);
+                DebugMessage(currentZMessage);
+            }
+        }
+        private bool CanShowParameterPages()
+        {
+            return GV.UserLevel == GV.User.Administrator && GV.AppSettingParm != null && GV.AppSettingParm.IsAuthorMode;
+        }
+
+        private void ApplyAuthorParameterAccess()
+        {
+            bool canOpenParameter = CanShowParameterPages();
+            tabPage3.Parent = canOpenParameter ? tabControl1 : null;
+            tabPage5.Parent = canOpenParameter ? tabControl1 : null;
+
+            buttonSetting.Visible = canOpenParameter;
+            ucPad.Visible = canOpenParameter;
+        }
+
+        private void ucPad_Click(object sender, EventArgs e)
+        {
+            UcOpenPad_Click(sender, e);
+        }
     }
 }
-

@@ -339,11 +339,11 @@ namespace NSAA_16Axis
                 if (Com.IsOpen == true)
                 {
 
-                    Thread.Sleep(500);
-                    //ChangeBrightness("LHigh", GV.AppSettingParm.LightDefault);
-                    Thread.Sleep(500);
-                    //ChangeBrightness("RHigh", GV.AppSettingParm.LightDefault);
-                    Thread.Sleep(500);
+                    //Thread.Sleep(500);
+                    ////ChangeBrightness("LHigh", GV.AppSettingParm.LightDefault);
+                    //Thread.Sleep(500);
+                    ////ChangeBrightness("RHigh", GV.AppSettingParm.LightDefault);
+                    //Thread.Sleep(500);
 
                 }
                 isOpen = true;
@@ -373,7 +373,7 @@ namespace NSAA_16Axis
             {
                 lock (_locker)
                 {
-                    Thread.Sleep(100);
+                    Thread.Sleep(20);
                     string channel = string.Empty;
                     byte Echo;
 
@@ -414,7 +414,7 @@ namespace NSAA_16Axis
                         byte[] byteSendMsg = System.Text.Encoding.UTF8.GetBytes(textBuf);
 
                         Com.Write(byteSendMsg, 0, byteSendMsg.Length);
-                        Thread.Sleep(200);
+                        Thread.Sleep(20);
                         byte[] ReadMessage = new byte[128];
 
                         int readCount;

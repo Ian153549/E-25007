@@ -795,6 +795,13 @@ namespace NSAA_16Axis
         public int iPinVacNo = 13607;   //  PIN Vac無真空  M13607
         public int iPLCError = 13608;   //  PLC No Error 設備無異常   M13608
 
+        public int iBigYDownCmd = 3021;   // M3021
+        public int iBigYDownAck = 8021;   // M8021
+        public int iBigYUpCmd = 3022;     // M3022
+        public int iBigYUpAck = 8022;     // M8022
+
+
+
         public int iAlign = 1000;
         public int iAlinger = 1001;
         public int iMaskMemory= 1003;
@@ -2189,22 +2196,38 @@ namespace NSAA_16Axis
 
         public void DownCameraZToHigh(int iWaferMask)
         {
-            GetRecipe();
-            int lz;
-            int rz;
+            //GetRecipe();
+            //int lz;
+            //int rz;
 
-            if (iWaferMask == 1)
-            {
-                lz = GV.Plc.RecipeData[43];
-                rz = GV.Plc.RecipeData[44];
-            } else
-            {
-                lz = GV.Plc.RecipeData[45];
-                rz = GV.Plc.RecipeData[46];
-            }
+            //if (iWaferMask == 1)
+            //{
+            //    lz = GV.Plc.RecipeData[43];
+            //    rz = GV.Plc.RecipeData[44];
+            //}
+            //else
+            //{
+            //    lz = GV.Plc.RecipeData[45];
+            //    rz = GV.Plc.RecipeData[46];
+            //}
 
-            GV.Plc.AlignDownCameraMoveZAbsW(0, 0, 0, 0, 0, lz, rz);
+            //GV.Plc.AlignDownCameraMoveZAbsW(0, 0, 0, 0, 0, lz, rz);
+            MoveDownCameraToSearchZ();
         }
+        public bool MoveDownCameraToSearchZ()
+        {
+            GetRecipe();
+            int leftMaskZ = RecipeData[43];
+            int rightMaskZ = RecipeData[44];
+            int leftWaferZ = RecipeData[45];
+            int rightWaferZ = RecipeData[46];
+            
+            int leftSearchZ=(int)(((long)leftMaskZ + (long)leftWaferZ) / 2);
+            int rightSearchZ = (int)(((long)rightMaskZ + (long)rightWaferZ) / 2);
+            return AlignDownCameraMoveZAbsW(0, 0, 0, 0, 0, leftSearchZ, rightSearchZ);
+        }
+
+
         public bool MoveCCDToRecipe()
         {
             bool bRet = true;

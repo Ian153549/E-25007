@@ -65,6 +65,8 @@ namespace NSAA_16Axis
             this.skZoomAndPanWindow1 = new MRLibrary.SKZoomAndPanWindow();
             this.labelCycleTestCycleTestTimes = new System.Windows.Forms.Label();
             this.gbAlignCondition = new System.Windows.Forms.GroupBox();
+            this.ucPad = new MRLibrary.UCButton();
+            this.btSetting = new System.Windows.Forms.Button();
             this.cbPixelShift = new System.Windows.Forms.ComboBox();
             this.chbPixelShift = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -650,6 +652,8 @@ namespace NSAA_16Axis
             // 
             this.gbAlignCondition.BackColor = System.Drawing.SystemColors.Control;
             this.gbAlignCondition.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.gbAlignCondition.Controls.Add(this.ucPad);
+            this.gbAlignCondition.Controls.Add(this.btSetting);
             this.gbAlignCondition.Controls.Add(this.cbPixelShift);
             this.gbAlignCondition.Controls.Add(this.chbPixelShift);
             this.gbAlignCondition.Controls.Add(this.tableLayoutPanel1);
@@ -662,6 +666,33 @@ namespace NSAA_16Axis
             this.gbAlignCondition.TabIndex = 27;
             this.gbAlignCondition.TabStop = false;
             this.gbAlignCondition.Text = "Align Condition";
+            // 
+            // ucPad
+            // 
+            this.ucPad.BackColor = System.Drawing.Color.Transparent;
+            this.ucPad.Caption = "Pad";
+            this.ucPad.FaceColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.ucPad.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ucPad.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.ucPad.Image = null;
+            this.ucPad.Location = new System.Drawing.Point(327, 267);
+            this.ucPad.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.ucPad.Name = "ucPad";
+            this.ucPad.Radius = 5;
+            this.ucPad.Size = new System.Drawing.Size(120, 31);
+            this.ucPad.TabIndex = 73;
+            this.ucPad.Click += new System.EventHandler(this.ucPad_Click);
+            // 
+            // btSetting
+            // 
+            this.btSetting.Location = new System.Drawing.Point(172, 269);
+            this.btSetting.Name = "btSetting";
+            this.btSetting.Size = new System.Drawing.Size(136, 31);
+            this.btSetting.TabIndex = 72;
+            this.btSetting.Text = "System Setting";
+            this.btSetting.UseVisualStyleBackColor = true;
+            this.btSetting.Visible = false;
+            this.btSetting.Click += new System.EventHandler(this.btSetting_Click);
             // 
             // cbPixelShift
             // 
@@ -1711,7 +1742,7 @@ namespace NSAA_16Axis
             // buttonSetting
             // 
             this.buttonSetting.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSetting.Location = new System.Drawing.Point(26, 77);
+            this.buttonSetting.Location = new System.Drawing.Point(155, 269);
             this.buttonSetting.Name = "buttonSetting";
             this.buttonSetting.Size = new System.Drawing.Size(89, 27);
             this.buttonSetting.TabIndex = 29;
@@ -2686,6 +2717,8 @@ namespace NSAA_16Axis
         private System.Windows.Forms.Button btRCoaLightMinus;
         private System.Windows.Forms.CheckBox chbPixelShift;
         private System.Windows.Forms.ComboBox cbPixelShift;
+        private System.Windows.Forms.Button btSetting;
+        private MRLibrary.UCButton ucPad;
     }
 }
 

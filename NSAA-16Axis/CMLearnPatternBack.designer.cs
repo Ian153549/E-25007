@@ -37,19 +37,16 @@
             this.btLBackMaskLightMinus = new System.Windows.Forms.Button();
             this.rbLBackMask = new System.Windows.Forms.RadioButton();
             this.btLBackMaskLightPlus = new System.Windows.Forms.Button();
-            this.ucNavigatorBackMaskL = new NSAA_16Axis.UCNavigator();
             this.tBLeftBackMaskLight = new System.Windows.Forms.TrackBar();
             this.pbLBackMask = new System.Windows.Forms.PictureBox();
             this.btLBackMaskSave = new System.Windows.Forms.Button();
             this.cbLBackMaskAlgo = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.gbLWafer = new System.Windows.Forms.GroupBox();
-            this.btBackLabelPatternL = new System.Windows.Forms.Button();
             this.cbLBackWaferClassList = new System.Windows.Forms.ComboBox();
             this.btLWaferLightMinus = new System.Windows.Forms.Button();
             this.rbLWafer = new System.Windows.Forms.RadioButton();
             this.btLWaferLightPlus = new System.Windows.Forms.Button();
-            this.ucNavigatorWaferL = new NSAA_16Axis.UCNavigator();
             this.tBLeftBackWaferLight = new System.Windows.Forms.TrackBar();
             this.pbLWafer = new System.Windows.Forms.PictureBox();
             this.btLWaferSave = new System.Windows.Forms.Button();
@@ -65,7 +62,6 @@
             this.btRWaferLightMinus = new System.Windows.Forms.Button();
             this.rbRWafer = new System.Windows.Forms.RadioButton();
             this.btRWaferLightPlus = new System.Windows.Forms.Button();
-            this.ucNavigatorWaferR = new NSAA_16Axis.UCNavigator();
             this.tBRightBackWaferLight = new System.Windows.Forms.TrackBar();
             this.btRWaferMask = new System.Windows.Forms.Button();
             this.pbRWafer = new System.Windows.Forms.PictureBox();
@@ -81,7 +77,6 @@
             this.btRBackMaskLightMinus = new System.Windows.Forms.Button();
             this.rbRBackMask = new System.Windows.Forms.RadioButton();
             this.btRBackMaskLightPlus = new System.Windows.Forms.Button();
-            this.ucNavigatorBackMaskR = new NSAA_16Axis.UCNavigator();
             this.btRBackMask = new System.Windows.Forms.Button();
             this.pbRBackMask = new System.Windows.Forms.PictureBox();
             this.btRBackMaskSave = new System.Windows.Forms.Button();
@@ -94,8 +89,6 @@
             this.btFindRMaskCenter = new System.Windows.Forms.Button();
             this.btRTopMaskLSave = new System.Windows.Forms.Button();
             this.btRTopMaskLightMinus = new System.Windows.Forms.Button();
-            this.ucNavigatorTopMaskR = new NSAA_16Axis.UCNavigator();
-            this.ucPattern1 = new NSAA_16Axis.UCPattern();
             this.btRTopMaskLightPlus = new System.Windows.Forms.Button();
             this.rbRTopMask = new System.Windows.Forms.RadioButton();
             this.tBRightTopMaskLight = new System.Windows.Forms.TrackBar();
@@ -110,7 +103,6 @@
             this.btLTopMaskLightMinus = new System.Windows.Forms.Button();
             this.tBLeftTopMaskLight = new System.Windows.Forms.TrackBar();
             this.btLTopMaskLightPlus = new System.Windows.Forms.Button();
-            this.ucNavigatorTopMaskL = new NSAA_16Axis.UCNavigator();
             this.rbLTopMask = new System.Windows.Forms.RadioButton();
             this.btLTopPhotoMask = new System.Windows.Forms.Button();
             this.pbLTopMask = new System.Windows.Forms.PictureBox();
@@ -192,15 +184,8 @@
             this.btUpdate = new MRLibrary.UCButton();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBoxB1 = new System.Windows.Forms.GroupBox();
-            this.nudWriteBackRightZ = new NSAA_16Axis.UCRoundedRectangleLabel();
-            this.nudWriteBackRightY = new NSAA_16Axis.UCRoundedRectangleLabel();
-            this.nudWriteBackRightX = new NSAA_16Axis.UCRoundedRectangleLabel();
-            this.nudWriteBackLeftZ = new NSAA_16Axis.UCRoundedRectangleLabel();
             this.btUpCCDGo = new MRLibrary.UCButton();
-            this.nudWriteBackLeftY = new NSAA_16Axis.UCRoundedRectangleLabel();
-            this.nudWriteBackLeftX = new NSAA_16Axis.UCRoundedRectangleLabel();
             this.btBackCCDUpdate = new MRLibrary.UCButton();
-            this.nudWriteUpBigY = new NSAA_16Axis.UCRoundedRectangleLabel();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.nudReadBackRightZ = new System.Windows.Forms.NumericUpDown();
             this.nudReadBackRightY = new System.Windows.Forms.NumericUpDown();
@@ -219,12 +204,8 @@
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.groupBoxB2 = new System.Windows.Forms.GroupBox();
-            this.nudWriteChuckY2 = new NSAA_16Axis.UCRoundedRectangleLabel();
             this.btChuckGo = new MRLibrary.UCButton();
-            this.nudWriteChuckY1 = new NSAA_16Axis.UCRoundedRectangleLabel();
-            this.nudWriteChuckX = new NSAA_16Axis.UCRoundedRectangleLabel();
             this.btBackChuckUpdate = new MRLibrary.UCButton();
-            this.nudWriteChuckZ = new NSAA_16Axis.UCRoundedRectangleLabel();
             this.nudReadChuckR = new System.Windows.Forms.NumericUpDown();
             this.nudReadChuckY2 = new System.Windows.Forms.NumericUpDown();
             this.nudReadChuckY1 = new System.Windows.Forms.NumericUpDown();
@@ -239,6 +220,25 @@
             this.ucBackPosition = new MRLibrary.UCButton();
             this.ucLeftROI = new MRLibrary.UCButton();
             this.ucRightROI = new MRLibrary.UCButton();
+            this.ucBackLabelPattern = new MRLibrary.UCButton();
+            this.nudWriteChuckY2 = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteChuckY1 = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteChuckX = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteChuckZ = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackRightZ = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackRightY = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackRightX = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackLeftZ = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackLeftY = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteBackLeftX = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.nudWriteUpBigY = new NSAA_16Axis.UCRoundedRectangleLabel();
+            this.ucNavigatorBackMaskR = new NSAA_16Axis.UCNavigator();
+            this.ucNavigatorTopMaskR = new NSAA_16Axis.UCNavigator();
+            this.ucPattern1 = new NSAA_16Axis.UCPattern();
+            this.ucNavigatorWaferR = new NSAA_16Axis.UCNavigator();
+            this.ucNavigatorBackMaskL = new NSAA_16Axis.UCNavigator();
+            this.ucNavigatorWaferL = new NSAA_16Axis.UCNavigator();
+            this.ucNavigatorTopMaskL = new NSAA_16Axis.UCNavigator();
             this.gbLBackMask.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tBLeftBackMaskLight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLBackMask)).BeginInit();
@@ -424,17 +424,6 @@
             this.btLBackMaskLightPlus.UseVisualStyleBackColor = true;
             this.btLBackMaskLightPlus.Click += new System.EventHandler(this.btLBackMaskLightPlus_Click);
             // 
-            // ucNavigatorBackMaskL
-            // 
-            this.ucNavigatorBackMaskL.AutoSize = true;
-            this.ucNavigatorBackMaskL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorBackMaskL.Location = new System.Drawing.Point(31, 28);
-            this.ucNavigatorBackMaskL.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorBackMaskL.Name = "ucNavigatorBackMaskL";
-            this.ucNavigatorBackMaskL.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorBackMaskL.TabIndex = 50;
-            this.ucNavigatorBackMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
-            // 
             // tBLeftBackMaskLight
             // 
             this.tBLeftBackMaskLight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -529,21 +518,6 @@
             this.gbLWafer.TabStop = false;
             this.gbLWafer.Text = "Wafer";
             // 
-            // btBackLabelPatternL
-            // 
-            this.btBackLabelPatternL.AutoSize = true;
-            this.btBackLabelPatternL.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.btBackLabelPatternL.Font = new System.Drawing.Font("Arial", 12F);
-            this.btBackLabelPatternL.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btBackLabelPatternL.Location = new System.Drawing.Point(771, 259);
-            this.btBackLabelPatternL.Name = "btBackLabelPatternL";
-            this.btBackLabelPatternL.Size = new System.Drawing.Size(131, 33);
-            this.btBackLabelPatternL.TabIndex = 76;
-            this.btBackLabelPatternL.Text = "Label Image";
-            this.btBackLabelPatternL.UseVisualStyleBackColor = false;
-            this.btBackLabelPatternL.Visible = false;
-            this.btBackLabelPatternL.Click += new System.EventHandler(this.btBackLabelPatternL_Click);
-            // 
             // cbLBackWaferClassList
             // 
             this.cbLBackWaferClassList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -601,17 +575,6 @@
             this.btLWaferLightPlus.Text = "+";
             this.btLWaferLightPlus.UseVisualStyleBackColor = true;
             this.btLWaferLightPlus.Click += new System.EventHandler(this.btLWaferLightPlus_Click);
-            // 
-            // ucNavigatorWaferL
-            // 
-            this.ucNavigatorWaferL.AutoSize = true;
-            this.ucNavigatorWaferL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorWaferL.Location = new System.Drawing.Point(36, 28);
-            this.ucNavigatorWaferL.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorWaferL.Name = "ucNavigatorWaferL";
-            this.ucNavigatorWaferL.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorWaferL.TabIndex = 49;
-            this.ucNavigatorWaferL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferL_CommandPressed);
             // 
             // tBLeftBackWaferLight
             // 
@@ -838,17 +801,6 @@
             this.btRWaferLightPlus.UseVisualStyleBackColor = true;
             this.btRWaferLightPlus.Click += new System.EventHandler(this.btRWaferLightPlus_Click);
             // 
-            // ucNavigatorWaferR
-            // 
-            this.ucNavigatorWaferR.AutoSize = true;
-            this.ucNavigatorWaferR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorWaferR.Location = new System.Drawing.Point(77, 28);
-            this.ucNavigatorWaferR.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorWaferR.Name = "ucNavigatorWaferR";
-            this.ucNavigatorWaferR.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorWaferR.TabIndex = 50;
-            this.ucNavigatorWaferR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferR_CommandPressed);
-            // 
             // tBRightBackWaferLight
             // 
             this.tBRightBackWaferLight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1074,17 +1026,6 @@
             this.btRBackMaskLightPlus.UseVisualStyleBackColor = true;
             this.btRBackMaskLightPlus.Click += new System.EventHandler(this.btRBackMaskLightPlus_Click);
             // 
-            // ucNavigatorBackMaskR
-            // 
-            this.ucNavigatorBackMaskR.AutoSize = true;
-            this.ucNavigatorBackMaskR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ucNavigatorBackMaskR.Location = new System.Drawing.Point(73, 30);
-            this.ucNavigatorBackMaskR.Margin = new System.Windows.Forms.Padding(6);
-            this.ucNavigatorBackMaskR.Name = "ucNavigatorBackMaskR";
-            this.ucNavigatorBackMaskR.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorBackMaskR.TabIndex = 51;
-            this.ucNavigatorBackMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
-            // 
             // btRBackMask
             // 
             this.btRBackMask.BackColor = System.Drawing.SystemColors.InactiveCaption;
@@ -1260,23 +1201,6 @@
             this.btRTopMaskLightMinus.Text = "-";
             this.btRTopMaskLightMinus.UseVisualStyleBackColor = true;
             this.btRTopMaskLightMinus.Click += new System.EventHandler(this.BtRTopMaskLightMinus_Click);
-            // 
-            // ucNavigatorTopMaskR
-            // 
-            this.ucNavigatorTopMaskR.AutoSize = true;
-            this.ucNavigatorTopMaskR.Location = new System.Drawing.Point(85, 28);
-            this.ucNavigatorTopMaskR.Name = "ucNavigatorTopMaskR";
-            this.ucNavigatorTopMaskR.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorTopMaskR.TabIndex = 54;
-            this.ucNavigatorTopMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
-            // 
-            // ucPattern1
-            // 
-            this.ucPattern1.Location = new System.Drawing.Point(31062, 32706);
-            this.ucPattern1.Margin = new System.Windows.Forms.Padding(0);
-            this.ucPattern1.Name = "ucPattern1";
-            this.ucPattern1.Size = new System.Drawing.Size(65535, 65535);
-            this.ucPattern1.TabIndex = 53;
             // 
             // btRTopMaskLightPlus
             // 
@@ -1479,15 +1403,6 @@
             this.btLTopMaskLightPlus.Text = "+";
             this.btLTopMaskLightPlus.UseVisualStyleBackColor = true;
             this.btLTopMaskLightPlus.Click += new System.EventHandler(this.btLRingLightPlus_Click);
-            // 
-            // ucNavigatorTopMaskL
-            // 
-            this.ucNavigatorTopMaskL.AutoSize = true;
-            this.ucNavigatorTopMaskL.Location = new System.Drawing.Point(37, 27);
-            this.ucNavigatorTopMaskL.Name = "ucNavigatorTopMaskL";
-            this.ucNavigatorTopMaskL.Size = new System.Drawing.Size(107, 40);
-            this.ucNavigatorTopMaskL.TabIndex = 15;
-            this.ucNavigatorTopMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
             // 
             // rbLTopMask
             // 
@@ -2596,62 +2511,6 @@
             this.groupBoxB1.TabStop = false;
             this.groupBoxB1.Text = "CCD Location";
             // 
-            // nudWriteBackRightZ
-            // 
-            this.nudWriteBackRightZ.BackColor = System.Drawing.Color.White;
-            this.nudWriteBackRightZ.DrawBorder = false;
-            this.nudWriteBackRightZ.FaceColor = System.Drawing.Color.DimGray;
-            this.nudWriteBackRightZ.ForeColor = System.Drawing.Color.White;
-            this.nudWriteBackRightZ.Location = new System.Drawing.Point(83, 246);
-            this.nudWriteBackRightZ.Name = "nudWriteBackRightZ";
-            this.nudWriteBackRightZ.Radius = 0;
-            this.nudWriteBackRightZ.Size = new System.Drawing.Size(80, 30);
-            this.nudWriteBackRightZ.TabIndex = 145;
-            this.nudWriteBackRightZ.Text = "0";
-            this.nudWriteBackRightZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // nudWriteBackRightY
-            // 
-            this.nudWriteBackRightY.BackColor = System.Drawing.Color.White;
-            this.nudWriteBackRightY.DrawBorder = false;
-            this.nudWriteBackRightY.FaceColor = System.Drawing.Color.DimGray;
-            this.nudWriteBackRightY.ForeColor = System.Drawing.Color.White;
-            this.nudWriteBackRightY.Location = new System.Drawing.Point(83, 213);
-            this.nudWriteBackRightY.Name = "nudWriteBackRightY";
-            this.nudWriteBackRightY.Radius = 0;
-            this.nudWriteBackRightY.Size = new System.Drawing.Size(80, 30);
-            this.nudWriteBackRightY.TabIndex = 145;
-            this.nudWriteBackRightY.Text = "0";
-            this.nudWriteBackRightY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // nudWriteBackRightX
-            // 
-            this.nudWriteBackRightX.BackColor = System.Drawing.Color.White;
-            this.nudWriteBackRightX.DrawBorder = false;
-            this.nudWriteBackRightX.FaceColor = System.Drawing.Color.DimGray;
-            this.nudWriteBackRightX.ForeColor = System.Drawing.Color.White;
-            this.nudWriteBackRightX.Location = new System.Drawing.Point(83, 180);
-            this.nudWriteBackRightX.Name = "nudWriteBackRightX";
-            this.nudWriteBackRightX.Radius = 0;
-            this.nudWriteBackRightX.Size = new System.Drawing.Size(80, 30);
-            this.nudWriteBackRightX.TabIndex = 145;
-            this.nudWriteBackRightX.Text = "0";
-            this.nudWriteBackRightX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // nudWriteBackLeftZ
-            // 
-            this.nudWriteBackLeftZ.BackColor = System.Drawing.Color.White;
-            this.nudWriteBackLeftZ.DrawBorder = false;
-            this.nudWriteBackLeftZ.FaceColor = System.Drawing.Color.DimGray;
-            this.nudWriteBackLeftZ.ForeColor = System.Drawing.Color.White;
-            this.nudWriteBackLeftZ.Location = new System.Drawing.Point(83, 147);
-            this.nudWriteBackLeftZ.Name = "nudWriteBackLeftZ";
-            this.nudWriteBackLeftZ.Radius = 0;
-            this.nudWriteBackLeftZ.Size = new System.Drawing.Size(80, 30);
-            this.nudWriteBackLeftZ.TabIndex = 145;
-            this.nudWriteBackLeftZ.Text = "0";
-            this.nudWriteBackLeftZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // btUpCCDGo
             // 
             this.btUpCCDGo.BackColor = System.Drawing.Color.Transparent;
@@ -2667,34 +2526,6 @@
             this.btUpCCDGo.TabIndex = 142;
             this.btUpCCDGo.Visible = false;
             // 
-            // nudWriteBackLeftY
-            // 
-            this.nudWriteBackLeftY.BackColor = System.Drawing.Color.White;
-            this.nudWriteBackLeftY.DrawBorder = false;
-            this.nudWriteBackLeftY.FaceColor = System.Drawing.Color.DimGray;
-            this.nudWriteBackLeftY.ForeColor = System.Drawing.Color.White;
-            this.nudWriteBackLeftY.Location = new System.Drawing.Point(83, 114);
-            this.nudWriteBackLeftY.Name = "nudWriteBackLeftY";
-            this.nudWriteBackLeftY.Radius = 0;
-            this.nudWriteBackLeftY.Size = new System.Drawing.Size(80, 29);
-            this.nudWriteBackLeftY.TabIndex = 145;
-            this.nudWriteBackLeftY.Text = "0";
-            this.nudWriteBackLeftY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // nudWriteBackLeftX
-            // 
-            this.nudWriteBackLeftX.BackColor = System.Drawing.Color.White;
-            this.nudWriteBackLeftX.DrawBorder = false;
-            this.nudWriteBackLeftX.FaceColor = System.Drawing.Color.DimGray;
-            this.nudWriteBackLeftX.ForeColor = System.Drawing.Color.White;
-            this.nudWriteBackLeftX.Location = new System.Drawing.Point(83, 80);
-            this.nudWriteBackLeftX.Name = "nudWriteBackLeftX";
-            this.nudWriteBackLeftX.Radius = 0;
-            this.nudWriteBackLeftX.Size = new System.Drawing.Size(80, 27);
-            this.nudWriteBackLeftX.TabIndex = 145;
-            this.nudWriteBackLeftX.Text = "0";
-            this.nudWriteBackLeftX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // btBackCCDUpdate
             // 
             this.btBackCCDUpdate.BackColor = System.Drawing.Color.Transparent;
@@ -2709,21 +2540,6 @@
             this.btBackCCDUpdate.Size = new System.Drawing.Size(98, 30);
             this.btBackCCDUpdate.TabIndex = 141;
             this.btBackCCDUpdate.Click += new System.EventHandler(this.BtBackCCDUpdate_Click);
-            // 
-            // nudWriteUpBigY
-            // 
-            this.nudWriteUpBigY.BackColor = System.Drawing.Color.White;
-            this.nudWriteUpBigY.DrawBorder = false;
-            this.nudWriteUpBigY.FaceColor = System.Drawing.Color.DimGray;
-            this.nudWriteUpBigY.ForeColor = System.Drawing.Color.White;
-            this.nudWriteUpBigY.Location = new System.Drawing.Point(83, 48);
-            this.nudWriteUpBigY.Name = "nudWriteUpBigY";
-            this.nudWriteUpBigY.Radius = 0;
-            this.nudWriteUpBigY.Size = new System.Drawing.Size(80, 27);
-            this.nudWriteUpBigY.TabIndex = 145;
-            this.nudWriteUpBigY.Text = "0";
-            this.nudWriteUpBigY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.nudWriteUpBigY.Visible = false;
             // 
             // numericUpDown1
             // 
@@ -3008,20 +2824,6 @@
             this.groupBoxB2.Text = "WEC Location";
             this.groupBoxB2.Visible = false;
             // 
-            // nudWriteChuckY2
-            // 
-            this.nudWriteChuckY2.BackColor = System.Drawing.Color.White;
-            this.nudWriteChuckY2.DrawBorder = false;
-            this.nudWriteChuckY2.FaceColor = System.Drawing.Color.DimGray;
-            this.nudWriteChuckY2.ForeColor = System.Drawing.Color.White;
-            this.nudWriteChuckY2.Location = new System.Drawing.Point(83, 180);
-            this.nudWriteChuckY2.Name = "nudWriteChuckY2";
-            this.nudWriteChuckY2.Radius = 0;
-            this.nudWriteChuckY2.Size = new System.Drawing.Size(80, 26);
-            this.nudWriteChuckY2.TabIndex = 145;
-            this.nudWriteChuckY2.Text = "0";
-            this.nudWriteChuckY2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // btChuckGo
             // 
             this.btChuckGo.BackColor = System.Drawing.Color.Transparent;
@@ -3037,34 +2839,6 @@
             this.btChuckGo.TabIndex = 142;
             this.btChuckGo.Visible = false;
             // 
-            // nudWriteChuckY1
-            // 
-            this.nudWriteChuckY1.BackColor = System.Drawing.Color.White;
-            this.nudWriteChuckY1.DrawBorder = false;
-            this.nudWriteChuckY1.FaceColor = System.Drawing.Color.DimGray;
-            this.nudWriteChuckY1.ForeColor = System.Drawing.Color.White;
-            this.nudWriteChuckY1.Location = new System.Drawing.Point(83, 143);
-            this.nudWriteChuckY1.Name = "nudWriteChuckY1";
-            this.nudWriteChuckY1.Radius = 0;
-            this.nudWriteChuckY1.Size = new System.Drawing.Size(80, 28);
-            this.nudWriteChuckY1.TabIndex = 145;
-            this.nudWriteChuckY1.Text = "0";
-            this.nudWriteChuckY1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // nudWriteChuckX
-            // 
-            this.nudWriteChuckX.BackColor = System.Drawing.Color.White;
-            this.nudWriteChuckX.DrawBorder = false;
-            this.nudWriteChuckX.FaceColor = System.Drawing.Color.DimGray;
-            this.nudWriteChuckX.ForeColor = System.Drawing.Color.White;
-            this.nudWriteChuckX.Location = new System.Drawing.Point(83, 102);
-            this.nudWriteChuckX.Name = "nudWriteChuckX";
-            this.nudWriteChuckX.Radius = 0;
-            this.nudWriteChuckX.Size = new System.Drawing.Size(80, 28);
-            this.nudWriteChuckX.TabIndex = 145;
-            this.nudWriteChuckX.Text = "0";
-            this.nudWriteChuckX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // btBackChuckUpdate
             // 
             this.btBackChuckUpdate.BackColor = System.Drawing.Color.Transparent;
@@ -3078,20 +2852,6 @@
             this.btBackChuckUpdate.Radius = 5;
             this.btBackChuckUpdate.Size = new System.Drawing.Size(102, 30);
             this.btBackChuckUpdate.TabIndex = 141;
-            // 
-            // nudWriteChuckZ
-            // 
-            this.nudWriteChuckZ.BackColor = System.Drawing.Color.White;
-            this.nudWriteChuckZ.DrawBorder = false;
-            this.nudWriteChuckZ.FaceColor = System.Drawing.Color.DimGray;
-            this.nudWriteChuckZ.ForeColor = System.Drawing.Color.White;
-            this.nudWriteChuckZ.Location = new System.Drawing.Point(83, 67);
-            this.nudWriteChuckZ.Name = "nudWriteChuckZ";
-            this.nudWriteChuckZ.Radius = 0;
-            this.nudWriteChuckZ.Size = new System.Drawing.Size(80, 27);
-            this.nudWriteChuckZ.TabIndex = 145;
-            this.nudWriteChuckZ.Text = "0";
-            this.nudWriteChuckZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // nudReadChuckR
             // 
@@ -3283,6 +3043,7 @@
             this.ucLeftROI.Radius = 5;
             this.ucLeftROI.Size = new System.Drawing.Size(88, 30);
             this.ucLeftROI.TabIndex = 175;
+            this.ucLeftROI.Visible = false;
             // 
             // ucRightROI
             // 
@@ -3297,12 +3058,253 @@
             this.ucRightROI.Radius = 5;
             this.ucRightROI.Size = new System.Drawing.Size(88, 30);
             this.ucRightROI.TabIndex = 175;
+            this.ucRightROI.Visible = false;
+            // 
+            // ucBackLabelPattern
+            // 
+            this.ucBackLabelPattern.BackColor = System.Drawing.Color.Transparent;
+            this.ucBackLabelPattern.Caption = "Label Image";
+            this.ucBackLabelPattern.FaceColor = System.Drawing.Color.Khaki;
+            this.ucBackLabelPattern.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ucBackLabelPattern.Image = null;
+            this.ucBackLabelPattern.Location = new System.Drawing.Point(773, 259);
+            this.ucBackLabelPattern.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.ucBackLabelPattern.Name = "ucBackLabelPattern";
+            this.ucBackLabelPattern.Radius = 5;
+            this.ucBackLabelPattern.Size = new System.Drawing.Size(126, 33);
+            this.ucBackLabelPattern.TabIndex = 175;
+            this.ucBackLabelPattern.Click += new System.EventHandler(this.ucBackLabelPattern_Click);
+            // 
+            // nudWriteChuckY2
+            // 
+            this.nudWriteChuckY2.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckY2.DrawBorder = false;
+            this.nudWriteChuckY2.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckY2.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckY2.Location = new System.Drawing.Point(83, 180);
+            this.nudWriteChuckY2.Name = "nudWriteChuckY2";
+            this.nudWriteChuckY2.Radius = 0;
+            this.nudWriteChuckY2.Size = new System.Drawing.Size(80, 26);
+            this.nudWriteChuckY2.TabIndex = 145;
+            this.nudWriteChuckY2.Text = "0";
+            this.nudWriteChuckY2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteChuckY1
+            // 
+            this.nudWriteChuckY1.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckY1.DrawBorder = false;
+            this.nudWriteChuckY1.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckY1.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckY1.Location = new System.Drawing.Point(83, 143);
+            this.nudWriteChuckY1.Name = "nudWriteChuckY1";
+            this.nudWriteChuckY1.Radius = 0;
+            this.nudWriteChuckY1.Size = new System.Drawing.Size(80, 28);
+            this.nudWriteChuckY1.TabIndex = 145;
+            this.nudWriteChuckY1.Text = "0";
+            this.nudWriteChuckY1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteChuckX
+            // 
+            this.nudWriteChuckX.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckX.DrawBorder = false;
+            this.nudWriteChuckX.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckX.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckX.Location = new System.Drawing.Point(83, 102);
+            this.nudWriteChuckX.Name = "nudWriteChuckX";
+            this.nudWriteChuckX.Radius = 0;
+            this.nudWriteChuckX.Size = new System.Drawing.Size(80, 28);
+            this.nudWriteChuckX.TabIndex = 145;
+            this.nudWriteChuckX.Text = "0";
+            this.nudWriteChuckX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteChuckZ
+            // 
+            this.nudWriteChuckZ.BackColor = System.Drawing.Color.White;
+            this.nudWriteChuckZ.DrawBorder = false;
+            this.nudWriteChuckZ.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteChuckZ.ForeColor = System.Drawing.Color.White;
+            this.nudWriteChuckZ.Location = new System.Drawing.Point(83, 67);
+            this.nudWriteChuckZ.Name = "nudWriteChuckZ";
+            this.nudWriteChuckZ.Radius = 0;
+            this.nudWriteChuckZ.Size = new System.Drawing.Size(80, 27);
+            this.nudWriteChuckZ.TabIndex = 145;
+            this.nudWriteChuckZ.Text = "0";
+            this.nudWriteChuckZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackRightZ
+            // 
+            this.nudWriteBackRightZ.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackRightZ.DrawBorder = false;
+            this.nudWriteBackRightZ.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackRightZ.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackRightZ.Location = new System.Drawing.Point(83, 246);
+            this.nudWriteBackRightZ.Name = "nudWriteBackRightZ";
+            this.nudWriteBackRightZ.Radius = 0;
+            this.nudWriteBackRightZ.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteBackRightZ.TabIndex = 145;
+            this.nudWriteBackRightZ.Text = "0";
+            this.nudWriteBackRightZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackRightY
+            // 
+            this.nudWriteBackRightY.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackRightY.DrawBorder = false;
+            this.nudWriteBackRightY.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackRightY.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackRightY.Location = new System.Drawing.Point(83, 213);
+            this.nudWriteBackRightY.Name = "nudWriteBackRightY";
+            this.nudWriteBackRightY.Radius = 0;
+            this.nudWriteBackRightY.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteBackRightY.TabIndex = 145;
+            this.nudWriteBackRightY.Text = "0";
+            this.nudWriteBackRightY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackRightX
+            // 
+            this.nudWriteBackRightX.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackRightX.DrawBorder = false;
+            this.nudWriteBackRightX.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackRightX.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackRightX.Location = new System.Drawing.Point(83, 180);
+            this.nudWriteBackRightX.Name = "nudWriteBackRightX";
+            this.nudWriteBackRightX.Radius = 0;
+            this.nudWriteBackRightX.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteBackRightX.TabIndex = 145;
+            this.nudWriteBackRightX.Text = "0";
+            this.nudWriteBackRightX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackLeftZ
+            // 
+            this.nudWriteBackLeftZ.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftZ.DrawBorder = false;
+            this.nudWriteBackLeftZ.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackLeftZ.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftZ.Location = new System.Drawing.Point(83, 147);
+            this.nudWriteBackLeftZ.Name = "nudWriteBackLeftZ";
+            this.nudWriteBackLeftZ.Radius = 0;
+            this.nudWriteBackLeftZ.Size = new System.Drawing.Size(80, 30);
+            this.nudWriteBackLeftZ.TabIndex = 145;
+            this.nudWriteBackLeftZ.Text = "0";
+            this.nudWriteBackLeftZ.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackLeftY
+            // 
+            this.nudWriteBackLeftY.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftY.DrawBorder = false;
+            this.nudWriteBackLeftY.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackLeftY.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftY.Location = new System.Drawing.Point(83, 114);
+            this.nudWriteBackLeftY.Name = "nudWriteBackLeftY";
+            this.nudWriteBackLeftY.Radius = 0;
+            this.nudWriteBackLeftY.Size = new System.Drawing.Size(80, 29);
+            this.nudWriteBackLeftY.TabIndex = 145;
+            this.nudWriteBackLeftY.Text = "0";
+            this.nudWriteBackLeftY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteBackLeftX
+            // 
+            this.nudWriteBackLeftX.BackColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftX.DrawBorder = false;
+            this.nudWriteBackLeftX.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteBackLeftX.ForeColor = System.Drawing.Color.White;
+            this.nudWriteBackLeftX.Location = new System.Drawing.Point(83, 80);
+            this.nudWriteBackLeftX.Name = "nudWriteBackLeftX";
+            this.nudWriteBackLeftX.Radius = 0;
+            this.nudWriteBackLeftX.Size = new System.Drawing.Size(80, 27);
+            this.nudWriteBackLeftX.TabIndex = 145;
+            this.nudWriteBackLeftX.Text = "0";
+            this.nudWriteBackLeftX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudWriteUpBigY
+            // 
+            this.nudWriteUpBigY.BackColor = System.Drawing.Color.White;
+            this.nudWriteUpBigY.DrawBorder = false;
+            this.nudWriteUpBigY.FaceColor = System.Drawing.Color.DimGray;
+            this.nudWriteUpBigY.ForeColor = System.Drawing.Color.White;
+            this.nudWriteUpBigY.Location = new System.Drawing.Point(83, 48);
+            this.nudWriteUpBigY.Name = "nudWriteUpBigY";
+            this.nudWriteUpBigY.Radius = 0;
+            this.nudWriteUpBigY.Size = new System.Drawing.Size(80, 27);
+            this.nudWriteUpBigY.TabIndex = 145;
+            this.nudWriteUpBigY.Text = "0";
+            this.nudWriteUpBigY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.nudWriteUpBigY.Visible = false;
+            // 
+            // ucNavigatorBackMaskR
+            // 
+            this.ucNavigatorBackMaskR.AutoSize = true;
+            this.ucNavigatorBackMaskR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorBackMaskR.Location = new System.Drawing.Point(73, 30);
+            this.ucNavigatorBackMaskR.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorBackMaskR.Name = "ucNavigatorBackMaskR";
+            this.ucNavigatorBackMaskR.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorBackMaskR.TabIndex = 51;
+            this.ucNavigatorBackMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
+            // 
+            // ucNavigatorTopMaskR
+            // 
+            this.ucNavigatorTopMaskR.AutoSize = true;
+            this.ucNavigatorTopMaskR.Location = new System.Drawing.Point(85, 28);
+            this.ucNavigatorTopMaskR.Name = "ucNavigatorTopMaskR";
+            this.ucNavigatorTopMaskR.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorTopMaskR.TabIndex = 54;
+            this.ucNavigatorTopMaskR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskR_CommandPressed);
+            // 
+            // ucPattern1
+            // 
+            this.ucPattern1.Location = new System.Drawing.Point(31081, 32725);
+            this.ucPattern1.Margin = new System.Windows.Forms.Padding(0);
+            this.ucPattern1.Name = "ucPattern1";
+            this.ucPattern1.Size = new System.Drawing.Size(65535, 65535);
+            this.ucPattern1.TabIndex = 53;
+            // 
+            // ucNavigatorWaferR
+            // 
+            this.ucNavigatorWaferR.AutoSize = true;
+            this.ucNavigatorWaferR.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorWaferR.Location = new System.Drawing.Point(77, 28);
+            this.ucNavigatorWaferR.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorWaferR.Name = "ucNavigatorWaferR";
+            this.ucNavigatorWaferR.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorWaferR.TabIndex = 50;
+            this.ucNavigatorWaferR.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferR_CommandPressed);
+            // 
+            // ucNavigatorBackMaskL
+            // 
+            this.ucNavigatorBackMaskL.AutoSize = true;
+            this.ucNavigatorBackMaskL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorBackMaskL.Location = new System.Drawing.Point(31, 28);
+            this.ucNavigatorBackMaskL.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorBackMaskL.Name = "ucNavigatorBackMaskL";
+            this.ucNavigatorBackMaskL.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorBackMaskL.TabIndex = 50;
+            this.ucNavigatorBackMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
+            // 
+            // ucNavigatorWaferL
+            // 
+            this.ucNavigatorWaferL.AutoSize = true;
+            this.ucNavigatorWaferL.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ucNavigatorWaferL.Location = new System.Drawing.Point(36, 28);
+            this.ucNavigatorWaferL.Margin = new System.Windows.Forms.Padding(6);
+            this.ucNavigatorWaferL.Name = "ucNavigatorWaferL";
+            this.ucNavigatorWaferL.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorWaferL.TabIndex = 49;
+            this.ucNavigatorWaferL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorWaferL_CommandPressed);
+            // 
+            // ucNavigatorTopMaskL
+            // 
+            this.ucNavigatorTopMaskL.AutoSize = true;
+            this.ucNavigatorTopMaskL.Location = new System.Drawing.Point(37, 27);
+            this.ucNavigatorTopMaskL.Name = "ucNavigatorTopMaskL";
+            this.ucNavigatorTopMaskL.Size = new System.Drawing.Size(107, 40);
+            this.ucNavigatorTopMaskL.TabIndex = 15;
+            this.ucNavigatorTopMaskL.CommandPressed += new NSAA_16Axis.UCNavigator.CommandPressedEvent(this.ucNavigatorTopMaskL_CommandPressed);
             // 
             // CMLearnPatternBack
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.Controls.Add(this.btBackLabelPatternL);
+            this.Controls.Add(this.ucBackLabelPattern);
             this.Controls.Add(this.ucRightROI);
             this.Controls.Add(this.ucLeftROI);
             this.Controls.Add(this.ucBackPosition);
@@ -3578,7 +3580,6 @@
         private System.Windows.Forms.Button BtRMaskAdjSave;
         private System.Windows.Forms.Button btSave;
         private System.Windows.Forms.ComboBox cbLBackWaferClassList;
-        private System.Windows.Forms.Button btBackLabelPatternL;
         private System.Windows.Forms.ComboBox cbRBackWaferClassList;
         private System.Windows.Forms.Button btBackLabelPatternR;
         private System.Windows.Forms.Button buttonL;
@@ -3649,5 +3650,6 @@
         private MRLibrary.UCButton ucBackPosition;
         private MRLibrary.UCButton ucLeftROI;
         private MRLibrary.UCButton ucRightROI;
+        private MRLibrary.UCButton ucBackLabelPattern;
     }
 }

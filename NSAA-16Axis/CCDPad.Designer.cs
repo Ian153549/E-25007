@@ -553,7 +553,7 @@ namespace NSAA_16Axis
             this.label1.Location = new System.Drawing.Point(267, 187);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 16);
+            this.label1.Size = new System.Drawing.Size(0, 20);
             this.label1.TabIndex = 96;
             // 
             // label2
@@ -563,7 +563,7 @@ namespace NSAA_16Axis
             this.label2.Location = new System.Drawing.Point(255, 57);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(69, 19);
+            this.label2.Size = new System.Drawing.Size(82, 24);
             this.label2.TabIndex = 97;
             this.label2.Text = "左 CCD";
             // 
@@ -574,7 +574,7 @@ namespace NSAA_16Axis
             this.label3.Location = new System.Drawing.Point(1316, 45);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(69, 19);
+            this.label3.Size = new System.Drawing.Size(82, 24);
             this.label3.TabIndex = 98;
             this.label3.Text = "右 CCD";
             // 
@@ -585,7 +585,7 @@ namespace NSAA_16Axis
             this.label4.Location = new System.Drawing.Point(851, 278);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(70, 24);
+            this.label4.Size = new System.Drawing.Size(88, 30);
             this.label4.TabIndex = 99;
             this.label4.Text = "Chuck";
             // 
@@ -593,10 +593,10 @@ namespace NSAA_16Axis
             // 
             this.labelBigY.AutoSize = true;
             this.labelBigY.Font = new System.Drawing.Font("標楷體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.labelBigY.Location = new System.Drawing.Point(724, 27);
+            this.labelBigY.Location = new System.Drawing.Point(778, 27);
             this.labelBigY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelBigY.Name = "labelBigY";
-            this.labelBigY.Size = new System.Drawing.Size(58, 24);
+            this.labelBigY.Size = new System.Drawing.Size(73, 30);
             this.labelBigY.TabIndex = 100;
             this.labelBigY.Text = "大 Y";
             // 
@@ -642,7 +642,7 @@ namespace NSAA_16Axis
             this.comboBoxBigYS.Location = new System.Drawing.Point(463, 139);
             this.comboBoxBigYS.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxBigYS.Name = "comboBoxBigYS";
-            this.comboBoxBigYS.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxBigYS.Size = new System.Drawing.Size(140, 34);
             this.comboBoxBigYS.TabIndex = 104;
             // 
             // comboBoxBigYB
@@ -662,17 +662,17 @@ namespace NSAA_16Axis
             this.comboBoxBigYB.Location = new System.Drawing.Point(463, 222);
             this.comboBoxBigYB.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxBigYB.Name = "comboBoxBigYB";
-            this.comboBoxBigYB.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxBigYB.Size = new System.Drawing.Size(140, 34);
             this.comboBoxBigYB.TabIndex = 105;
             // 
             // BigY
             // 
             this.BigY.AutoSize = true;
             this.BigY.Font = new System.Drawing.Font("標楷體", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.BigY.Location = new System.Drawing.Point(732, 75);
+            this.BigY.Location = new System.Drawing.Point(782, 75);
             this.BigY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BigY.Name = "BigY";
-            this.BigY.Size = new System.Drawing.Size(43, 21);
+            this.BigY.Size = new System.Drawing.Size(54, 27);
             this.BigY.TabIndex = 106;
             this.BigY.Text = "大Y";
             // 
@@ -683,7 +683,7 @@ namespace NSAA_16Axis
             this.labelLeftX.Location = new System.Drawing.Point(110, 93);
             this.labelLeftX.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelLeftX.Name = "labelLeftX";
-            this.labelLeftX.Size = new System.Drawing.Size(120, 21);
+            this.labelLeftX.Size = new System.Drawing.Size(152, 27);
             this.labelLeftX.TabIndex = 107;
             this.labelLeftX.Text = "labelLeftX";
             // 
@@ -715,7 +715,7 @@ namespace NSAA_16Axis
             this.comboBoxLeftXS.Location = new System.Drawing.Point(50, 141);
             this.comboBoxLeftXS.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxLeftXS.Name = "comboBoxLeftXS";
-            this.comboBoxLeftXS.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxLeftXS.Size = new System.Drawing.Size(140, 34);
             this.comboBoxLeftXS.TabIndex = 108;
             // 
             // comboBoxLeftXB
@@ -735,7 +735,7 @@ namespace NSAA_16Axis
             this.comboBoxLeftXB.Location = new System.Drawing.Point(53, 279);
             this.comboBoxLeftXB.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxLeftXB.Name = "comboBoxLeftXB";
-            this.comboBoxLeftXB.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxLeftXB.Size = new System.Drawing.Size(140, 34);
             this.comboBoxLeftXB.TabIndex = 109;
             // 
             // comboBoxLeftYB
@@ -755,7 +755,7 @@ namespace NSAA_16Axis
             this.comboBoxLeftYB.Location = new System.Drawing.Point(285, 283);
             this.comboBoxLeftYB.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxLeftYB.Name = "comboBoxLeftYB";
-            this.comboBoxLeftYB.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxLeftYB.Size = new System.Drawing.Size(140, 34);
             this.comboBoxLeftYB.TabIndex = 111;
             // 
             // comboBoxLeftYS
@@ -786,7 +786,7 @@ namespace NSAA_16Axis
             this.comboBoxLeftYS.Location = new System.Drawing.Point(285, 145);
             this.comboBoxLeftYS.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxLeftYS.Name = "comboBoxLeftYS";
-            this.comboBoxLeftYS.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxLeftYS.Size = new System.Drawing.Size(140, 34);
             this.comboBoxLeftYS.TabIndex = 110;
             // 
             // labelLeftY
@@ -796,7 +796,7 @@ namespace NSAA_16Axis
             this.labelLeftY.Location = new System.Drawing.Point(299, 97);
             this.labelLeftY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelLeftY.Name = "labelLeftY";
-            this.labelLeftY.Size = new System.Drawing.Size(120, 21);
+            this.labelLeftY.Size = new System.Drawing.Size(152, 27);
             this.labelLeftY.TabIndex = 112;
             this.labelLeftY.Text = "labelLeftY";
             // 
@@ -807,7 +807,7 @@ namespace NSAA_16Axis
             this.labelChuckY2.Location = new System.Drawing.Point(927, 346);
             this.labelChuckY2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelChuckY2.Name = "labelChuckY2";
-            this.labelChuckY2.Size = new System.Drawing.Size(142, 21);
+            this.labelChuckY2.Size = new System.Drawing.Size(180, 27);
             this.labelChuckY2.TabIndex = 119;
             this.labelChuckY2.Text = "labelChuckY2";
             // 
@@ -828,7 +828,7 @@ namespace NSAA_16Axis
             this.comboBoxChuckYB.Location = new System.Drawing.Point(941, 516);
             this.comboBoxChuckYB.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxChuckYB.Name = "comboBoxChuckYB";
-            this.comboBoxChuckYB.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxChuckYB.Size = new System.Drawing.Size(140, 34);
             this.comboBoxChuckYB.TabIndex = 118;
             // 
             // comboBoxChuckYS
@@ -859,7 +859,7 @@ namespace NSAA_16Axis
             this.comboBoxChuckYS.Location = new System.Drawing.Point(941, 378);
             this.comboBoxChuckYS.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxChuckYS.Name = "comboBoxChuckYS";
-            this.comboBoxChuckYS.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxChuckYS.Size = new System.Drawing.Size(140, 34);
             this.comboBoxChuckYS.TabIndex = 117;
             // 
             // comboBoxChuckXB
@@ -879,7 +879,7 @@ namespace NSAA_16Axis
             this.comboBoxChuckXB.Location = new System.Drawing.Point(615, 516);
             this.comboBoxChuckXB.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxChuckXB.Name = "comboBoxChuckXB";
-            this.comboBoxChuckXB.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxChuckXB.Size = new System.Drawing.Size(140, 34);
             this.comboBoxChuckXB.TabIndex = 116;
             // 
             // comboBoxChuckXS
@@ -910,7 +910,7 @@ namespace NSAA_16Axis
             this.comboBoxChuckXS.Location = new System.Drawing.Point(615, 378);
             this.comboBoxChuckXS.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxChuckXS.Name = "comboBoxChuckXS";
-            this.comboBoxChuckXS.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxChuckXS.Size = new System.Drawing.Size(140, 34);
             this.comboBoxChuckXS.TabIndex = 115;
             // 
             // labelChuckX
@@ -920,7 +920,7 @@ namespace NSAA_16Axis
             this.labelChuckX.Location = new System.Drawing.Point(823, 312);
             this.labelChuckX.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelChuckX.Name = "labelChuckX";
-            this.labelChuckX.Size = new System.Drawing.Size(131, 21);
+            this.labelChuckX.Size = new System.Drawing.Size(166, 27);
             this.labelChuckX.TabIndex = 114;
             this.labelChuckX.Text = "labelChuckX";
             // 
@@ -931,7 +931,7 @@ namespace NSAA_16Axis
             this.labelRightY.Location = new System.Drawing.Point(1434, 91);
             this.labelRightY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelRightY.Name = "labelRightY";
-            this.labelRightY.Size = new System.Drawing.Size(131, 21);
+            this.labelRightY.Size = new System.Drawing.Size(166, 27);
             this.labelRightY.TabIndex = 125;
             this.labelRightY.Text = "labelRightY";
             // 
@@ -952,7 +952,7 @@ namespace NSAA_16Axis
             this.comboBoxRightYB.Location = new System.Drawing.Point(1425, 269);
             this.comboBoxRightYB.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxRightYB.Name = "comboBoxRightYB";
-            this.comboBoxRightYB.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxRightYB.Size = new System.Drawing.Size(140, 34);
             this.comboBoxRightYB.TabIndex = 124;
             // 
             // comboBoxRightYS
@@ -983,7 +983,7 @@ namespace NSAA_16Axis
             this.comboBoxRightYS.Location = new System.Drawing.Point(1425, 131);
             this.comboBoxRightYS.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxRightYS.Name = "comboBoxRightYS";
-            this.comboBoxRightYS.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxRightYS.Size = new System.Drawing.Size(140, 34);
             this.comboBoxRightYS.TabIndex = 123;
             // 
             // comboBoxRightXB
@@ -1003,7 +1003,7 @@ namespace NSAA_16Axis
             this.comboBoxRightXB.Location = new System.Drawing.Point(1106, 269);
             this.comboBoxRightXB.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxRightXB.Name = "comboBoxRightXB";
-            this.comboBoxRightXB.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxRightXB.Size = new System.Drawing.Size(140, 34);
             this.comboBoxRightXB.TabIndex = 122;
             // 
             // comboBoxRightXS
@@ -1034,7 +1034,7 @@ namespace NSAA_16Axis
             this.comboBoxRightXS.Location = new System.Drawing.Point(1107, 131);
             this.comboBoxRightXS.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxRightXS.Name = "comboBoxRightXS";
-            this.comboBoxRightXS.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxRightXS.Size = new System.Drawing.Size(140, 34);
             this.comboBoxRightXS.TabIndex = 121;
             // 
             // labelRightX
@@ -1044,7 +1044,7 @@ namespace NSAA_16Axis
             this.labelRightX.Location = new System.Drawing.Point(1115, 91);
             this.labelRightX.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelRightX.Name = "labelRightX";
-            this.labelRightX.Size = new System.Drawing.Size(131, 21);
+            this.labelRightX.Size = new System.Drawing.Size(166, 27);
             this.labelRightX.TabIndex = 120;
             this.labelRightX.Text = "labelRightX";
             // 
@@ -1055,7 +1055,7 @@ namespace NSAA_16Axis
             this.labelChuckY1.Location = new System.Drawing.Point(656, 337);
             this.labelChuckY1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelChuckY1.Name = "labelChuckY1";
-            this.labelChuckY1.Size = new System.Drawing.Size(142, 21);
+            this.labelChuckY1.Size = new System.Drawing.Size(180, 27);
             this.labelChuckY1.TabIndex = 126;
             this.labelChuckY1.Text = "labelChuckY1";
             // 
@@ -1139,7 +1139,7 @@ namespace NSAA_16Axis
             this.comboBoxChuckZS.Location = new System.Drawing.Point(1298, 437);
             this.comboBoxChuckZS.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxChuckZS.Name = "comboBoxChuckZS";
-            this.comboBoxChuckZS.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxChuckZS.Size = new System.Drawing.Size(140, 34);
             this.comboBoxChuckZS.TabIndex = 131;
             // 
             // buttonChuckZDownB
@@ -1185,7 +1185,7 @@ namespace NSAA_16Axis
             this.comboBoxChuckZB.Location = new System.Drawing.Point(250, 431);
             this.comboBoxChuckZB.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxChuckZB.Name = "comboBoxChuckZB";
-            this.comboBoxChuckZB.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxChuckZB.Size = new System.Drawing.Size(140, 34);
             this.comboBoxChuckZB.TabIndex = 134;
             // 
             // labelChuckZ
@@ -1195,7 +1195,7 @@ namespace NSAA_16Axis
             this.labelChuckZ.Location = new System.Drawing.Point(810, 572);
             this.labelChuckZ.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelChuckZ.Name = "labelChuckZ";
-            this.labelChuckZ.Size = new System.Drawing.Size(131, 21);
+            this.labelChuckZ.Size = new System.Drawing.Size(166, 27);
             this.labelChuckZ.TabIndex = 135;
             this.labelChuckZ.Text = "labelChuckZ";
             // 
@@ -1227,7 +1227,7 @@ namespace NSAA_16Axis
             this.comboBoxRotationS.Location = new System.Drawing.Point(1132, 437);
             this.comboBoxRotationS.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxRotationS.Name = "comboBoxRotationS";
-            this.comboBoxRotationS.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxRotationS.Size = new System.Drawing.Size(140, 34);
             this.comboBoxRotationS.TabIndex = 136;
             // 
             // comboBoxRotationB
@@ -1247,7 +1247,7 @@ namespace NSAA_16Axis
             this.comboBoxRotationB.Location = new System.Drawing.Point(412, 431);
             this.comboBoxRotationB.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxRotationB.Name = "comboBoxRotationB";
-            this.comboBoxRotationB.Size = new System.Drawing.Size(140, 29);
+            this.comboBoxRotationB.Size = new System.Drawing.Size(140, 34);
             this.comboBoxRotationB.TabIndex = 137;
             // 
             // buttonCWRotationS
@@ -1357,7 +1357,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDLeftX1.Name = "nUDLeftX1";
-            this.nUDLeftX1.Size = new System.Drawing.Size(140, 30);
+            this.nUDLeftX1.Size = new System.Drawing.Size(140, 36);
             this.nUDLeftX1.TabIndex = 145;
             // 
             // label6
@@ -1367,7 +1367,7 @@ namespace NSAA_16Axis
             this.label6.Location = new System.Drawing.Point(27, 654);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(69, 19);
+            this.label6.Size = new System.Drawing.Size(82, 24);
             this.label6.TabIndex = 146;
             this.label6.Text = "位置 1";
             // 
@@ -1387,7 +1387,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDLeftX2.Name = "nUDLeftX2";
-            this.nUDLeftX2.Size = new System.Drawing.Size(140, 30);
+            this.nUDLeftX2.Size = new System.Drawing.Size(140, 36);
             this.nUDLeftX2.TabIndex = 147;
             this.nUDLeftX2.Value = new decimal(new int[] {
             30,
@@ -1411,7 +1411,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDLeftY2.Name = "nUDLeftY2";
-            this.nUDLeftY2.Size = new System.Drawing.Size(140, 30);
+            this.nUDLeftY2.Size = new System.Drawing.Size(140, 36);
             this.nUDLeftY2.TabIndex = 150;
             this.nUDLeftY2.Value = new decimal(new int[] {
             30,
@@ -1426,7 +1426,7 @@ namespace NSAA_16Axis
             this.label7.Location = new System.Drawing.Point(27, 710);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(69, 19);
+            this.label7.Size = new System.Drawing.Size(82, 24);
             this.label7.TabIndex = 149;
             this.label7.Text = "位置 2";
             // 
@@ -1446,7 +1446,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDLeftY1.Name = "nUDLeftY1";
-            this.nUDLeftY1.Size = new System.Drawing.Size(140, 30);
+            this.nUDLeftY1.Size = new System.Drawing.Size(140, 36);
             this.nUDLeftY1.TabIndex = 148;
             this.nUDLeftY1.Value = new decimal(new int[] {
             30,
@@ -1470,7 +1470,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDBigY2.Name = "nUDBigY2";
-            this.nUDBigY2.Size = new System.Drawing.Size(140, 30);
+            this.nUDBigY2.Size = new System.Drawing.Size(140, 36);
             this.nUDBigY2.TabIndex = 152;
             this.nUDBigY2.Value = new decimal(new int[] {
             30,
@@ -1494,7 +1494,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDBigY1.Name = "nUDBigY1";
-            this.nUDBigY1.Size = new System.Drawing.Size(140, 30);
+            this.nUDBigY1.Size = new System.Drawing.Size(140, 36);
             this.nUDBigY1.TabIndex = 151;
             this.nUDBigY1.Value = new decimal(new int[] {
             30,
@@ -1518,7 +1518,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDRightX2.Name = "nUDRightX2";
-            this.nUDRightX2.Size = new System.Drawing.Size(140, 30);
+            this.nUDRightX2.Size = new System.Drawing.Size(140, 36);
             this.nUDRightX2.TabIndex = 154;
             this.nUDRightX2.Value = new decimal(new int[] {
             30,
@@ -1542,7 +1542,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDRightX1.Name = "nUDRightX1";
-            this.nUDRightX1.Size = new System.Drawing.Size(140, 30);
+            this.nUDRightX1.Size = new System.Drawing.Size(140, 36);
             this.nUDRightX1.TabIndex = 153;
             this.nUDRightX1.Value = new decimal(new int[] {
             30,
@@ -1566,7 +1566,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDRightY2.Name = "nUDRightY2";
-            this.nUDRightY2.Size = new System.Drawing.Size(140, 30);
+            this.nUDRightY2.Size = new System.Drawing.Size(140, 36);
             this.nUDRightY2.TabIndex = 156;
             this.nUDRightY2.Value = new decimal(new int[] {
             30,
@@ -1590,7 +1590,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDRightY1.Name = "nUDRightY1";
-            this.nUDRightY1.Size = new System.Drawing.Size(140, 30);
+            this.nUDRightY1.Size = new System.Drawing.Size(140, 36);
             this.nUDRightY1.TabIndex = 155;
             this.nUDRightY1.Value = new decimal(new int[] {
             30,
@@ -1614,7 +1614,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDChuckX2.Name = "nUDChuckX2";
-            this.nUDChuckX2.Size = new System.Drawing.Size(176, 27);
+            this.nUDChuckX2.Size = new System.Drawing.Size(176, 31);
             this.nUDChuckX2.TabIndex = 158;
             this.nUDChuckX2.Value = new decimal(new int[] {
             30,
@@ -1638,7 +1638,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDChuckX1.Name = "nUDChuckX1";
-            this.nUDChuckX1.Size = new System.Drawing.Size(176, 27);
+            this.nUDChuckX1.Size = new System.Drawing.Size(176, 31);
             this.nUDChuckX1.TabIndex = 157;
             this.nUDChuckX1.Value = new decimal(new int[] {
             30,
@@ -1662,7 +1662,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDChuckY12.Name = "nUDChuckY12";
-            this.nUDChuckY12.Size = new System.Drawing.Size(176, 27);
+            this.nUDChuckY12.Size = new System.Drawing.Size(176, 31);
             this.nUDChuckY12.TabIndex = 160;
             this.nUDChuckY12.Value = new decimal(new int[] {
             30,
@@ -1686,7 +1686,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDChuckY11.Name = "nUDChuckY11";
-            this.nUDChuckY11.Size = new System.Drawing.Size(176, 27);
+            this.nUDChuckY11.Size = new System.Drawing.Size(176, 31);
             this.nUDChuckY11.TabIndex = 159;
             this.nUDChuckY11.Value = new decimal(new int[] {
             30,
@@ -1710,7 +1710,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDChuckY22.Name = "nUDChuckY22";
-            this.nUDChuckY22.Size = new System.Drawing.Size(176, 27);
+            this.nUDChuckY22.Size = new System.Drawing.Size(176, 31);
             this.nUDChuckY22.TabIndex = 162;
             this.nUDChuckY22.Value = new decimal(new int[] {
             30,
@@ -1734,7 +1734,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDChuckY21.Name = "nUDChuckY21";
-            this.nUDChuckY21.Size = new System.Drawing.Size(176, 27);
+            this.nUDChuckY21.Size = new System.Drawing.Size(176, 31);
             this.nUDChuckY21.TabIndex = 161;
             this.nUDChuckY21.Value = new decimal(new int[] {
             30,
@@ -1758,7 +1758,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDChuckZ2.Name = "nUDChuckZ2";
-            this.nUDChuckZ2.Size = new System.Drawing.Size(176, 27);
+            this.nUDChuckZ2.Size = new System.Drawing.Size(176, 31);
             this.nUDChuckZ2.TabIndex = 164;
             this.nUDChuckZ2.Value = new decimal(new int[] {
             30,
@@ -1782,7 +1782,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDChuckZ1.Name = "nUDChuckZ1";
-            this.nUDChuckZ1.Size = new System.Drawing.Size(176, 27);
+            this.nUDChuckZ1.Size = new System.Drawing.Size(176, 31);
             this.nUDChuckZ1.TabIndex = 163;
             this.nUDChuckZ1.Value = new decimal(new int[] {
             30,
@@ -1797,7 +1797,7 @@ namespace NSAA_16Axis
             this.label8.Location = new System.Drawing.Point(442, 1052);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(69, 19);
+            this.label8.Size = new System.Drawing.Size(82, 24);
             this.label8.TabIndex = 166;
             this.label8.Text = "位置 2";
             // 
@@ -1808,7 +1808,7 @@ namespace NSAA_16Axis
             this.label9.Location = new System.Drawing.Point(442, 970);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(69, 19);
+            this.label9.Size = new System.Drawing.Size(82, 24);
             this.label9.TabIndex = 165;
             this.label9.Text = "位置 1";
             // 
@@ -1873,7 +1873,7 @@ namespace NSAA_16Axis
             this.cbLeftX.Location = new System.Drawing.Point(205, 606);
             this.cbLeftX.Margin = new System.Windows.Forms.Padding(4);
             this.cbLeftX.Name = "cbLeftX";
-            this.cbLeftX.Size = new System.Drawing.Size(79, 29);
+            this.cbLeftX.Size = new System.Drawing.Size(92, 34);
             this.cbLeftX.TabIndex = 175;
             this.cbLeftX.Text = "左CCDX";
             this.cbLeftX.UseVisualStyleBackColor = true;
@@ -1887,7 +1887,7 @@ namespace NSAA_16Axis
             this.cbLeftY.Location = new System.Drawing.Point(415, 604);
             this.cbLeftY.Margin = new System.Windows.Forms.Padding(4);
             this.cbLeftY.Name = "cbLeftY";
-            this.cbLeftY.Size = new System.Drawing.Size(79, 29);
+            this.cbLeftY.Size = new System.Drawing.Size(92, 34);
             this.cbLeftY.TabIndex = 176;
             this.cbLeftY.Text = "左CCDY";
             this.cbLeftY.UseVisualStyleBackColor = true;
@@ -1901,7 +1901,7 @@ namespace NSAA_16Axis
             this.cbBigY.Location = new System.Drawing.Point(795, 607);
             this.cbBigY.Margin = new System.Windows.Forms.Padding(4);
             this.cbBigY.Name = "cbBigY";
-            this.cbBigY.Size = new System.Drawing.Size(49, 29);
+            this.cbBigY.Size = new System.Drawing.Size(56, 34);
             this.cbBigY.TabIndex = 177;
             this.cbBigY.Text = "大Y";
             this.cbBigY.UseVisualStyleBackColor = true;
@@ -1915,7 +1915,7 @@ namespace NSAA_16Axis
             this.cbRightX.Location = new System.Drawing.Point(1145, 607);
             this.cbRightX.Margin = new System.Windows.Forms.Padding(4);
             this.cbRightX.Name = "cbRightX";
-            this.cbRightX.Size = new System.Drawing.Size(79, 29);
+            this.cbRightX.Size = new System.Drawing.Size(92, 34);
             this.cbRightX.TabIndex = 178;
             this.cbRightX.Text = "右CCDX";
             this.cbRightX.UseVisualStyleBackColor = true;
@@ -1929,7 +1929,7 @@ namespace NSAA_16Axis
             this.cbRightY.Location = new System.Drawing.Point(1339, 613);
             this.cbRightY.Margin = new System.Windows.Forms.Padding(4);
             this.cbRightY.Name = "cbRightY";
-            this.cbRightY.Size = new System.Drawing.Size(79, 29);
+            this.cbRightY.Size = new System.Drawing.Size(92, 34);
             this.cbRightY.TabIndex = 179;
             this.cbRightY.Text = "右CCDY";
             this.cbRightY.UseVisualStyleBackColor = true;
@@ -1942,7 +1942,7 @@ namespace NSAA_16Axis
             this.cBChuckZ.Location = new System.Drawing.Point(1484, 928);
             this.cBChuckZ.Margin = new System.Windows.Forms.Padding(4);
             this.cBChuckZ.Name = "cBChuckZ";
-            this.cBChuckZ.Size = new System.Drawing.Size(65, 26);
+            this.cBChuckZ.Size = new System.Drawing.Size(79, 30);
             this.cBChuckZ.TabIndex = 183;
             this.cBChuckZ.Text = "ChuckZ";
             this.cBChuckZ.UseVisualStyleBackColor = true;
@@ -1955,7 +1955,7 @@ namespace NSAA_16Axis
             this.cBChuckY2.Location = new System.Drawing.Point(1214, 928);
             this.cBChuckY2.Margin = new System.Windows.Forms.Padding(4);
             this.cBChuckY2.Name = "cBChuckY2";
-            this.cBChuckY2.Size = new System.Drawing.Size(73, 26);
+            this.cBChuckY2.Size = new System.Drawing.Size(89, 30);
             this.cBChuckY2.TabIndex = 182;
             this.cBChuckY2.Text = "ChuckY2";
             this.cBChuckY2.UseVisualStyleBackColor = true;
@@ -1968,7 +1968,7 @@ namespace NSAA_16Axis
             this.cBChuckY1.Location = new System.Drawing.Point(897, 928);
             this.cBChuckY1.Margin = new System.Windows.Forms.Padding(4);
             this.cBChuckY1.Name = "cBChuckY1";
-            this.cBChuckY1.Size = new System.Drawing.Size(73, 26);
+            this.cBChuckY1.Size = new System.Drawing.Size(89, 30);
             this.cBChuckY1.TabIndex = 181;
             this.cBChuckY1.Text = "ChuckY1";
             this.cBChuckY1.UseVisualStyleBackColor = true;
@@ -1981,7 +1981,7 @@ namespace NSAA_16Axis
             this.cBChuckX.Location = new System.Drawing.Point(610, 928);
             this.cBChuckX.Margin = new System.Windows.Forms.Padding(4);
             this.cBChuckX.Name = "cBChuckX";
-            this.cBChuckX.Size = new System.Drawing.Size(65, 26);
+            this.cBChuckX.Size = new System.Drawing.Size(79, 30);
             this.cBChuckX.TabIndex = 180;
             this.cBChuckX.Text = "ChuckX";
             this.cBChuckX.UseVisualStyleBackColor = true;
@@ -2003,7 +2003,7 @@ namespace NSAA_16Axis
             // 
             this.btLeftZSDown.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btLeftZSDown.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btLeftZSDown.Location = new System.Drawing.Point(664, 129);
+            this.btLeftZSDown.Location = new System.Drawing.Point(643, 126);
             this.btLeftZSDown.Margin = new System.Windows.Forms.Padding(4);
             this.btLeftZSDown.Name = "btLeftZSDown";
             this.btLeftZSDown.Size = new System.Drawing.Size(70, 39);
@@ -2029,7 +2029,7 @@ namespace NSAA_16Axis
             // 
             this.btLeftZBDown.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btLeftZBDown.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btLeftZBDown.Location = new System.Drawing.Point(662, 177);
+            this.btLeftZBDown.Location = new System.Drawing.Point(643, 179);
             this.btLeftZBDown.Margin = new System.Windows.Forms.Padding(4);
             this.btLeftZBDown.Name = "btLeftZBDown";
             this.btLeftZBDown.Size = new System.Drawing.Size(70, 74);
@@ -2094,10 +2094,10 @@ namespace NSAA_16Axis
             // 
             this.lbLeftZ.AutoSize = true;
             this.lbLeftZ.Font = new System.Drawing.Font("標楷體", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.lbLeftZ.Location = new System.Drawing.Point(717, 75);
+            this.lbLeftZ.Location = new System.Drawing.Point(650, 75);
             this.lbLeftZ.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbLeftZ.Name = "lbLeftZ";
-            this.lbLeftZ.Size = new System.Drawing.Size(76, 21);
+            this.lbLeftZ.Size = new System.Drawing.Size(96, 27);
             this.lbLeftZ.TabIndex = 193;
             this.lbLeftZ.Text = "Left Z";
             // 
@@ -2105,10 +2105,10 @@ namespace NSAA_16Axis
             // 
             this.labelLeftZ.AutoSize = true;
             this.labelLeftZ.Font = new System.Drawing.Font("標楷體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.labelLeftZ.Location = new System.Drawing.Point(671, 27);
+            this.labelLeftZ.Location = new System.Drawing.Point(622, 27);
             this.labelLeftZ.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelLeftZ.Name = "labelLeftZ";
-            this.labelLeftZ.Size = new System.Drawing.Size(106, 24);
+            this.labelLeftZ.Size = new System.Drawing.Size(133, 30);
             this.labelLeftZ.TabIndex = 192;
             this.labelLeftZ.Text = "左 CCD Z";
             // 
@@ -2119,7 +2119,7 @@ namespace NSAA_16Axis
             this.lbRightZ.Location = new System.Drawing.Point(920, 75);
             this.lbRightZ.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbRightZ.Name = "lbRightZ";
-            this.lbRightZ.Size = new System.Drawing.Size(87, 21);
+            this.lbRightZ.Size = new System.Drawing.Size(110, 27);
             this.lbRightZ.TabIndex = 195;
             this.lbRightZ.Text = "Right Z";
             // 
@@ -2130,7 +2130,7 @@ namespace NSAA_16Axis
             this.labelRightZ.Location = new System.Drawing.Point(888, 27);
             this.labelRightZ.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelRightZ.Name = "labelRightZ";
-            this.labelRightZ.Size = new System.Drawing.Size(106, 24);
+            this.labelRightZ.Size = new System.Drawing.Size(133, 30);
             this.labelRightZ.TabIndex = 194;
             this.labelRightZ.Text = "右 CCD Z";
             // 
@@ -2143,7 +2143,7 @@ namespace NSAA_16Axis
             this.cbLeftZ.Location = new System.Drawing.Point(611, 607);
             this.cbLeftZ.Margin = new System.Windows.Forms.Padding(4);
             this.cbLeftZ.Name = "cbLeftZ";
-            this.cbLeftZ.Size = new System.Drawing.Size(99, 29);
+            this.cbLeftZ.Size = new System.Drawing.Size(116, 34);
             this.cbLeftZ.TabIndex = 198;
             this.cbLeftZ.Text = "左 CCD Z";
             this.cbLeftZ.UseVisualStyleBackColor = true;
@@ -2164,7 +2164,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDLeftZ2.Name = "nUDLeftZ2";
-            this.nUDLeftZ2.Size = new System.Drawing.Size(140, 30);
+            this.nUDLeftZ2.Size = new System.Drawing.Size(140, 36);
             this.nUDLeftZ2.TabIndex = 197;
             this.nUDLeftZ2.Value = new decimal(new int[] {
             30,
@@ -2188,7 +2188,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDLeftZ1.Name = "nUDLeftZ1";
-            this.nUDLeftZ1.Size = new System.Drawing.Size(140, 30);
+            this.nUDLeftZ1.Size = new System.Drawing.Size(140, 36);
             this.nUDLeftZ1.TabIndex = 196;
             this.nUDLeftZ1.Value = new decimal(new int[] {
             30,
@@ -2205,7 +2205,7 @@ namespace NSAA_16Axis
             this.cbRightZ.Location = new System.Drawing.Point(939, 607);
             this.cbRightZ.Margin = new System.Windows.Forms.Padding(4);
             this.cbRightZ.Name = "cbRightZ";
-            this.cbRightZ.Size = new System.Drawing.Size(99, 29);
+            this.cbRightZ.Size = new System.Drawing.Size(116, 34);
             this.cbRightZ.TabIndex = 201;
             this.cbRightZ.Text = "右 CCD Z";
             this.cbRightZ.UseVisualStyleBackColor = true;
@@ -2226,7 +2226,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDRightZ2.Name = "nUDRightZ2";
-            this.nUDRightZ2.Size = new System.Drawing.Size(140, 30);
+            this.nUDRightZ2.Size = new System.Drawing.Size(140, 36);
             this.nUDRightZ2.TabIndex = 200;
             this.nUDRightZ2.Value = new decimal(new int[] {
             30,
@@ -2250,7 +2250,7 @@ namespace NSAA_16Axis
             0,
             -2147483648});
             this.nUDRightZ1.Name = "nUDRightZ1";
-            this.nUDRightZ1.Size = new System.Drawing.Size(140, 30);
+            this.nUDRightZ1.Size = new System.Drawing.Size(140, 36);
             this.nUDRightZ1.TabIndex = 199;
             this.nUDRightZ1.Value = new decimal(new int[] {
             30,

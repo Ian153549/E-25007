@@ -41,7 +41,7 @@ namespace NSAA_16Axis
         private SKZoomAndPanWindow _upWindow;
         private SKZoomAndPanWindow _backWindow;
         private bool _isUpPage = true;
-
+        public bool AutoDispalyEnabled { get; set; } = true;
 
         // Feature names
         const string EXPOSURE_AUTO = "ExposureAuto";            //Standard
@@ -141,43 +141,89 @@ namespace NSAA_16Axis
                 _simulationTimer.Dispose();
             }
             _simulationTimer = new System.Timers.Timer(1000 / _simulationFrameRate);
+            //_simulationTimer.Elapsed += (sender, e) =>
+            //{
+            //    if (IsFileImage && !FileImage.Empty())
+            //    {
+            //        lock (_lock)
+            //        {
+            //            if (FrameCount > FrameCountLimit)
+            //            {
+            //                if (_grabImageN != null)
+            //                {
+            //                    if (!_grabImageN.Empty())
+            //                    {
+            //                        _grabImageN = null;
+            //                        _grabImageN = new Mat(HeightMax, WidthMax, MatType.CV_8UC1);
+            //                    }
+            //                }
+            //                if (_grabImage != null)
+            //                {
+            //                    if (!_grabImage.Empty())
+            //                    {
+            //                        _grabImage?.Dispose();
+            //                    }
+            //                    _grabImage = null;
+            //                    _grabImage = new Mat(HeightMax, WidthMax, MatType.CV_8UC1);
+            //                }
+            //                FrameCount = 0;
+            //            }
+            //            FileImage.CopyTo(_grabImageN);
+            //            FileImage.CopyTo(_grabImage);
+            //            _grabEvent.Set();
+            //            OnFrameReady(_grabImage);
+            //            if (_window != null && _isLive)
+            //            {
+            //                _window.SetImage(_grabImage);
+            //            }
+            //            FrameCount++;
+            //        }
+            //    }
+            //};
             _simulationTimer.Elapsed += (sender, e) =>
             {
-                if (IsFileImage && !FileImage.Empty())
+                // 不再是檔案影像模式 → 停止 Timer,避免繼續覆蓋即時影像
+                if (!IsFileImage || FileImage == null || FileImage.Empty())
                 {
-                    lock (_lock)
+                    if (!IsFileImage) _simulationTimer.Stop();
+                    return;
+                }
+
+                Mat toShow = null;
+                lock (_lock)
+                {
+                    if (FrameCount > FrameCountLimit)
                     {
-                        if (FrameCount > FrameCountLimit)
+                        if (_grabImageN != null)
                         {
-                            if (_grabImageN != null)
-                            {
-                                if (!_grabImageN.Empty())
-                                {
-                                    _grabImageN = null;
-                                    _grabImageN = new Mat(HeightMax, WidthMax, MatType.CV_8UC1);
-                                }
-                            }
-                            if (_grabImage != null)
-                            {
-                                if (!_grabImage.Empty())
-                                {
-                                    _grabImage?.Dispose();
-                                }
-                                _grabImage = null;
-                                _grabImage = new Mat(HeightMax, WidthMax, MatType.CV_8UC1);
-                            }
-                            FrameCount = 0;
+                            _grabImageN = null;
+                            _grabImageN = new Mat(HeightMax, WidthMax, MatType.CV_8UC1);
                         }
-                        FileImage.CopyTo(_grabImageN);
-                        FileImage.CopyTo(_grabImage);
-                        _grabEvent.Set();
-                        OnFrameReady(_grabImage);
-                        if (_window != null && _isLive)
+                        if (_grabImage != null)
                         {
-                            _window.SetImage(_grabImage);
+                            if (!_grabImage.Empty())
+                            {
+                                _grabImage.Dispose();
+                            }
+                            _grabImage = null;
+                            _grabImage = new Mat(HeightMax, WidthMax, MatType.CV_8UC1);
                         }
-                        FrameCount++;
+                        FrameCount = 0;
                     }
+                    FileImage.CopyTo(_grabImageN);
+                    FileImage.CopyTo(_grabImage);
+                    _grabEvent.Set();
+                    OnFrameReady(_grabImage);
+                    FrameCount++;
+
+                    if (_window != null && _isLive)
+                        toShow = _grabImage.Clone();
+                }
+
+                // 關鍵:在 lock 外更新 UI,避免與 UI 執行緒互相等待造成死結
+                if (toShow != null)
+                {
+                    _window.SetImage(toShow);
                 }
             };
             _simulationTimer.AutoReset = true;
@@ -436,7 +482,18 @@ namespace NSAA_16Axis
         {
 
         }
+        public Mat GetLatestFrameClone()
+        {
+            lock (_lock)
+            {
+                if(_grabImage== null || _grabImage.Empty())
+                {
+                    return null;
+                }
 
+                return _grabImage.Clone();
+            }
+        }
         public double CameraGainPercentageValue
         {
             get; set;
@@ -472,8 +529,8 @@ namespace NSAA_16Axis
             IsOpen = true;
             try
             {
-                IEnum exposureModeNode= nodeMapRemote.GetNode<IEnum>("ExposureMode");
-                if (exposureModeNode != null && exposureModeNode.IsWritable) 
+                IEnum exposureModeNode = nodeMapRemote.GetNode<IEnum>("ExposureMode");
+                if (exposureModeNode != null && exposureModeNode.IsWritable)
                 {
                     exposureModeNode.FromString("Timed");
                     System.Diagnostics.Debug.WriteLine("Set ExposureMode to Timed");
@@ -574,11 +631,11 @@ namespace NSAA_16Axis
                     {
                         lock (_lock)
                         {
-                            if(_grabImage != null)
+                            if (_grabImage != null)
                             {
                                 if (!_grabImage.Empty()) _grabImage.CopyTo(CMat);
                             }
-                            
+
                         }
                     }
                 }
@@ -724,10 +781,14 @@ namespace NSAA_16Axis
                                     FrameCount++;
                                 }
 
-                                if (_window != null && _isLive)
+                                //if (_window != null && _isLive)
+                                //    _window.SetImage(_grabImageN);
+                                if(AutoDispalyEnabled && _window!=null && _isLive)
+                                {
                                     _window.SetImage(_grabImageN);
+                                }
                                 OnFrameReady(_grabImage);
-                            }                           
+                            }
                         }
                     }
                     catch (Exception)
@@ -740,12 +801,12 @@ namespace NSAA_16Axis
 
         private void DisposeAndRecreateMat(ref Mat mat, int width, int height)
         {
-            if(mat != null)
+            if (mat != null)
             {
                 if (!mat.Empty()) mat.Dispose();
-                mat = null;               
+                mat = null;
             }
-            mat = new Mat(height,width, MatType.CV_8UC1);
+            mat = new Mat(height, width, MatType.CV_8UC1);
         }
 
         public void StopCamera()
@@ -911,10 +972,10 @@ namespace NSAA_16Axis
             }
         }
 
-        public void SetWindow(SKZoomAndPanWindow window) 
-        { 
-            
-            _window = window; 
+        public void SetWindow(SKZoomAndPanWindow window)
+        {
+
+            _window = window;
         }
 
         public void Live()
@@ -960,6 +1021,10 @@ namespace NSAA_16Axis
             else
             {
                 System.Diagnostics.Debug.WriteLine($"[Live] IsFileImage=false, IsOpen={IsOpen}");
+                if (_simulationTimer != null && _simulationTimer.Enabled)
+                {
+                    _simulationTimer.Stop();   // 回到真實 CCD,停止模擬 Timer
+                }
             }
 
         }
@@ -972,7 +1037,7 @@ namespace NSAA_16Axis
                 //dataStream.StopAcquisition();
             }
             _isLive = false;
-           
+            if (_simulationTimer != null) _simulationTimer.Stop();
         }
 
         public void Close()

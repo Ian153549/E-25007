@@ -41,7 +41,6 @@ namespace NSAA_16Axis
             this.cbLMaskAlgorithm = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.gbLWafer = new System.Windows.Forms.GroupBox();
-            this.btLabelPatternL = new System.Windows.Forms.Button();
             this.cbLWaferClassList = new System.Windows.Forms.ComboBox();
             this.btFindLWaferCenter = new System.Windows.Forms.Button();
             this.ucLeftWaferNavigator = new NSAA_16Axis.UCNavigator();
@@ -166,6 +165,7 @@ namespace NSAA_16Axis
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.ucPosition = new MRLibrary.UCButton();
+            this.ucLabelPattern = new MRLibrary.UCButton();
             this.gbLMask.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLMaskImage)).BeginInit();
             this.gbLWafer.SuspendLayout();
@@ -360,20 +360,6 @@ namespace NSAA_16Axis
             this.gbLWafer.TabIndex = 9;
             this.gbLWafer.TabStop = false;
             this.gbLWafer.Text = "Wafer";
-            // 
-            // btLabelPatternL
-            // 
-            this.btLabelPatternL.AutoSize = true;
-            this.btLabelPatternL.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.btLabelPatternL.Font = new System.Drawing.Font("Arial", 12F);
-            this.btLabelPatternL.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btLabelPatternL.Location = new System.Drawing.Point(808, 283);
-            this.btLabelPatternL.Name = "btLabelPatternL";
-            this.btLabelPatternL.Size = new System.Drawing.Size(129, 33);
-            this.btLabelPatternL.TabIndex = 76;
-            this.btLabelPatternL.Text = "Label Image";
-            this.btLabelPatternL.UseVisualStyleBackColor = false;
-            this.btLabelPatternL.Click += new System.EventHandler(this.btLabelPatternL_Click);
             // 
             // cbLWaferClassList
             // 
@@ -2133,11 +2119,26 @@ namespace NSAA_16Axis
             this.ucPosition.TabIndex = 143;
             this.ucPosition.Click += new System.EventHandler(this.ucPosition_Click);
             // 
+            // ucLabelPattern
+            // 
+            this.ucLabelPattern.BackColor = System.Drawing.Color.Transparent;
+            this.ucLabelPattern.Caption = "Label Image";
+            this.ucLabelPattern.FaceColor = System.Drawing.Color.Khaki;
+            this.ucLabelPattern.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ucLabelPattern.Image = null;
+            this.ucLabelPattern.Location = new System.Drawing.Point(799, 287);
+            this.ucLabelPattern.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.ucLabelPattern.Name = "ucLabelPattern";
+            this.ucLabelPattern.Radius = 5;
+            this.ucLabelPattern.Size = new System.Drawing.Size(138, 30);
+            this.ucLabelPattern.TabIndex = 143;
+            this.ucLabelPattern.Click += new System.EventHandler(this.ucLabelPattern_Click);
+            // 
             // CMLearnPatternUp
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.Controls.Add(this.btLabelPatternL);
+            this.Controls.Add(this.ucLabelPattern);
             this.Controls.Add(this.ucPosition);
             this.Controls.Add(this.btTRRead);
             this.Controls.Add(this.btTLRead);
@@ -2322,7 +2323,6 @@ namespace NSAA_16Axis
         private System.Windows.Forms.Button BtLeftWaferFocus;
         private System.Windows.Forms.Button btMagSaveHigh;
         private System.Windows.Forms.ComboBox cbLWaferClassList;
-        private System.Windows.Forms.Button btLabelPatternL;
         private System.Windows.Forms.Button btLabelPatternR;
         private System.Windows.Forms.ComboBox cbRWaferClassList;
         private System.Windows.Forms.Button btTfile;
@@ -2369,5 +2369,6 @@ namespace NSAA_16Axis
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label14;
         private MRLibrary.UCButton ucPosition;
+        private MRLibrary.UCButton ucLabelPattern;
     }
 }

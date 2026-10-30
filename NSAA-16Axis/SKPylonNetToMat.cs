@@ -34,6 +34,7 @@ namespace NSAA_16Axis
         public int _h = 1944;
         public Rectangle _roi;
         public Mat _grabImageN = new Mat(2592, 1944, MatType.CV_8UC1);
+        public bool AutoDisplayEnabled { get; set; } = true;
 
         /// <summary>
         /// use SetWindow() and Is Live to display camera image
@@ -57,6 +58,18 @@ namespace NSAA_16Axis
         public PylonNetToMat()
         {
 
+        }
+
+        public Mat GetLastestFrameClone()
+        {
+            lock (_lock)
+            {
+                if(_grabImage==null || _grabImage.Empty())
+                {
+                    return null;
+                }
+                return _grabImage.Clone();
+            }
         }
 
         public string SerialNum
@@ -178,9 +191,9 @@ namespace NSAA_16Axis
                     //mat = new Mat(_mat0, _roi);
                     byte[] imageData = grabResult.PixelData as byte[];
                     int length = grabResult.Width * grabResult.Height;
-                    Marshal.Copy(imageData, 0, _grabImageN.Data, length);
+                    //Marshal.Copy(imageData, 0, _grabImageN.Data, length);
 
-                    if (_window != null && _isLive) _window.SetImage(_grabImageN);
+                    //if (_window != null && _isLive) _window.SetImage(_grabImageN);
 
                     lock (_lock)
                     {
@@ -189,7 +202,16 @@ namespace NSAA_16Axis
 
                         //}
                         Marshal.Copy(imageData,0, _grabImage.Data, length);
+                        Marshal.Copy(imageData, 0, _grabImageN.Data, length);
                         _grabEvent.Set();
+                    }
+                    //if(_window != null && _isLive)
+                    //{
+                    //    _window.SetImage(_grabImageN);
+                    //}
+                    if(AutoDisplayEnabled && _window != null && _isLive)
+                    {
+                        _window.SetImage(_grabImageN);
                     }
                 }
                 else

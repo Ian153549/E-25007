@@ -1650,8 +1650,17 @@ namespace NSAA_16Axis
             string lfileName = folderName + "//L-" + now.ToString("HHmmss") + ".jpg";
             string rfileName = folderName + "//R-" + now.ToString("HHmmss") + ".jpg";
 
-            Cv2.ImWrite(lfileName, lResult);
-            Cv2.ImWrite(rfileName, rResult);
+            //Cv2.ImWrite(lfileName, lResult);
+            //Cv2.ImWrite(rfileName, rResult);
+            if (lResult != null && !lResult.Empty())
+                Cv2.ImWrite(lfileName, lResult);
+            else
+                WriteToStatusTextBox("Left image is empty, cannot save");
+
+            if (rResult != null && !rResult.Empty())
+                Cv2.ImWrite(rfileName, rResult);
+            else
+                WriteToStatusTextBox("Right image is empty, cannot save");
         }
 
         public static string SaveCaptureImage(Mat lImage, Mat rImage)
@@ -2830,8 +2839,18 @@ namespace NSAA_16Axis
                                      "Mask mark take a picture!!",
                                      "Put wafer in chuck!!"
         };
-        
+
+        public bool IsAuthorMode
+        {
+            get
+            {
+                return Author == 1;
+            }
+        }
+
     }
+
+    
 
     public class MRException : Exception, ISerializable
     {
@@ -3260,6 +3279,7 @@ namespace NSAA_16Axis
         public string strBottomMask = "Bond";
         public string strAI = "AI Identify";
         public string strImageLabel = "Label Image";
+        public string strPositionShow = "Position Show";
         public string strLanguageSelect = "Language Select";
         public string strEnglish = "English";
         public string strTChinese = "Traditional Chinese";
