@@ -51,7 +51,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\DebugIX\</OutputPath>
+    <OutputPath>bin\x64\DebugVIII\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -76,9 +76,8 @@
     <ApplicationIcon>ICON.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Basler.Pylon, Version=1.2.0.0, Culture=neutral, PublicKeyToken=e389355f398382ab, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Basler\pylon 6\Development\Assemblies\Basler.Pylon\x64\Basler.Pylon.dll</HintPath>
+    <Reference Include="Basler.Pylon">
+      <HintPath>bin\x64\DebugIX\Basler.Pylon.dll</HintPath>
     </Reference>
     <Reference Include="GenApiDotNet40_v3_4, Version=3.4.0.0, Culture=neutral, PublicKeyToken=702a7d0a1d42e9d9, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -465,6 +464,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y /E /I  "$(TargetDir)*.*" "Z:\E-25007\NSAA-16Axis\bin\x64\DebugIX"</PostBuildEvent>
+    <PostBuildEvent>xcopy /Y /E /I  "$(TargetDir)*.*" "Z:\E-25007\NSAA-16Axis\bin\x64\DebugVIII"</PostBuildEvent>
   </PropertyGroup>
 </Project>

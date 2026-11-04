@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MRLibrary", "MRLibrary\MRLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuaaHzii", "NSAA-16Axis\BuaaHzii.csproj", "{FB015907-1646-4E0D-983C-8794BDCA844E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainModel", "..\ImageFind-master\imagefind\Vino\TrainModel.csproj", "{F104F44E-CF92-4374-B6C5-68F43A436357}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainModel", "TrainModel\TrainModel.csproj", "{F104F44E-CF92-4374-B6C5-68F43A436357}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

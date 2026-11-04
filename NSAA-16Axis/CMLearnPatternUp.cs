@@ -18,11 +18,25 @@ using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Xml;
 using static System.Windows.Forms.AxHost;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace NSAA_16Axis
 {
     public partial class CMLearnPatternUp : UserControl
     {
+
+        private enum LoopEnhanceMethod
+        {
+            None,
+            Median,
+            Bilateral,
+            TotalVariation,
+            Horizontal,
+            Vertical,
+            FftBandStop,
+            UnsharpMask
+        }
+
         public int EditRecipe;
         public int NowMageni;
         public int iFirstRun = 0;
@@ -76,10 +90,18 @@ namespace NSAA_16Axis
         public MatchPosition LWaferMp = new MatchPosition();
         public MatchPosition RMaskMp = new MatchPosition();
         public MatchPosition RWaferMp = new MatchPosition();
+        private Button _btImageEnhance;
+        private LoopEnhanceMethod _selectedEnhanceMethod = LoopEnhanceMethod.None;
+        private LoopEnhanceMethod _runningEnhanceMethod = LoopEnhanceMethod.None;
 
+        private readonly HashSet<string> _savedEnhanceFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private string _enhanceSessionFolderName = string.Empty;
+        private bool _fileModeEnabled = false;
+        private bool _closeFileAfterModelLoop = false;
         public CMLearnPatternUp()
         {
             InitializeComponent();
+            InitializeImageEnhanceButton();
             GV.LeftUpWindowOnLearnPage = skLPattern;
             GV.RightUpWindowOnLearnPage = skRPattern;
             skLPattern.MaskMp = LMaskMp;
@@ -109,6 +131,499 @@ namespace NSAA_16Axis
             // 初始狀態：隱藏 groupBox
             groupBoxT4.Visible = false;
             groupBoxT1.Visible = false;
+        }
+
+        private void InitializeImageEnhanceButton()
+        {
+            if (_btImageEnhance != null) return;
+            _btImageEnhance = new Button
+            {
+                Name = "btImageEnhance",
+                Text = "ImageEnhance",
+                Size = new System.Drawing.Size(140, btTRRead.Height),
+                Location = new System.Drawing.Point(btTRRead.Right + 6, btTRRead.Top),
+                UseVisualStyleBackColor = true,
+                TabIndex = btTRRead.TabIndex + 1
+            };
+            _btImageEnhance.Click += ImageEnhance_Click;
+
+            Control parent = btTRRead.Parent ?? this;
+            parent.Controls.Add(_btImageEnhance);
+            _btImageEnhance.BringToFront();
+        }
+        private void ImageEnhance_Click(object sender, EventArgs e)
+        {
+
+            if (_modelLoopRunning ||
+                (_modelLoopThread != null && _modelLoopThread.IsAlive))
+            {
+                MessageBox.Show(
+                    this,
+                    "請先停止 ModelLoop，再變更影像處理方法。",
+                    "ImageEnhance",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            using (Form dialog = new Form())
+            using (FlowLayoutPanel panel = new FlowLayoutPanel())
+            {
+                dialog.Text = "選擇影像處理方法";
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.MaximizeBox = false;
+                dialog.MinimizeBox = false;
+                dialog.ShowInTaskbar = false;
+                dialog.ClientSize = new System.Drawing.Size(760, 455);
+
+                panel.Dock = DockStyle.Fill;
+                panel.FlowDirection = FlowDirection.TopDown;
+                panel.WrapContents = false;
+                panel.AutoScroll = true;
+                panel.Padding = new Padding(12);
+
+                dialog.Controls.Add(panel);
+                AddEnhanceChoice(panel, dialog, LoopEnhanceMethod.None, "不處理｜保留原圖，不套用 Otsu");
+
+                AddEnhanceChoice(panel, dialog, LoopEnhanceMethod.Median,
+                    "中值濾波｜Kernel=5（可改 3）");
+
+                AddEnhanceChoice(panel, dialog, LoopEnhanceMethod.Bilateral,
+                    "雙邊濾波｜d=7，σColor=22，σSpace=5");
+
+                AddEnhanceChoice(panel, dialog, LoopEnhanceMethod.TotalVariation,
+                    "TV 總變分｜weight=0.03（建議 0.02~0.05），60 次");
+
+                AddEnhanceChoice(panel, dialog, LoopEnhanceMethod.Horizontal,
+                    "水平方向濾波｜9×1，σX=2");
+
+                AddEnhanceChoice(panel, dialog, LoopEnhanceMethod.Vertical,
+                    "垂直方向濾波｜1×9，σY=2");
+
+                AddEnhanceChoice(panel, dialog, LoopEnhanceMethod.FftBandStop,
+                    "FFT 徑向帶阻｜f0=0.062，σ=0.004，強度=0.4");
+
+                AddEnhanceChoice(panel, dialog, LoopEnhanceMethod.UnsharpMask,
+                    "Unsharp Mask｜k=0.6，Gaussian σ=1.2（輕度銳化）");
+
+                dialog.ShowDialog(this);
+            }
+        }
+        private void AddEnhanceChoice(FlowLayoutPanel panel, Form dialog, LoopEnhanceMethod method, string text)
+        {
+            Button choice = new Button
+            {
+                Text = (_selectedEnhanceMethod == method ? "✓ " : "") + text + (method == LoopEnhanceMethod.None ? "" : " → Otsu"),
+                Width = 710,
+                Height = 50,
+                Margin = new Padding(0, 0, 0, 8),
+                TextAlign = ContentAlignment.MiddleLeft,
+                UseVisualStyleBackColor = true
+            };
+
+            choice.Click += delegate
+            {
+                _selectedEnhanceMethod = method;
+                _btImageEnhance.BackColor = method == LoopEnhanceMethod.None
+                    ? SystemColors.Control
+                    : Color.LightSkyBlue;
+
+                GM.WriteToStatusTextBox(
+                    "ImageEnhance 已選擇：" + GetEnhanceDescription(method));
+
+                dialog.DialogResult = DialogResult.OK;
+                dialog.Close();
+            };
+
+            panel.Controls.Add(choice);
+        }
+        private static string GetEnhanceDescription(LoopEnhanceMethod method)
+        {
+            string description = GetFilterDescription(method);
+            return method == LoopEnhanceMethod.None ? description : description + " -> Otsu Binary";
+        }
+
+
+        private static string GetFilterDescription(LoopEnhanceMethod method)
+        {
+            switch (method)
+            {
+                case LoopEnhanceMethod.Median:
+                    return "Median，Kernel=5";
+                case LoopEnhanceMethod.Bilateral:
+                    return "Bilateral，d=7，sigmaColor=22，sigmaSpace=5";
+                case LoopEnhanceMethod.TotalVariation:
+                    return "TV，weight=0.03，iterations=60，normalized=0..1";
+                case LoopEnhanceMethod.Horizontal:
+                    return "Horizontal Gaussian，Kernel=9×1，sigma=2";
+                case LoopEnhanceMethod.Vertical:
+                    return "Vertical Gaussian，Kernel=1×9，sigma=2";
+                case LoopEnhanceMethod.FftBandStop:
+                    return "FFT radial band-stop，f0=0.062，sigma=0.004，strength=0.4";
+                case LoopEnhanceMethod.UnsharpMask:
+                    return "USM，k=0.6，gaussianSigma=1.2";
+                default:
+                    return "None（不處理）";
+            }
+        }
+
+
+        private static Mat ApplyLoopEnhancement(Mat source, LoopEnhanceMethod method)
+        {
+            if (source == null || source.Empty())
+                throw new ArgumentException("影像為空。", "source");
+
+            // None 維持原圖，不套用 Otsu。
+            if (method == LoopEnhanceMethod.None)
+                return source.Clone();
+
+            if (source.Type() != MatType.CV_8UC1)
+                throw new ArgumentException("影像處理需要 8-bit 單通道灰階影像。", "source");
+
+            using (Mat filtered = ApplyLoopFilter(source, method))
+            {
+                Mat result = new Mat();
+
+                try
+                {
+                    Cv2.Threshold(
+                        filtered,
+                        result,
+                        0,
+                        255,
+                        ThresholdTypes.Binary | ThresholdTypes.Otsu);
+
+                    return result;
+                }
+                catch
+                {
+                    result.Dispose();
+                    throw;
+                }
+            }
+        }
+        private static Mat ApplyLoopFilter(Mat source, LoopEnhanceMethod method)
+        {
+            if (source == null || source.Empty())
+                throw new ArgumentException("影像為空。", "source");
+
+            if (method == LoopEnhanceMethod.TotalVariation)
+                return ApplyTvDenoise(source, 0.03f, 60); // 建議區間 0.02~0.05
+
+            if (method == LoopEnhanceMethod.FftBandStop)
+                return ApplyFftRadialBandStop(source);
+
+            if (method == LoopEnhanceMethod.UnsharpMask)
+                return ApplyUnsharpMask(source, 1.2, 0.6);
+
+            Mat result = new Mat();
+            try
+            {
+                switch (method)
+                {
+                    case LoopEnhanceMethod.Median:
+                        Cv2.MedianBlur(source, result, 5); // 可改 3
+                        break;
+
+                    case LoopEnhanceMethod.Bilateral:
+                        Cv2.BilateralFilter(source, result, 7, 22, 5);
+                        break;
+
+                    case LoopEnhanceMethod.Horizontal:
+                        Cv2.GaussianBlur(
+                            source, result, new OpenCvSharp.Size(9, 1),
+                            2, 0, BorderTypes.Reflect101);
+                        break;
+
+                    case LoopEnhanceMethod.Vertical:
+                        Cv2.GaussianBlur(
+                            source, result, new OpenCvSharp.Size(1, 9),
+                            0, 2, BorderTypes.Reflect101);
+                        break;
+
+                    default:
+                        source.CopyTo(result);
+                        break;
+                }
+
+                return result;
+            }
+            catch
+            {
+                result.Dispose();
+                throw;
+            }
+        }
+        private static Mat ApplyUnsharpMask(Mat source, double sigma, double k)
+        {
+            // I_out = (1+k)I - k*G(I)
+            Mat blurred = new Mat();
+            Mat result = new Mat();
+            try
+            {
+                Cv2.GaussianBlur(source, blurred, new OpenCvSharp.Size(0, 0), sigma, sigma, BorderTypes.Reflect101);
+                Cv2.AddWeighted(source, 1.0 + k, blurred, -k, 0.0, result);
+                return result;
+            }
+            catch
+            {
+                result.Dispose();
+                throw;
+            }
+            finally
+            {
+                blurred.Dispose();
+            }
+        }
+        private static Mat ApplyTvDenoise(Mat source, float weight, int iterations)
+        {
+            int width = source.Cols;
+            int height = source.Rows;
+            int count = checked(width * height);
+
+            byte[] bytes = new byte[count];
+
+            // 逐列複製，避免假設 Mat 必定連續。
+            for (int y = 0; y < height; y++)
+            {
+                System.Runtime.InteropServices.Marshal.Copy(
+                    source.Ptr(y), bytes, y * width, width);
+            }
+
+            float[] input = new float[count];
+            float[] current = new float[count];
+            float[] next = new float[count];
+            float[] extrapolated = new float[count];
+            float[] dualX = new float[count];
+            float[] dualY = new float[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                float value = bytes[i] / 255.0f;
+                input[i] = value;
+                current[i] = value;
+                extrapolated[i] = value;
+            }
+
+            // Primal-dual ROF:
+            // min 0.5 * ||u-f||² + weight * TV(u)
+            const float tau = 0.25f;
+            const float sigma = 0.25f;
+
+            for (int iteration = 0; iteration < iterations; iteration++)
+            {
+                // Dual update：前向梯度，邊界採零通量。
+                for (int y = 0; y < height; y++)
+                {
+                    int row = y * width;
+                    for (int x = 0; x < width; x++)
+                    {
+                        int i = row + x;
+
+                        float gx = x + 1 < width
+                            ? extrapolated[i + 1] - extrapolated[i] : 0f;
+                        float gy = y + 1 < height
+                            ? extrapolated[i + width] - extrapolated[i] : 0f;
+
+                        float px = dualX[i] + sigma * gx;
+                        float py = dualY[i] + sigma * gy;
+
+                        float norm = (float)Math.Sqrt(px * px + py * py);
+                        float scale = Math.Max(1f, norm / weight);
+
+                        dualX[i] = px / scale;
+                        dualY[i] = py / scale;
+                    }
+                }
+
+                // Primal update。
+                for (int y = 0; y < height; y++)
+                {
+                    int row = y * width;
+                    for (int x = 0; x < width; x++)
+                    {
+                        int i = row + x;
+                        float divergence =
+                            dualX[i] - (x > 0 ? dualX[i - 1] : 0f) +
+                            dualY[i] - (y > 0 ? dualY[i - width] : 0f);
+
+                        next[i] = (current[i] + tau * divergence +
+                                   tau * input[i]) / (1f + tau);
+                    }
+                }
+
+                for (int i = 0; i < count; i++)
+                    extrapolated[i] = 2f * next[i] - current[i];
+
+                float[] swap = current;
+                current = next;
+                next = swap;
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                double value = Math.Round(current[i] * 255.0);
+                bytes[i] = (byte)Math.Max(0.0, Math.Min(255.0, value));
+            }
+
+            Mat result = new Mat(height, width, MatType.CV_8UC1);
+            try
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    System.Runtime.InteropServices.Marshal.Copy(
+                        bytes, y * width, result.Ptr(y), width);
+                }
+
+                return result;
+            }
+            catch
+            {
+                result.Dispose();
+                throw;
+            }
+        }
+        private static Mat ApplyFftRadialBandStop(Mat source)
+        {
+            const double centerFrequency = 0.062;
+            const double bandwidthSigma = 0.004;
+            const double strength = 0.4;
+
+            int rows = Cv2.GetOptimalDFTSize(source.Rows);
+            int cols = Cv2.GetOptimalDFTSize(source.Cols);
+
+            using (Mat padded = new Mat())
+            using (Mat floating = new Mat())
+            using (Mat spectrum = new Mat())
+            using (Mat restored = new Mat())
+            {
+                Cv2.CopyMakeBorder(
+                    source, padded,
+                    0, rows - source.Rows,
+                    0, cols - source.Cols,
+                    BorderTypes.Reflect101);
+
+                padded.ConvertTo(floating, MatType.CV_32FC1, 1.0 / 255.0);
+
+                Cv2.Dft(floating, spectrum, DftFlags.ComplexOutput);
+
+                // 頻譜未 fftshift：DC 在左上角，
+                // 以折返頻率計算各象限的徑向距離。
+                for (int y = 0; y < rows; y++)
+                {
+                    double fy = Math.Min(y, rows - y) / (double)rows;
+
+                    for (int x = 0; x < cols; x++)
+                    {
+                        double fx = Math.Min(x, cols - x) / (double)cols;
+                        double radius = Math.Sqrt(fx * fx + fy * fy);
+                        double delta = (radius - centerFrequency) / bandwidthSigma;
+
+                        double gain = 1.0 -
+                            strength * Math.Exp(-0.5 * delta * delta);
+
+                        if (x == 0 && y == 0)
+                            gain = 1.0; // 保留 DC／整體平均亮度。
+
+                        Vec2f value = spectrum.At<Vec2f>(y, x);
+                        spectrum.Set<Vec2f>(
+                            y, x,
+                            new Vec2f(
+                                (float)(value.Item0 * gain),
+                                (float)(value.Item1 * gain)));
+                    }
+                }
+
+                Cv2.Dft(
+                    spectrum, restored,
+                    DftFlags.Inverse | DftFlags.RealOutput | DftFlags.Scale);
+
+                Mat result = new Mat();
+                try
+                {
+                    using (Mat cropped = new Mat(
+                        restored,
+                        new OpenCvSharp.Rect(0, 0, source.Cols, source.Rows)))
+                    {
+                        // 使用固定比例轉回，避免 MinMax Normalize 改變對比。
+                        cropped.ConvertTo(result, MatType.CV_8UC1, 255.0);
+                    }
+
+                    return result;
+                }
+                catch
+                {
+                    result.Dispose();
+                    throw;
+                }
+            }
+        }
+        private void SaveEnhancedImageOnce(string sourceFile, Mat enhanced, LoopEnhanceMethod method)
+        {
+            if (method == LoopEnhanceMethod.None) return;
+
+            try
+            {
+                FileInfo info = new FileInfo(sourceFile);
+
+                string identity =
+                    info.FullName.ToUpperInvariant() + "|" +
+                    info.Length.ToString(System.Globalization.CultureInfo.InvariantCulture) + "|" +
+                    info.LastWriteTimeUtc.Ticks.ToString(
+                        System.Globalization.CultureInfo.InvariantCulture) + "|" +
+                    GetEnhanceDescription(method);
+
+                string hash;
+                using (var sha = System.Security.Cryptography.SHA256.Create())
+                {
+                    byte[] digest = sha.ComputeHash(Encoding.UTF8.GetBytes(identity));
+                    hash = BitConverter.ToString(digest).Replace("-", "");
+                }
+                //string session = string.IsNullOrWhiteSpace(_enhanceSessionFolderName) ? DateTime.Now.ToString("yyyyMMdd_HHmmss") : _enhanceSessionFolderName;
+                //string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "imageEnhance", session, method.ToString());
+                if (string.IsNullOrWhiteSpace(_enhanceSessionFolderName))
+                    throw new InvalidOperationException("尚未建立 file 影像儲存批次。");
+
+                string directory = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "imageEnhance",
+                    _enhanceSessionFolderName,
+                    method.ToString());
+
+                string outputPath = Path.Combine(directory, hash + ".png");
+
+                if (_savedEnhanceFiles.Contains(outputPath))
+                    return;
+
+                Directory.CreateDirectory(directory);
+
+                // 已有輸出時不重寫；重開程式仍適用。
+                if (!File.Exists(outputPath))
+                {
+                    if (!Cv2.ImWrite(outputPath, enhanced))
+                        throw new IOException("影像儲存失敗：" + outputPath);
+                }
+
+                string descriptionPath = Path.ChangeExtension(outputPath, ".txt");
+                if (!File.Exists(descriptionPath))
+                {
+                    File.WriteAllText(
+                        descriptionPath,
+                        "來源影像：" + info.FullName + Environment.NewLine +
+                        "處理方法：" + GetEnhanceDescription(method) + Environment.NewLine +
+                        "輸出影像：" + outputPath + Environment.NewLine +
+                        "建立時間：" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        new UTF8Encoding(true));
+                }
+
+                _savedEnhanceFiles.Add(outputPath);
+            }
+            catch (Exception ex)
+            {
+                // 存檔失敗不終止 ModelLoop，下一輪會再嘗試。
+                Debug.WriteLine("[ImageEnhance] 存檔失敗：" + ex);
+            }
         }
 
         private void CMLearnPattern_Load(object sender, EventArgs e)
@@ -335,176 +850,176 @@ namespace NSAA_16Axis
                     {
                         //lock (_matchLock)          // ← 新增
                         //{
-                            Mat leftFullImage = GV.LeftUpCam.Grab();
-                            Mat rightFullImage = GV.RightUpCam.Grab();
+                        Mat leftFullImage = GV.LeftUpCam.Grab();
+                        Mat rightFullImage = GV.RightUpCam.Grab();
 
-                            if (rBLowMagnification.Checked)
+                        if (rBLowMagnification.Checked)
+                        {
+                            int lWaferClassId = _AlignC.LLWaferAIClassId;
+                            int rWaferClassId = _AlignC.RLWaferAIClassId;
+                            int lMaskClassId = _AlignC.LLMaskAIClassId;
+                            int rMaskClassId = _AlignC.RLMaskAIClassId;
+
+                            BeginInvoke((MethodInvoker)delegate ()
                             {
-                                int lWaferClassId = _AlignC.LLWaferAIClassId;
-                                int rWaferClassId = _AlignC.RLWaferAIClassId;
-                                int lMaskClassId = _AlignC.LLMaskAIClassId;
-                                int rMaskClassId = _AlignC.RLMaskAIClassId;
-
-                                BeginInvoke((MethodInvoker)delegate ()
+                                if (_AlignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLWaferClassList.SelectedIndex >= 0)
                                 {
-                                    if (_AlignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLWaferClassList.SelectedIndex >= 0)
-                                    {
-                                        lWaferClassId = cbLWaferClassList.SelectedIndex;
-                                    }
-                                    if (_AlignC.RLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRWaferClassList.SelectedIndex >= 0)
-                                    {
-                                        rWaferClassId = cbRWaferClassList.SelectedIndex;
-                                    }
-                                    if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLMaskClassList.SelectedIndex >= 0)
-                                    {
-                                        lMaskClassId = cbLMaskClassList.SelectedIndex;
-                                    }
-                                    if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRMaskClassList.SelectedIndex >= 0)
-                                    {
-                                        rMaskClassId = cbRMaskClassList.SelectedIndex;
-                                    }
-                                });
-
-                                //  左低倍率光罩 - 使用完整影像搜尋
-                                if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-                                {
-                                    GV.matcherLLM.MatMatchWithAlgo(0, leftFullImage, ref LMaskMp, _AlignC.LLMaskAlgorithm, lMaskClassId);
+                                    lWaferClassId = cbLWaferClassList.SelectedIndex;
                                 }
-                                else
+                                if (_AlignC.RLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRWaferClassList.SelectedIndex >= 0)
                                 {
-                                    GV.matcherLLM.MatMatchWithAlgo(0, leftFullImage, ref LMaskMp, _AlignC.LLMaskAlgorithm);
+                                    rWaferClassId = cbRWaferClassList.SelectedIndex;
                                 }
-
-                                //  套用偏移量校正座標
-                                LMaskMp.X += _AlignC.LLMaskOffsetX;
-                                LMaskMp.Y += _AlignC.LLMaskOffsetY;
-
-                                //  左低倍率晶圓 - 使用完整影像搜尋
-                                if (_AlignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                                if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLMaskClassList.SelectedIndex >= 0)
                                 {
-                                    GV.matcherLLW.MatMatchWithAlgo(0, leftFullImage, ref LWaferMp, _AlignC.LLWaferAlgorithm, lWaferClassId);
+                                    lMaskClassId = cbLMaskClassList.SelectedIndex;
                                 }
-                                else
+                                if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRMaskClassList.SelectedIndex >= 0)
                                 {
-                                    GV.matcherLLW.MatMatchWithAlgo(0, leftFullImage, ref LWaferMp, _AlignC.LLWaferAlgorithm);
+                                    rMaskClassId = cbRMaskClassList.SelectedIndex;
                                 }
+                            });
 
-                                //  套用偏移量校正座標
-                                LWaferMp.X += _AlignC.LLWaferOffsetX;
-                                LWaferMp.Y += _AlignC.LLWaferOffsetY;
-
-                                //  右低倍率光罩 - 使用完整影像搜尋
-                                if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-                                {
-                                    GV.matcherRLM.MatMatchWithAlgo(0, rightFullImage, ref RMaskMp, _AlignC.RLMaskAlgorithm, rMaskClassId);
-                                }
-                                else
-                                {
-                                    GV.matcherRLM.MatMatchWithAlgo(0, rightFullImage, ref RMaskMp, _AlignC.RLMaskAlgorithm);
-                                }
-
-                                //  套用偏移量校正座標
-                                RMaskMp.X += _AlignC.RLMaskOffsetX;
-                                RMaskMp.Y += _AlignC.RLMaskOffsetY;
-
-                                //  右低倍率晶圓 - 使用完整影像搜尋
-                                if (_AlignC.RLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-                                {
-                                    GV.matcherRLW.MatMatchWithAlgo(0, rightFullImage, ref RWaferMp, _AlignC.RLWaferAlgorithm, rWaferClassId);
-                                }
-                                else
-                                {
-                                    GV.matcherRLW.MatMatchWithAlgo(0, rightFullImage, ref RWaferMp, _AlignC.RLWaferAlgorithm);
-                                }
-
-                                //  套用偏移量校正座標
-                                RWaferMp.X += _AlignC.RLWaferOffsetX;
-                                RWaferMp.Y += _AlignC.RLWaferOffsetY;
+                            //  左低倍率光罩 - 使用完整影像搜尋
+                            if (_AlignC.LLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherLLM.MatMatchWithAlgo(0, leftFullImage, ref LMaskMp, _AlignC.LLMaskAlgorithm, lMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherLLM.MatMatchWithAlgo(0, leftFullImage, ref LMaskMp, _AlignC.LLMaskAlgorithm);
                             }
 
-                            if (rBHighMagnification.Checked)
+                            //  套用偏移量校正座標
+                            LMaskMp.X += _AlignC.LLMaskOffsetX;
+                            LMaskMp.Y += _AlignC.LLMaskOffsetY;
+
+                            //  左低倍率晶圓 - 使用完整影像搜尋
+                            if (_AlignC.LLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
                             {
-                                int lWaferClassId = _AlignC.LHWaferAIClassId;
-                                int rWaferClassId = _AlignC.RHWaferAIClassId;
-                                int lMaskClassId = _AlignC.LHMaskAIClassId;
-                                int rMaskClassId = _AlignC.RHMaskAIClassId;
-
-                                BeginInvoke((MethodInvoker)delegate ()
-                                {
-                                    if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLWaferClassList.SelectedIndex >= 0)
-                                    {
-                                        lWaferClassId = cbLWaferClassList.SelectedIndex;
-                                    }
-                                    if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRWaferClassList.SelectedIndex >= 0)
-                                    {
-                                        rWaferClassId = cbRWaferClassList.SelectedIndex;
-                                    }
-                                    if (_AlignC.LHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLMaskClassList.SelectedIndex >= 0)
-                                    {
-                                        lMaskClassId = cbLMaskClassList.SelectedIndex;
-                                    }
-                                    if (_AlignC.RHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRMaskClassList.SelectedIndex >= 0)
-                                    {
-                                        rMaskClassId = cbRMaskClassList.SelectedIndex;
-                                    }
-                                });
-
-                                //  左高倍率光罩 - 使用完整影像搜尋
-                                if (_AlignC.LHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-                                {
-                                    GV.matcherLHM.MatMatchWithAlgo(0, leftFullImage, ref LMaskMp, _AlignC.LHMaskAlgorithm, lMaskClassId);
-                                }
-                                else
-                                {
-                                    GV.matcherLHM.MatMatchWithAlgo(0, leftFullImage, ref LMaskMp, _AlignC.LHMaskAlgorithm);
-                                }
-
-                                //  套用偏移量校正座標
-                                LMaskMp.X += _AlignC.LHMaskOffsetX;
-                                LMaskMp.Y += _AlignC.LHMaskOffsetY;
-
-                                //  左高倍率晶圓 - 使用完整影像搜尋
-                                if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-                                {
-                                    GV.matcherLHW.MatMatchWithAlgo(0, leftFullImage, ref LWaferMp, _AlignC.LHWaferAlgorithm, lWaferClassId);
-                                }
-                                else
-                                {
-                                    GV.matcherLHW.MatMatchWithAlgo(0, leftFullImage, ref LWaferMp, _AlignC.LHWaferAlgorithm);
-                                }
-
-                                //  套用偏移量校正座標
-                                LWaferMp.X += _AlignC.LHWaferOffsetX;
-                                LWaferMp.Y += _AlignC.LHWaferOffsetY;
-
-                                //  右高倍率光罩 - 使用完整影像搜尋
-                                if (_AlignC.RHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-                                {
-                                    GV.matcherRHM.MatMatchWithAlgo(0, rightFullImage, ref RMaskMp, _AlignC.RHMaskAlgorithm, rMaskClassId);
-                                }
-                                else
-                                {
-                                    GV.matcherRHM.MatMatchWithAlgo(0, rightFullImage, ref RMaskMp, _AlignC.RHMaskAlgorithm);
-                                }
-
-                                //  套用偏移量校正座標
-                                RMaskMp.X += _AlignC.RHMaskOffsetX;
-                                RMaskMp.Y += _AlignC.RHMaskOffsetY;
-
-                                //  右高倍率晶圓 - 使用完整影像搜尋
-                                if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
-                                {
-                                    GV.matcherRHW.MatMatchWithAlgo(0, rightFullImage, ref RWaferMp, _AlignC.RHWaferAlgorithm, rWaferClassId);
-                                }
-                                else
-                                {
-                                    GV.matcherRHW.MatMatchWithAlgo(0, rightFullImage, ref RWaferMp, _AlignC.RHWaferAlgorithm);
-                                }
-
-                                //  套用偏移量校正座標
-                                RWaferMp.X += _AlignC.RHWaferOffsetX;
-                                RWaferMp.Y += _AlignC.RHWaferOffsetY;
+                                GV.matcherLLW.MatMatchWithAlgo(0, leftFullImage, ref LWaferMp, _AlignC.LLWaferAlgorithm, lWaferClassId);
                             }
+                            else
+                            {
+                                GV.matcherLLW.MatMatchWithAlgo(0, leftFullImage, ref LWaferMp, _AlignC.LLWaferAlgorithm);
+                            }
+
+                            //  套用偏移量校正座標
+                            LWaferMp.X += _AlignC.LLWaferOffsetX;
+                            LWaferMp.Y += _AlignC.LLWaferOffsetY;
+
+                            //  右低倍率光罩 - 使用完整影像搜尋
+                            if (_AlignC.RLMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRLM.MatMatchWithAlgo(0, rightFullImage, ref RMaskMp, _AlignC.RLMaskAlgorithm, rMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRLM.MatMatchWithAlgo(0, rightFullImage, ref RMaskMp, _AlignC.RLMaskAlgorithm);
+                            }
+
+                            //  套用偏移量校正座標
+                            RMaskMp.X += _AlignC.RLMaskOffsetX;
+                            RMaskMp.Y += _AlignC.RLMaskOffsetY;
+
+                            //  右低倍率晶圓 - 使用完整影像搜尋
+                            if (_AlignC.RLWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRLW.MatMatchWithAlgo(0, rightFullImage, ref RWaferMp, _AlignC.RLWaferAlgorithm, rWaferClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRLW.MatMatchWithAlgo(0, rightFullImage, ref RWaferMp, _AlignC.RLWaferAlgorithm);
+                            }
+
+                            //  套用偏移量校正座標
+                            RWaferMp.X += _AlignC.RLWaferOffsetX;
+                            RWaferMp.Y += _AlignC.RLWaferOffsetY;
+                        }
+
+                        if (rBHighMagnification.Checked)
+                        {
+                            int lWaferClassId = _AlignC.LHWaferAIClassId;
+                            int rWaferClassId = _AlignC.RHWaferAIClassId;
+                            int lMaskClassId = _AlignC.LHMaskAIClassId;
+                            int rMaskClassId = _AlignC.RHMaskAIClassId;
+
+                            BeginInvoke((MethodInvoker)delegate ()
+                            {
+                                if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLWaferClassList.SelectedIndex >= 0)
+                                {
+                                    lWaferClassId = cbLWaferClassList.SelectedIndex;
+                                }
+                                if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRWaferClassList.SelectedIndex >= 0)
+                                {
+                                    rWaferClassId = cbRWaferClassList.SelectedIndex;
+                                }
+                                if (_AlignC.LHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbLMaskClassList.SelectedIndex >= 0)
+                                {
+                                    lMaskClassId = cbLMaskClassList.SelectedIndex;
+                                }
+                                if (_AlignC.RHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch && cbRMaskClassList.SelectedIndex >= 0)
+                                {
+                                    rMaskClassId = cbRMaskClassList.SelectedIndex;
+                                }
+                            });
+
+                            //  左高倍率光罩 - 使用完整影像搜尋
+                            if (_AlignC.LHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherLHM.MatMatchWithAlgo(0, leftFullImage, ref LMaskMp, _AlignC.LHMaskAlgorithm, lMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherLHM.MatMatchWithAlgo(0, leftFullImage, ref LMaskMp, _AlignC.LHMaskAlgorithm);
+                            }
+
+                            //  套用偏移量校正座標
+                            LMaskMp.X += _AlignC.LHMaskOffsetX;
+                            LMaskMp.Y += _AlignC.LHMaskOffsetY;
+
+                            //  左高倍率晶圓 - 使用完整影像搜尋
+                            if (_AlignC.LHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherLHW.MatMatchWithAlgo(0, leftFullImage, ref LWaferMp, _AlignC.LHWaferAlgorithm, lWaferClassId);
+                            }
+                            else
+                            {
+                                GV.matcherLHW.MatMatchWithAlgo(0, leftFullImage, ref LWaferMp, _AlignC.LHWaferAlgorithm);
+                            }
+
+                            //  套用偏移量校正座標
+                            LWaferMp.X += _AlignC.LHWaferOffsetX;
+                            LWaferMp.Y += _AlignC.LHWaferOffsetY;
+
+                            //  右高倍率光罩 - 使用完整影像搜尋
+                            if (_AlignC.RHMaskAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRHM.MatMatchWithAlgo(0, rightFullImage, ref RMaskMp, _AlignC.RHMaskAlgorithm, rMaskClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRHM.MatMatchWithAlgo(0, rightFullImage, ref RMaskMp, _AlignC.RHMaskAlgorithm);
+                            }
+
+                            //  套用偏移量校正座標
+                            RMaskMp.X += _AlignC.RHMaskOffsetX;
+                            RMaskMp.Y += _AlignC.RHMaskOffsetY;
+
+                            //  右高倍率晶圓 - 使用完整影像搜尋
+                            if (_AlignC.RHWaferAlgorithm == OpenCV3MatchUMat.AlignAlgorithm.AIMatch)
+                            {
+                                GV.matcherRHW.MatMatchWithAlgo(0, rightFullImage, ref RWaferMp, _AlignC.RHWaferAlgorithm, rWaferClassId);
+                            }
+                            else
+                            {
+                                GV.matcherRHW.MatMatchWithAlgo(0, rightFullImage, ref RWaferMp, _AlignC.RHWaferAlgorithm);
+                            }
+
+                            //  套用偏移量校正座標
+                            RWaferMp.X += _AlignC.RHWaferOffsetX;
+                            RWaferMp.Y += _AlignC.RHWaferOffsetY;
+                        }
                         //}
 
                         //  更新 UI 顯示
@@ -1973,7 +2488,7 @@ namespace NSAA_16Axis
             try
             {
                 isLive = true;
-                
+
                 EditRecipe = GV.NowRecipeNumber;
                 _recipe = GV._recipe;
                 _AlignC = _recipe.AlignC;
@@ -3152,12 +3667,12 @@ namespace NSAA_16Axis
         public void RestoreMagnificationControlState()
         {
             if (IsDisposed) return;
-            if(InvokeRequired)
+            if (InvokeRequired)
             {
                 BeginInvoke((MethodInvoker)RestoreMagnificationControlState);
                 return;
             }
-            if(Interlocked.CompareExchange(ref _magnificationChangeBusy, 0, 0) != 0)
+            if (Interlocked.CompareExchange(ref _magnificationChangeBusy, 0, 0) != 0)
             {
                 return;
             }
@@ -6292,22 +6807,98 @@ namespace NSAA_16Axis
         //    lbEmulationModeL.Visible = false;
         //    lbEmulationModeR.Visible = false;
         //}
+        //private void btTfile_Click(object sender, EventArgs e)
+        //{
+        //    isLive = false;
+        //    _workImageTStop = false;
+        //    Thread thWorkImageT = new Thread(WorkImageT) { IsBackground = true };
+        //    thWorkImageT.Start();
+        //    GV.LeftUpCam.IsFileImage = true;
+        //    GV.RightUpCam.IsFileImage = true;
+        //    lbEmulationModeL.Visible = false;
+        //    lbEmulationModeR.Visible = false;
+
+        //    // 反白:表示目前使用檔案影像
+        //    if (_btTfileOrgColor == Color.Empty) _btTfileOrgColor = btTfile.BackColor;
+        //    btTfile.BackColor = Color.Orange;
+        //}
         private void btTfile_Click(object sender, EventArgs e)
         {
+            if (!_fileModeEnabled)
+            {
+                EnableFileMode();
+                return;
+            }
+
+            // 工作緒完成目前影像後，才關閉檔案模式。
+            if (_modelLoopRunning ||
+                (_modelLoopThread != null && _modelLoopThread.IsAlive))
+            {
+                _closeFileAfterModelLoop = true;
+                _modelLoopStop = true;
+
+                if (chkModelLoop != null && chkModelLoop.Checked)
+                    chkModelLoop.Checked = false;
+
+                GM.WriteToStatusTextBox(
+                    "file 關閉中：完成目前影像並輸出報表後還原相機。");
+                return;
+            }
+
+            DisableFileMode();
+        }
+
+        private void EnableFileMode()
+        {
+            // ModelLoop 重啟時不重建批次。
+            if (_fileModeEnabled)
+                return;
+
+            _enhanceSessionFolderName =
+                DateTime.Now.ToString("yyyyMMdd_HHmmss_fff") + "_" +
+                Guid.NewGuid().ToString("N").Substring(0, 8);
+
+            _savedEnhanceFiles.Clear();
+            _closeFileAfterModelLoop = false;
+            _fileModeEnabled = true;
+
             isLive = false;
-            _workImageTStop = false;
-            Thread thWorkImageT = new Thread(WorkImageT) { IsBackground = true };
-            thWorkImageT.Start();
+
+            // WorkImageT 只有等待用途，此處不再建立空轉工作緒。
+            _workImageTStop = true;
+
             GV.LeftUpCam.IsFileImage = true;
             GV.RightUpCam.IsFileImage = true;
+
             lbEmulationModeL.Visible = false;
             lbEmulationModeR.Visible = false;
 
-            // 反白:表示目前使用檔案影像
-            if (_btTfileOrgColor == Color.Empty) _btTfileOrgColor = btTfile.BackColor;
+            if (_btTfileOrgColor == Color.Empty)
+                _btTfileOrgColor = btTfile.BackColor;
+
             btTfile.BackColor = Color.Orange;
+
+            GM.WriteToStatusTextBox(
+                "file 已開啟，影像儲存批次：" + _enhanceSessionFolderName);
         }
 
+        private void DisableFileMode()
+        {
+            // 僅在 ModelLoop 已停止後呼叫。
+            _fileModeEnabled = false;
+            _closeFileAfterModelLoop = false;
+            _workImageTStop = true;
+
+            RestoreCameraAfterModelLoop();
+            ResetBtTfileColor();
+
+            lbEmulationModeL.Visible = !GV.AppSettingParm.LeftUpCamEnable;
+            lbEmulationModeR.Visible = !GV.AppSettingParm.RightUpCamEnable;
+
+            isLive = GV.TabOption == GV.Tab.Learn;
+
+            GM.WriteToStatusTextBox("file 已關閉，相機已還原。");
+        }
         private void WorkImageT()
         {
             while (!isLive && !_workImageTStop)
@@ -6445,7 +7036,7 @@ namespace NSAA_16Axis
             {
                 if (chkModelLoop != null && chkModelLoop.Checked) chkModelLoop.Checked = false;
                 isLive = false;
-               
+
                 if (locationUpdateTimer != null && locationUpdateTimer.Enabled)
                 {
                     locationUpdateTimer.Stop();
@@ -6539,7 +7130,7 @@ namespace NSAA_16Axis
         private volatile bool _modelLoopStop;
         private volatile bool _modelLoopRunning;
         private readonly object _matchLock = new object();
-        private volatile bool _workImageTStop;    
+        private volatile bool _workImageTStop;
         private bool _mlLeftStarted, _mlRightStarted;
         private const double ModelLoopMinScore = 0.5;
 
@@ -6653,12 +7244,22 @@ namespace NSAA_16Axis
                 }
 
                 // 結合 btTfile 功能(檔案影像模式)
-                btTfile_Click(btTfile, EventArgs.Empty);
+                //btTfile_Click(btTfile, EventArgs.Empty);
+                //_runningEnhanceMethod = _selectedEnhanceMethod;
+                //_savedEnhanceFiles.Clear();
+                //_enhanceSessionFolderName = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                EnableFileMode();
 
+                _runningEnhanceMethod = _selectedEnhanceMethod;
+
+                GM.WriteToStatusTextBox(
+                    "ModelLoop 影像處理：" +
+                    GetEnhanceDescription(_runningEnhanceMethod));
                 _mlStats = new ModelLoopStats();
                 _mlStats.LeftDir = _modelLoopLeftDir;
                 _mlStats.RightDir = _modelLoopRightDir;
-                _mlStats.Algorithm = GetModelLoopAlgoName();
+                //_mlStats.Algorithm = GetModelLoopAlgoName();
+                _mlStats.Algorithm = GetModelLoopAlgoName() + " | ImageEnhance=" + GetEnhanceDescription(_runningEnhanceMethod);
                 _mlLeft = BuildMlSide(true);
                 _mlRight = BuildMlSide(false);
                 _mlLeftStarted = false;
@@ -6777,13 +7378,63 @@ namespace NSAA_16Axis
             }
             finally
             {
-                stats.End = DateTime.Now;
-                try { if (stats.Csv != null) { stats.Csv.Flush(); stats.Csv.Dispose(); } } catch { }
-                try { WriteModelLoopReport(stats); }
-                catch (Exception ex) { Debug.WriteLine("ModelLoop report error: " + ex); }
+                //stats.End = DateTime.Now;
+                //try { if (stats.Csv != null) { stats.Csv.Flush(); stats.Csv.Dispose(); } } catch { }
+                //try { WriteModelLoopReport(stats); }
+                //catch (Exception ex) { Debug.WriteLine("ModelLoop report error: " + ex); }
 
-                _modelLoopRunning = false;
-                _workImageTStop = true;     // 結束 WorkImageT 執行緒
+                //_modelLoopRunning = false;
+                //_workImageTStop = true;     // 結束 WorkImageT 執行緒
+
+                //try
+                //{
+                //    if (!IsDisposed && IsHandleCreated)
+                //    {
+                //        BeginInvoke((MethodInvoker)delegate
+                //        {
+                //            RestoreCameraAfterModelLoop();
+                //            //GM.WriteToStatusTextBox("ModelLoop 報表已輸出: " + stats.ReportPath);
+                //            try
+                //            {
+                //                if (!IsDisposed && IsHandleCreated)
+                //                {
+                //                    BeginInvoke((MethodInvoker)delegate
+                //                    {
+                //                        lbEmulationModeL.Visible = !GV.AppSettingParm.LeftUpCamEnable;
+                //                        lbEmulationModeR.Visible = !GV.AppSettingParm.RightUpCamEnable;
+                //                        if (GV.TabOption == GV.Tab.Learn) isLive = true;
+                //                        GM.WriteToStatusTextBox("ModelLoop 報表已輸出: " + stats.ReportPath);
+                //                    });
+                //                }
+                //            }
+                //            catch { }
+                //        });
+                //    }
+                //}
+                //catch { }
+                stats.End = DateTime.Now;
+
+                try
+                {
+                    if (stats.Csv != null)
+                    {
+                        stats.Csv.Flush();
+                        stats.Csv.Dispose();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("ModelLoop CSV close error: " + ex);
+                }
+
+                try
+                {
+                    WriteModelLoopReport(stats);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("ModelLoop report error: " + ex);
+                }
 
                 try
                 {
@@ -6791,26 +7442,58 @@ namespace NSAA_16Axis
                     {
                         BeginInvoke((MethodInvoker)delegate
                         {
-                            RestoreCameraAfterModelLoop();
-                            //GM.WriteToStatusTextBox("ModelLoop 報表已輸出: " + stats.ReportPath);
                             try
                             {
-                                if (!IsDisposed && IsHandleCreated)
+                                if (IsDisposed)
+                                    return;
+
+                                // 避免非手動取消時，CheckBox 仍維持勾選。
+                                if (chkModelLoop != null && chkModelLoop.Checked)
                                 {
-                                    BeginInvoke((MethodInvoker)delegate
+                                    chkModelLoop.CheckedChanged -= chkModelLoop_CheckedChanged;
+
+                                    try
                                     {
-                                        lbEmulationModeL.Visible = !GV.AppSettingParm.LeftUpCamEnable;
-                                        lbEmulationModeR.Visible = !GV.AppSettingParm.RightUpCamEnable;
-                                        if (GV.TabOption == GV.Tab.Learn) isLive = true;
-                                        GM.WriteToStatusTextBox("ModelLoop 報表已輸出: " + stats.ReportPath);
-                                    });
+                                        chkModelLoop.Checked = false;
+                                    }
+                                    finally
+                                    {
+                                        chkModelLoop.CheckedChanged += chkModelLoop_CheckedChanged;
+                                    }
                                 }
+
+                                if (_closeFileAfterModelLoop)
+                                {
+                                    // 使用者按下 file 關閉：此時才還原相機。
+                                    DisableFileMode();
+                                }
+                                else if (_fileModeEnabled)
+                                {
+                                    // 僅停止 ModelLoop：保留 file 模式與儲存批次。
+                                    isLive = false;
+                                    btTfile.BackColor = Color.Orange;
+                                }
+
+                                GM.WriteToStatusTextBox(
+                                    "ModelLoop 報表已輸出：" + stats.ReportPath);
                             }
-                            catch { }
+                            finally
+                            {
+                                // UI 收尾完成後才允許下一次啟動。
+                                _modelLoopRunning = false;
+                            }
                         });
                     }
+                    else
+                    {
+                        _modelLoopRunning = false;
+                    }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    _modelLoopRunning = false;
+                    Debug.WriteLine("ModelLoop UI cleanup error: " + ex);
+                }
             }
         }
         //private bool ShowImageOnUi(bool left, Mat img)
@@ -6910,64 +7593,215 @@ namespace NSAA_16Axis
                 m.MatMatchWithAlgo(0, img, ref mp, algo);
         }
 
+        //private void RunModelLoopOne(bool left, string file, MlSide s, ModelLoopStats stats)
+        //{
+        //    var sw = new Stopwatch();
+        //    bool ok = false;
+        //    double maskScore = 0, waferScore = 0;
+        //    string err = "";
+
+        //    try
+        //    {
+        //        Mat img = Cv2.ImRead(file, ImreadModes.Grayscale);
+        //        if (img == null || img.Empty()) throw new Exception("讀圖失敗");
+
+        //        ShowImageOnUi(left, img);
+        //        Thread.Sleep(30);   // 讓 UI 有時間重繪
+
+        //        lock (_matchLock)
+        //        {
+        //            sw.Start();   // 只計對位(推論)時間,不含等鎖
+        //            if (left)
+        //            {
+        //                MlMatch(s.MaskM, img, ref LMaskMp, s.MaskA, s.MaskCls);
+        //                MlMatch(s.WaferM, img, ref LWaferMp, s.WaferA, s.WaferCls);
+        //                sw.Stop();
+        //                LMaskMp.X += s.MaskOffX; LMaskMp.Y += s.MaskOffY;
+        //                LWaferMp.X += s.WaferOffX; LWaferMp.Y += s.WaferOffY;
+        //                maskScore = LMaskMp.Score;
+        //                waferScore = LWaferMp.Score;
+        //            }
+        //            else
+        //            {
+        //                MlMatch(s.MaskM, img, ref RMaskMp, s.MaskA, s.MaskCls);
+        //                MlMatch(s.WaferM, img, ref RWaferMp, s.WaferA, s.WaferCls);
+        //                sw.Stop();
+        //                RMaskMp.X += s.MaskOffX; RMaskMp.Y += s.MaskOffY;
+        //                RWaferMp.X += s.WaferOffX; RWaferMp.Y += s.WaferOffY;
+        //                maskScore = RMaskMp.Score;
+        //                waferScore = RWaferMp.Score;
+        //            }
+        //        }
+
+        //        ok = maskScore >= ModelLoopMinScore && waferScore >= ModelLoopMinScore;
+
+        //        string msg = string.Format("[ModelLoop {0}] {1} M={2:N2} W={3:N2} {4:N1}ms",
+        //            left ? "L" : "R", Path.GetFileName(file), maskScore, waferScore, sw.Elapsed.TotalMilliseconds);
+        //        try
+        //        {
+        //            BeginInvoke((MethodInvoker)delegate
+        //            {
+        //                lbDebugMsg.Visible = true;
+        //                lbDebugMsg.Text = msg;
+        //            });
+        //        }
+        //        catch { }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        stats.Crash++;
+        //        err = ex.Message.Replace(',', ';').Replace('\r', ' ').Replace('\n', ' ');
+        //        if (sw.IsRunning) sw.Stop();
+        //        Debug.WriteLine("ModelLoop exception: " + ex);
+        //    }
+
+        //    double ms = sw.Elapsed.TotalMilliseconds;
+        //    stats.Total++;
+        //    if (ok) stats.Success++;
+        //    stats.AddLatency(ms);
+
+        //    try
+        //    {
+        //        stats.Csv.WriteLine(string.Join(",", new string[]
+        //        {
+        //            DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+        //            left ? "L" : "R",
+        //            "\"" + Path.GetFileName(file) + "\"",
+        //            s.AlgoText,
+        //            maskScore.ToString("F4"),
+        //            waferScore.ToString("F4"),
+        //            ok ? "1" : "0",
+        //            ms.ToString("F2"),
+        //            err
+        //        }));
+        //    }
+        //    catch { }
+        //}
         private void RunModelLoopOne(bool left, string file, MlSide s, ModelLoopStats stats)
         {
-            var sw = new Stopwatch();
+            Stopwatch sw = new Stopwatch();
             bool ok = false;
-            double maskScore = 0, waferScore = 0;
+            double maskScore = 0;
+            double waferScore = 0;
             string err = "";
 
             try
             {
-                Mat img = Cv2.ImRead(file, ImreadModes.Grayscale);
-                if (img == null || img.Empty()) throw new Exception("讀圖失敗");
-
-                ShowImageOnUi(left, img);
-                Thread.Sleep(30);   // 讓 UI 有時間重繪
-
-                lock (_matchLock)
+                using (Mat original = Cv2.ImRead(file, ImreadModes.Grayscale))
                 {
-                    sw.Start();   // 只計對位(推論)時間,不含等鎖
-                    if (left)
+                    if (original.Empty())
+                        throw new IOException("讀圖失敗：" + file);
+
+                    Mat processed = null;
+                    try
                     {
-                        MlMatch(s.MaskM, img, ref LMaskMp, s.MaskA, s.MaskCls);
-                        MlMatch(s.WaferM, img, ref LWaferMp, s.WaferA, s.WaferCls);
-                        sw.Stop();
-                        LMaskMp.X += s.MaskOffX; LMaskMp.Y += s.MaskOffY;
-                        LWaferMp.X += s.WaferOffX; LWaferMp.Y += s.WaferOffY;
-                        maskScore = LMaskMp.Score;
-                        waferScore = LWaferMp.Score;
+                        Mat imageForMatch = original;
+
+                        if (_runningEnhanceMethod != LoopEnhanceMethod.None)
+                        {
+                            processed = ApplyLoopEnhancement(
+                                original, _runningEnhanceMethod);
+
+                            imageForMatch = processed;
+
+                            SaveEnhancedImageOnce(
+                                file, processed, _runningEnhanceMethod);
+                        }
+
+                        // 顯示與比對都使用同一張處理結果。
+                        ShowImageOnUi(left, imageForMatch);
+                        Thread.Sleep(30);
+
+                        lock (_matchLock)
+                        {
+                            // 保留原定義：只計比對／推論，
+                            // 不含讀圖、影像處理、存檔與等鎖。
+                            sw.Start();
+
+                            if (left)
+                            {
+                                MlMatch(
+                                    s.MaskM, imageForMatch,
+                                    ref LMaskMp, s.MaskA, s.MaskCls);
+
+                                MlMatch(
+                                    s.WaferM, imageForMatch,
+                                    ref LWaferMp, s.WaferA, s.WaferCls);
+
+                                sw.Stop();
+
+                                LMaskMp.X += s.MaskOffX;
+                                LMaskMp.Y += s.MaskOffY;
+                                LWaferMp.X += s.WaferOffX;
+                                LWaferMp.Y += s.WaferOffY;
+
+                                maskScore = LMaskMp.Score;
+                                waferScore = LWaferMp.Score;
+                            }
+                            else
+                            {
+                                MlMatch(
+                                    s.MaskM, imageForMatch,
+                                    ref RMaskMp, s.MaskA, s.MaskCls);
+
+                                MlMatch(
+                                    s.WaferM, imageForMatch,
+                                    ref RWaferMp, s.WaferA, s.WaferCls);
+
+                                sw.Stop();
+
+                                RMaskMp.X += s.MaskOffX;
+                                RMaskMp.Y += s.MaskOffY;
+                                RWaferMp.X += s.WaferOffX;
+                                RWaferMp.Y += s.WaferOffY;
+
+                                maskScore = RMaskMp.Score;
+                                waferScore = RWaferMp.Score;
+                            }
+                        }
+
+                        ok = maskScore >= ModelLoopMinScore &&
+                             waferScore >= ModelLoopMinScore;
+
+                        string message = string.Format(
+                            "[ModelLoop {0}] {1} M={2:N2} W={3:N2} {4:N1}ms Enhance={5}",
+                            left ? "L" : "R",
+                            Path.GetFileName(file),
+                            maskScore,
+                            waferScore,
+                            sw.Elapsed.TotalMilliseconds,
+                            _runningEnhanceMethod);
+
+                        try
+                        {
+                            BeginInvoke((MethodInvoker)delegate
+                            {
+                                if (IsDisposed) return;
+                                lbDebugMsg.Visible = true;
+                                lbDebugMsg.Text = message;
+                            });
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // 控制項已關閉。
+                        }
                     }
-                    else
+                    finally
                     {
-                        MlMatch(s.MaskM, img, ref RMaskMp, s.MaskA, s.MaskCls);
-                        MlMatch(s.WaferM, img, ref RWaferMp, s.WaferA, s.WaferCls);
-                        sw.Stop();
-                        RMaskMp.X += s.MaskOffX; RMaskMp.Y += s.MaskOffY;
-                        RWaferMp.X += s.WaferOffX; RWaferMp.Y += s.WaferOffY;
-                        maskScore = RMaskMp.Score;
-                        waferScore = RWaferMp.Score;
+                        // ShowImageOnUi 內部會 Clone，因此這裡可釋放處理圖。
+                        if (processed != null)
+                            processed.Dispose();
                     }
                 }
-
-                ok = maskScore >= ModelLoopMinScore && waferScore >= ModelLoopMinScore;
-
-                string msg = string.Format("[ModelLoop {0}] {1} M={2:N2} W={3:N2} {4:N1}ms",
-                    left ? "L" : "R", Path.GetFileName(file), maskScore, waferScore, sw.Elapsed.TotalMilliseconds);
-                try
-                {
-                    BeginInvoke((MethodInvoker)delegate
-                    {
-                        lbDebugMsg.Visible = true;
-                        lbDebugMsg.Text = msg;
-                    });
-                }
-                catch { }
             }
             catch (Exception ex)
             {
                 stats.Crash++;
-                err = ex.Message.Replace(',', ';').Replace('\r', ' ').Replace('\n', ' ');
+                err = ex.Message
+                    .Replace(',', ';')
+                    .Replace('\r', ' ')
+                    .Replace('\n', ' ');
+
                 if (sw.IsRunning) sw.Stop();
                 Debug.WriteLine("ModelLoop exception: " + ex);
             }
@@ -6981,18 +7815,24 @@ namespace NSAA_16Axis
             {
                 stats.Csv.WriteLine(string.Join(",", new string[]
                 {
-                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-                    left ? "L" : "R",
-                    "\"" + Path.GetFileName(file) + "\"",
-                    s.AlgoText,
-                    maskScore.ToString("F4"),
-                    waferScore.ToString("F4"),
-                    ok ? "1" : "0",
-                    ms.ToString("F2"),
-                    err
+            DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+            left ? "L" : "R",
+            "\"" + Path.GetFileName(file).Replace("\"", "\"\"") + "\"",
+            s.AlgoText,
+            maskScore.ToString("F4",
+                System.Globalization.CultureInfo.InvariantCulture),
+            waferScore.ToString("F4",
+                System.Globalization.CultureInfo.InvariantCulture),
+            ok ? "1" : "0",
+            ms.ToString("F2",
+                System.Globalization.CultureInfo.InvariantCulture),
+            err
                 }));
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ModelLoop CSV error: " + ex.Message);
+            }
         }
 
         /// <summary>取消勾選後,還原正常 CCD 畫面。必須在 UI 執行緒呼叫。</summary>
